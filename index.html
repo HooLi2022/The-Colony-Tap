@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌍 Мировой Кликер</title>
+    <title>🌍 Мировой Кликер - Топ игроков</title>
     <style>
         body {
             margin: 0;
@@ -14,17 +14,20 @@
             justify-content: center;
             align-items: center;
             color: white;
+            padding: 20px;
         }
         .container {
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
             border-radius: 20px;
-            padding: 40px;
+            padding: 30px;
             box-shadow: 0 8px 32px 0 rgba(31,38,135,0.37);
-            max-width: 600px;
-            width: 90%;
+            max-width: 800px;
+            width: 100%;
             text-align: center;
         }
+        
+        /* Основной счетчик */
         .counter {
             font-size: 5em;
             font-weight: bold;
@@ -32,45 +35,170 @@
             background: rgba(0,0,0,0.3);
             border-radius: 20px;
             padding: 20px;
+            border: 2px solid rgba(255,215,0,0.3);
+            text-shadow: 0 0 20px rgba(255,215,0,0.5);
         }
+        
+        /* Кнопка клика */
         .click-button {
             background: #ffd700;
             color: #333;
             border: none;
-            font-size: 2em;
-            padding: 20px 40px;
+            font-size: 2.5em;
+            padding: 25px 50px;
             border-radius: 60px;
             cursor: pointer;
             font-weight: bold;
             margin: 20px 0;
-            transition: 0.1s;
+            transition: all 0.2s;
+            box-shadow: 0 0 30px rgba(255,215,0,0.5);
+            width: 100%;
+            max-width: 400px;
         }
-        .click-button:hover { transform: scale(1.05); background: #ffed4a; }
-        .click-button:active { transform: scale(0.95); }
+        .click-button:hover { 
+            transform: scale(1.05); 
+            background: #ffed4a;
+            box-shadow: 0 0 50px rgba(255,215,0,0.8);
+        }
+        .click-button:active { 
+            transform: scale(0.95);
+            background: #ffc800;
+        }
+        
+        /* Блок с именем */
+        .name-section {
+            background: rgba(255,255,255,0.15);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
         .name-input {
-            padding: 10px 15px;
-            border-radius: 25px;
+            padding: 12px 20px;
+            border-radius: 30px;
             border: none;
-            width: 200px;
+            width: 250px;
             margin: 10px;
-            font-size: 1em;
+            font-size: 1.1em;
+            background: rgba(255,255,255,0.9);
         }
         .name-button {
-            padding: 10px 20px;
-            border-radius: 25px;
+            padding: 12px 30px;
+            border-radius: 30px;
             border: none;
             background: #ffd700;
             cursor: pointer;
             font-weight: bold;
-            font-size: 1em;
+            font-size: 1.1em;
+            transition: 0.2s;
         }
-        .last-clicker, .online-status {
+        .name-button:hover {
+            background: #ffed4a;
+            transform: scale(1.05);
+        }
+        
+        /* Статистика */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.15);
+            border-radius: 15px;
+            padding: 15px;
+            backdrop-filter: blur(5px);
+        }
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #ffd700;
+        }
+        
+        /* Топ игроков */
+        .top-players {
+            background: rgba(0,0,0,0.3);
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid rgba(255,215,0,0.3);
+        }
+        .top-title {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255,215,0,0.5);
+        }
+        .top-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .top-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin: 8px 0;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            font-size: 1.2em;
+            transition: 0.2s;
+            border: 1px solid transparent;
+        }
+        .top-item:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: #ffd700;
+            transform: translateX(5px);
+        }
+        .top-rank {
+            width: 40px;
+            height: 40px;
+            background: #ffd700;
+            color: #333;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            font-size: 1.2em;
+        }
+        .top-rank-1 { background: #FFD700; box-shadow: 0 0 20px #FFD700; }
+        .top-rank-2 { background: #C0C0C0; box-shadow: 0 0 20px #C0C0C0; }
+        .top-rank-3 { background: #CD7F32; box-shadow: 0 0 20px #CD7F32; }
+        .top-name {
+            flex: 1;
+            text-align: left;
+            font-weight: 500;
+        }
+        .top-score {
+            font-weight: bold;
+            color: #ffd700;
+            font-size: 1.3em;
+            margin-left: 10px;
+        }
+        
+        /* Анимация для новых рекордов */
+        @keyframes newRecord {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); color: #ffd700; }
+            100% { transform: scale(1); }
+        }
+        .new-record {
+            animation: newRecord 0.5s ease;
+        }
+        
+        .last-clicker {
             background: rgba(255,255,255,0.2);
             padding: 15px;
             border-radius: 10px;
             margin-top: 20px;
         }
-        #lastClickerName { color: #ffd700; font-weight: bold; }
+        #lastClickerName { 
+            color: #ffd700; 
+            font-weight: bold;
+            font-size: 1.2em;
+        }
     </style>
 </head>
 <body>
@@ -78,19 +206,42 @@
         <h1>🌍 Мировой Кликер</h1>
         <p>Кликайте вместе со всем миром!</p>
         
+        <!-- Основной счетчик -->
         <div class="counter" id="counter">0</div>
         
-        <div>
-            <input type="text" id="username" class="name-input" placeholder="Ваше имя" value="Аноним">
+        <!-- Блок с именем -->
+        <div class="name-section">
+            <input type="text" id="username" class="name-input" placeholder="Ваше имя" value="Аноним" maxlength="20">
             <button id="saveNameBtn" class="name-button">Сохранить имя</button>
         </div>
         
-        <button id="clickBtn" class="click-button">👆 КЛИК</button>
+        <!-- Кнопка клика -->
+        <button id="clickBtn" class="click-button">👆 ТАП</button>
         
-        <div class="online-status">
-            <span id="onlineCount">👥 Загрузка...</span>
+        <!-- Статистика -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div>Сейчас кликают</div>
+                <div class="stat-value" id="onlineCount">0</div>
+            </div>
+            <div class="stat-card">
+                <div>Твой счет</div>
+                <div class="stat-value" id="userScore">0</div>
+            </div>
         </div>
         
+        <!-- Топ игроков -->
+        <div class="top-players">
+            <div class="top-title">🏆 Топ таперов 🏆</div>
+            <div id="topList" class="top-list">
+                <!-- Сюда будет подгружаться топ -->
+                <div class="top-item" style="justify-content: center; opacity: 0.7;">
+                    Загрузка топ игроков...
+                </div>
+            </div>
+        </div>
+        
+        <!-- Последний кликнувший -->
         <div class="last-clicker">
             <span>Последний кликнул: </span>
             <span id="lastClickerName">никто</span>
@@ -103,41 +254,37 @@
 
     <script>
         // ========== НАСТРОЙКИ FIREBASE ==========
-        // ВСТАВЬТЕ ВАШИ РЕАЛЬНЫЕ КЛЮЧИ СЮДА!!!
         const firebaseConfig = {
-            apiKey: "AIzaSyA_gNkLMsTxneTwyg5bDxKBN9osRIUrPaE",  // Пример ключа - ЗАМЕНИТЕ!
-            authDomain: "the-colony-tap.firebaseapp.com",      // ЗАМЕНИТЕ!
-            databaseURL: "https://the-colony-tap-default-rtdb.firebaseio.com", // ЗАМЕНИТЕ! ТОЛЬКО КОРЕНЬ!
-            projectId: "the-colony-tap",                       // ЗАМЕНИТЕ!
-            storageBucket: "the-colony-tap.firebasestorage.app",       // ЗАМЕНИТЕ!
-            messagingSenderId: "433438733616",                 // ЗАМЕНИТЕ!
-            appId: "1:433438733616:web:76095a36161b32590d44f5"          // ЗАМЕНИТЕ!
+            apiKey: "AIzaSyA_gNkLMsTxneTwyg5bDxKBN9osRIUrPaE",
+            authDomain: "the-colony-tap.firebaseapp.com",
+            databaseURL: "https://the-colony-tap-default-rtdb.firebaseio.com",
+            projectId: "the-colony-tap",
+            storageBucket: "the-colony-tap.firebasestorage.app",
+            messagingSenderId: "433438733616",
+            appId: "1:433438733616:web:76095a36161b32590d44f5"
         };
         // ========================================
 
         // Инициализация Firebase
-        let app;
-        try {
-            app = firebase.initializeApp(firebaseConfig);
-            console.log('✅ Firebase инициализирован');
-        } catch (e) {
-            console.error('❌ Ошибка инициализации Firebase:', e);
-            alert('Ошибка подключения к базе данных. Проверьте ключи Firebase в коде!');
-        }
-
+        firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
+        console.log('✅ Firebase инициализирован');
 
         // Получаем элементы
         const counterEl = document.getElementById('counter');
         const lastClickerEl = document.getElementById('lastClickerName');
         const onlineCountEl = document.getElementById('onlineCount');
+        const userScoreEl = document.getElementById('userScore');
         const usernameInput = document.getElementById('username');
         const saveNameBtn = document.getElementById('saveNameBtn');
         const clickBtn = document.getElementById('clickBtn');
+        const topListEl = document.getElementById('topList');
 
         // Переменные
         let currentUsername = 'Аноним';
         let myOnlineRef = null;
+        let myPlayerRef = null;
+        let myCurrentScore = 0;
 
         // Функция сохранения имени
         function setUsername() {
@@ -146,29 +293,95 @@
                 currentUsername = name;
                 alert('Имя сохранено: ' + currentUsername);
                 
-                // Обновляем в онлайн статусе
+                // Обновляем имя в онлайн статусе
                 if (myOnlineRef) {
                     myOnlineRef.update({ name: currentUsername, lastSeen: Date.now() });
                 }
+                
+                // Обновляем имя в статистике игрока
+                if (myPlayerRef) {
+                    myPlayerRef.update({ 
+                        name: currentUsername,
+                        lastSeen: Date.now()
+                    });
+                }
             }
+        }
+
+        // Функция обновления топа
+        function updateTopList(snapshot) {
+            const players = snapshot.val();
+            if (!players) {
+                topListEl.innerHTML = '<div class="top-item" style="justify-content: center;">Пока нет игроков</div>';
+                return;
+            }
+
+            // Преобразуем объект в массив и сортируем по счету
+            const playersArray = Object.entries(players).map(([id, data]) => ({
+                id,
+                name: data.name || 'Аноним',
+                score: data.score || 0
+            })).filter(p => p.score > 0); // Показываем только тех, у кого есть клики
+
+            // Сортируем по убыванию счета
+            playersArray.sort((a, b) => b.score - a.score);
+            
+            // Берем топ-10
+            const top10 = playersArray.slice(0, 10);
+            
+            if (top10.length === 0) {
+                topListEl.innerHTML = '<div class="top-item" style="justify-content: center;">Пока нет кликов</div>';
+                return;
+            }
+
+            // Строим HTML для топа
+            let topHtml = '';
+            top10.forEach((player, index) => {
+                const rankClass = index === 0 ? 'top-rank-1' : (index === 1 ? 'top-rank-2' : (index === 2 ? 'top-rank-3' : ''));
+                
+                // Подсвечиваем текущего игрока
+                const isCurrentPlayer = player.id === (myPlayerRef ? myPlayerRef.key : null);
+                const currentPlayerStyle = isCurrentPlayer ? 'border: 2px solid #ffd700; background: rgba(255,215,0,0.2);' : '';
+                
+                topHtml += `
+                    <div class="top-item" style="${currentPlayerStyle}">
+                        <div class="top-rank ${rankClass}">${index + 1}</div>
+                        <span class="top-name">${player.name}</span>
+                        <span class="top-score">${player.score.toLocaleString()}</span>
+                    </div>
+                `;
+            });
+            
+            topListEl.innerHTML = topHtml;
         }
 
         // Функция клика
         function handleClick() {
             console.log('Клик от:', currentUsername);
             
+            // Увеличиваем глобальный счетчик
             const counterRef = database.ref('globalCounter');
             
-            // Атомарно увеличиваем счетчик
             counterRef.transaction(function(current) {
                 return (current || 0) + 1;
             }).then((result) => {
                 if (result.committed) {
                     // Сохраняем информацию о последнем клике
-                    return database.ref('lastClick').set({
+                    database.ref('lastClick').set({
                         name: currentUsername,
                         timestamp: Date.now()
                     });
+                    
+                    // Увеличиваем личный счет игрока
+                    if (myPlayerRef) {
+                        myPlayerRef.transaction(function(current) {
+                            if (!current) current = { score: 0, name: currentUsername, lastSeen: Date.now() };
+                            current.score = (current.score || 0) + 1;
+                            current.lastSeen = Date.now();
+                            current.name = currentUsername;
+                            return current;
+                        });
+                    }
                 }
             }).catch(error => {
                 console.error('Ошибка:', error);
@@ -180,6 +393,7 @@
         function joinOnline() {
             if (!database) return;
             
+            // Онлайн статус
             myOnlineRef = database.ref('onlineUsers').push();
             myOnlineRef.set({
                 name: currentUsername,
@@ -187,10 +401,23 @@
                 lastSeen: Date.now()
             });
 
+            // Статистика игрока
+            myPlayerRef = database.ref('players').push();
+            myPlayerRef.set({
+                name: currentUsername,
+                score: 0,
+                joined: Date.now(),
+                lastSeen: Date.now()
+            });
+
             // Удаляем при закрытии
             window.addEventListener('beforeunload', function() {
                 if (myOnlineRef) {
                     myOnlineRef.remove();
+                }
+                // Не удаляем игрока из статистики, чтобы сохранить его счет
+                if (myPlayerRef) {
+                    myPlayerRef.update({ lastSeen: Date.now(), online: false });
                 }
             });
         }
@@ -203,9 +430,6 @@
         database.ref('globalCounter').on('value', (snapshot) => {
             const count = snapshot.val() || 0;
             counterEl.innerText = count.toLocaleString();
-            console.log('Счетчик обновлен:', count);
-        }, (error) => {
-            console.error('Ошибка чтения счетчика:', error);
         });
 
         // Слушаем последний клик
@@ -220,7 +444,21 @@
         database.ref('onlineUsers').on('value', (snapshot) => {
             const users = snapshot.val();
             const count = users ? Object.keys(users).length : 0;
-            onlineCountEl.innerHTML = `👥 Сейчас кликают: <strong>${count}</strong> человек`;
+            onlineCountEl.innerHTML = count;
+        });
+
+        // Слушаем топ игроков
+        database.ref('players').on('value', (snapshot) => {
+            updateTopList(snapshot);
+            
+            // Обновляем личный счет текущего игрока
+            if (myPlayerRef) {
+                const players = snapshot.val();
+                if (players && players[myPlayerRef.key]) {
+                    myCurrentScore = players[myPlayerRef.key].score || 0;
+                    userScoreEl.innerText = myCurrentScore.toLocaleString();
+                }
+            }
         });
 
         // Присоединяемся
@@ -236,9 +474,15 @@
                     name: currentUsername
                 });
             }
+            if (myPlayerRef) {
+                myPlayerRef.update({
+                    lastSeen: Date.now(),
+                    name: currentUsername
+                });
+            }
         }, 30000);
 
-        console.log('✅ Мировой кликер готов!');
+        console.log('✅ Мировой кликер с топом готов!');
     </script>
 </body>
 </html>
