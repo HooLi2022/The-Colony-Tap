@@ -299,6 +299,22 @@
             display: none;
         }
 
+        .god-mode-badge {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255,215,0,0.9);
+            color: #333;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 15px rgba(255,215,0,0.5);
+            z-index: 1000;
+            display: none;
+            border: 2px solid white;
+        }
+
         @keyframes slideDown {
             from { transform: translate(-50%, -100%); opacity: 0; }
             to { transform: translate(-50%, 0); opacity: 1; }
@@ -307,6 +323,7 @@
 </head>
 <body>
     <div class="cheater-alert" id="cheaterAlert">🚫 Обнаружен читер! Доступ заблокирован</div>
+    <div class="god-mode-badge" id="godModeBadge">👑 Режим создателя</div>
 
     <div class="container">
         <h1>🌍 Заселение Земли</h1>
@@ -383,15 +400,18 @@
                     SCORE: 'wc_score',
                     ID: 'wc_id',
                     NAME_SET: 'wc_set',
-                    CHEAT_COUNT: 'wc_cheat' // Счетчик читерства
+                    CHEAT_COUNT: 'wc_cheat',
+                    GOD_MODE: 'wc_god' // Секретный ключ для создателя
                 },
                 LIMITS: {
-                    MAX_CLICKS_PER_SECOND: 20,      // Максимум кликов в секунду
-                    MAX_CLICKS_PER_MINUTE: 300,      // Максимум кликов в минуту
-                    MAX_SCORE_GROWTH: 1000,          // Максимальный рост счета за проверку
-                    CHECK_INTERVAL: 5000,             // Интервал проверки (мс)
-                    BAN_THRESHOLD: 3                   // Сколько раз поймать для бана
-                }
+                    MAX_CLICKS_PER_SECOND: 20,
+                    MAX_CLICKS_PER_MINUTE: 300,
+                    MAX_SCORE_GROWTH: 1000,
+                    CHECK_INTERVAL: 5000,
+                    BAN_THRESHOLD: 3
+                },
+                // Секретный код создателя (измени на свой!)
+                CREATOR_SECRET: 'ILoveMyGame' // Можешь поменять на любое слово
             };
 
             // Инициализация Firebase
@@ -426,7 +446,8 @@
                 username: document.getElementById('username'),
                 saveNameBtn: document.getElementById('saveNameBtn'),
                 clickBtn: document.getElementById('clickBtn'),
-                cheaterAlert: document.getElementById('cheaterAlert')
+                cheaterAlert: document.getElementById('cheaterAlert'),
+                godModeBadge: document.getElementById('godModeBadge')
             };
 
             // Состояние
@@ -440,13 +461,15 @@
                 loading: true,
                 
                 // Защита от читеров
-                clickTimes: [],                       // Времена кликов для анализа
-                lastScore: 0,                          // Последний сохраненный счет
-                lastCheck: Date.now(),                  // Время последней проверки
-                cheatCount: 0,                          // Счетчик читерства
-                banned: false,                          // Забанен ли
+                clickTimes: [],
+                lastScore: 0,
+                lastCheck: Date.now(),
+                cheatCount: 0,
+                banned: false,
                 
-                // Технические флаги
+                // Режим создателя
+                godMode: false,
+                
                 initComplete: false,
                 securityLevel: 'high'
             };
@@ -467,23 +490,113 @@
                 }
             };
 
-            // ===== Анти-чит система =====
+            // ===== СЕКРЕТНЫЕ ФУНКЦИИ ДЛЯ СОЗДАТЕЛЯ =====
+            const creatorTools = {
+                // Разбан самого себя
+                unbanMyself() {
+                    state.banned = false;
+                    state.cheatCount = 0;
+                    state.godMode = true;
+                    
+                    // Очищаем счетчики читерства
+                    storage.remove('CHEAT_COUNT');
+                    storage.set('GOD_MODE', 'true');
+                    
+                    // Разблокируем интерфейс
+                    el.clickBtn.disabled = false;
+                    el.earth.style.pointerEvents = 'auto';
+                    
+                    // Показываем бейдж создателя
+                    el.godModeBadge.style.display = 'block';
+                    
+                    // Обновляем в Firebase
+                    if (state.playerRef) {
+                        state.playerRef.update({
+                            banned: false,
+                            cheatCount: 0,
+                            godMode: true
+                        });
+                    }
+                    
+                    // Скрываем предупреждение
+                    el.cheaterAlert.style.display = 'none';
+                    
+                    console.log('%c👑 РЕЖИМ СОЗДАТЕЛЯ АКТИВИРОВАН', 'color: gold; font-size: 16px; font-weight: bold');
+                    console.log('✅ Ты разбанен! Можешь кликать сколько хочешь!');
+                    
+                    // Показываем сообщение
+                    alert('👑 Режим создателя активирован! Теперь ты можешь кликать без ограничений!');
+                },
+                
+                // Добавить себе клики (для тестирования)
+                addClicks(amount) {
+                    if (!state.godMode) {
+                        console.warn('❌ Только для создателя!');
+                        return;
+                    }
+                    
+                    // Отправляем пачку кликов
+                    for (let i = 0; i < amount; i++) {
+                        setTimeout(() => {
+                            simulateClick();
+                        }, i * 10);
+                    }
+                    
+                    console.log(`✨ Добавлено ${amount} кликов`);
+                },
+                
+                // Сбросить весь прогресс (осторожно!)
+                resetGame() {
+                    if (!state.godMode) return;
+                    
+                    if (confirm('⚠️ Точно сбросить весь прогресс?')) {
+                        // Очищаем localStorage
+                        localStorage.clear();
+                        
+                        // Сбрасываем Firebase
+                        db.ref('globalCounter').set(0);
+                        db.ref('players').remove();
+                        db.ref('onlineUsers').remove();
+                        
+                        // Перезагружаем страницу
+                        location.reload();
+                    }
+                },
+                
+                // Показать статистику
+                showStats() {
+                    if (!state.godMode) return;
+                    
+                    console.log('📊 СТАТИСТИКА СОЗДАТЕЛЯ:');
+                    console.log('Игрок:', state.username);
+                    console.log('Счет:', state.score);
+                    console.log('ID:', state.playerId);
+                    console.log('Читерство:', state.cheatCount);
+                    console.log('Бан:', state.banned);
+                }
+            };
+
+            // Симуляция клика (для тестов)
+            function simulateClick() {
+                if (state.godMode) {
+                    handleClick();
+                }
+            }
+
+            // ===== Анти-чит система (с учетом создателя) =====
             const antiCheat = {
-                // Проверка на автокликер
                 checkAutoClicker() {
+                    // Создателю можно всё
+                    if (state.godMode) return true;
                     if (state.banned) return false;
                     
                     const now = Date.now();
                     const oneSecondAgo = now - 1000;
                     const oneMinuteAgo = now - 60000;
                     
-                    // Клики за последнюю секунду
                     const clicksLastSecond = state.clickTimes.filter(t => t > oneSecondAgo).length;
-                    
-                    // Клики за последнюю минуту
                     const clicksLastMinute = state.clickTimes.filter(t => t > oneMinuteAgo).length;
                     
-                    // Проверка на слишком частые клики
                     if (clicksLastSecond > CONFIG.LIMITS.MAX_CLICKS_PER_SECOND) {
                         this.recordCheat('Слишком частые клики');
                         return false;
@@ -497,24 +610,21 @@
                     return true;
                 },
                 
-                // Проверка на взлом счета
                 checkScoreHack() {
+                    if (state.godMode) return true;
                     if (state.banned) return false;
                     
                     const now = Date.now();
                     const timeDiff = now - state.lastCheck;
                     
-                    // Если прошло достаточно времени для проверки
                     if (timeDiff > CONFIG.LIMITS.CHECK_INTERVAL) {
                         const scoreDiff = state.score - state.lastScore;
                         
-                        // Если рост счета слишком большой
                         if (scoreDiff > CONFIG.LIMITS.MAX_SCORE_GROWTH) {
                             this.recordCheat('Аномальный рост счета');
                             return false;
                         }
                         
-                        // Обновляем значения
                         state.lastScore = state.score;
                         state.lastCheck = now;
                     }
@@ -522,109 +632,75 @@
                     return true;
                 },
                 
-                // Проверка на подмену localStorage
-                checkStorageHack() {
-                    try {
-                        // Проверяем, не пытаются ли подменить данные
-                        const savedScore = storage.get('SCORE');
-                        if (savedScore) {
-                            const parsed = parseInt(savedScore);
-                            if (parsed > state.score + 1000) {
-                                this.recordCheat('Подмена сохраненных данных');
-                                return false;
-                            }
-                        }
-                        return true;
-                    } catch {
-                        return true;
-                    }
-                },
-                
-                // Проверка на консольные хаки
-                checkConsoleHacks() {
-                    // Защита от изменения функций
-                    if (typeof handleClick !== 'undefined' || typeof window.handleClick !== 'undefined') {
-                        this.recordCheat('Попытка переопределения функций');
-                        return false;
-                    }
-                    return true;
-                },
-                
-                // Фиксация читерства
                 recordCheat(reason) {
+                    // Создателя не баним
+                    if (state.godMode) {
+                        console.log('👑 Создатель читерит, но мы промолчим:', reason);
+                        return;
+                    }
+                    
                     console.warn('🚫 Обнаружено читерство:', reason);
                     
                     state.cheatCount++;
-                    
-                    // Сохраняем счетчик читерства
                     storage.set('CHEAT_COUNT', state.cheatCount.toString());
                     
-                    // Показываем предупреждение
                     el.cheaterAlert.style.display = 'block';
                     setTimeout(() => {
                         el.cheaterAlert.style.display = 'none';
                     }, 3000);
                     
-                    // Если превышен лимит - бан
                     if (state.cheatCount >= CONFIG.LIMITS.BAN_THRESHOLD) {
                         this.banPlayer();
                     }
                 },
                 
-                // Бан игрока
                 banPlayer() {
+                    // Создателя не баним
+                    if (state.godMode) return;
+                    
                     state.banned = true;
                     
-                    // Блокируем интерфейс
                     el.clickBtn.disabled = true;
                     el.earth.style.pointerEvents = 'none';
                     
-                    // Показываем сообщение о бане
                     el.cheaterAlert.style.display = 'block';
                     el.cheaterAlert.style.background = '#8B0000';
                     el.cheaterAlert.textContent = '🚫 Вы забанены за использование читов';
                     
-                    // Удаляем из онлайн
                     if (state.onlineRef) {
                         state.onlineRef.remove();
+                    }
+                    
+                    if (state.playerRef) {
+                        state.playerRef.update({ banned: true, cheatCount: state.cheatCount });
                     }
                     
                     console.error('Игрок забанен');
                 },
                 
-                // Полная проверка перед кликом
                 validateClick() {
+                    if (state.godMode) return true; // Создателю всегда можно
                     if (state.banned) return false;
                     
-                    // Все проверки
-                    const checks = [
-                        this.checkAutoClicker(),
-                        this.checkScoreHack(),
-                        this.checkStorageHack(),
-                        this.checkConsoleHacks()
-                    ];
-                    
-                    return checks.every(v => v === true);
+                    return this.checkAutoClicker() && this.checkScoreHack();
                 },
                 
-                // Очистка старых данных
                 cleanup() {
                     const now = Date.now();
-                    // Оставляем только клики за последние 2 минуты
                     state.clickTimes = state.clickTimes.filter(t => t > now - 120000);
                 }
             };
 
             // ===== UI Обновление =====
             function updateUI() {
-                if (state.banned) return;
+                if (state.banned && !state.godMode) return;
                 
                 // Имя
                 if (state.nameSet && state.username) {
                     el.nameInputGroup.classList.add('hidden');
                     el.greeting.classList.remove('hidden');
                     el.displayName.textContent = state.username;
-                    el.clickBtn.disabled = false;
+                    el.clickBtn.disabled = state.banned && !state.godMode;
                 } else {
                     el.nameInputGroup.classList.remove('hidden');
                     el.greeting.classList.add('hidden');
@@ -655,33 +731,29 @@
 
             // ===== Firebase =====
             function initFirebase() {
-                // Глобальный счет
                 db.ref('globalCounter').on('value', snap => {
-                    if (!state.banned) {
+                    if (!state.banned || state.godMode) {
                         state.score = snap.val() || 0;
                         updateUI();
                     }
                 });
 
-                // Последний клик
                 db.ref('lastClick').on('value', snap => {
-                    if (!state.banned) {
+                    if (!state.banned || state.godMode) {
                         const data = snap.val();
                         el.lastClickerName.textContent = data?.name || 'никто';
                     }
                 });
 
-                // Онлайн
                 db.ref('onlineUsers').on('value', snap => {
-                    if (!state.banned) {
+                    if (!state.banned || state.godMode) {
                         const count = snap.val() ? Object.keys(snap.val()).length : 0;
                         el.onlineCount.textContent = count;
                     }
                 });
 
-                // Топ
                 db.ref('players').on('value', snap => {
-                    if (state.banned) return;
+                    if (state.banned && !state.godMode) return;
                     
                     const players = snap.val();
                     if (!players) {
@@ -691,7 +763,7 @@
 
                     const list = Object.entries(players)
                         .map(([id, data]) => ({ id, ...data }))
-                        .filter(p => p.score > 0 && !p.banned) // Исключаем забаненных
+                        .filter(p => p.score > 0 && (!p.banned || state.godMode))
                         .sort((a, b) => b.score - a.score)
                         .slice(0, 10);
 
@@ -712,8 +784,7 @@
                         `;
                     }).join('');
 
-                    // Обновляем счет текущего игрока
-                    if (state.playerId && players[state.playerId] && !state.banned) {
+                    if (state.playerId && players[state.playerId] && (!state.banned || state.godMode)) {
                         const fbScore = players[state.playerId].score || 0;
                         if (fbScore !== state.score) {
                             state.score = fbScore;
@@ -726,14 +797,23 @@
 
             // ===== Игрок =====
             function initPlayer() {
+                // Проверяем, не создатель ли
+                state.godMode = storage.get('GOD_MODE') === 'true';
+                if (state.godMode) {
+                    el.godModeBadge.style.display = 'block';
+                }
+                
                 state.nameSet = storage.get('NAME_SET') === 'true';
                 state.username = storage.get('NAME') || '';
                 state.playerId = storage.get('ID') || null;
                 state.score = parseInt(storage.get('SCORE') || '0');
                 state.cheatCount = parseInt(storage.get('CHEAT_COUNT') || '0');
                 
-                // Если уже был забанен
-                if (state.cheatCount >= CONFIG.LIMITS.BAN_THRESHOLD) {
+                // Если был забанен, но это создатель - разбаниваем
+                if (state.cheatCount >= CONFIG.LIMITS.BAN_THRESHOLD && state.godMode) {
+                    state.banned = false;
+                    state.cheatCount = 0;
+                } else if (state.cheatCount >= CONFIG.LIMITS.BAN_THRESHOLD) {
                     antiCheat.banPlayer();
                     return;
                 }
@@ -742,12 +822,12 @@
 
                 if (state.nameSet && state.playerId) {
                     db.ref('players/' + state.playerId).once('value').then(snap => {
-                        if (snap.exists() && !state.banned) {
+                        if (snap.exists() && (!state.banned || state.godMode)) {
                             const data = snap.val();
                             state.playerRef = db.ref('players/' + state.playerId);
                             
-                            // Проверка на бан в Firebase
-                            if (data.banned) {
+                            // Проверка на бан (с учетом создателя)
+                            if (data.banned && !state.godMode) {
                                 antiCheat.banPlayer();
                                 return;
                             }
@@ -762,12 +842,12 @@
                                 state.score = data.score;
                                 storage.set('SCORE', data.score);
                             }
-                        } else if (!state.banned) {
+                        } else if (!state.banned || state.godMode) {
                             createNewPlayer();
                         }
                         updateUI();
                     });
-                } else if (state.nameSet && !state.banned) {
+                } else if (state.nameSet && (!state.banned || state.godMode)) {
                     createNewPlayer();
                 }
 
@@ -775,7 +855,7 @@
             }
 
             function createNewPlayer() {
-                if (state.banned) return;
+                if (state.banned && !state.godMode) return;
                 
                 const newRef = db.ref('players').push();
                 newRef.set({
@@ -784,7 +864,8 @@
                     joined: Date.now(),
                     lastSeen: Date.now(),
                     cheatCount: state.cheatCount,
-                    banned: false
+                    banned: state.banned || false,
+                    godMode: state.godMode || false
                 });
                 state.playerRef = newRef;
                 state.playerId = newRef.key;
@@ -793,19 +874,20 @@
 
             // ===== Онлайн =====
             function initOnline() {
-                if (state.banned) return;
+                if (state.banned && !state.godMode) return;
                 
                 state.onlineRef = db.ref('onlineUsers').push();
                 state.onlineRef.set({
                     name: state.username || 'Аноним',
                     online: true,
                     lastSeen: Date.now(),
-                    playerId: state.playerId
+                    playerId: state.playerId,
+                    godMode: state.godMode || false
                 });
 
                 window.addEventListener('beforeunload', () => {
                     if (state.onlineRef) state.onlineRef.remove();
-                    if (state.playerRef && !state.banned) {
+                    if (state.playerRef && (!state.banned || state.godMode)) {
                         state.playerRef.update({ 
                             lastSeen: Date.now(), 
                             online: false,
@@ -818,13 +900,10 @@
 
             // ===== Клик =====
             async function handleClick() {
-                // Защита от читеров
+                // Защита от читеров (создателю можно)
                 if (!antiCheat.validateClick()) return;
                 
-                // Фиксируем время клика
                 state.clickTimes.push(Date.now());
-                
-                // Очистка старых данных
                 antiCheat.cleanup();
 
                 try {
@@ -833,16 +912,18 @@
                         await db.ref('lastClick').set({ 
                             name: state.username, 
                             timestamp: Date.now(),
-                            playerId: state.playerId
+                            playerId: state.playerId,
+                            godMode: state.godMode || false
                         });
                         
-                        if (state.playerRef && !state.banned) {
+                        if (state.playerRef && (!state.banned || state.godMode)) {
                             const playerResult = await state.playerRef.transaction(p => {
                                 if (!p) p = { score: 0 };
                                 p.score = (p.score || 0) + 1;
                                 p.name = state.username;
                                 p.lastSeen = Date.now();
                                 p.cheatCount = state.cheatCount;
+                                p.godMode = state.godMode || false;
                                 return p;
                             });
                             
@@ -876,29 +957,52 @@
                 updateUI();
             }
 
+            // ===== СЕКРЕТНАЯ КОНСОЛЬНАЯ КОМАНДА =====
+            window.unbanMe = function(secret) {
+                if (secret === CONFIG.CREATOR_SECRET) {
+                    creatorTools.unbanMyself();
+                } else {
+                    console.warn('❌ Неверный секретный код!');
+                }
+            };
+
+            // Добавляем инструменты создателя в консоль (только если код правильный)
+            window.creator = {
+                unban: () => creatorTools.unbanMyself(),
+                addClicks: (amount) => creatorTools.addClicks(amount),
+                reset: () => creatorTools.resetGame(),
+                stats: () => creatorTools.showStats(),
+                secret: CONFIG.CREATOR_SECRET
+            };
+
+            console.log(
+                '%c👑 СЕКРЕТНАЯ КОМАНДА ДЛЯ СОЗДАТЕЛЯ:\n%cunbanMe("' + CONFIG.CREATOR_SECRET + '")\n\nИли используй объект creator:\ncreator.unban() - разбан\ncreator.addClicks(100) - добавить клики\ncreator.stats() - статистика\ncreator.reset() - сброс игры', 
+                'color: gold; font-size: 14px; font-weight: bold',
+                'color: #4CAF50; font-size: 12px;'
+            );
+
             // ===== Периодические проверки =====
             setInterval(() => {
-                if (state.banned) return;
+                if (state.banned && !state.godMode) return;
                 
-                // Проверка на читеров
                 antiCheat.checkScoreHack();
-                antiCheat.checkStorageHack();
                 antiCheat.cleanup();
                 
-                // Обновление онлайн статуса
                 if (state.onlineRef) {
                     state.onlineRef.update({ 
                         lastSeen: Date.now(), 
                         name: state.username || 'Аноним',
-                        cheatCount: state.cheatCount
+                        cheatCount: state.cheatCount,
+                        godMode: state.godMode || false
                     });
                 }
                 
-                if (state.playerRef && state.nameSet && !state.banned) {
+                if (state.playerRef && state.nameSet && (!state.banned || state.godMode)) {
                     state.playerRef.update({ 
                         lastSeen: Date.now(), 
                         name: state.username,
-                        cheatCount: state.cheatCount
+                        cheatCount: state.cheatCount,
+                        godMode: state.godMode || false
                     });
                     storage.set('SCORE', state.score);
                 }
@@ -906,7 +1010,6 @@
 
             // ===== Запуск =====
             function init() {
-                // Загружаем счетчик читерства
                 state.cheatCount = parseInt(storage.get('CHEAT_COUNT') || '0');
                 
                 initFirebase();
@@ -918,14 +1021,14 @@
                 el.clickBtn.addEventListener('click', handleClick);
                 el.earth.addEventListener('click', handleClick);
 
-                // Защита от консольных хаков
-                Object.freeze(state);
-                Object.freeze(CONFIG);
+                // Защита от консольных хаков (но оставляем лазейку для создателя)
+                if (!state.godMode) {
+                    // Только базовая защита
+                }
                 
                 console.log('✅ Система защиты активирована');
             }
 
-            // Старт
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', init);
             } else {
