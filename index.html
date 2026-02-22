@@ -33,7 +33,6 @@
             text-align: center;
         }
 
-        /* Земля */
         .earth {
             position: relative;
             width: min(280px, 60vw);
@@ -71,7 +70,6 @@
             mask-image: radial-gradient(circle, black, transparent);
         }
 
-        /* Прогресс */
         .progress-section {
             margin: 16px 0;
         }
@@ -91,7 +89,6 @@
             transition: width 0.3s;
         }
 
-        /* Счетчик */
         .counter {
             font-size: clamp(2.5rem, 10vw, 4rem);
             font-weight: bold;
@@ -103,7 +100,6 @@
             text-shadow: 0 0 20px rgba(255,215,0,0.5);
         }
 
-        /* Имя */
         .name-section {
             margin: 20px 0;
             min-height: 80px;
@@ -159,7 +155,6 @@
             display: none !important;
         }
 
-        /* Кнопка клика */
         .click-button {
             background: #ffd700;
             color: #333;
@@ -191,7 +186,6 @@
             cursor: not-allowed;
         }
 
-        /* Статистика */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -213,7 +207,6 @@
             margin-top: 4px;
         }
 
-        /* Топ игроков */
         .top-players {
             background: rgba(0,0,0,0.3);
             border-radius: 20px;
@@ -289,20 +282,41 @@
             color: #ffd700;
             font-weight: bold;
         }
+
+        .cheater-alert {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ff4444;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0 4px 20px rgba(255,0,0,0.5);
+            z-index: 1000;
+            animation: slideDown 0.3s;
+            display: none;
+        }
+
+        @keyframes slideDown {
+            from { transform: translate(-50%, -100%); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
     </style>
 </head>
 <body>
+    <div class="cheater-alert" id="cheaterAlert">🚫 Обнаружен читер! Доступ заблокирован</div>
+
     <div class="container">
         <h1>🌍 Заселение Земли</h1>
         <p>Цель: 8 млрд кликов</p>
         
-        <!-- Земля -->
         <div class="earth" id="earth">
             <div class="earth-fill" id="earthFill"></div>
             <div class="earth-image" id="earthImage"></div>
         </div>
         
-        <!-- Прогресс -->
         <div class="progress-section">
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
@@ -312,10 +326,8 @@
             </div>
         </div>
         
-        <!-- Счетчик -->
         <div class="counter" id="counter">0</div>
         
-        <!-- Имя -->
         <div class="name-section">
             <div id="nameInputGroup" class="name-input-group">
                 <input type="text" id="username" class="name-input" placeholder="Ваше имя" maxlength="20" autocomplete="off">
@@ -326,10 +338,8 @@
             </div>
         </div>
         
-        <!-- Кнопка клика -->
         <button id="clickBtn" class="click-button" disabled>👆 ЗАСЕЛИТЬ</button>
         
-        <!-- Статистика -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div>Онлайн</div>
@@ -345,7 +355,6 @@
             </div>
         </div>
         
-        <!-- Топ -->
         <div class="top-players">
             <div class="top-title">🏆 Топ засельников</div>
             <div id="topList" class="top-list">
@@ -353,13 +362,11 @@
             </div>
         </div>
         
-        <!-- Последний клик -->
         <div class="last-clicker">
             Последний: <span id="lastClickerName">никто</span>
         </div>
     </div>
 
-    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
@@ -375,7 +382,15 @@
                     NAME: 'wc_name',
                     SCORE: 'wc_score',
                     ID: 'wc_id',
-                    NAME_SET: 'wc_set'
+                    NAME_SET: 'wc_set',
+                    CHEAT_COUNT: 'wc_cheat' // Счетчик читерства
+                },
+                LIMITS: {
+                    MAX_CLICKS_PER_SECOND: 20,      // Максимум кликов в секунду
+                    MAX_CLICKS_PER_MINUTE: 300,      // Максимум кликов в минуту
+                    MAX_SCORE_GROWTH: 1000,          // Максимальный рост счета за проверку
+                    CHECK_INTERVAL: 5000,             // Интервал проверки (мс)
+                    BAN_THRESHOLD: 3                   // Сколько раз поймать для бана
                 }
             };
 
@@ -410,7 +425,8 @@
                 displayName: document.getElementById('displayName'),
                 username: document.getElementById('username'),
                 saveNameBtn: document.getElementById('saveNameBtn'),
-                clickBtn: document.getElementById('clickBtn')
+                clickBtn: document.getElementById('clickBtn'),
+                cheaterAlert: document.getElementById('cheaterAlert')
             };
 
             // Состояние
@@ -421,7 +437,18 @@
                 nameSet: false,
                 onlineRef: null,
                 playerRef: null,
-                loading: true
+                loading: true,
+                
+                // Защита от читеров
+                clickTimes: [],                       // Времена кликов для анализа
+                lastScore: 0,                          // Последний сохраненный счет
+                lastCheck: Date.now(),                  // Время последней проверки
+                cheatCount: 0,                          // Счетчик читерства
+                banned: false,                          // Забанен ли
+                
+                // Технические флаги
+                initComplete: false,
+                securityLevel: 'high'
             };
 
             // ===== Хранилище =====
@@ -440,8 +467,158 @@
                 }
             };
 
+            // ===== Анти-чит система =====
+            const antiCheat = {
+                // Проверка на автокликер
+                checkAutoClicker() {
+                    if (state.banned) return false;
+                    
+                    const now = Date.now();
+                    const oneSecondAgo = now - 1000;
+                    const oneMinuteAgo = now - 60000;
+                    
+                    // Клики за последнюю секунду
+                    const clicksLastSecond = state.clickTimes.filter(t => t > oneSecondAgo).length;
+                    
+                    // Клики за последнюю минуту
+                    const clicksLastMinute = state.clickTimes.filter(t => t > oneMinuteAgo).length;
+                    
+                    // Проверка на слишком частые клики
+                    if (clicksLastSecond > CONFIG.LIMITS.MAX_CLICKS_PER_SECOND) {
+                        this.recordCheat('Слишком частые клики');
+                        return false;
+                    }
+                    
+                    if (clicksLastMinute > CONFIG.LIMITS.MAX_CLICKS_PER_MINUTE) {
+                        this.recordCheat('Превышен лимит кликов в минуту');
+                        return false;
+                    }
+                    
+                    return true;
+                },
+                
+                // Проверка на взлом счета
+                checkScoreHack() {
+                    if (state.banned) return false;
+                    
+                    const now = Date.now();
+                    const timeDiff = now - state.lastCheck;
+                    
+                    // Если прошло достаточно времени для проверки
+                    if (timeDiff > CONFIG.LIMITS.CHECK_INTERVAL) {
+                        const scoreDiff = state.score - state.lastScore;
+                        
+                        // Если рост счета слишком большой
+                        if (scoreDiff > CONFIG.LIMITS.MAX_SCORE_GROWTH) {
+                            this.recordCheat('Аномальный рост счета');
+                            return false;
+                        }
+                        
+                        // Обновляем значения
+                        state.lastScore = state.score;
+                        state.lastCheck = now;
+                    }
+                    
+                    return true;
+                },
+                
+                // Проверка на подмену localStorage
+                checkStorageHack() {
+                    try {
+                        // Проверяем, не пытаются ли подменить данные
+                        const savedScore = storage.get('SCORE');
+                        if (savedScore) {
+                            const parsed = parseInt(savedScore);
+                            if (parsed > state.score + 1000) {
+                                this.recordCheat('Подмена сохраненных данных');
+                                return false;
+                            }
+                        }
+                        return true;
+                    } catch {
+                        return true;
+                    }
+                },
+                
+                // Проверка на консольные хаки
+                checkConsoleHacks() {
+                    // Защита от изменения функций
+                    if (typeof handleClick !== 'undefined' || typeof window.handleClick !== 'undefined') {
+                        this.recordCheat('Попытка переопределения функций');
+                        return false;
+                    }
+                    return true;
+                },
+                
+                // Фиксация читерства
+                recordCheat(reason) {
+                    console.warn('🚫 Обнаружено читерство:', reason);
+                    
+                    state.cheatCount++;
+                    
+                    // Сохраняем счетчик читерства
+                    storage.set('CHEAT_COUNT', state.cheatCount.toString());
+                    
+                    // Показываем предупреждение
+                    el.cheaterAlert.style.display = 'block';
+                    setTimeout(() => {
+                        el.cheaterAlert.style.display = 'none';
+                    }, 3000);
+                    
+                    // Если превышен лимит - бан
+                    if (state.cheatCount >= CONFIG.LIMITS.BAN_THRESHOLD) {
+                        this.banPlayer();
+                    }
+                },
+                
+                // Бан игрока
+                banPlayer() {
+                    state.banned = true;
+                    
+                    // Блокируем интерфейс
+                    el.clickBtn.disabled = true;
+                    el.earth.style.pointerEvents = 'none';
+                    
+                    // Показываем сообщение о бане
+                    el.cheaterAlert.style.display = 'block';
+                    el.cheaterAlert.style.background = '#8B0000';
+                    el.cheaterAlert.textContent = '🚫 Вы забанены за использование читов';
+                    
+                    // Удаляем из онлайн
+                    if (state.onlineRef) {
+                        state.onlineRef.remove();
+                    }
+                    
+                    console.error('Игрок забанен');
+                },
+                
+                // Полная проверка перед кликом
+                validateClick() {
+                    if (state.banned) return false;
+                    
+                    // Все проверки
+                    const checks = [
+                        this.checkAutoClicker(),
+                        this.checkScoreHack(),
+                        this.checkStorageHack(),
+                        this.checkConsoleHacks()
+                    ];
+                    
+                    return checks.every(v => v === true);
+                },
+                
+                // Очистка старых данных
+                cleanup() {
+                    const now = Date.now();
+                    // Оставляем только клики за последние 2 минуты
+                    state.clickTimes = state.clickTimes.filter(t => t > now - 120000);
+                }
+            };
+
             // ===== UI Обновление =====
             function updateUI() {
+                if (state.banned) return;
+                
                 // Имя
                 if (state.nameSet && state.username) {
                     el.nameInputGroup.classList.add('hidden');
@@ -480,24 +657,32 @@
             function initFirebase() {
                 // Глобальный счет
                 db.ref('globalCounter').on('value', snap => {
-                    state.score = snap.val() || 0;
-                    updateUI();
+                    if (!state.banned) {
+                        state.score = snap.val() || 0;
+                        updateUI();
+                    }
                 });
 
                 // Последний клик
                 db.ref('lastClick').on('value', snap => {
-                    const data = snap.val();
-                    el.lastClickerName.textContent = data?.name || 'никто';
+                    if (!state.banned) {
+                        const data = snap.val();
+                        el.lastClickerName.textContent = data?.name || 'никто';
+                    }
                 });
 
                 // Онлайн
                 db.ref('onlineUsers').on('value', snap => {
-                    const count = snap.val() ? Object.keys(snap.val()).length : 0;
-                    el.onlineCount.textContent = count;
+                    if (!state.banned) {
+                        const count = snap.val() ? Object.keys(snap.val()).length : 0;
+                        el.onlineCount.textContent = count;
+                    }
                 });
 
                 // Топ
                 db.ref('players').on('value', snap => {
+                    if (state.banned) return;
+                    
                     const players = snap.val();
                     if (!players) {
                         el.topList.innerHTML = '<div class="top-item">Пока нет игроков</div>';
@@ -506,7 +691,7 @@
 
                     const list = Object.entries(players)
                         .map(([id, data]) => ({ id, ...data }))
-                        .filter(p => p.score > 0)
+                        .filter(p => p.score > 0 && !p.banned) // Исключаем забаненных
                         .sort((a, b) => b.score - a.score)
                         .slice(0, 10);
 
@@ -528,7 +713,7 @@
                     }).join('');
 
                     // Обновляем счет текущего игрока
-                    if (state.playerId && players[state.playerId]) {
+                    if (state.playerId && players[state.playerId] && !state.banned) {
                         const fbScore = players[state.playerId].score || 0;
                         if (fbScore !== state.score) {
                             state.score = fbScore;
@@ -545,26 +730,44 @@
                 state.username = storage.get('NAME') || '';
                 state.playerId = storage.get('ID') || null;
                 state.score = parseInt(storage.get('SCORE') || '0');
+                state.cheatCount = parseInt(storage.get('CHEAT_COUNT') || '0');
+                
+                // Если уже был забанен
+                if (state.cheatCount >= CONFIG.LIMITS.BAN_THRESHOLD) {
+                    antiCheat.banPlayer();
+                    return;
+                }
 
                 if (state.username) el.username.value = state.username;
 
                 if (state.nameSet && state.playerId) {
                     db.ref('players/' + state.playerId).once('value').then(snap => {
-                        if (snap.exists()) {
+                        if (snap.exists() && !state.banned) {
                             const data = snap.val();
                             state.playerRef = db.ref('players/' + state.playerId);
+                            
+                            // Проверка на бан в Firebase
+                            if (data.banned) {
+                                antiCheat.banPlayer();
+                                return;
+                            }
+                            
                             if (data.score < state.score) {
-                                state.playerRef.update({ score: state.score, name: state.username });
+                                state.playerRef.update({ 
+                                    score: state.score, 
+                                    name: state.username,
+                                    lastSeen: Date.now()
+                                });
                             } else {
                                 state.score = data.score;
                                 storage.set('SCORE', data.score);
                             }
-                        } else {
+                        } else if (!state.banned) {
                             createNewPlayer();
                         }
                         updateUI();
                     });
-                } else if (state.nameSet) {
+                } else if (state.nameSet && !state.banned) {
                     createNewPlayer();
                 }
 
@@ -572,11 +775,16 @@
             }
 
             function createNewPlayer() {
+                if (state.banned) return;
+                
                 const newRef = db.ref('players').push();
                 newRef.set({
                     name: state.username,
                     score: state.score,
-                    joined: Date.now()
+                    joined: Date.now(),
+                    lastSeen: Date.now(),
+                    cheatCount: state.cheatCount,
+                    banned: false
                 });
                 state.playerRef = newRef;
                 state.playerId = newRef.key;
@@ -585,17 +793,24 @@
 
             // ===== Онлайн =====
             function initOnline() {
+                if (state.banned) return;
+                
                 state.onlineRef = db.ref('onlineUsers').push();
                 state.onlineRef.set({
                     name: state.username || 'Аноним',
                     online: true,
-                    lastSeen: Date.now()
+                    lastSeen: Date.now(),
+                    playerId: state.playerId
                 });
 
                 window.addEventListener('beforeunload', () => {
                     if (state.onlineRef) state.onlineRef.remove();
-                    if (state.playerRef) {
-                        state.playerRef.update({ lastSeen: Date.now(), online: false });
+                    if (state.playerRef && !state.banned) {
+                        state.playerRef.update({ 
+                            lastSeen: Date.now(), 
+                            online: false,
+                            cheatCount: state.cheatCount
+                        });
                         storage.set('SCORE', state.score);
                     }
                 });
@@ -603,19 +818,31 @@
 
             // ===== Клик =====
             async function handleClick() {
-                if (!state.nameSet) return;
+                // Защита от читеров
+                if (!antiCheat.validateClick()) return;
+                
+                // Фиксируем время клика
+                state.clickTimes.push(Date.now());
+                
+                // Очистка старых данных
+                antiCheat.cleanup();
 
                 try {
                     const result = await db.ref('globalCounter').transaction(v => (v || 0) + 1);
                     if (result.committed) {
-                        await db.ref('lastClick').set({ name: state.username, timestamp: Date.now() });
+                        await db.ref('lastClick').set({ 
+                            name: state.username, 
+                            timestamp: Date.now(),
+                            playerId: state.playerId
+                        });
                         
-                        if (state.playerRef) {
+                        if (state.playerRef && !state.banned) {
                             const playerResult = await state.playerRef.transaction(p => {
                                 if (!p) p = { score: 0 };
                                 p.score = (p.score || 0) + 1;
                                 p.name = state.username;
                                 p.lastSeen = Date.now();
+                                p.cheatCount = state.cheatCount;
                                 return p;
                             });
                             
@@ -649,8 +876,39 @@
                 updateUI();
             }
 
+            // ===== Периодические проверки =====
+            setInterval(() => {
+                if (state.banned) return;
+                
+                // Проверка на читеров
+                antiCheat.checkScoreHack();
+                antiCheat.checkStorageHack();
+                antiCheat.cleanup();
+                
+                // Обновление онлайн статуса
+                if (state.onlineRef) {
+                    state.onlineRef.update({ 
+                        lastSeen: Date.now(), 
+                        name: state.username || 'Аноним',
+                        cheatCount: state.cheatCount
+                    });
+                }
+                
+                if (state.playerRef && state.nameSet && !state.banned) {
+                    state.playerRef.update({ 
+                        lastSeen: Date.now(), 
+                        name: state.username,
+                        cheatCount: state.cheatCount
+                    });
+                    storage.set('SCORE', state.score);
+                }
+            }, 15000);
+
             // ===== Запуск =====
             function init() {
+                // Загружаем счетчик читерства
+                state.cheatCount = parseInt(storage.get('CHEAT_COUNT') || '0');
+                
                 initFirebase();
                 initPlayer();
                 initOnline();
@@ -658,20 +916,13 @@
                 el.saveNameBtn.addEventListener('click', setName);
                 el.username.addEventListener('keypress', e => e.key === 'Enter' && setName());
                 el.clickBtn.addEventListener('click', handleClick);
-                el.earth.addEventListener('click', handleClick); // Клик по Земле
+                el.earth.addEventListener('click', handleClick);
 
-                // Периодическое обновление
-                setInterval(() => {
-                    if (state.onlineRef) {
-                        state.onlineRef.update({ lastSeen: Date.now(), name: state.username || 'Аноним' });
-                    }
-                    if (state.playerRef && state.nameSet) {
-                        state.playerRef.update({ lastSeen: Date.now(), name: state.username });
-                        storage.set('SCORE', state.score);
-                    }
-                }, 30000);
-
-                console.log('✅ Готово');
+                // Защита от консольных хаков
+                Object.freeze(state);
+                Object.freeze(CONFIG);
+                
+                console.log('✅ Система защиты активирована');
             }
 
             // Старт
