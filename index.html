@@ -3,42 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мировой Кликер 🌍</title>
+    <title>🌍 Мировой Кликер</title>
     <style>
         body {
             margin: 0;
             min-height: 100vh;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             color: white;
-            text-align: center;
         }
         .container {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 40px;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px 0 rgba(31,38,135,0.37);
             max-width: 600px;
             width: 90%;
-        }
-        h1 {
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            text-align: center;
         }
         .counter {
             font-size: 5em;
             font-weight: bold;
             margin: 20px 0;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0,0,0,0.3);
             border-radius: 20px;
             padding: 20px;
-            word-break: break-word;
         }
         .click-button {
             background: #ffd700;
@@ -49,17 +42,11 @@
             border-radius: 60px;
             cursor: pointer;
             font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: all 0.1s ease;
             margin: 20px 0;
+            transition: 0.1s;
         }
-        .click-button:hover {
-            transform: scale(1.05);
-            background: #ffed4a;
-        }
-        .click-button:active {
-            transform: scale(0.95);
-        }
+        .click-button:hover { transform: scale(1.05); background: #ffed4a; }
+        .click-button:active { transform: scale(0.95); }
         .name-input {
             padding: 10px 15px;
             border-radius: 25px;
@@ -77,22 +64,13 @@
             font-weight: bold;
             font-size: 1em;
         }
-        .last-clicker {
+        .last-clicker, .online-status {
             background: rgba(255,255,255,0.2);
             padding: 15px;
             border-radius: 10px;
             margin-top: 20px;
-            font-size: 1.1em;
         }
-        #lastClickerName {
-            color: #ffd700;
-            font-weight: bold;
-        }
-        .online-status {
-            margin-top: 20px;
-            font-size: 1.2em;
-            opacity: 0.9;
-        }
+        #lastClickerName { color: #ffd700; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -103,11 +81,11 @@
         <div class="counter" id="counter">0</div>
         
         <div>
-            <input type="text" id="username" class="name-input" placeholder="Ваше имя" value="Аноним" maxlength="20">
+            <input type="text" id="username" class="name-input" placeholder="Ваше имя" value="Аноним">
             <button id="saveNameBtn" class="name-button">Сохранить имя</button>
         </div>
         
-        <button id="clickBtn" class="click-button">👆 КЛИКНИ СЮДА</button>
+        <button id="clickBtn" class="click-button">👆 КЛИК</button>
         
         <div class="online-status">
             <span id="onlineCount">👥 Загрузка...</span>
@@ -119,36 +97,40 @@
         </div>
     </div>
 
-    <!-- Подключаем Firebase -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        // Конфигурация Firebase для вашего веб-приложения
-const firebaseConfig = {
- apiKey: "AIzaSyA_gNkLMsTxneTwyg5bDxKBN9osRIUrPaE",
-authDomain: "the-colony-tap.firebaseapp.com",
-databaseURL: "https://the-colony-tap-default-rtdb.firebaseio.com",
- projectId: "the-colony-tap",
- storageBucket: "the-colony-tap.firebasestorage.app",
- messagingSenderId: "433438733616",
- appId: "1:433438733616:web:76095a36161b32590d44f5"
-};
+        // ========== НАСТРОЙКИ FIREBASE ==========
+        // ВСТАВЬТЕ ВАШИ РЕАЛЬНЫЕ КЛЮЧИ СЮДА!!!
+        const firebaseConfig = {
+            apiKey: "AIzaSyA_gNkLMsTxneTwyg5bDxKBN9osRIUrPaE",  // Пример ключа - ЗАМЕНИТЕ!
+            authDomain: "the-colony-tap.firebaseapp.com",      // ЗАМЕНИТЕ!
+            databaseURL: "https://the-colony-tap-default-rtdb.firebaseio.com", // ЗАМЕНИТЕ! ТОЛЬКО КОРЕНЬ!
+            projectId: "the-colony-tap",                       // ЗАМЕНИТЕ!
+            storageBucket: "the-colony-tap.firebasestorage.app",       // ЗАМЕНИТЕ!
+            messagingSenderId: "433438733616",                 // ЗАМЕНИТЕ!
+            appId: "1:433438733616:web:76095a36161b32590d44f5"          // ЗАМЕНИТЕ!
+        };
         // ========================================
 
-        // Проверка на заполненные ключи
-        if (firebaseConfig.apiKey === "ВАШ_API_KEY") {
-            alert("⚠️ ВНИМАНИЕ: Не заполнены ключи Firebase! Клики не будут сохраняться.\n\nЗамените ВАШ_API_KEY и другие ключи на реальные из консоли Firebase.");
+        // Инициализация Firebase
+        let app;
+        try {
+            app = firebase.initializeApp(firebaseConfig);
+            console.log('✅ Firebase инициализирован');
+        } catch (e) {
+            console.error('❌ Ошибка инициализации Firebase:', e);
+            alert('Ошибка подключения к базе данных. Проверьте ключи Firebase в коде!');
         }
 
-        // Инициализация Firebase
-        firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // Получаем элементы DOM
-        const counterElement = document.getElementById('counter');
-        const lastClickerElement = document.getElementById('lastClickerName');
-        const onlineCountElement = document.getElementById('onlineCount');
+        // Получаем элементы
+        const counterEl = document.getElementById('counter');
+        const lastClickerEl = document.getElementById('lastClickerName');
+        const onlineCountEl = document.getElementById('onlineCount');
         const usernameInput = document.getElementById('username');
         const saveNameBtn = document.getElementById('saveNameBtn');
         const clickBtn = document.getElementById('clickBtn');
@@ -159,43 +141,45 @@ databaseURL: "https://the-colony-tap-default-rtdb.firebaseio.com",
 
         // Функция сохранения имени
         function setUsername() {
-            if (usernameInput.value.trim() !== '') {
-                currentUsername = usernameInput.value.trim();
+            const name = usernameInput.value.trim();
+            if (name) {
+                currentUsername = name;
                 alert('Имя сохранено: ' + currentUsername);
                 
-                // Обновляем имя в онлайн-статусе
+                // Обновляем в онлайн статусе
                 if (myOnlineRef) {
-                    myOnlineRef.update({
-                        name: currentUsername,
-                        lastSeen: Date.now()
-                    });
+                    myOnlineRef.update({ name: currentUsername, lastSeen: Date.now() });
                 }
             }
         }
 
         // Функция клика
         function handleClick() {
-            console.log('Клик! Имя:', currentUsername);
+            console.log('Клик от:', currentUsername);
             
-            // Увеличиваем счетчик
             const counterRef = database.ref('globalCounter');
             
-            counterRef.transaction(function(currentCount) {
-                return (currentCount || 0) + 1;
-            }).then(() => {
-                // Сохраняем информацию о последнем клике
-                return database.ref('lastClick').set({
-                    name: currentUsername,
-                    timestamp: Date.now()
-                });
+            // Атомарно увеличиваем счетчик
+            counterRef.transaction(function(current) {
+                return (current || 0) + 1;
+            }).then((result) => {
+                if (result.committed) {
+                    // Сохраняем информацию о последнем клике
+                    return database.ref('lastClick').set({
+                        name: currentUsername,
+                        timestamp: Date.now()
+                    });
+                }
             }).catch(error => {
-                console.error('Ошибка клика:', error);
+                console.error('Ошибка:', error);
                 alert('Ошибка: ' + error.message);
             });
         }
 
-        // Функция добавления в онлайн
+        // Функция входа в онлайн
         function joinOnline() {
+            if (!database) return;
+            
             myOnlineRef = database.ref('onlineUsers').push();
             myOnlineRef.set({
                 name: currentUsername,
@@ -211,33 +195,38 @@ databaseURL: "https://the-colony-tap-default-rtdb.firebaseio.com",
             });
         }
 
-        // Привязываем обработчики событий
+        // Добавляем обработчики событий
         saveNameBtn.addEventListener('click', setUsername);
         clickBtn.addEventListener('click', handleClick);
 
         // Слушаем изменения счетчика
         database.ref('globalCounter').on('value', (snapshot) => {
             const count = snapshot.val() || 0;
-            counterElement.innerText = count.toLocaleString();
+            counterEl.innerText = count.toLocaleString();
+            console.log('Счетчик обновлен:', count);
+        }, (error) => {
+            console.error('Ошибка чтения счетчика:', error);
         });
 
         // Слушаем последний клик
         database.ref('lastClick').on('value', (snapshot) => {
             const data = snapshot.val();
             if (data && data.name) {
-                lastClickerElement.innerText = data.name;
+                lastClickerEl.innerText = data.name;
             }
         });
 
-        // Слушаем количество онлайн
+        // Слушаем онлайн
         database.ref('onlineUsers').on('value', (snapshot) => {
             const users = snapshot.val();
             const count = users ? Object.keys(users).length : 0;
-            onlineCountElement.innerHTML = `👥 Сейчас кликают: <strong>${count}</strong> человек`;
+            onlineCountEl.innerHTML = `👥 Сейчас кликают: <strong>${count}</strong> человек`;
         });
 
-        // Присоединяемся к онлайн
-        joinOnline();
+        // Присоединяемся
+        setTimeout(() => {
+            joinOnline();
+        }, 1000);
 
         // Обновляем статус онлайн
         setInterval(() => {
@@ -249,7 +238,7 @@ databaseURL: "https://the-colony-tap-default-rtdb.firebaseio.com",
             }
         }, 30000);
 
-        console.log('Мировой кликер запущен!');
+        console.log('✅ Мировой кликер готов!');
     </script>
 </body>
 </html>
