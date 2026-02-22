@@ -322,7 +322,7 @@
         <div class="name-section">
             <input type="text" id="username" class="name-input" placeholder="Ваше имя" maxlength="20">
             <button id="saveNameBtn" class="name-button">Сохранить имя</button>
-            <div id="saveIndicator" class="save-indicator">✓ Имя сохранено в браузере</div>
+            <div id="saveIndicator" class="save-indicator">✓ Данные сохранены в браузере</div>
         </div>
         
         <!-- Кнопка клика -->
@@ -385,7 +385,9 @@
 
         // Константы
         const TARGET_POPULATION = 8000000000; // 8 миллиардов
-        const STORAGE_NAME_KEY = 'worldClicker_username'; // Ключ для localStorage
+        const STORAGE_NAME_KEY = 'worldClicker_username';
+        const STORAGE_SCORE_KEY = 'worldClicker_score'; // Ключ для сохранения счета
+        const STORAGE_PLAYER_ID_KEY = 'worldClicker_playerId'; // Ключ для ID игрока
         
         // Получаем элементы
         const counterEl = document.getElementById('counter');
@@ -407,28 +409,54 @@
         // Форматируем целевое население
         targetPopulationEl.innerText = TARGET_POPULATION.toLocaleString();
 
-        // ========== СИСТЕМА СОХРАНЕНИЯ ИМЕНИ ==========
+        // ========== СИСТЕМА СОХРАНЕНИЯ ==========
         
-        // Загружаем сохраненное имя из localStorage
-        function loadSavedUsername() {
+        // Переменные
+        let currentUsername = 'Аноним';
+        let myOnlineRef = null;
+        let myPlayerRef = null;
+        let myCurrentScore = 0;
+        let isRestoringScore = false; // Флаг для предотвращения двойного восстановления
+
+        // Загружаем сохраненные данные из localStorage
+        function loadSavedData() {
+            // Загружаем имя
             const savedName = localStorage.getItem(STORAGE_NAME_KEY);
             if (savedName) {
                 currentUsername = savedName;
                 usernameInput.value = savedName;
                 console.log('✅ Имя загружено из localStorage:', savedName);
-                
-                // Показываем индикатор сохранения
-                saveIndicator.classList.add('show');
-                setTimeout(() => {
-                    saveIndicator.classList.remove('show');
-                }, 2000);
-                
-                return true;
             } else {
-                // Если имени нет, ставим значение по умолчанию
                 usernameInput.value = 'Аноним';
                 currentUsername = 'Аноним';
-                return false;
+            }
+            
+            // Загружаем счет (для отображения до подключения к Firebase)
+            const savedScore = localStorage.getItem(STORAGE_SCORE_KEY);
+            if (savedScore) {
+                const score = parseInt(savedScore) || 0;
+                myCurrentScore = score;
+                userScoreEl.innerText = score.toLocaleString();
+                console.log('✅ Счет загружен из localStorage:', score);
+            }
+            
+            // Загружаем ID игрока (если есть)
+            const savedPlayerId = localStorage.getItem(STORAGE_PLAYER_ID_KEY);
+            if (savedPlayerId) {
+                console.log('✅ Найден сохраненный ID игрока:', savedPlayerId);
+                return savedPlayerId;
+            }
+            
+            return null;
+        }
+
+        // Сохраняем счет в localStorage
+        function saveScoreToStorage(score) {
+            try {
+                localStorage.setItem(STORAGE_SCORE_KEY, score.toString());
+                console.log('✅ Счет сохранен в localStorage:', score);
+            } catch (e) {
+                console.error('❌ Ошибка сохранения счета:', e);
             }
         }
 
@@ -446,8 +474,18 @@
                 
                 return true;
             } catch (e) {
-                console.error('❌ Ошибка сохранения в localStorage:', e);
+                console.error('❌ Ошибка сохранения имени:', e);
                 return false;
+            }
+        }
+
+        // Сохраняем ID игрока
+        function savePlayerIdToStorage(playerId) {
+            try {
+                localStorage.setItem(STORAGE_PLAYER_ID_KEY, playerId);
+                console.log('✅ ID игрока сохранен в localStorage:', playerId);
+            } catch (e) {
+                console.error('❌ Ошибка сохранения ID игрока:', e);
             }
         }
 
@@ -455,10 +493,7 @@
         function setUsername() {
             const name = usernameInput.value.trim();
             if (name) {
-                // Сохраняем в переменную
                 currentUsername = name;
-                
-                // Сохраняем в localStorage
                 saveUsernameToStorage(name);
                 
                 alert('Имя сохранено в браузере навсегда: ' + currentUsername);
@@ -479,33 +514,22 @@
             }
         }
 
-        // Загружаем имя при старте
-        loadSavedUsername();
-
-        // ========== ОСТАЛЬНЫЕ ФУНКЦИИ ==========
+        // ========== ФУНКЦИИ РАБОТЫ С FIREBASE ==========
 
         // Функция обновления Земли
         function updateEarth(globalCount) {
             const count = globalCount || 0;
             
-            // Вычисляем процент заполнения (максимум 100%)
             let percent = Math.min((count / TARGET_POPULATION) * 100, 100);
             
-            // Обновляем заполнение круга (вода/суша снизу вверх)
             earthFill.style.height = percent + '%';
-            
-            // Обновляем прозрачность картинки Земли
             earthImage.style.opacity = percent / 100;
-            
-            // Обновляем прогресс-бар
             progressBar.style.width = percent + '%';
             
-            // Обновляем текст с остатком
             const remaining = Math.max(TARGET_POPULATION - count, 0);
             remainingEl.innerText = remaining.toLocaleString();
             currentPopulationEl.innerText = count.toLocaleString();
             
-            // Меняем цвет заполнения в зависимости от процента
             if (percent < 30) {
                 earthFill.style.background = 'linear-gradient(180deg, #4CAF50 0%, #2E7D32 100%)';
             } else if (percent < 70) {
@@ -514,7 +538,6 @@
                 earthFill.style.background = 'linear-gradient(180deg, #FF5722 0%, #BF360C 100%)';
             }
             
-            // Если достигли цели - праздничная анимация
             if (count >= TARGET_POPULATION) {
                 earthContainer.style.animation = 'pulse 0.5s infinite';
                 progressBar.style.background = 'linear-gradient(90deg, #FFD700, #FFA500)';
@@ -561,6 +584,67 @@
             topListEl.innerHTML = topHtml;
         }
 
+        // Функция восстановления счета игрока
+        function restorePlayerScore(playerId, savedScore) {
+            if (!playerId || isRestoringScore) return;
+            
+            isRestoringScore = true;
+            
+            // Получаем ссылку на игрока по сохраненному ID
+            const playerRef = database.ref('players/' + playerId);
+            
+            // Проверяем, существует ли такой игрок
+            playerRef.once('value').then((snapshot) => {
+                const playerData = snapshot.val();
+                
+                if (playerData) {
+                    // Игрок найден в базе
+                    console.log('✅ Найден существующий игрок:', playerData);
+                    
+                    // Если сохраненный счет больше, чем в базе (например, были офлайн клики)
+                    if (savedScore > (playerData.score || 0)) {
+                        console.log('📈 Обновляем счет в базе с', playerData.score, 'до', savedScore);
+                        playerRef.update({ 
+                            score: savedScore,
+                            lastSeen: Date.now(),
+                            name: currentUsername
+                        });
+                        myCurrentScore = savedScore;
+                    } else {
+                        myCurrentScore = playerData.score || 0;
+                        // Обновляем localStorage, если в базе больше
+                        if (playerData.score > savedScore) {
+                            saveScoreToStorage(playerData.score);
+                        }
+                    }
+                    
+                    myPlayerRef = playerRef;
+                    userScoreEl.innerText = myCurrentScore.toLocaleString();
+                    
+                } else {
+                    // Игрок не найден - создаем нового с сохраненным счетом
+                    console.log('🆕 Создаем нового игрока с счетом:', savedScore);
+                    const newPlayerRef = database.ref('players').push();
+                    newPlayerRef.set({
+                        name: currentUsername,
+                        score: savedScore,
+                        joined: Date.now(),
+                        lastSeen: Date.now()
+                    }).then(() => {
+                        myPlayerRef = newPlayerRef;
+                        savePlayerIdToStorage(newPlayerRef.key);
+                        myCurrentScore = savedScore;
+                        userScoreEl.innerText = savedScore.toLocaleString();
+                    });
+                }
+                
+                isRestoringScore = false;
+            }).catch(error => {
+                console.error('❌ Ошибка восстановления игрока:', error);
+                isRestoringScore = false;
+            });
+        }
+
         // Функция клика
         function handleClick() {
             console.log('Клик от:', currentUsername);
@@ -577,16 +661,23 @@
                     });
                     
                     if (myPlayerRef) {
+                        // Обновляем счет в Firebase
                         myPlayerRef.transaction(function(current) {
                             if (!current) current = { score: 0, name: currentUsername, lastSeen: Date.now() };
                             current.score = (current.score || 0) + 1;
                             current.lastSeen = Date.now();
                             current.name = currentUsername;
                             return current;
+                        }).then((result) => {
+                            if (result.committed) {
+                                // Сохраняем новый счет в localStorage
+                                const newScore = result.snapshot.val().score;
+                                saveScoreToStorage(newScore);
+                                myCurrentScore = newScore;
+                            }
                         });
                     }
                     
-                    // Проверяем, достигли ли цели
                     if (result.snapshot.val() >= TARGET_POPULATION) {
                         alert('🎉 ПОЗДРАВЛЯЕМ! МЫ ЗАСЕЛИЛИ ВСЮ ЗЕМЛЮ! 🎉');
                     }
@@ -601,20 +692,33 @@
         function joinOnline() {
             if (!database) return;
             
+            // Сначала пробуем восстановить игрока
+            const savedPlayerId = loadSavedData();
+            
             myOnlineRef = database.ref('onlineUsers').push();
             myOnlineRef.set({
                 name: currentUsername,
                 online: true,
                 lastSeen: Date.now()
             });
-
-            myPlayerRef = database.ref('players').push();
-            myPlayerRef.set({
-                name: currentUsername,
-                score: 0,
-                joined: Date.now(),
-                lastSeen: Date.now()
-            });
+            
+            // Если есть сохраненный ID игрока, восстанавливаем его
+            if (savedPlayerId) {
+                const savedScore = parseInt(localStorage.getItem(STORAGE_SCORE_KEY)) || 0;
+                restorePlayerScore(savedPlayerId, savedScore);
+            } else {
+                // Создаем нового игрока
+                myPlayerRef = database.ref('players').push();
+                myPlayerRef.set({
+                    name: currentUsername,
+                    score: myCurrentScore,
+                    joined: Date.now(),
+                    lastSeen: Date.now()
+                }).then(() => {
+                    // Сохраняем ID нового игрока
+                    savePlayerIdToStorage(myPlayerRef.key);
+                });
+            }
 
             window.addEventListener('beforeunload', function() {
                 if (myOnlineRef) {
@@ -656,11 +760,17 @@
         database.ref('players').on('value', (snapshot) => {
             updateTopList(snapshot);
             
+            // Обновляем счет текущего игрока, если он уже загружен
             if (myPlayerRef) {
                 const players = snapshot.val();
                 if (players && players[myPlayerRef.key]) {
-                    myCurrentScore = players[myPlayerRef.key].score || 0;
-                    userScoreEl.innerText = myCurrentScore.toLocaleString();
+                    const fbScore = players[myPlayerRef.key].score || 0;
+                    // Если счет из Firebase отличается от сохраненного, обновляем
+                    if (fbScore !== myCurrentScore) {
+                        myCurrentScore = fbScore;
+                        userScoreEl.innerText = fbScore.toLocaleString();
+                        saveScoreToStorage(fbScore);
+                    }
                 }
             }
         });
@@ -682,11 +792,16 @@
                 myPlayerRef.update({
                     lastSeen: Date.now(),
                     name: currentUsername
+                }).then(() => {
+                    // Сохраняем актуальный счет в localStorage
+                    if (myCurrentScore > 0) {
+                        saveScoreToStorage(myCurrentScore);
+                    }
                 });
             }
         }, 30000);
 
-        console.log('✅ Мировой кликер с сохранением имени готов!');
+        console.log('✅ Мировой кликер с полным сохранением прогресса готов!');
     </script>
 </body>
 </html>
