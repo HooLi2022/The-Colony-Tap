@@ -172,6 +172,18 @@
             background: #ffed4a;
             transform: scale(1.05);
         }
+
+        /* Индикатор сохранения */
+        .save-indicator {
+            color: #4CAF50;
+            font-size: 0.9em;
+            margin-top: 5px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .save-indicator.show {
+            opacity: 1;
+        }
         
         /* Статистика */
         .stats-grid {
@@ -308,8 +320,9 @@
         
         <!-- Блок с именем -->
         <div class="name-section">
-            <input type="text" id="username" class="name-input" placeholder="Ваше имя" value="Аноним" maxlength="20">
+            <input type="text" id="username" class="name-input" placeholder="Ваше имя" maxlength="20">
             <button id="saveNameBtn" class="name-button">Сохранить имя</button>
+            <div id="saveIndicator" class="save-indicator">✓ Имя сохранено в браузере</div>
         </div>
         
         <!-- Кнопка клика -->
@@ -372,6 +385,7 @@
 
         // Константы
         const TARGET_POPULATION = 8000000000; // 8 миллиардов
+        const STORAGE_NAME_KEY = 'worldClicker_username'; // Ключ для localStorage
         
         // Получаем элементы
         const counterEl = document.getElementById('counter');
@@ -388,15 +402,87 @@
         const currentPopulationEl = document.getElementById('currentPopulation');
         const targetPopulationEl = document.getElementById('targetPopulation');
         const remainingEl = document.getElementById('remaining');
+        const saveIndicator = document.getElementById('saveIndicator');
 
         // Форматируем целевое население
         targetPopulationEl.innerText = TARGET_POPULATION.toLocaleString();
 
-        // Переменные
-        let currentUsername = 'Аноним';
-        let myOnlineRef = null;
-        let myPlayerRef = null;
-        let myCurrentScore = 0;
+        // ========== СИСТЕМА СОХРАНЕНИЯ ИМЕНИ ==========
+        
+        // Загружаем сохраненное имя из localStorage
+        function loadSavedUsername() {
+            const savedName = localStorage.getItem(STORAGE_NAME_KEY);
+            if (savedName) {
+                currentUsername = savedName;
+                usernameInput.value = savedName;
+                console.log('✅ Имя загружено из localStorage:', savedName);
+                
+                // Показываем индикатор сохранения
+                saveIndicator.classList.add('show');
+                setTimeout(() => {
+                    saveIndicator.classList.remove('show');
+                }, 2000);
+                
+                return true;
+            } else {
+                // Если имени нет, ставим значение по умолчанию
+                usernameInput.value = 'Аноним';
+                currentUsername = 'Аноним';
+                return false;
+            }
+        }
+
+        // Сохраняем имя в localStorage
+        function saveUsernameToStorage(name) {
+            try {
+                localStorage.setItem(STORAGE_NAME_KEY, name);
+                console.log('✅ Имя сохранено в localStorage:', name);
+                
+                // Показываем индикатор сохранения
+                saveIndicator.classList.add('show');
+                setTimeout(() => {
+                    saveIndicator.classList.remove('show');
+                }, 2000);
+                
+                return true;
+            } catch (e) {
+                console.error('❌ Ошибка сохранения в localStorage:', e);
+                return false;
+            }
+        }
+
+        // Функция сохранения имени
+        function setUsername() {
+            const name = usernameInput.value.trim();
+            if (name) {
+                // Сохраняем в переменную
+                currentUsername = name;
+                
+                // Сохраняем в localStorage
+                saveUsernameToStorage(name);
+                
+                alert('Имя сохранено в браузере навсегда: ' + currentUsername);
+                
+                // Обновляем имя в Firebase
+                if (myOnlineRef) {
+                    myOnlineRef.update({ name: currentUsername, lastSeen: Date.now() });
+                }
+                
+                if (myPlayerRef) {
+                    myPlayerRef.update({ 
+                        name: currentUsername,
+                        lastSeen: Date.now()
+                    });
+                }
+            } else {
+                alert('Введите имя');
+            }
+        }
+
+        // Загружаем имя при старте
+        loadSavedUsername();
+
+        // ========== ОСТАЛЬНЫЕ ФУНКЦИИ ==========
 
         // Функция обновления Земли
         function updateEarth(globalCount) {
@@ -409,7 +495,6 @@
             earthFill.style.height = percent + '%';
             
             // Обновляем прозрачность картинки Земли
-            // Картинка проявляется по мере заполнения
             earthImage.style.opacity = percent / 100;
             
             // Обновляем прогресс-бар
@@ -422,37 +507,17 @@
             
             // Меняем цвет заполнения в зависимости от процента
             if (percent < 30) {
-                earthFill.style.background = 'linear-gradient(180deg, #4CAF50 0%, #2E7D32 100%)'; // Зеленый
+                earthFill.style.background = 'linear-gradient(180deg, #4CAF50 0%, #2E7D32 100%)';
             } else if (percent < 70) {
-                earthFill.style.background = 'linear-gradient(180deg, #FFC107 0%, #FF8F00 100%)'; // Желтый
+                earthFill.style.background = 'linear-gradient(180deg, #FFC107 0%, #FF8F00 100%)';
             } else {
-                earthFill.style.background = 'linear-gradient(180deg, #FF5722 0%, #BF360C 100%)'; // Оранжевый/красный
+                earthFill.style.background = 'linear-gradient(180deg, #FF5722 0%, #BF360C 100%)';
             }
             
             // Если достигли цели - праздничная анимация
             if (count >= TARGET_POPULATION) {
                 earthContainer.style.animation = 'pulse 0.5s infinite';
                 progressBar.style.background = 'linear-gradient(90deg, #FFD700, #FFA500)';
-            }
-        }
-
-        // Функция сохранения имени
-        function setUsername() {
-            const name = usernameInput.value.trim();
-            if (name) {
-                currentUsername = name;
-                alert('Имя сохранено: ' + currentUsername);
-                
-                if (myOnlineRef) {
-                    myOnlineRef.update({ name: currentUsername, lastSeen: Date.now() });
-                }
-                
-                if (myPlayerRef) {
-                    myPlayerRef.update({ 
-                        name: currentUsername,
-                        lastSeen: Date.now()
-                    });
-                }
             }
         }
 
@@ -621,7 +686,7 @@
             }
         }, 30000);
 
-        console.log('✅ Мировой кликер с заселением Земли готов!');
+        console.log('✅ Мировой кликер с сохранением имени готов!');
     </script>
 </body>
 </html>
