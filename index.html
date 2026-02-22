@@ -3,187 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌍 Мировой Кликер - Заселение Земли</title>
+    <title>🌍 Заселение Земли</title>
     <style>
-        body {
+        * {
+            box-sizing: border-box;
             margin: 0;
+            padding: 0;
+        }
+        
+        body {
             min-height: 100vh;
-            background: linear-gradient(135deg, #0B0B2B 0%, #1B1B4B 100%);
-            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0B0B2B, #1B1B4B);
+            font-family: 'Segoe UI', system-ui, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             color: white;
-            padding: 20px;
+            padding: 16px;
         }
+
         .container {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 8px 32px 0 rgba(31,38,135,0.37);
             max-width: 800px;
             width: 100%;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
             text-align: center;
         }
-        
-        /* Контейнер для Земли */
-        .earth-container {
+
+        /* Земля */
+        .earth {
             position: relative;
-            width: 300px;
-            height: 300px;
-            margin: 20px auto;
-            cursor: pointer;
-        }
-        
-        /* Круг-основа */
-        .earth-circle {
-            width: 100%;
-            height: 100%;
+            width: min(280px, 60vw);
+            height: min(280px, 60vw);
+            margin: 16px auto;
             border-radius: 50%;
             background: #2B3B4B;
-            box-shadow: 0 0 50px rgba(100,150,255,0.3);
-            position: relative;
+            box-shadow: 0 0 40px rgba(100,150,255,0.3);
             overflow: hidden;
-            transition: all 0.3s ease;
+            cursor: pointer;
+            transition: transform 0.2s;
         }
-        
-        /* Заполняющаяся часть (вода/суша) */
+
+        .earth:active {
+            transform: scale(0.98);
+        }
+
         .earth-fill {
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
             height: 0%;
-            background: linear-gradient(180deg, #4CAF50 0%, #2E7D32 100%);
-            transition: height 0.5s ease-out;
-            border-radius: 0 0 300px 300px;
+            background: linear-gradient(180deg, #4CAF50, #2E7D32);
+            transition: height 0.3s ease-out;
+            border-radius: 0 0 50% 50%;
         }
-        
-        /* Картинка Земли (появляется постепенно) */
+
         .earth-image {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
+            inset: 0;
             background: url('https://upload.wikimedia.org/wikipedia/commons/9/97/The_earth_at_night.jpg') center/cover;
             opacity: 0;
-            transition: opacity 0.5s ease;
-            mask-image: radial-gradient(circle at 50% 50%, transparent 0%, black 100%);
-            -webkit-mask-image: radial-gradient(circle at 50% 50%, transparent 0%, black 100%);
+            transition: opacity 0.3s;
+            mask-image: radial-gradient(circle, black, transparent);
         }
-        
-        /* Текст с населением */
-        .population-info {
-            margin-top: 20px;
-            font-size: 1.2em;
+
+        /* Прогресс */
+        .progress-section {
+            margin: 16px 0;
         }
-        
-        .population-bar {
-            width: 100%;
+
+        .progress-bar {
             height: 20px;
             background: rgba(255,255,255,0.2);
             border-radius: 10px;
             overflow: hidden;
-            margin: 10px 0;
+            margin: 8px 0;
         }
-        
-        .population-progress {
+
+        .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #4CAF50, #8BC34A);
             width: 0%;
-            transition: width 0.5s ease;
-            border-radius: 10px;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            transition: width 0.3s;
         }
-        
-        .earth-target {
-            font-size: 1.1em;
-            color: #FFD700;
-            margin: 10px 0;
-        }
-        
+
         /* Счетчик */
         .counter {
-            font-size: 4em;
+            font-size: clamp(2.5rem, 10vw, 4rem);
             font-weight: bold;
-            margin: 20px 0;
             background: rgba(0,0,0,0.3);
             border-radius: 20px;
-            padding: 20px;
+            padding: 16px;
+            margin: 16px 0;
             border: 2px solid rgba(255,215,0,0.3);
             text-shadow: 0 0 20px rgba(255,215,0,0.5);
         }
-        
-        /* Кнопка клика */
-        .click-button {
-            background: #ffd700;
-            color: #333;
-            border: none;
-            font-size: 2.5em;
-            padding: 25px 50px;
-            border-radius: 60px;
-            cursor: pointer;
-            font-weight: bold;
-            margin: 20px 0;
-            transition: all 0.2s;
-            box-shadow: 0 0 30px rgba(255,215,0,0.5);
-            width: 100%;
-            max-width: 400px;
-        }
-        .click-button:hover { 
-            transform: scale(1.05); 
-            background: #ffed4a;
-            box-shadow: 0 0 50px rgba(255,215,0,0.8);
-        }
-        .click-button:active { 
-            transform: scale(0.95);
-            background: #ffc800;
-        }
-        
-        /* Блок с именем - начальный */
+
+        /* Имя */
         .name-section {
-            background: rgba(255,255,255,0.15);
-            border-radius: 15px;
-            padding: 20px;
             margin: 20px 0;
-            transition: all 0.3s ease;
+            min-height: 80px;
         }
-        
-        /* Скрытый блок с именем */
-        .name-section.hidden {
-            display: none;
+
+        .name-input-group {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
-        
-        /* Блок с именем после сохранения */
-        .greeting-section {
-            background: rgba(255,255,255,0.15);
-            border-radius: 15px;
-            padding: 15px 25px;
-            margin: 20px auto;
-            display: inline-block;
-            font-size: 1.3em;
-            border: 2px solid #ffd700;
-            box-shadow: 0 0 20px rgba(255,215,0,0.3);
-            transition: all 0.3s ease;
-        }
-        
-        .greeting-name {
-            color: #ffd700;
-            font-weight: bold;
-            font-size: 1.4em;
-        }
-        
+
         .name-input {
             padding: 12px 20px;
             border-radius: 30px;
             border: none;
             width: 250px;
-            margin: 10px;
             font-size: 1.1em;
-            background: rgba(255,255,255,0.9);
+            background: rgba(255,255,255,0.95);
         }
+
         .name-button {
             padding: 12px 30px;
             border-radius: 30px;
@@ -194,80 +135,120 @@
             font-size: 1.1em;
             transition: 0.2s;
         }
+
         .name-button:hover {
             background: #ffed4a;
             transform: scale(1.05);
         }
 
-        /* Индикатор сохранения */
-        .save-indicator {
-            color: #4CAF50;
-            font-size: 0.9em;
-            margin-top: 5px;
-            opacity: 0;
-            transition: opacity 0.3s;
+        .greeting {
+            font-size: 1.4em;
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 40px;
+            display: inline-block;
+            border: 2px solid #ffd700;
         }
-        .save-indicator.show {
-            opacity: 1;
+
+        .greeting-name {
+            color: #ffd700;
+            font-weight: bold;
         }
-        
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Кнопка клика */
+        .click-button {
+            background: #ffd700;
+            color: #333;
+            border: none;
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            padding: 20px 40px;
+            border-radius: 60px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 16px 0;
+            transition: all 0.2s;
+            box-shadow: 0 0 30px rgba(255,215,0,0.5);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .click-button:not(:disabled):hover {
+            transform: scale(1.05);
+            background: #ffed4a;
+            box-shadow: 0 0 50px rgba(255,215,0,0.8);
+        }
+
+        .click-button:not(:disabled):active {
+            transform: scale(0.95);
+        }
+
+        .click-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
         /* Статистика */
         .stats-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 20px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
             margin: 20px 0;
         }
+
         .stat-card {
             background: rgba(255,255,255,0.15);
-            border-radius: 15px;
-            padding: 15px;
-            backdrop-filter: blur(5px);
+            border-radius: 16px;
+            padding: 12px;
+            font-size: 0.9rem;
         }
+
         .stat-value {
-            font-size: 1.5em;
+            font-size: 1.3rem;
             font-weight: bold;
             color: #ffd700;
+            margin-top: 4px;
         }
-        
+
         /* Топ игроков */
         .top-players {
             background: rgba(0,0,0,0.3);
             border-radius: 20px;
-            padding: 20px;
+            padding: 16px;
             margin-top: 20px;
-            border: 1px solid rgba(255,215,0,0.3);
         }
+
         .top-title {
-            font-size: 1.8em;
-            margin-bottom: 20px;
+            font-size: 1.5rem;
             color: #ffd700;
-            text-shadow: 0 0 10px rgba(255,215,0,0.5);
+            margin-bottom: 16px;
         }
+
         .top-list {
             list-style: none;
-            padding: 0;
-            margin: 0;
         }
+
         .top-item {
             display: flex;
             align-items: center;
-            padding: 12px 15px;
-            margin: 8px 0;
+            padding: 10px 12px;
+            margin: 6px 0;
             background: rgba(255,255,255,0.1);
             border-radius: 12px;
-            font-size: 1.2em;
             transition: 0.2s;
-            border: 1px solid transparent;
         }
-        .top-item:hover {
-            background: rgba(255,255,255,0.2);
-            border-color: #ffd700;
-            transform: translateX(5px);
+
+        .top-item.current {
+            border: 2px solid #ffd700;
+            background: rgba(255,215,0,0.15);
         }
+
         .top-rank {
-            width: 40px;
-            height: 40px;
+            width: 32px;
+            height: 32px;
             background: #ffd700;
             color: #333;
             border-radius: 50%;
@@ -275,95 +256,83 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            margin-right: 15px;
-            font-size: 1.2em;
+            margin-right: 12px;
+            flex-shrink: 0;
         }
-        .top-rank-1 { background: #FFD700; box-shadow: 0 0 20px #FFD700; }
-        .top-rank-2 { background: #C0C0C0; box-shadow: 0 0 20px #C0C0C0; }
-        .top-rank-3 { background: #CD7F32; box-shadow: 0 0 20px #CD7F32; }
+
+        .top-rank-1 { background: #FFD700; box-shadow: 0 0 15px #FFD700; }
+        .top-rank-2 { background: #C0C0C0; box-shadow: 0 0 15px #C0C0C0; }
+        .top-rank-3 { background: #CD7F32; box-shadow: 0 0 15px #CD7F32; }
+
         .top-name {
             flex: 1;
             text-align: left;
-            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
+
         .top-score {
             font-weight: bold;
             color: #ffd700;
-            font-size: 1.3em;
-            margin-left: 10px;
-        }
-        
-        .last-clicker {
-            background: rgba(255,255,255,0.2);
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-        #lastClickerName { 
-            color: #ffd700; 
-            font-weight: bold;
-            font-size: 1.2em;
+            margin-left: 8px;
         }
 
-        /* Анимация вращения Земли */
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
+        .last-clicker {
+            background: rgba(255,255,255,0.2);
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 16px;
         }
-        
-        .earth-container:hover {
-            animation: pulse 1s infinite;
+
+        #lastClickerName {
+            color: #ffd700;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🌍 Заселение Земли</h1>
-        <p>Цель: 8 миллиардов кликов (население Земли)</p>
+        <p>Цель: 8 млрд кликов</p>
         
         <!-- Земля -->
-        <div class="earth-container" id="earthContainer">
-            <div class="earth-circle" id="earthCircle">
-                <div class="earth-fill" id="earthFill"></div>
-                <div class="earth-image" id="earthImage"></div>
-            </div>
+        <div class="earth" id="earth">
+            <div class="earth-fill" id="earthFill"></div>
+            <div class="earth-image" id="earthImage"></div>
         </div>
         
         <!-- Прогресс -->
-        <div class="population-info">
-            <div>Прогресс заселения:</div>
-            <div class="population-bar">
-                <div class="population-progress" id="progressBar"></div>
+        <div class="progress-section">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
             </div>
             <div class="earth-target">
-                <span id="currentPopulation">0</span> / <span id="targetPopulation">8 000 000 000</span>
+                <span id="currentPop">0</span> / 8 000 000 000
             </div>
         </div>
         
-        <!-- Основной счетчик -->
+        <!-- Счетчик -->
         <div class="counter" id="counter">0</div>
         
-        <!-- Блок с именем (показывается только если имя не задано) -->
-        <div id="nameSection" class="name-section">
-            <input type="text" id="username" class="name-input" placeholder="Введите ваше имя" maxlength="20">
-            <button id="saveNameBtn" class="name-button">Начать игру</button>
-            <div id="saveIndicator" class="save-indicator">✓ Имя сохранено</div>
-        </div>
-        
-        <!-- Блок приветствия (показывается после сохранения имени) -->
-        <div id="greetingSection" class="greeting-section" style="display: none;">
-            <span>Игрок: </span>
-            <span id="displayName" class="greeting-name"></span>
+        <!-- Имя -->
+        <div class="name-section">
+            <div id="nameInputGroup" class="name-input-group">
+                <input type="text" id="username" class="name-input" placeholder="Ваше имя" maxlength="20" autocomplete="off">
+                <button id="saveNameBtn" class="name-button">Начать</button>
+            </div>
+            <div id="greeting" class="greeting hidden">
+                <span>Игрок: <span id="displayName" class="greeting-name"></span></span>
+            </div>
         </div>
         
         <!-- Кнопка клика -->
-        <button id="clickBtn" class="click-button">👆 ЗАСЕЛИТЬ</button>
+        <button id="clickBtn" class="click-button" disabled>👆 ЗАСЕЛИТЬ</button>
         
         <!-- Статистика -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div>Сейчас кликают</div>
+                <div>Онлайн</div>
                 <div class="stat-value" id="onlineCount">0</div>
             </div>
             <div class="stat-card">
@@ -376,517 +345,342 @@
             </div>
         </div>
         
-        <!-- Топ игроков -->
+        <!-- Топ -->
         <div class="top-players">
-            <div class="top-title">🏆 Топ засельников 🏆</div>
+            <div class="top-title">🏆 Топ засельников</div>
             <div id="topList" class="top-list">
-                <div class="top-item" style="justify-content: center; opacity: 0.7;">
-                    Загрузка...
-                </div>
+                <div class="top-item" style="justify-content: center;">Загрузка...</div>
             </div>
         </div>
         
-        <!-- Последний кликнувший -->
+        <!-- Последний клик -->
         <div class="last-clicker">
-            <span>Последний заселил: </span>
-            <span id="lastClickerName">никто</span>
+            Последний: <span id="lastClickerName">никто</span>
         </div>
     </div>
 
-    <!-- Firebase SDK -->
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        // ========== НАСТРОЙКИ FIREBASE ==========
-        const firebaseConfig = {
-            apiKey: "AIzaSyA_gNkLMsTxneTwyg5bDxKBN9osRIUrPaE",
-            authDomain: "the-colony-tap.firebaseapp.com",
-            databaseURL: "https://the-colony-tap-default-rtdb.firebaseio.com",
-            projectId: "the-colony-tap",
-            storageBucket: "the-colony-tap.firebasestorage.app",
-            messagingSenderId: "433438733616",
-            appId: "1:433438733616:web:76095a36161b32590d44f5"
-        };
-        // ========================================
-
-        // Инициализация Firebase
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        console.log('✅ Firebase инициализирован');
-
-        // Константы
-        const TARGET_POPULATION = 8000000000; // 8 миллиардов
-        const STORAGE_NAME_KEY = 'worldClicker_username';
-        const STORAGE_SCORE_KEY = 'worldClicker_score';
-        const STORAGE_PLAYER_ID_KEY = 'worldClicker_playerId';
-        const STORAGE_NAME_SET_KEY = 'worldClicker_nameSet'; // Флаг, что имя уже установлено
-        
-        // Получаем элементы
-        const counterEl = document.getElementById('counter');
-        const lastClickerEl = document.getElementById('lastClickerName');
-        const onlineCountEl = document.getElementById('onlineCount');
-        const userScoreEl = document.getElementById('userScore');
-        const usernameInput = document.getElementById('username');
-        const saveNameBtn = document.getElementById('saveNameBtn');
-        const clickBtn = document.getElementById('clickBtn');
-        const topListEl = document.getElementById('topList');
-        const earthFill = document.getElementById('earthFill');
-        const earthImage = document.getElementById('earthImage');
-        const progressBar = document.getElementById('progressBar');
-        const currentPopulationEl = document.getElementById('currentPopulation');
-        const targetPopulationEl = document.getElementById('targetPopulation');
-        const remainingEl = document.getElementById('remaining');
-        const saveIndicator = document.getElementById('saveIndicator');
-        const nameSection = document.getElementById('nameSection');
-        const greetingSection = document.getElementById('greetingSection');
-        const displayName = document.getElementById('displayName');
-
-        // Форматируем целевое население
-        targetPopulationEl.innerText = TARGET_POPULATION.toLocaleString();
-
-        // ========== СИСТЕМА СОХРАНЕНИЯ ==========
-        
-        // Переменные
-        let currentUsername = '';
-        let myOnlineRef = null;
-        let myPlayerRef = null;
-        let myCurrentScore = 0;
-        let isRestoringScore = false;
-        let isNameSet = false; // Флаг, установлено ли имя
-
-        // Проверяем, было ли уже установлено имя
-        function checkNameSet() {
-            const nameSet = localStorage.getItem(STORAGE_NAME_SET_KEY) === 'true';
-            const savedName = localStorage.getItem(STORAGE_NAME_KEY);
+        (function() {
+            'use strict';
             
-            if (nameSet && savedName) {
-                isNameSet = true;
-                currentUsername = savedName;
-                return true;
-            }
-            return false;
-        }
-
-        // Показываем интерфейс в зависимости от того, установлено ли имя
-        function updateNameUI() {
-            if (isNameSet) {
-                // Имя уже установлено - скрываем поле ввода, показываем приветствие
-                nameSection.classList.add('hidden');
-                greetingSection.style.display = 'inline-block';
-                displayName.textContent = currentUsername;
-                
-                // Делаем кнопку клика полностью активной
-                clickBtn.style.opacity = '1';
-                clickBtn.disabled = false;
-            } else {
-                // Имя еще не установлено - показываем поле ввода
-                nameSection.classList.remove('hidden');
-                greetingSection.style.display = 'none';
-                
-                // Блокируем кнопку клика, пока имя не введено
-                clickBtn.style.opacity = '0.5';
-                clickBtn.disabled = true;
-            }
-        }
-
-        // Загружаем сохраненные данные из localStorage
-        function loadSavedData() {
-            // Проверяем, установлено ли имя
-            if (checkNameSet()) {
-                usernameInput.value = currentUsername;
-                console.log('✅ Имя уже установлено:', currentUsername);
-                
-                // Загружаем счет
-                const savedScore = localStorage.getItem(STORAGE_SCORE_KEY);
-                if (savedScore) {
-                    myCurrentScore = parseInt(savedScore) || 0;
-                    userScoreEl.innerText = myCurrentScore.toLocaleString();
+            // Конфигурация
+            const CONFIG = {
+                TARGET: 8000000000,
+                DB_URL: 'https://the-colony-tap-default-rtdb.firebaseio.com',
+                STORAGE: {
+                    NAME: 'wc_name',
+                    SCORE: 'wc_score',
+                    ID: 'wc_id',
+                    NAME_SET: 'wc_set'
                 }
-                
-                updateNameUI();
-                return localStorage.getItem(STORAGE_PLAYER_ID_KEY);
-            } else {
-                // Имя не установлено - показываем интерфейс ввода
-                usernameInput.value = '';
-                updateNameUI();
-                return null;
-            }
-        }
+            };
 
-        // Сохраняем факт установки имени
-        function setNameSetFlag() {
-            try {
-                localStorage.setItem(STORAGE_NAME_SET_KEY, 'true');
-                isNameSet = true;
-            } catch (e) {
-                console.error('❌ Ошибка сохранения флага имени:', e);
-            }
-        }
-
-        // Сохраняем счет в localStorage
-        function saveScoreToStorage(score) {
-            try {
-                localStorage.setItem(STORAGE_SCORE_KEY, score.toString());
-                console.log('✅ Счет сохранен в localStorage:', score);
-            } catch (e) {
-                console.error('❌ Ошибка сохранения счета:', e);
-            }
-        }
-
-        // Сохраняем имя в localStorage
-        function saveUsernameToStorage(name) {
-            try {
-                localStorage.setItem(STORAGE_NAME_KEY, name);
-                console.log('✅ Имя сохранено в localStorage:', name);
-                return true;
-            } catch (e) {
-                console.error('❌ Ошибка сохранения имени:', e);
-                return false;
-            }
-        }
-
-        // Сохраняем ID игрока
-        function savePlayerIdToStorage(playerId) {
-            try {
-                localStorage.setItem(STORAGE_PLAYER_ID_KEY, playerId);
-                console.log('✅ ID игрока сохранен в localStorage:', playerId);
-            } catch (e) {
-                console.error('❌ Ошибка сохранения ID игрока:', e);
-            }
-        }
-
-        // Функция сохранения имени (теперь вызывается только один раз)
-        function setUsername() {
-            const name = usernameInput.value.trim();
-            if (name) {
-                // Сохраняем имя
-                currentUsername = name;
-                saveUsernameToStorage(name);
-                setNameSetFlag();
-                
-                // Показываем индикатор
-                saveIndicator.classList.add('show');
-                
-                // Обновляем интерфейс
-                updateNameUI();
-                
-                // Разблокируем кнопку клика
-                clickBtn.style.opacity = '1';
-                clickBtn.disabled = false;
-                
-                // Сохраняем имя в Firebase (если уже есть референсы)
-                if (myOnlineRef) {
-                    myOnlineRef.update({ name: currentUsername, lastSeen: Date.now() });
-                }
-                
-                if (myPlayerRef) {
-                    myPlayerRef.update({ 
-                        name: currentUsername,
-                        lastSeen: Date.now()
-                    });
-                }
-                
-                // Скрываем индикатор через 2 секунды
-                setTimeout(() => {
-                    saveIndicator.classList.remove('show');
-                }, 2000);
-                
-                console.log('✅ Имя установлено навсегда:', currentUsername);
-            } else {
-                alert('Пожалуйста, введите ваше имя');
-            }
-        }
-
-        // ========== ФУНКЦИИ РАБОТЫ С FIREBASE ==========
-
-        // Функция обновления Земли
-        function updateEarth(globalCount) {
-            const count = globalCount || 0;
-            
-            let percent = Math.min((count / TARGET_POPULATION) * 100, 100);
-            
-            earthFill.style.height = percent + '%';
-            earthImage.style.opacity = percent / 100;
-            progressBar.style.width = percent + '%';
-            
-            const remaining = Math.max(TARGET_POPULATION - count, 0);
-            remainingEl.innerText = remaining.toLocaleString();
-            currentPopulationEl.innerText = count.toLocaleString();
-            
-            if (percent < 30) {
-                earthFill.style.background = 'linear-gradient(180deg, #4CAF50 0%, #2E7D32 100%)';
-            } else if (percent < 70) {
-                earthFill.style.background = 'linear-gradient(180deg, #FFC107 0%, #FF8F00 100%)';
-            } else {
-                earthFill.style.background = 'linear-gradient(180deg, #FF5722 0%, #BF360C 100%)';
-            }
-            
-            if (count >= TARGET_POPULATION) {
-                earthContainer.style.animation = 'pulse 0.5s infinite';
-                progressBar.style.background = 'linear-gradient(90deg, #FFD700, #FFA500)';
-            }
-        }
-
-        // Функция обновления топа
-        function updateTopList(snapshot) {
-            const players = snapshot.val();
-            if (!players) {
-                topListEl.innerHTML = '<div class="top-item" style="justify-content: center;">Пока нет засельников</div>';
-                return;
-            }
-
-            const playersArray = Object.entries(players).map(([id, data]) => ({
-                id,
-                name: data.name || 'Аноним',
-                score: data.score || 0
-            })).filter(p => p.score > 0);
-
-            playersArray.sort((a, b) => b.score - a.score);
-            const top10 = playersArray.slice(0, 10);
-            
-            if (top10.length === 0) {
-                topListEl.innerHTML = '<div class="top-item" style="justify-content: center;">Пока нет кликов</div>';
-                return;
-            }
-
-            let topHtml = '';
-            top10.forEach((player, index) => {
-                const rankClass = index === 0 ? 'top-rank-1' : (index === 1 ? 'top-rank-2' : (index === 2 ? 'top-rank-3' : ''));
-                const isCurrentPlayer = player.id === (myPlayerRef ? myPlayerRef.key : null);
-                const currentPlayerStyle = isCurrentPlayer ? 'border: 2px solid #ffd700; background: rgba(255,215,0,0.2);' : '';
-                
-                topHtml += `
-                    <div class="top-item" style="${currentPlayerStyle}">
-                        <div class="top-rank ${rankClass}">${index + 1}</div>
-                        <span class="top-name">${player.name}</span>
-                        <span class="top-score">${player.score.toLocaleString()}</span>
-                    </div>
-                `;
+            // Инициализация Firebase
+            firebase.initializeApp({
+                apiKey: "AIzaSyA_gNkLMsTxneTwyg5bDxKBN9osRIUrPaE",
+                authDomain: "the-colony-tap.firebaseapp.com",
+                databaseURL: CONFIG.DB_URL,
+                projectId: "the-colony-tap",
+                storageBucket: "the-colony-tap.firebasestorage.app",
+                messagingSenderId: "433438733616",
+                appId: "1:433438733616:web:76095a36161b32590d44f5"
             });
-            
-            topListEl.innerHTML = topHtml;
-        }
 
-        // Функция восстановления счета игрока
-        function restorePlayerScore(playerId, savedScore) {
-            if (!playerId || isRestoringScore || !isNameSet) return;
+            const db = firebase.database();
             
-            isRestoringScore = true;
-            
-            const playerRef = database.ref('players/' + playerId);
-            
-            playerRef.once('value').then((snapshot) => {
-                const playerData = snapshot.val();
+            // Элементы DOM
+            const el = {
+                earth: document.getElementById('earth'),
+                earthFill: document.getElementById('earthFill'),
+                earthImage: document.getElementById('earthImage'),
+                progressFill: document.getElementById('progressFill'),
+                counter: document.getElementById('counter'),
+                currentPop: document.getElementById('currentPop'),
+                remaining: document.getElementById('remaining'),
+                onlineCount: document.getElementById('onlineCount'),
+                userScore: document.getElementById('userScore'),
+                lastClickerName: document.getElementById('lastClickerName'),
+                topList: document.getElementById('topList'),
+                nameInputGroup: document.getElementById('nameInputGroup'),
+                greeting: document.getElementById('greeting'),
+                displayName: document.getElementById('displayName'),
+                username: document.getElementById('username'),
+                saveNameBtn: document.getElementById('saveNameBtn'),
+                clickBtn: document.getElementById('clickBtn')
+            };
+
+            // Состояние
+            const state = {
+                username: '',
+                score: 0,
+                playerId: null,
+                nameSet: false,
+                onlineRef: null,
+                playerRef: null,
+                loading: true
+            };
+
+            // ===== Хранилище =====
+            const storage = {
+                get: key => {
+                    try { return localStorage.getItem(CONFIG.STORAGE[key]); } 
+                    catch { return null; }
+                },
+                set: (key, value) => {
+                    try { localStorage.setItem(CONFIG.STORAGE[key], value); } 
+                    catch (e) { console.warn('Storage error:', e); }
+                },
+                remove: key => {
+                    try { localStorage.removeItem(CONFIG.STORAGE[key]); } 
+                    catch (e) { console.warn('Storage error:', e); }
+                }
+            };
+
+            // ===== UI Обновление =====
+            function updateUI() {
+                // Имя
+                if (state.nameSet && state.username) {
+                    el.nameInputGroup.classList.add('hidden');
+                    el.greeting.classList.remove('hidden');
+                    el.displayName.textContent = state.username;
+                    el.clickBtn.disabled = false;
+                } else {
+                    el.nameInputGroup.classList.remove('hidden');
+                    el.greeting.classList.add('hidden');
+                    el.clickBtn.disabled = true;
+                }
+
+                // Земля
+                const percent = Math.min((state.score / CONFIG.TARGET) * 100, 100);
+                el.earthFill.style.height = percent + '%';
+                el.earthImage.style.opacity = percent / 100;
+                el.progressFill.style.width = percent + '%';
                 
-                if (playerData) {
-                    console.log('✅ Найден существующий игрок:', playerData);
-                    
-                    if (savedScore > (playerData.score || 0)) {
-                        console.log('📈 Обновляем счет в базе с', playerData.score, 'до', savedScore);
-                        playerRef.update({ 
-                            score: savedScore,
-                            lastSeen: Date.now(),
-                            name: currentUsername
-                        });
-                        myCurrentScore = savedScore;
-                    } else {
-                        myCurrentScore = playerData.score || 0;
-                        if (playerData.score > savedScore) {
-                            saveScoreToStorage(playerData.score);
+                // Цвет
+                if (percent < 30) {
+                    el.earthFill.style.background = 'linear-gradient(180deg, #4CAF50, #2E7D32)';
+                } else if (percent < 70) {
+                    el.earthFill.style.background = 'linear-gradient(180deg, #FFC107, #FF8F00)';
+                } else {
+                    el.earthFill.style.background = 'linear-gradient(180deg, #FF5722, #BF360C)';
+                }
+
+                // Текст
+                el.counter.textContent = state.score.toLocaleString();
+                el.currentPop.textContent = state.score.toLocaleString();
+                el.remaining.textContent = Math.max(CONFIG.TARGET - state.score, 0).toLocaleString();
+                el.userScore.textContent = (state.playerRef ? state.score : 0).toLocaleString();
+            }
+
+            // ===== Firebase =====
+            function initFirebase() {
+                // Глобальный счет
+                db.ref('globalCounter').on('value', snap => {
+                    state.score = snap.val() || 0;
+                    updateUI();
+                });
+
+                // Последний клик
+                db.ref('lastClick').on('value', snap => {
+                    const data = snap.val();
+                    el.lastClickerName.textContent = data?.name || 'никто';
+                });
+
+                // Онлайн
+                db.ref('onlineUsers').on('value', snap => {
+                    const count = snap.val() ? Object.keys(snap.val()).length : 0;
+                    el.onlineCount.textContent = count;
+                });
+
+                // Топ
+                db.ref('players').on('value', snap => {
+                    const players = snap.val();
+                    if (!players) {
+                        el.topList.innerHTML = '<div class="top-item">Пока нет игроков</div>';
+                        return;
+                    }
+
+                    const list = Object.entries(players)
+                        .map(([id, data]) => ({ id, ...data }))
+                        .filter(p => p.score > 0)
+                        .sort((a, b) => b.score - a.score)
+                        .slice(0, 10);
+
+                    if (!list.length) {
+                        el.topList.innerHTML = '<div class="top-item">Пока нет кликов</div>';
+                        return;
+                    }
+
+                    el.topList.innerHTML = list.map((p, i) => {
+                        const rankClass = i === 0 ? 'top-rank-1' : i === 1 ? 'top-rank-2' : i === 2 ? 'top-rank-3' : '';
+                        const isCurrent = p.id === state.playerId;
+                        return `
+                            <div class="top-item ${isCurrent ? 'current' : ''}">
+                                <div class="top-rank ${rankClass}">${i + 1}</div>
+                                <span class="top-name">${p.name || 'Аноним'}</span>
+                                <span class="top-score">${p.score.toLocaleString()}</span>
+                            </div>
+                        `;
+                    }).join('');
+
+                    // Обновляем счет текущего игрока
+                    if (state.playerId && players[state.playerId]) {
+                        const fbScore = players[state.playerId].score || 0;
+                        if (fbScore !== state.score) {
+                            state.score = fbScore;
+                            storage.set('SCORE', fbScore);
+                            updateUI();
                         }
                     }
-                    
-                    myPlayerRef = playerRef;
-                    userScoreEl.innerText = myCurrentScore.toLocaleString();
-                    
-                } else {
-                    console.log('🆕 Создаем нового игрока с счетом:', savedScore);
-                    const newPlayerRef = database.ref('players').push();
-                    newPlayerRef.set({
-                        name: currentUsername,
-                        score: savedScore,
-                        joined: Date.now(),
-                        lastSeen: Date.now()
-                    }).then(() => {
-                        myPlayerRef = newPlayerRef;
-                        savePlayerIdToStorage(newPlayerRef.key);
-                        myCurrentScore = savedScore;
-                        userScoreEl.innerText = savedScore.toLocaleString();
-                    });
-                }
-                
-                isRestoringScore = false;
-            }).catch(error => {
-                console.error('❌ Ошибка восстановления игрока:', error);
-                isRestoringScore = false;
-            });
-        }
-
-        // Функция клика
-        function handleClick() {
-            if (!isNameSet) {
-                alert('Сначала введите имя!');
-                return;
+                });
             }
-            
-            console.log('Клик от:', currentUsername);
-            
-            const counterRef = database.ref('globalCounter');
-            
-            counterRef.transaction(function(current) {
-                return (current || 0) + 1;
-            }).then((result) => {
-                if (result.committed) {
-                    database.ref('lastClick').set({
-                        name: currentUsername,
-                        timestamp: Date.now()
-                    });
-                    
-                    if (myPlayerRef) {
-                        myPlayerRef.transaction(function(current) {
-                            if (!current) current = { score: 0, name: currentUsername, lastSeen: Date.now() };
-                            current.score = (current.score || 0) + 1;
-                            current.lastSeen = Date.now();
-                            current.name = currentUsername;
-                            return current;
-                        }).then((result) => {
-                            if (result.committed) {
-                                const newScore = result.snapshot.val().score;
-                                saveScoreToStorage(newScore);
-                                myCurrentScore = newScore;
+
+            // ===== Игрок =====
+            function initPlayer() {
+                state.nameSet = storage.get('NAME_SET') === 'true';
+                state.username = storage.get('NAME') || '';
+                state.playerId = storage.get('ID') || null;
+                state.score = parseInt(storage.get('SCORE') || '0');
+
+                if (state.username) el.username.value = state.username;
+
+                if (state.nameSet && state.playerId) {
+                    db.ref('players/' + state.playerId).once('value').then(snap => {
+                        if (snap.exists()) {
+                            const data = snap.val();
+                            state.playerRef = db.ref('players/' + state.playerId);
+                            if (data.score < state.score) {
+                                state.playerRef.update({ score: state.score, name: state.username });
+                            } else {
+                                state.score = data.score;
+                                storage.set('SCORE', data.score);
                             }
-                        });
-                    }
-                    
-                    if (result.snapshot.val() >= TARGET_POPULATION) {
-                        alert('🎉 ПОЗДРАВЛЯЕМ! МЫ ЗАСЕЛИЛИ ВСЮ ЗЕМЛЮ! 🎉');
-                    }
-                }
-            }).catch(error => {
-                console.error('Ошибка:', error);
-                alert('Ошибка: ' + error.message);
-            });
-        }
-
-        // Функция входа в онлайн
-        function joinOnline() {
-            if (!database) return;
-            
-            const savedPlayerId = loadSavedData();
-            
-            myOnlineRef = database.ref('onlineUsers').push();
-            myOnlineRef.set({
-                name: currentUsername || 'Аноним',
-                online: true,
-                lastSeen: Date.now()
-            });
-            
-            // Если имя уже установлено, восстанавливаем или создаем игрока
-            if (isNameSet) {
-                if (savedPlayerId) {
-                    const savedScore = parseInt(localStorage.getItem(STORAGE_SCORE_KEY)) || 0;
-                    restorePlayerScore(savedPlayerId, savedScore);
-                } else {
-                    myPlayerRef = database.ref('players').push();
-                    myPlayerRef.set({
-                        name: currentUsername,
-                        score: myCurrentScore,
-                        joined: Date.now(),
-                        lastSeen: Date.now()
-                    }).then(() => {
-                        savePlayerIdToStorage(myPlayerRef.key);
+                        } else {
+                            createNewPlayer();
+                        }
+                        updateUI();
                     });
+                } else if (state.nameSet) {
+                    createNewPlayer();
                 }
+
+                updateUI();
             }
 
-            window.addEventListener('beforeunload', function() {
-                if (myOnlineRef) {
-                    myOnlineRef.remove();
-                }
-                if (myPlayerRef) {
-                    myPlayerRef.update({ lastSeen: Date.now(), online: false });
-                }
-            });
-        }
-
-        // Добавляем обработчики
-        saveNameBtn.addEventListener('click', setUsername);
-        
-        // Разрешаем ввод имени по нажатию Enter
-        usernameInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                setUsername();
-            }
-        });
-        
-        clickBtn.addEventListener('click', handleClick);
-
-        // Слушаем изменения счетчика
-        database.ref('globalCounter').on('value', (snapshot) => {
-            const count = snapshot.val() || 0;
-            counterEl.innerText = count.toLocaleString();
-            updateEarth(count);
-        });
-
-        // Слушаем последний клик
-        database.ref('lastClick').on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (data && data.name) {
-                lastClickerEl.innerText = data.name;
-            }
-        });
-
-        // Слушаем онлайн
-        database.ref('onlineUsers').on('value', (snapshot) => {
-            const users = snapshot.val();
-            const count = users ? Object.keys(users).length : 0;
-            onlineCountEl.innerHTML = count;
-        });
-
-        // Слушаем топ игроков
-        database.ref('players').on('value', (snapshot) => {
-            updateTopList(snapshot);
-            
-            if (myPlayerRef && isNameSet) {
-                const players = snapshot.val();
-                if (players && players[myPlayerRef.key]) {
-                    const fbScore = players[myPlayerRef.key].score || 0;
-                    if (fbScore !== myCurrentScore) {
-                        myCurrentScore = fbScore;
-                        userScoreEl.innerText = fbScore.toLocaleString();
-                        saveScoreToStorage(fbScore);
-                    }
-                }
-            }
-        });
-
-        // Присоединяемся
-        setTimeout(() => {
-            joinOnline();
-        }, 1000);
-
-        // Обновляем статус
-        setInterval(() => {
-            if (myOnlineRef) {
-                myOnlineRef.update({
-                    lastSeen: Date.now(),
-                    name: currentUsername || 'Аноним'
+            function createNewPlayer() {
+                const newRef = db.ref('players').push();
+                newRef.set({
+                    name: state.username,
+                    score: state.score,
+                    joined: Date.now()
                 });
+                state.playerRef = newRef;
+                state.playerId = newRef.key;
+                storage.set('ID', state.playerId);
             }
-            if (myPlayerRef && isNameSet) {
-                myPlayerRef.update({
-                    lastSeen: Date.now(),
-                    name: currentUsername
-                }).then(() => {
-                    if (myCurrentScore > 0) {
-                        saveScoreToStorage(myCurrentScore);
+
+            // ===== Онлайн =====
+            function initOnline() {
+                state.onlineRef = db.ref('onlineUsers').push();
+                state.onlineRef.set({
+                    name: state.username || 'Аноним',
+                    online: true,
+                    lastSeen: Date.now()
+                });
+
+                window.addEventListener('beforeunload', () => {
+                    if (state.onlineRef) state.onlineRef.remove();
+                    if (state.playerRef) {
+                        state.playerRef.update({ lastSeen: Date.now(), online: false });
+                        storage.set('SCORE', state.score);
                     }
                 });
             }
-        }, 30000);
 
-        console.log('✅ Мировой кликер с блокировкой ника готов!');
+            // ===== Клик =====
+            async function handleClick() {
+                if (!state.nameSet) return;
+
+                try {
+                    const result = await db.ref('globalCounter').transaction(v => (v || 0) + 1);
+                    if (result.committed) {
+                        await db.ref('lastClick').set({ name: state.username, timestamp: Date.now() });
+                        
+                        if (state.playerRef) {
+                            const playerResult = await state.playerRef.transaction(p => {
+                                if (!p) p = { score: 0 };
+                                p.score = (p.score || 0) + 1;
+                                p.name = state.username;
+                                p.lastSeen = Date.now();
+                                return p;
+                            });
+                            
+                            if (playerResult.committed) {
+                                state.score = playerResult.snapshot.val().score;
+                                storage.set('SCORE', state.score);
+                            }
+                        }
+
+                        if (result.snapshot.val() >= CONFIG.TARGET) {
+                            alert('🎉 МЫ ЗАСЕЛИЛИ ЗЕМЛЮ! 🎉');
+                        }
+                    }
+                } catch (e) {
+                    console.error('Click error:', e);
+                }
+            }
+
+            // ===== Имя =====
+            function setName() {
+                const name = el.username.value.trim();
+                if (!name) return alert('Введите имя');
+
+                state.username = name;
+                state.nameSet = true;
+                
+                storage.set('NAME', name);
+                storage.set('NAME_SET', 'true');
+
+                createNewPlayer();
+                updateUI();
+            }
+
+            // ===== Запуск =====
+            function init() {
+                initFirebase();
+                initPlayer();
+                initOnline();
+                
+                el.saveNameBtn.addEventListener('click', setName);
+                el.username.addEventListener('keypress', e => e.key === 'Enter' && setName());
+                el.clickBtn.addEventListener('click', handleClick);
+                el.earth.addEventListener('click', handleClick); // Клик по Земле
+
+                // Периодическое обновление
+                setInterval(() => {
+                    if (state.onlineRef) {
+                        state.onlineRef.update({ lastSeen: Date.now(), name: state.username || 'Аноним' });
+                    }
+                    if (state.playerRef && state.nameSet) {
+                        state.playerRef.update({ lastSeen: Date.now(), name: state.username });
+                        storage.set('SCORE', state.score);
+                    }
+                }, 30000);
+
+                console.log('✅ Готово');
+            }
+
+            // Старт
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+        })();
     </script>
 </body>
 </html>
