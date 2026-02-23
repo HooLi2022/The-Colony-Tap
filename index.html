@@ -50,23 +50,26 @@
             transform: scale(0.98);
         }
 
+        /* Цветная заливка (теперь это маска для картинки) */
         .earth-fill {
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
             height: 0%;
-            background: linear-gradient(180deg, #4CAF50, #2E7D32);
+            background: #4CAF50;
             transition: height 0.3s ease-out;
+            z-index: 1;
         }
 
+        /* Картинка Земли (изначально скрыта, появляется через маску) */
         .earth-image {
             position: absolute;
             inset: 0;
-            background: url('https://github.com/HooLi2022/The-Colony-Tap/commit/4d09fa3259b59be832c2c383c47b4811f71075b2') center/cover;
-            opacity: 0;
-            transition: opacity 0.3s;
-            mask-image: radial-gradient(circle, black, transparent);
+            background: url('ССЫЛКА_НА_ТВОЮ_КАРТИНКУ') center/cover;
+            z-index: 2;
+            clip-path: inset(100% 0 0 0);
+            transition: clip-path 0.3s ease-out;
         }
 
         .progress-section {
@@ -634,7 +637,9 @@
         <p>Цель: <span id="targetDisplay">8 млрд</span></p>
         
         <div class="earth" id="earth">
+            <!-- Цветная заливка (фон) -->
             <div class="earth-fill" id="earthFill"></div>
+            <!-- Картинка Земли (появляется снизу вверх) -->
             <div class="earth-image" id="earthImage"></div>
         </div>
         
@@ -721,7 +726,7 @@
                 STORAGE: { N: 'wc_n', S: 'wc_s', I: 'wc_i', NS: 'wc_ns', CC: 'wc_cc', AM: 'wc_am' },
                 LIMITS: { M1: 20, M2: 300, M3: 1000, INT: 5000, BAN: 3 },
                 KEY: 'Lm9rMjAyNQ==',
-                RESET_FLAG: 'reset_trigger' // Флаг для глобального сброса
+                RESET_FLAG: 'reset_trigger'
             };
 
             // Firebase инициализация
@@ -821,19 +826,17 @@
                 }
 
                 const p = Math.min((s.globalScore / s.target) * 100, 100);
-                requestAnimationFrame(() => {
-                    el.ef.style.height = p + '%';
-                    el.ei.style.opacity = p / 100;
-                    el.pf.style.width = p + '%';
-                });
                 
-                if (p < 30) {
-                    el.ef.style.background = 'linear-gradient(180deg, #4CAF50, #2E7D32)';
-                } else if (p < 70) {
-                    el.ef.style.background = 'linear-gradient(180deg, #FFC107, #FF8F00)';
-                } else {
-                    el.ef.style.background = 'linear-gradient(180deg, #FF5722, #BF360C)';
-                }
+                // Обновляем цветную заливку (фон)
+                el.ef.style.height = p + '%';
+                
+                // Обновляем картинку - она появляется снизу вверх
+                // clip-path: inset(100% - p% 0 0 0) - обрезает сверху
+                const clipValue = (100 - p) + '%';
+                el.ei.style.clipPath = `inset(${clipValue} 0 0 0)`;
+                
+                // Обновляем прогресс-бар
+                el.pf.style.width = p + '%';
 
                 el.c.textContent = s.globalScore.toLocaleString();
                 el.cp.textContent = s.globalScore.toLocaleString();
@@ -849,11 +852,9 @@
 
             // ===== ФУНКЦИЯ ГЛОБАЛЬНОГО СБРОСА =====
             function performGlobalReset() {
-                // Показываем сообщение всем
                 el.rm.style.display = 'block';
                 setTimeout(() => { el.rm.style.display = 'none'; }, 3000);
                 
-                // Сбрасываем локальное состояние
                 s.globalScore = 0;
                 s.myScore = 0;
                 s.ns = false;
@@ -862,15 +863,12 @@
                 s.pr = null;
                 s.b = false;
                 
-                // Очищаем localStorage
                 localStorage.clear();
                 
-                // Обновляем UI
                 el.un.value = '';
                 el.nig.classList.remove('hidden');
                 el.g.classList.add('hidden');
                 
-                // Пересоздаем онлайн статус
                 if (s.or) s.or.remove();
                 s.or = db.ref('onlineUsers').push();
                 s.or.set({ n: 'Аноним', on: true, ls: Date.now(), pid: null });
@@ -882,7 +880,6 @@
             db.ref('admin/reset').on('value', (snap) => {
                 if (snap.val() === true) {
                     performGlobalReset();
-                    // Сбрасываем флаг
                     db.ref('admin/reset').set(false);
                 }
             });
@@ -945,15 +942,11 @@
                 resetGame() {
                     if (!s.admin || !confirm('⚠️ Сбросить игру для ВСЕХ игроков? Все данные будут удалены!')) return;
                     
-                    // Устанавливаем флаг сброса в Firebase
                     db.ref('admin/reset').set(true);
-                    
-                    // Очищаем все данные в Firebase
                     db.ref('globalCounter').set(0);
                     db.ref('players').remove();
                     db.ref('onlineUsers').remove();
                     
-                    // Закрываем панель
                     this.close();
                 },
                 addGlobalClicks(amount) {
@@ -1328,6 +1321,4 @@
         })();
     </script>
 </body>
-
 </html>
-
