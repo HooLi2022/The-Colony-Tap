@@ -66,24 +66,11 @@
         .earth-image {
             position: absolute;
             inset: 0;
-            background: url('https://avatars.mds.yandex.net/i?id=94649166b488b59250cdf66927fa17ad_l-7718735-images-thumbs&n=13') center/cover;
+            background: url('https://i.imgur.com/W6H3wKX.jpg') center/cover;
+            background-size: cover;
             z-index: 2;
             clip-path: inset(100% 0 0 0);
             transition: clip-path 0.3s ease-out;
-        }
-
-        /* Временная метка для отладки */
-        .debug-info {
-            position: fixed;
-            bottom: 80px;
-            left: 20px;
-            background: rgba(0,0,0,0.7);
-            color: #ffd700;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 12px;
-            z-index: 1000;
-            display: none;
         }
 
         .progress-section {
@@ -583,6 +570,83 @@
             animation: slideDown 0.3s;
             display: none;
         }
+
+        /* Стили для ползунка размера */
+        .size-control {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+        }
+
+        .size-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: #ffd700;
+        }
+
+        .size-slider {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            background: #ffd700;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid white;
+        }
+
+        .size-slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: #ffd700;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid white;
+        }
+
+        .size-value {
+            font-size: 1.2rem;
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .size-presets {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+
+        .size-preset-btn {
+            background: rgba(255,215,0,0.2);
+            border: 1px solid #ffd700;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .size-preset-btn:hover {
+            background: rgba(255,215,0,0.4);
+            transform: scale(1.05);
+        }
+
+        .size-preset-btn.active {
+            background: #ffd700;
+            color: #333;
+        }
     </style>
 </head>
 <body>
@@ -595,9 +659,6 @@
         <span>👑 Админ</span>
         <span class="notification" id="adminNotification">0</span>
     </div>
-    
-    <!-- Отладочная информация -->
-    <div class="debug-info" id="debugInfo"></div>
     
     <div class="backdrop" id="backdrop"></div>
     
@@ -629,6 +690,26 @@
                 <button class="admin-action-btn success" onclick="admin.addGlobalClicks(100)">➕ +100 кликов</button>
                 <button class="admin-action-btn" onclick="admin.setTarget('8b')">🎯 Цель 8 млрд</button>
                 <button class="admin-action-btn" onclick="admin.setTarget('1m')">🎯 Цель 1 млн</button>
+            </div>
+        </div>
+        
+        <div class="admin-section">
+            <h3>🖼️ Настройки картинки</h3>
+            <div class="size-control">
+                <div class="size-label">
+                    <span>Размер изображения</span>
+                    <span class="size-value" id="sizeValue">100%</span>
+                </div>
+                <input type="range" id="sizeSlider" class="size-slider" min="50" max="200" value="100" step="5">
+                <div class="size-presets">
+                    <button class="size-preset-btn" onclick="admin.setImageSize(75)">Мелко (75%)</button>
+                    <button class="size-preset-btn active" onclick="admin.setImageSize(100)">Средне (100%)</button>
+                    <button class="size-preset-btn" onclick="admin.setImageSize(125)">Крупно (125%)</button>
+                    <button class="size-preset-btn" onclick="admin.setImageSize(150)">Очень крупно (150%)</button>
+                </div>
+                <p style="color: #aaa; font-size: 0.8rem; margin-top: 10px;">
+                    Подбери размер так, чтобы картинка четко вписалась в круг
+                </p>
             </div>
         </div>
         
@@ -740,7 +821,7 @@
                     '8b': 8000000000,
                     '1m': 1000000
                 },
-                STORAGE: { N: 'wc_n', S: 'wc_s', I: 'wc_i', NS: 'wc_ns', CC: 'wc_cc', AM: 'wc_am' },
+                STORAGE: { N: 'wc_n', S: 'wc_s', I: 'wc_i', NS: 'wc_ns', CC: 'wc_cc', AM: 'wc_am', SIZE: 'wc_size' },
                 LIMITS: { M1: 20, M2: 300, M3: 1000, INT: 5000, BAN: 3 },
                 KEY: 'Lm9rMjAyNQ==',
                 RESET_FLAG: 'reset_trigger',
@@ -793,7 +874,9 @@
                 adminOnline: document.getElementById('adminOnline'),
                 targetDisplay: document.getElementById('targetDisplay'),
                 targetPopulation: document.getElementById('targetPopulation'),
-                debugInfo: document.getElementById('debugInfo')
+                sizeSlider: document.getElementById('sizeSlider'),
+                sizeValue: document.getElementById('sizeValue'),
+                sizePresetBtns: document.querySelectorAll('.size-preset-btn')
             };
 
             // Состояние
@@ -816,7 +899,7 @@
                 clickLock: false,
                 target: C.TARGET,
                 pendingClick: false,
-                imageLoaded: false
+                imageSize: 100 // Размер в процентах
             };
 
             // Хранилище
@@ -825,29 +908,6 @@
                 s: (k, v) => { try { localStorage.setItem(C.STORAGE[k], v); } catch {} },
                 r: (k) => { try { localStorage.removeItem(C.STORAGE[k]); } catch {} }
             };
-
-            // ===== ПРОВЕРКА ЗАГРУЗКИ КАРТИНКИ =====
-            function checkImage() {
-                const img = new Image();
-                img.onload = function() {
-                    s.imageLoaded = true;
-                    el.debugInfo.style.display = 'block';
-                    el.debugInfo.style.background = '#4CAF50';
-                    el.debugInfo.innerHTML = '✅ Картинка загружена!';
-                    console.log('✅ Картинка успешно загружена');
-                };
-                img.onerror = function() {
-                    s.imageLoaded = false;
-                    el.debugInfo.style.display = 'block';
-                    el.debugInfo.style.background = '#ff4444';
-                    el.debugInfo.innerHTML = '❌ Ошибка загрузки картинки! Проверь ссылку';
-                    console.error('❌ Ошибка загрузки картинки:', C.IMAGE_URL);
-                    
-                    // Временно используем запасную картинку
-                    el.ei.style.background = 'url("https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?w=400") center/cover';
-                };
-                img.src = C.IMAGE_URL;
-            }
 
             // ===== UI =====
             function updateUI() {
@@ -890,6 +950,27 @@
                     el.adminTotalPlayers.textContent = Object.keys(s.players).length;
                     el.adminOnline.textContent = s.online;
                 }
+            }
+
+            // ===== ФУНКЦИЯ ИЗМЕНЕНИЯ РАЗМЕРА КАРТИНКИ =====
+            function updateImageSize(size) {
+                s.imageSize = size;
+                el.ei.style.backgroundSize = size + '%';
+                el.sizeValue.textContent = size + '%';
+                
+                // Сохраняем в localStorage
+                stor.s('SIZE', size.toString());
+                
+                // Обновляем активную кнопку
+                el.sizePresetBtns.forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Подсвечиваем ближайший пресет
+                if (size === 75) el.sizePresetBtns[0].classList.add('active');
+                else if (size === 100) el.sizePresetBtns[1].classList.add('active');
+                else if (size === 125) el.sizePresetBtns[2].classList.add('active');
+                else if (size === 150) el.sizePresetBtns[3].classList.add('active');
             }
 
             // ===== ФУНКЦИЯ ГЛОБАЛЬНОГО СБРОСА =====
@@ -939,6 +1020,10 @@
                     el.adminPanel.classList.add('show');
                     el.bd.classList.add('show');
                     this.updatePlayerList();
+                    
+                    // Устанавливаем значение ползунка
+                    el.sizeSlider.value = s.imageSize;
+                    el.sizeValue.textContent = s.imageSize + '%';
                 },
                 close() {
                     el.adminPanel.classList.remove('show');
@@ -1047,6 +1132,10 @@
                     db.ref('/').remove();
                     localStorage.clear();
                     setTimeout(() => location.reload(), 1000);
+                },
+                setImageSize(size) {
+                    if (!s.admin) return;
+                    updateImageSize(size);
                 }
             };
 
@@ -1256,10 +1345,14 @@
                 s.myScore = parseInt(stor.g('S') || '0');
                 s.cc = parseInt(stor.g('CC') || '0');
                 
+                // Загружаем сохраненный размер
+                const savedSize = stor.g('SIZE');
+                if (savedSize) {
+                    s.imageSize = parseInt(savedSize);
+                    updateImageSize(s.imageSize);
+                }
+                
                 if (s.u) el.un.value = s.u;
-
-                // Проверяем картинку
-                checkImage();
 
                 db.ref('globalCounter').once('value').then(snap => {
                     s.globalScore = snap.val() || 0;
@@ -1328,6 +1421,13 @@
                 el.close.addEventListener('click', () => admin.close());
                 el.bd.addEventListener('click', () => admin.close());
 
+                // Слушатель ползунка размера
+                el.sizeSlider.addEventListener('input', (e) => {
+                    if (s.admin) {
+                        updateImageSize(parseInt(e.target.value));
+                    }
+                });
+
                 setInterval(() => {
                     if (s.b && !s.admin) return;
                     ac.check();
@@ -1366,10 +1466,4 @@
         })();
     </script>
 </body>
-
 </html>
-
-
-
-
-
