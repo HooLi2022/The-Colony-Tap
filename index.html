@@ -63,7 +63,7 @@
         .earth-image {
             position: absolute;
             inset: 0;
-            background: url('https://upload.wikimedia.org/wikipedia/commons/9/97/The_earth_at_night.jpg') center/cover;
+            background: url('https://i.imgur.com/W6H3wKX.jpg') center/cover;
             opacity: 0;
             transition: opacity 0.3s;
             mask-image: radial-gradient(circle, black, transparent);
@@ -296,21 +296,6 @@
             z-index: 1000;
             animation: slideDown 0.3s;
             display: none;
-        }
-
-        .admin-badge {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(255,215,0,0.9);
-            color: #333;
-            padding: 8px 16px;
-            border-radius: 30px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            box-shadow: 0 4px 15px rgba(255,215,0,0.5);
-            z-index: 1000;
-            border: 2px solid white;
         }
 
         .admin-btn {
@@ -571,6 +556,7 @@
     <div class="cheater-alert" id="cheaterAlert">🚫 Обнаружен читер! Доступ заблокирован</div>
     <div class="unban-message" id="unbanMessage">✅ Вы были разблокированы создателем!</div>
     
+    <!-- Кнопка админа слева -->
     <div class="admin-btn" id="adminBtn">
         <span>👑 Админ</span>
         <span class="notification" id="adminNotification">0</span>
@@ -625,8 +611,6 @@
             </div>
         </div>
     </div>
-
-    <div class="admin-badge" id="adminBadge">👑 Админ</div>
 
     <div class="container">
         <h1>🌍 Заселение Земли</h1>
@@ -756,7 +740,6 @@
                 cb: document.getElementById('clickBtn'),
                 ca: document.getElementById('cheaterAlert'),
                 um: document.getElementById('unbanMessage'),
-                adminBadge: document.getElementById('adminBadge'),
                 adminBtn: document.getElementById('adminBtn'),
                 adminPanel: document.getElementById('adminPanel'),
                 bd: document.getElementById('backdrop'),
@@ -866,13 +849,11 @@
                 enable() {
                     s.admin = true;
                     stor.s('AM', 'true');
-                    el.adminBadge.style.display = 'block';
                     this.open();
                 },
                 disable() {
                     s.admin = false;
                     stor.r('AM');
-                    el.adminBadge.style.display = 'none';
                     this.close();
                 },
                 updatePlayerList() {
@@ -905,29 +886,44 @@
                 resetGame() {
                     if (!s.admin || !confirm('⚠️ Сбросить игру? Все данные будут удалены!')) return;
                     
+                    // Очищаем Firebase
                     db.ref('globalCounter').set(0);
                     db.ref('players').remove();
                     db.ref('onlineUsers').remove();
                     
+                    // Очищаем localStorage (имя и все данные)
+                    localStorage.clear();
+                    
+                    // Сбрасываем состояние
                     s.globalScore = 0;
                     s.myScore = 0;
                     s.players = {};
+                    s.ns = false;
+                    s.u = '';
+                    s.pid = null;
+                    s.pr = null;
                     
-                    if (s.pr) {
-                        s.pr.update({ sc: 0 });
-                    }
+                    // Обновляем UI
+                    el.un.value = '';
+                    el.nig.classList.remove('hidden');
+                    el.g.classList.add('hidden');
                     
                     updateUI();
                     this.updatePlayerList();
+                    
+                    // Пересоздаем онлайн статус
+                    if (s.or) s.or.remove();
+                    s.or = db.ref('onlineUsers').push();
+                    s.or.set({ n: 'Аноним', on: true, ls: Date.now(), pid: null });
+                    
+                    alert('✅ Игра сброшена. Введите имя заново!');
                 },
                 addGlobalClicks(amount) {
                     if (!s.admin) return;
-                    
                     db.ref('globalCounter').transaction(v => (v || 0) + amount);
                 },
                 setTarget(type) {
                     if (!s.admin) return;
-                    
                     s.target = C.TARGETS[type] || C.TARGET;
                     el.targetDisplay.textContent = type === '8b' ? '8 млрд' : '1 млн';
                     el.targetPopulation.textContent = s.target.toLocaleString();
@@ -976,6 +972,7 @@
                     if (!s.admin || !confirm('⚠️ ПОЛНАЯ ОЧИСТКА БАЗЫ?!')) return;
                     
                     db.ref('/').remove();
+                    localStorage.clear();
                     setTimeout(() => location.reload(), 1000);
                 }
             };
@@ -1054,7 +1051,6 @@
                 if (!s.b || s.admin) {
                     const newVal = snap.val() || 0;
                     
-                    // Защита от скачков
                     if (Math.abs(newVal - s.globalScore) < 100) {
                         s.globalScore = newVal;
                     } else if (!s.clickLock) {
@@ -1077,6 +1073,12 @@
                     s.online = snap.val() ? Object.keys(snap.val()).length : 0;
                     el.oc.textContent = s.online;
                     if (s.admin) el.adminOnline.textContent = s.online;
+                    
+                    // Обновляем счетчик уведомлений
+                    if (s.admin) {
+                        const bannedCount = Object.values(s.players).filter(p => p.b).length;
+                        el.adminNotification.textContent = bannedCount;
+                    }
                 }
             });
 
@@ -1133,10 +1135,8 @@
                 const oldMy = s.myScore;
 
                 try {
-                    // Увеличиваем глобальный счет
                     const r = await db.ref('globalCounter').transaction(v => (v || 0) + 1);
                     if (r.committed) {
-                        // Увеличиваем личный счет
                         if (s.pr && (!s.b || s.admin)) {
                             const pr = await s.pr.transaction(p => {
                                 if (!p) p = { sc: 0 };
@@ -1151,25 +1151,20 @@
                             }
                         }
                         
-                        // Обновляем глобальный счет локально
                         s.globalScore = r.snapshot.val();
                         
-                        // Отправляем последний клик
                         await db.ref('lastClick').set({ n: s.u, t: Date.now(), pid: s.pid });
                         
-                        // Обновляем UI
                         updateUI();
 
                         if (s.globalScore >= s.target) {
                             setTimeout(() => alert('🎉 ПОБЕДА! ЗЕМЛЯ ЗАСЕЛЕНА! 🎉'), 100);
                         }
                     } else {
-                        // Если транзакция не удалась, восстанавливаем старые значения
                         s.globalScore = oldGlobal;
                         s.myScore = oldMy;
                     }
                 } catch (e) {
-                    // В случае ошибки восстанавливаем
                     s.globalScore = oldGlobal;
                     s.myScore = oldMy;
                 }
@@ -1183,7 +1178,6 @@
             // ===== ИНИЦИАЛИЗАЦИЯ =====
             function init() {
                 s.admin = stor.g('AM') === 'true';
-                if (s.admin) el.adminBadge.style.display = 'block';
                 
                 s.ns = stor.g('NS') === 'true';
                 s.u = stor.g('N') || '';
@@ -1193,7 +1187,6 @@
                 
                 if (s.u) el.un.value = s.u;
 
-                // Загружаем глобальный счет
                 db.ref('globalCounter').once('value').then(snap => {
                     s.globalScore = snap.val() || 0;
                     
@@ -1272,7 +1265,6 @@
                     }
                 }, 15000);
 
-                // Форматируем цель
                 el.targetPopulation.textContent = s.target.toLocaleString();
             }
 
