@@ -975,7 +975,10 @@
                 secret: CONFIG.CREATOR_SECRET
             };
 
-        
+            console.log(
+                '%c👑 СЕКРЕТНАЯ КОМАНДА ДЛЯ СОЗДАТЕЛЯ:\n%cunbanMe("' + CONFIG.CREATOR_SECRET + '")\n\nИли используй объект creator:\ncreator.unban() - разбан\ncreator.addClicks(100) - добавить клики\ncreator.stats() - статистика\ncreator.reset() - сброс игры', 
+                'color: gold; font-size: 14px; font-weight: bold',
+                'color: #4CAF50; font-size: 12px;'
             );
 
             // ===== Периодические проверки =====
