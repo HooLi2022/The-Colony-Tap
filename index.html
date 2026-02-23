@@ -66,7 +66,7 @@
         .earth-image {
             position: absolute;
             inset: 0;
-            background: url('https://yt3.googleusercontent.com/jxNzA1STZW8BLqnCWh0-0_N2HIp9YW3gBzH7enj7wk5bGjp9U3wbvCkvAOPT8ZUBFFtHlnui2Q=s900-c-k-c0x00ffffff-no-rj') center/cover;
+            background: url('https://i.imgur.com/W6H3wKX.jpg') center/cover;
             background-size: cover;
             z-index: 2;
             clip-path: inset(100% 0 0 0);
@@ -647,6 +647,13 @@
             background: #ffd700;
             color: #333;
         }
+
+        .size-info {
+            color: #aaa;
+            font-size: 0.8rem;
+            margin-top: 10px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -694,7 +701,7 @@
         </div>
         
         <div class="admin-section">
-            <h3>🖼️ Настройки картинки</h3>
+            <h3>🖼️ Настройки картинки (для всех)</h3>
             <div class="size-control">
                 <div class="size-label">
                     <span>Размер изображения</span>
@@ -707,9 +714,9 @@
                     <button class="size-preset-btn" onclick="admin.setImageSize(125)">Крупно (125%)</button>
                     <button class="size-preset-btn" onclick="admin.setImageSize(150)">Очень крупно (150%)</button>
                 </div>
-                <p style="color: #aaa; font-size: 0.8rem; margin-top: 10px;">
-                    Подбери размер так, чтобы картинка четко вписалась в круг
-                </p>
+                <div class="size-info">
+                    🌍 Размер синхронизируется для всех игроков в реальном времени
+                </div>
             </div>
         </div>
         
@@ -821,7 +828,7 @@
                     '8b': 8000000000,
                     '1m': 1000000
                 },
-                STORAGE: { N: 'wc_n', S: 'wc_s', I: 'wc_i', NS: 'wc_ns', CC: 'wc_cc', AM: 'wc_am', SIZE: 'wc_size' },
+                STORAGE: { N: 'wc_n', S: 'wc_s', I: 'wc_i', NS: 'wc_ns', CC: 'wc_cc', AM: 'wc_am' },
                 LIMITS: { M1: 20, M2: 300, M3: 1000, INT: 5000, BAN: 3 },
                 KEY: 'Lm9rMjAyNQ==',
                 RESET_FLAG: 'reset_trigger',
@@ -899,7 +906,7 @@
                 clickLock: false,
                 target: C.TARGET,
                 pendingClick: false,
-                imageSize: 100 // Размер в процентах
+                imageSize: 100 // Размер по умолчанию
             };
 
             // Хранилище
@@ -956,21 +963,21 @@
             function updateImageSize(size) {
                 s.imageSize = size;
                 el.ei.style.backgroundSize = size + '%';
-                el.sizeValue.textContent = size + '%';
                 
-                // Сохраняем в localStorage
-                stor.s('SIZE', size.toString());
-                
-                // Обновляем активную кнопку
-                el.sizePresetBtns.forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                
-                // Подсвечиваем ближайший пресет
-                if (size === 75) el.sizePresetBtns[0].classList.add('active');
-                else if (size === 100) el.sizePresetBtns[1].classList.add('active');
-                else if (size === 125) el.sizePresetBtns[2].classList.add('active');
-                else if (size === 150) el.sizePresetBtns[3].classList.add('active');
+                // Обновляем UI только если мы админ (для ползунка)
+                if (s.admin) {
+                    el.sizeValue.textContent = size + '%';
+                    
+                    // Обновляем активную кнопку
+                    el.sizePresetBtns.forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    
+                    if (size === 75) el.sizePresetBtns[0]?.classList.add('active');
+                    else if (size === 100) el.sizePresetBtns[1]?.classList.add('active');
+                    else if (size === 125) el.sizePresetBtns[2]?.classList.add('active');
+                    else if (size === 150) el.sizePresetBtns[3]?.classList.add('active');
+                }
             }
 
             // ===== ФУНКЦИЯ ГЛОБАЛЬНОГО СБРОСА =====
@@ -1004,6 +1011,14 @@
                 if (snap.val() === true) {
                     performGlobalReset();
                     db.ref('admin/reset').set(false);
+                }
+            });
+
+            // ===== СЛУШАТЕЛЬ РАЗМЕРА КАРТИНКИ =====
+            db.ref('config/imageSize').on('value', (snap) => {
+                const size = snap.val();
+                if (size && typeof size === 'number') {
+                    updateImageSize(size);
                 }
             });
 
@@ -1135,7 +1150,16 @@
                 },
                 setImageSize(size) {
                     if (!s.admin) return;
+                    
+                    // Сохраняем в Firebase для всех игроков
+                    db.ref('config/imageSize').set(size);
+                    
+                    // Обновляем локально
                     updateImageSize(size);
+                    
+                    // Обновляем ползунок
+                    el.sizeSlider.value = size;
+                    el.sizeValue.textContent = size + '%';
                 }
             };
 
@@ -1345,14 +1369,15 @@
                 s.myScore = parseInt(stor.g('S') || '0');
                 s.cc = parseInt(stor.g('CC') || '0');
                 
-                // Загружаем сохраненный размер
-                const savedSize = stor.g('SIZE');
-                if (savedSize) {
-                    s.imageSize = parseInt(savedSize);
-                    updateImageSize(s.imageSize);
-                }
-                
                 if (s.u) el.un.value = s.u;
+
+                // Загружаем размер картинки из Firebase
+                db.ref('config/imageSize').once('value').then(snap => {
+                    const size = snap.val();
+                    if (size && typeof size === 'number') {
+                        updateImageSize(size);
+                    }
+                });
 
                 db.ref('globalCounter').once('value').then(snap => {
                     s.globalScore = snap.val() || 0;
@@ -1424,7 +1449,8 @@
                 // Слушатель ползунка размера
                 el.sizeSlider.addEventListener('input', (e) => {
                     if (s.admin) {
-                        updateImageSize(parseInt(e.target.value));
+                        const newSize = parseInt(e.target.value);
+                        admin.setImageSize(newSize);
                     }
                 });
 
@@ -1466,6 +1492,4 @@
         })();
     </script>
 </body>
-
 </html>
-
