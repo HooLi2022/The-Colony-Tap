@@ -298,7 +298,7 @@
             display: none;
         }
 
-        .god-mode-badge {
+        .admin-badge {
             position: fixed;
             bottom: 20px;
             right: 20px;
@@ -313,7 +313,7 @@
             border: 2px solid white;
         }
 
-        .creator-panel-btn {
+        .admin-btn {
             position: fixed;
             bottom: 20px;
             left: 20px;
@@ -332,12 +332,12 @@
             gap: 8px;
         }
 
-        .creator-panel-btn:hover {
+        .admin-btn:hover {
             transform: scale(1.05);
             background: #ffd700;
         }
 
-        .creator-panel-btn .notification {
+        .admin-btn .notification {
             background: #ff4444;
             color: white;
             border-radius: 50%;
@@ -350,7 +350,7 @@
             margin-left: 8px;
         }
 
-        .creator-panel {
+        .admin-panel {
             position: fixed;
             top: 50%;
             left: 50%;
@@ -368,7 +368,7 @@
             display: none;
         }
 
-        .creator-panel.show {
+        .admin-panel.show {
             display: block;
         }
 
@@ -405,133 +405,129 @@
             background: rgba(255,0,0,0.3);
         }
 
-        .banned-list {
-            margin-top: 20px;
-        }
-
-        .banned-item {
+        .admin-section {
             background: rgba(255,255,255,0.1);
             border-radius: 16px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-left: 5px solid #ff4444;
-            transition: 0.2s;
-        }
-
-        .banned-item:hover {
-            background: rgba(255,255,255,0.15);
-            transform: translateX(5px);
-        }
-
-        .banned-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .banned-name {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #ffd700;
-        }
-
-        .banned-score {
-            background: rgba(255,215,0,0.2);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 1.1rem;
-        }
-
-        .banned-reason {
-            color: #ffaaaa;
-            margin-bottom: 10px;
-            font-size: 0.9rem;
-        }
-
-        .banned-time {
-            color: #aaa;
-            font-size: 0.8rem;
-            margin-bottom: 15px;
-        }
-
-        .banned-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .action-btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 25px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-            flex: 1;
-            min-width: 100px;
-        }
-
-        .unban-btn {
-            background: #4CAF50;
-            color: white;
-        }
-
-        .unban-btn:hover {
-            background: #45a049;
-            transform: scale(1.05);
-        }
-
-        .warn-btn {
-            background: #ffd700;
-            color: #333;
-        }
-
-        .warn-btn:hover {
-            background: #ffed4a;
-            transform: scale(1.05);
-        }
-
-        .delete-btn {
-            background: #ff4444;
-            color: white;
-        }
-
-        .delete-btn:hover {
-            background: #cc0000;
-            transform: scale(1.05);
-        }
-
-        .empty-list {
-            text-align: center;
-            padding: 30px;
-            color: #aaa;
-            font-size: 1.2rem;
-        }
-
-        .panel-stats {
-            background: rgba(0,0,0,0.3);
-            border-radius: 16px;
-            padding: 15px;
+            padding: 20px;
             margin-bottom: 20px;
+        }
+
+        .admin-section h3 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .admin-stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .admin-stat {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 12px;
             text-align: center;
         }
 
-        .stat-item {
-            color: #ffd700;
-        }
-
-        .stat-label {
+        .admin-stat-label {
             font-size: 0.8rem;
             color: #aaa;
         }
 
-        .stat-number {
-            font-size: 1.5rem;
+        .admin-stat-value {
+            font-size: 1.3rem;
+            color: #ffd700;
             font-weight: bold;
+        }
+
+        .admin-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .admin-action-btn {
+            background: rgba(255,215,0,0.2);
+            border: 1px solid #ffd700;
+            color: white;
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: bold;
+        }
+
+        .admin-action-btn:hover {
+            background: rgba(255,215,0,0.4);
+            transform: scale(1.02);
+        }
+
+        .admin-action-btn.danger {
+            background: rgba(255,68,68,0.2);
+            border-color: #ff4444;
+        }
+
+        .admin-action-btn.danger:hover {
+            background: rgba(255,68,68,0.4);
+        }
+
+        .admin-action-btn.success {
+            background: rgba(76,175,80,0.2);
+            border-color: #4CAF50;
+        }
+
+        .admin-action-btn.success:hover {
+            background: rgba(76,175,80,0.4);
+        }
+
+        .player-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .player-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .player-item.banned {
+            border-left: 3px solid #ff4444;
+        }
+
+        .player-info {
+            flex: 1;
+        }
+
+        .player-name {
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .player-score {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .player-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .player-action {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
         }
 
         .backdrop {
@@ -575,44 +571,66 @@
     <div class="cheater-alert" id="cheaterAlert">🚫 Обнаружен читер! Доступ заблокирован</div>
     <div class="unban-message" id="unbanMessage">✅ Вы были разблокированы создателем!</div>
     
-    <div class="creator-panel-btn" id="creatorPanelBtn">
-        <span>👑 Панель</span>
-        <span class="notification" id="bannedNotification">0</span>
+    <div class="admin-btn" id="adminBtn">
+        <span>👑 Админ</span>
+        <span class="notification" id="adminNotification">0</span>
     </div>
     
     <div class="backdrop" id="backdrop"></div>
     
-    <div class="creator-panel" id="creatorPanel">
+    <div class="admin-panel" id="adminPanel">
         <div class="panel-header">
-            <h2>👑 Панель</h2>
+            <h2>👑 Админ панель</h2>
             <button class="close-panel" id="closePanel">×</button>
         </div>
         
-        <div class="panel-stats">
-            <div>
-                <div class="stat-label">Всего</div>
-                <div class="stat-number" id="totalPlayers">0</div>
+        <div class="admin-stats">
+            <div class="admin-stat">
+                <div class="admin-stat-label">Глобальный счет</div>
+                <div class="admin-stat-value" id="adminGlobalScore">0</div>
             </div>
-            <div>
-                <div class="stat-label">Забанено</div>
-                <div class="stat-number" id="totalBanned">0</div>
+            <div class="admin-stat">
+                <div class="admin-stat-label">Игроков</div>
+                <div class="admin-stat-value" id="adminTotalPlayers">0</div>
             </div>
-            <div>
-                <div class="stat-label">Онлайн</div>
-                <div class="stat-number" id="totalOnline">0</div>
+            <div class="admin-stat">
+                <div class="admin-stat-label">Онлайн</div>
+                <div class="admin-stat-value" id="adminOnline">0</div>
             </div>
         </div>
         
-        <div class="banned-list" id="bannedList">
-            <div class="empty-list">Нет забаненных</div>
+        <div class="admin-section">
+            <h3>⚡ Управление игрой</h3>
+            <div class="admin-actions">
+                <button class="admin-action-btn success" onclick="admin.resetGame()">🔄 Сброс игры</button>
+                <button class="admin-action-btn success" onclick="admin.addGlobalClicks(100)">➕ +100 кликов</button>
+                <button class="admin-action-btn" onclick="admin.setTarget('8b')">🎯 Цель 8 млрд</button>
+                <button class="admin-action-btn" onclick="admin.setTarget('1m')">🎯 Цель 1 млн</button>
+            </div>
+        </div>
+        
+        <div class="admin-section">
+            <h3>👥 Игроки</h3>
+            <div class="player-list" id="playerList">
+                <div style="text-align: center; color: #aaa;">Загрузка...</div>
+            </div>
+        </div>
+        
+        <div class="admin-section">
+            <h3>🔧 Инструменты</h3>
+            <div class="admin-actions">
+                <button class="admin-action-btn" onclick="admin.clearBanned()">✅ Разбанить всех</button>
+                <button class="admin-action-btn danger" onclick="admin.banAll()">🚫 Забанить всех</button>
+                <button class="admin-action-btn danger" onclick="admin.clearDatabase()">⚠️ Очистить БД</button>
+            </div>
         </div>
     </div>
 
-    <div class="god-mode-badge" id="godModeBadge">👑 Режим</div>
+    <div class="admin-badge" id="adminBadge">👑 Админ</div>
 
     <div class="container">
         <h1>🌍 Заселение Земли</h1>
-        <p>Цель: 8 млрд кликов</p>
+        <p>Цель: <span id="targetDisplay">8 млрд</span></p>
         
         <div class="earth" id="earth">
             <div class="earth-fill" id="earthFill"></div>
@@ -624,7 +642,7 @@
                 <div class="progress-fill" id="progressFill"></div>
             </div>
             <div class="earth-target">
-                <span id="currentPop">0</span> / 8 000 000 000
+                <span id="currentPop">0</span> / <span id="targetPopulation">8 000 000 000</span>
             </div>
         </div>
         
@@ -695,7 +713,11 @@
             // Конфигурация
             const C = {
                 TARGET: 8000000000,
-                STORAGE: { N: 'wc_n', S: 'wc_s', I: 'wc_i', NS: 'wc_ns', CC: 'wc_cc', GM: 'wc_gm' },
+                TARGETS: {
+                    '8b': 8000000000,
+                    '1m': 1000000
+                },
+                STORAGE: { N: 'wc_n', S: 'wc_s', I: 'wc_i', NS: 'wc_ns', CC: 'wc_cc', AM: 'wc_am' },
                 LIMITS: { M1: 20, M2: 300, M3: 1000, INT: 5000, BAN: 3 },
                 KEY: 'Lm9rMjAyNQ=='
             };
@@ -734,23 +756,25 @@
                 cb: document.getElementById('clickBtn'),
                 ca: document.getElementById('cheaterAlert'),
                 um: document.getElementById('unbanMessage'),
-                gmb: document.getElementById('godModeBadge'),
-                cpbtn: document.getElementById('creatorPanelBtn'),
-                cpanel: document.getElementById('creatorPanel'),
+                adminBadge: document.getElementById('adminBadge'),
+                adminBtn: document.getElementById('adminBtn'),
+                adminPanel: document.getElementById('adminPanel'),
                 bd: document.getElementById('backdrop'),
                 close: document.getElementById('closePanel'),
-                bl: document.getElementById('bannedList'),
-                bn: document.getElementById('bannedNotification'),
-                tp: document.getElementById('totalPlayers'),
-                tb: document.getElementById('totalBanned'),
-                to: document.getElementById('totalOnline')
+                playerList: document.getElementById('playerList'),
+                adminNotification: document.getElementById('adminNotification'),
+                adminGlobalScore: document.getElementById('adminGlobalScore'),
+                adminTotalPlayers: document.getElementById('adminTotalPlayers'),
+                adminOnline: document.getElementById('adminOnline'),
+                targetDisplay: document.getElementById('targetDisplay'),
+                targetPopulation: document.getElementById('targetPopulation')
             };
 
             // Состояние
             const s = {
                 u: '',
-                sc: 0,           // Глобальный счет (для отображения)
-                myScore: 0,       // Личный счет игрока
+                globalScore: 0,
+                myScore: 0,
                 pid: null,
                 ns: false,
                 or: null,
@@ -760,11 +784,12 @@
                 lch: Date.now(),
                 cc: 0,
                 b: false,
-                gm: false,
-                ap: {},
-                pl: null,
+                admin: false,
+                players: {},
+                online: 0,
                 clickLock: false,
-                lastGlobalUpdate: 0  // Время последнего глобального обновления
+                target: C.TARGET,
+                pendingClick: false
             };
 
             // Хранилище
@@ -775,8 +800,8 @@
             };
 
             // ===== UI =====
-            function uUI() {
-                if (s.b && !s.gm) {
+            function updateUI() {
+                if (s.b && !s.admin) {
                     el.cb.disabled = true;
                     el.e.style.pointerEvents = 'none';
                 } else if (s.ns) {
@@ -793,159 +818,199 @@
                     el.g.classList.add('hidden');
                 }
 
-                // Обновляем прогресс на основе ГЛОБАЛЬНОГО счета
-                const p = Math.min((s.sc / C.TARGET) * 100, 100);
-                if (el.ef.style.height !== p + '%') el.ef.style.height = p + '%';
-                if (el.ei.style.opacity !== (p / 100).toString()) el.ei.style.opacity = p / 100;
-                if (el.pf.style.width !== p + '%') el.pf.style.width = p + '%';
+                const p = Math.min((s.globalScore / s.target) * 100, 100);
+                requestAnimationFrame(() => {
+                    el.ef.style.height = p + '%';
+                    el.ei.style.opacity = p / 100;
+                    el.pf.style.width = p + '%';
+                });
                 
                 if (p < 30) {
-                    if (el.ef.style.background !== 'linear-gradient(180deg, #4CAF50, #2E7D32)') 
-                        el.ef.style.background = 'linear-gradient(180deg, #4CAF50, #2E7D32)';
+                    el.ef.style.background = 'linear-gradient(180deg, #4CAF50, #2E7D32)';
                 } else if (p < 70) {
-                    if (el.ef.style.background !== 'linear-gradient(180deg, #FFC107, #FF8F00)') 
-                        el.ef.style.background = 'linear-gradient(180deg, #FFC107, #FF8F00)';
+                    el.ef.style.background = 'linear-gradient(180deg, #FFC107, #FF8F00)';
                 } else {
-                    if (el.ef.style.background !== 'linear-gradient(180deg, #FF5722, #BF360C)') 
-                        el.ef.style.background = 'linear-gradient(180deg, #FF5722, #BF360C)';
+                    el.ef.style.background = 'linear-gradient(180deg, #FF5722, #BF360C)';
                 }
 
-                // Глобальный счет
-                const scStr = s.sc.toLocaleString();
-                if (el.c.textContent !== scStr) el.c.textContent = scStr;
-                if (el.cp.textContent !== scStr) el.cp.textContent = scStr;
+                el.c.textContent = s.globalScore.toLocaleString();
+                el.cp.textContent = s.globalScore.toLocaleString();
+                el.r.textContent = Math.max(s.target - s.globalScore, 0).toLocaleString();
+                el.us.textContent = s.myScore.toLocaleString();
                 
-                // Осталось
-                const remainingStr = Math.max(C.TARGET - s.sc, 0).toLocaleString();
-                if (el.r.textContent !== remainingStr) el.r.textContent = remainingStr;
-                
-                // Личный счет (твой вклад)
-                const usStr = s.myScore.toLocaleString();
-                if (el.us.textContent !== usStr) el.us.textContent = usStr;
+                if (s.admin) {
+                    el.adminGlobalScore.textContent = s.globalScore.toLocaleString();
+                    el.adminTotalPlayers.textContent = Object.keys(s.players).length;
+                    el.adminOnline.textContent = s.online;
+                }
             }
+
+            // ===== АДМИН ПАНЕЛЬ =====
+            const admin = {
+                open() {
+                    if (!s.admin) {
+                        const secret = prompt('🔐 Введите пароль админа:');
+                        if (secret === atob(C.KEY)) {
+                            this.enable();
+                        }
+                        return;
+                    }
+                    el.adminPanel.classList.add('show');
+                    el.bd.classList.add('show');
+                    this.updatePlayerList();
+                },
+                close() {
+                    el.adminPanel.classList.remove('show');
+                    el.bd.classList.remove('show');
+                },
+                enable() {
+                    s.admin = true;
+                    stor.s('AM', 'true');
+                    el.adminBadge.style.display = 'block';
+                    this.open();
+                },
+                disable() {
+                    s.admin = false;
+                    stor.r('AM');
+                    el.adminBadge.style.display = 'none';
+                    this.close();
+                },
+                updatePlayerList() {
+                    const players = Object.entries(s.players)
+                        .map(([id, data]) => ({ id, ...data }))
+                        .sort((a, b) => (b.sc || 0) - (a.sc || 0));
+
+                    if (players.length === 0) {
+                        el.playerList.innerHTML = '<div style="text-align: center; color: #aaa;">Нет игроков</div>';
+                        return;
+                    }
+
+                    el.playerList.innerHTML = players.map(p => `
+                        <div class="player-item ${p.b ? 'banned' : ''}">
+                            <div class="player-info">
+                                <div class="player-name">${p.n || 'Аноним'}</div>
+                                <div class="player-score">👆 ${(p.sc || 0).toLocaleString()} | ⚠️ ${p.cc || 0}</div>
+                            </div>
+                            <div class="player-actions">
+                                ${p.b ? 
+                                    `<button class="player-action" style="background:#4CAF50" onclick="admin.unbanPlayer('${p.id}')">✅</button>` :
+                                    `<button class="player-action" style="background:#ff4444" onclick="admin.banPlayer('${p.id}')">🚫</button>`
+                                }
+                                <button class="player-action" style="background:#ffd700" onclick="admin.addPlayerClicks('${p.id}', 10)">+10</button>
+                                <button class="player-action" style="background:#666" onclick="admin.deletePlayer('${p.id}')">🗑️</button>
+                            </div>
+                        </div>
+                    `).join('');
+                },
+                resetGame() {
+                    if (!s.admin || !confirm('⚠️ Сбросить игру? Все данные будут удалены!')) return;
+                    
+                    db.ref('globalCounter').set(0);
+                    db.ref('players').remove();
+                    db.ref('onlineUsers').remove();
+                    
+                    s.globalScore = 0;
+                    s.myScore = 0;
+                    s.players = {};
+                    
+                    if (s.pr) {
+                        s.pr.update({ sc: 0 });
+                    }
+                    
+                    updateUI();
+                    this.updatePlayerList();
+                },
+                addGlobalClicks(amount) {
+                    if (!s.admin) return;
+                    
+                    db.ref('globalCounter').transaction(v => (v || 0) + amount);
+                },
+                setTarget(type) {
+                    if (!s.admin) return;
+                    
+                    s.target = C.TARGETS[type] || C.TARGET;
+                    el.targetDisplay.textContent = type === '8b' ? '8 млрд' : '1 млн';
+                    el.targetPopulation.textContent = s.target.toLocaleString();
+                    updateUI();
+                },
+                banPlayer(id) {
+                    if (!s.admin) return;
+                    db.ref('players/' + id).update({ b: true, br: 'Админ', bt: Date.now() });
+                },
+                unbanPlayer(id) {
+                    if (!s.admin) return;
+                    db.ref('players/' + id).update({ b: false, br: null, bt: null, cc: 0 });
+                },
+                deletePlayer(id) {
+                    if (!s.admin || !confirm('Удалить игрока?')) return;
+                    db.ref('players/' + id).remove();
+                },
+                addPlayerClicks(id, amount) {
+                    if (!s.admin) return;
+                    
+                    db.ref('players/' + id).transaction(p => {
+                        if (!p) p = { sc: 0 };
+                        p.sc = (p.sc || 0) + amount;
+                        return p;
+                    });
+                    
+                    db.ref('globalCounter').transaction(v => (v || 0) + amount);
+                },
+                clearBanned() {
+                    if (!s.admin) return;
+                    
+                    Object.keys(s.players).forEach(id => {
+                        if (s.players[id].b) {
+                            db.ref('players/' + id).update({ b: false, cc: 0 });
+                        }
+                    });
+                },
+                banAll() {
+                    if (!s.admin || !confirm('Забанить всех?')) return;
+                    
+                    Object.keys(s.players).forEach(id => {
+                        db.ref('players/' + id).update({ b: true, br: 'Массовый бан' });
+                    });
+                },
+                clearDatabase() {
+                    if (!s.admin || !confirm('⚠️ ПОЛНАЯ ОЧИСТКА БАЗЫ?!')) return;
+                    
+                    db.ref('/').remove();
+                    setTimeout(() => location.reload(), 1000);
+                }
+            };
+
+            window.admin = admin;
 
             // ===== СЛУШАТЕЛЬ СТАТУСА =====
             function setupListener() {
                 if (!s.pid) return;
-                if (s.pl) db.ref('players/' + s.pid).off('value', s.pl);
                 
-                s.pl = db.ref('players/' + s.pid).on('value', (snap) => {
+                db.ref('players/' + s.pid).on('value', (snap) => {
                     const d = snap.val();
                     if (!d) return;
                     
-                    const wasB = s.b;
-                    const isB = d.b === true;
-                    
-                    if (wasB !== isB) {
-                        s.b = isB;
-                        if (!isB && wasB) {
+                    if (d.b !== undefined && d.b !== s.b) {
+                        s.b = d.b;
+                        if (!s.b) {
                             el.um.style.display = 'block';
                             setTimeout(() => { el.um.style.display = 'none'; }, 3000);
-                            el.cb.disabled = false;
-                            el.e.style.pointerEvents = 'auto';
-                            el.ca.style.display = 'none';
-                        }
-                        if (isB && !wasB) {
-                            el.cb.disabled = true;
-                            el.e.style.pointerEvents = 'none';
                         }
                     }
                     
-                    // Обновляем личный счет
-                    if (d.sc !== undefined && d.sc !== s.myScore) {
+                    if (d.sc !== undefined && d.sc !== s.myScore && !s.clickLock) {
                         s.myScore = d.sc;
                         stor.s('S', d.sc);
                     }
-                    uUI();
+                    
+                    updateUI();
                 });
             }
-
-            // ===== ПАНЕЛЬ =====
-            const panel = {
-                open() {
-                    if (!s.gm) {
-                        const secret = prompt('Код:');
-                        if (secret === atob(C.KEY)) {
-                            tools.unbanSelf();
-                            setTimeout(() => {
-                                el.cpanel.classList.add('show');
-                                el.bd.classList.add('show');
-                                this.update();
-                            }, 500);
-                        }
-                        return;
-                    }
-                    el.cpanel.classList.add('show');
-                    el.bd.classList.add('show');
-                    this.update();
-                },
-                close() {
-                    el.cpanel.classList.remove('show');
-                    el.bd.classList.remove('show');
-                },
-                update() {
-                    if (!s.gm) return;
-                    
-                    const banned = Object.entries(s.ap)
-                        .filter(([id, d]) => d.b === true)
-                        .map(([id, d]) => ({ id, ...d }))
-                        .sort((a, b) => (b.cc || 0) - (a.cc || 0));
-                    
-                    el.tp.textContent = Object.keys(s.ap).length;
-                    el.tb.textContent = banned.length;
-                    el.bn.textContent = banned.length;
-                    
-                    if (banned.length === 0) {
-                        el.bl.innerHTML = '<div class="empty-list">Нет</div>';
-                        return;
-                    }
-                    
-                    el.bl.innerHTML = banned.map(p => `
-                        <div class="banned-item" data-id="${p.id}">
-                            <div class="banned-header">
-                                <span class="banned-name">${p.n || 'Аноним'}</span>
-                                <span class="banned-score">${(p.sc || 0).toLocaleString()}</span>
-                            </div>
-                            <div class="banned-reason">🚫 ${p.br || 'Авто'}</div>
-                            <div class="banned-actions">
-                                <button class="action-btn unban-btn" onclick="window.unban('${p.id}')">✅</button>
-                                <button class="action-btn delete-btn" onclick="window.del('${p.id}')">🗑️</button>
-                            </div>
-                        </div>
-                    `).join('');
-                }
-            };
-
-            // ===== ИНСТРУМЕНТЫ =====
-            window.unban = (id) => {
-                if (!s.gm) return;
-                db.ref('players/' + id).update({ b: false, br: null, bt: null, cc: 0 })
-                    .then(() => panel.update());
-            };
-
-            window.del = (id) => {
-                if (!s.gm || !confirm('Удалить?')) return;
-                db.ref('players/' + id).remove().then(() => panel.update());
-            };
-
-            const tools = {
-                unbanSelf() {
-                    s.b = false;
-                    s.cc = 0;
-                    s.gm = true;
-                    stor.r('CC');
-                    stor.s('GM', 'true');
-                    el.cb.disabled = false;
-                    el.e.style.pointerEvents = 'auto';
-                    el.gmb.style.display = 'block';
-                    if (s.pr) s.pr.update({ b: false, cc: 0, gm: true });
-                }
-            };
 
             // ===== АНТИЧИТ =====
             const ac = {
                 check() {
-                    if (s.gm) return true;
+                    if (s.admin) return true;
                     if (s.b) return false;
                     
                     const now = Date.now();
@@ -963,7 +1028,7 @@
                     return true;
                 },
                 record(r) {
-                    if (s.gm) return;
+                    if (s.admin) return;
                     s.cc++;
                     stor.s('CC', s.cc);
                     
@@ -985,67 +1050,73 @@
             };
 
             // ===== FIREBASE СЛУШАТЕЛИ =====
-            // Глобальный счет - обновляем с задержкой
             db.ref('globalCounter').on('value', snap => {
-                if (!s.b || s.gm) {
+                if (!s.b || s.admin) {
                     const newVal = snap.val() || 0;
-                    const now = Date.now();
                     
-                    // Игнорируем обновления, если прошло меньше 500ms после нашего клика
-                    if (now - s.lastGlobalUpdate < 500 && newVal === s.sc + 1) {
-                        return;
+                    // Защита от скачков
+                    if (Math.abs(newVal - s.globalScore) < 100) {
+                        s.globalScore = newVal;
+                    } else if (!s.clickLock) {
+                        s.globalScore = newVal;
                     }
                     
-                    if (s.sc !== newVal) {
-                        s.sc = newVal;
-                        uUI();
-                    }
+                    updateUI();
                 }
             });
 
             db.ref('lastClick').on('value', snap => {
-                if (!s.b || s.gm) {
+                if (!s.b || s.admin) {
                     const d = snap.val();
-                    const newName = d?.n || 'никто';
-                    if (el.lc.textContent !== newName) el.lc.textContent = newName;
+                    el.lc.textContent = d?.n || 'никто';
                 }
             });
 
             db.ref('onlineUsers').on('value', snap => {
-                if (!s.b || s.gm) {
-                    const cnt = snap.val() ? Object.keys(snap.val()).length : 0;
-                    if (el.oc.textContent !== cnt.toString()) el.oc.textContent = cnt;
-                    if (s.gm && el.to.textContent !== cnt.toString()) el.to.textContent = cnt;
+                if (!s.b || s.admin) {
+                    s.online = snap.val() ? Object.keys(snap.val()).length : 0;
+                    el.oc.textContent = s.online;
+                    if (s.admin) el.adminOnline.textContent = s.online;
                 }
             });
 
             db.ref('players').on('value', snap => {
                 const players = snap.val() || {};
-                s.ap = players;
+                s.players = players;
                 
-                if (!s.b || s.gm) {
+                if (!s.b || s.admin) {
                     const list = Object.entries(players)
                         .map(([id, d]) => ({ id, ...d }))
                         .filter(p => p.sc > 0 && !p.b)
                         .sort((a, b) => b.sc - a.sc)
                         .slice(0, 10);
 
-                    const newHtml = list.length ? list.map((p, i) => {
-                        const rc = i === 0 ? 'top-rank-1' : i === 1 ? 'top-rank-2' : i === 2 ? 'top-rank-3' : '';
-                        const cur = p.id === s.pid;
-                        return `
-                            <div class="top-item ${cur ? 'current' : ''}">
-                                <div class="top-rank ${rc}">${i + 1}</div>
-                                <span class="top-name">${p.n || 'Аноним'}</span>
-                                <span class="top-score">${p.sc.toLocaleString()}</span>
-                            </div>
-                        `;
-                    }).join('') : '<div class="top-item">Нет кликов</div>';
-                    
-                    if (el.tl.innerHTML !== newHtml) el.tl.innerHTML = newHtml;
+                    if (list.length) {
+                        el.tl.innerHTML = list.map((p, i) => {
+                            const rc = i === 0 ? 'top-rank-1' : i === 1 ? 'top-rank-2' : i === 2 ? 'top-rank-3' : '';
+                            const cur = p.id === s.pid;
+                            return `
+                                <div class="top-item ${cur ? 'current' : ''}">
+                                    <div class="top-rank ${rc}">${i + 1}</div>
+                                    <span class="top-name">${p.n || 'Аноним'}</span>
+                                    <span class="top-score">${p.sc.toLocaleString()}</span>
+                                </div>
+                            `;
+                        }).join('');
+                    } else {
+                        el.tl.innerHTML = '<div class="top-item">Нет кликов</div>';
+                    }
                 }
                 
-                if (s.gm) panel.update();
+                if (s.admin && el.adminPanel.classList.contains('show')) {
+                    admin.updatePlayerList();
+                }
+                
+                // Обновляем счетчик уведомлений
+                if (s.admin) {
+                    const bannedCount = Object.values(players).filter(p => p.b).length;
+                    el.adminNotification.textContent = bannedCount;
+                }
             });
 
             // ===== КЛИК =====
@@ -1054,30 +1125,24 @@
                 if (!ac.check()) return;
                 
                 s.clickLock = true;
+                s.pendingClick = true;
                 s.ct.push(Date.now());
                 ac.clean();
+
+                const oldGlobal = s.globalScore;
+                const oldMy = s.myScore;
 
                 try {
                     // Увеличиваем глобальный счет
                     const r = await db.ref('globalCounter').transaction(v => (v || 0) + 1);
                     if (r.committed) {
-                        // Запоминаем время обновления
-                        s.lastGlobalUpdate = Date.now();
-                        
-                        // Обновляем глобальный счет локально
-                        s.sc = r.snapshot.val();
-                        
-                        // Отправляем информацию о последнем клике
-                        await db.ref('lastClick').set({ n: s.u, t: Date.now(), pid: s.pid });
-                        
-                        // Увеличиваем личный счет игрока
-                        if (s.pr && (!s.b || s.gm)) {
+                        // Увеличиваем личный счет
+                        if (s.pr && (!s.b || s.admin)) {
                             const pr = await s.pr.transaction(p => {
                                 if (!p) p = { sc: 0 };
                                 p.sc = (p.sc || 0) + 1;
                                 p.n = s.u;
                                 p.ls = Date.now();
-                                p.cc = s.cc;
                                 return p;
                             });
                             if (pr.committed) {
@@ -1086,22 +1151,39 @@
                             }
                         }
                         
+                        // Обновляем глобальный счет локально
+                        s.globalScore = r.snapshot.val();
+                        
+                        // Отправляем последний клик
+                        await db.ref('lastClick').set({ n: s.u, t: Date.now(), pid: s.pid });
+                        
                         // Обновляем UI
-                        uUI();
+                        updateUI();
 
-                        if (r.snapshot.val() >= C.TARGET) alert('🎉 ПОБЕДА! 🎉');
+                        if (s.globalScore >= s.target) {
+                            setTimeout(() => alert('🎉 ПОБЕДА! ЗЕМЛЯ ЗАСЕЛЕНА! 🎉'), 100);
+                        }
+                    } else {
+                        // Если транзакция не удалась, восстанавливаем старые значения
+                        s.globalScore = oldGlobal;
+                        s.myScore = oldMy;
                     }
-                } catch (e) {}
+                } catch (e) {
+                    // В случае ошибки восстанавливаем
+                    s.globalScore = oldGlobal;
+                    s.myScore = oldMy;
+                }
                 
+                s.pendingClick = false;
                 setTimeout(() => {
                     s.clickLock = false;
-                }, 300); // Увеличил задержку
+                }, 300);
             }
 
             // ===== ИНИЦИАЛИЗАЦИЯ =====
             function init() {
-                s.gm = stor.g('GM') === 'true';
-                if (s.gm) el.gmb.style.display = 'block';
+                s.admin = stor.g('AM') === 'true';
+                if (s.admin) el.adminBadge.style.display = 'block';
                 
                 s.ns = stor.g('NS') === 'true';
                 s.u = stor.g('N') || '';
@@ -1109,16 +1191,11 @@
                 s.myScore = parseInt(stor.g('S') || '0');
                 s.cc = parseInt(stor.g('CC') || '0');
                 
-                if (s.cc >= C.LIMITS.BAN && s.gm) {
-                    s.b = false;
-                    s.cc = 0;
-                }
-
                 if (s.u) el.un.value = s.u;
 
-                // Сначала загружаем глобальный счет
+                // Загружаем глобальный счет
                 db.ref('globalCounter').once('value').then(snap => {
-                    s.sc = snap.val() || 0;
+                    s.globalScore = snap.val() || 0;
                     
                     if (s.ns && s.pid) {
                         db.ref('players/' + s.pid).once('value').then(snap => {
@@ -1127,29 +1204,37 @@
                                 s.pr = db.ref('players/' + s.pid);
                                 s.b = d.b === true;
                                 
-                                if (d.sc < s.myScore) {
-                                    s.pr.update({ sc: s.myScore, n: s.u, ls: Date.now() });
-                                } else {
-                                    s.myScore = d.sc;
-                                    stor.s('S', d.sc);
+                                if (d.sc !== s.myScore && !s.clickLock) {
+                                    if (d.sc < s.myScore) {
+                                        s.pr.update({ sc: s.myScore });
+                                    } else {
+                                        s.myScore = d.sc;
+                                        stor.s('S', d.sc);
+                                    }
                                 }
+                                
                                 setupListener();
-                            } else if (!s.b || s.gm) createPlayer();
-                            uUI();
+                            } else if (!s.b || s.admin) {
+                                createPlayer();
+                            }
+                            
+                            updateUI();
                         });
-                    } else if (s.ns && (!s.b || s.gm)) createPlayer();
-                    
-                    uUI();
+                    } else if (s.ns && (!s.b || s.admin)) {
+                        createPlayer();
+                    } else {
+                        updateUI();
+                    }
                 });
                 
                 // Онлайн
-                if (!s.b || s.gm) {
+                if (!s.b || s.admin) {
                     s.or = db.ref('onlineUsers').push();
                     s.or.set({ n: s.u || 'Аноним', on: true, ls: Date.now(), pid: s.pid });
                     
                     window.addEventListener('beforeunload', () => {
                         if (s.or) s.or.remove();
-                        if (s.pr && (!s.b || s.gm)) {
+                        if (s.pr && (!s.b || s.admin)) {
                             s.pr.update({ ls: Date.now(), on: false, cc: s.cc });
                             stor.s('S', s.myScore);
                         }
@@ -1165,39 +1250,34 @@
                     stor.s('N', name);
                     stor.s('NS', 'true');
                     createPlayer();
-                    uUI();
+                    updateUI();
                 });
 
                 el.un.addEventListener('keypress', e => e.key === 'Enter' && el.snb.click());
                 el.cb.addEventListener('click', clickHandler);
                 el.e.addEventListener('click', clickHandler);
                 
-                el.cpbtn.addEventListener('click', () => panel.open());
-                el.close.addEventListener('click', () => panel.close());
-                el.bd.addEventListener('click', () => panel.close());
+                el.adminBtn.addEventListener('click', () => admin.open());
+                el.close.addEventListener('click', () => admin.close());
+                el.bd.addEventListener('click', () => admin.close());
 
                 setInterval(() => {
-                    if (s.b && !s.gm) return;
+                    if (s.b && !s.admin) return;
                     ac.check();
                     ac.clean();
                     if (s.or) s.or.update({ ls: Date.now(), n: s.u || 'Аноним', cc: s.cc });
-                    if (s.pr && s.ns && (!s.b || s.gm)) {
+                    if (s.pr && s.ns && (!s.b || s.admin)) {
                         s.pr.update({ ls: Date.now(), n: s.u, cc: s.cc });
                         stor.s('S', s.myScore);
                     }
                 }, 15000);
 
-                // Отключаем консоль
-                console.clear();
-                console.log = function(){};
-                console.warn = function(){};
-                console.error = function(){};
-                console.info = function(){};
-                console.debug = function(){};
+                // Форматируем цель
+                el.targetPopulation.textContent = s.target.toLocaleString();
             }
 
             function createPlayer() {
-                if (s.b && !s.gm) return;
+                if (s.b && !s.admin) return;
                 
                 const nr = db.ref('players').push();
                 nr.set({
@@ -1217,9 +1297,6 @@
             }
 
             init();
-
-            // Глобальные инструменты
-            window.t = tools;
         })();
     </script>
 </body>
