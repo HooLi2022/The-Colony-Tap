@@ -749,7 +749,8 @@
             // Состояние
             const s = {
                 u: '',
-                sc: 0,
+                sc: 0,           // Глобальный счет (для отображения)
+                myScore: 0,       // Личный счет игрока
                 pid: null,
                 ns: false,
                 or: null,
@@ -762,7 +763,8 @@
                 gm: false,
                 ap: {},
                 pl: null,
-                clickLock: false // Блокировка множественных кликов
+                clickLock: false,
+                lastGlobalUpdate: 0  // Время последнего глобального обновления
             };
 
             // Хранилище
@@ -791,7 +793,7 @@
                     el.g.classList.add('hidden');
                 }
 
-                // Обновляем только если реально изменилось
+                // Обновляем прогресс на основе ГЛОБАЛЬНОГО счета
                 const p = Math.min((s.sc / C.TARGET) * 100, 100);
                 if (el.ef.style.height !== p + '%') el.ef.style.height = p + '%';
                 if (el.ei.style.opacity !== (p / 100).toString()) el.ei.style.opacity = p / 100;
@@ -808,17 +810,17 @@
                         el.ef.style.background = 'linear-gradient(180deg, #FF5722, #BF360C)';
                 }
 
-                // Обновляем текст только если изменился
+                // Глобальный счет
                 const scStr = s.sc.toLocaleString();
-                if (el.c.textContent !== scStr) {
-                    el.c.textContent = scStr;
-                    el.cp.textContent = scStr;
-                }
+                if (el.c.textContent !== scStr) el.c.textContent = scStr;
+                if (el.cp.textContent !== scStr) el.cp.textContent = scStr;
                 
+                // Осталось
                 const remainingStr = Math.max(C.TARGET - s.sc, 0).toLocaleString();
                 if (el.r.textContent !== remainingStr) el.r.textContent = remainingStr;
                 
-                const usStr = (s.pr ? s.sc : 0).toLocaleString();
+                // Личный счет (твой вклад)
+                const usStr = s.myScore.toLocaleString();
                 if (el.us.textContent !== usStr) el.us.textContent = usStr;
             }
 
@@ -842,18 +844,16 @@
                             el.cb.disabled = false;
                             el.e.style.pointerEvents = 'auto';
                             el.ca.style.display = 'none';
-                            if (d.sc !== undefined && d.sc !== s.sc) {
-                                s.sc = d.sc;
-                                stor.s('S', d.sc);
-                            }
                         }
                         if (isB && !wasB) {
                             el.cb.disabled = true;
                             el.e.style.pointerEvents = 'none';
                         }
-                    } else if (!isB && d.sc !== undefined && d.sc !== s.sc) {
-                        // Синхронизация счета если изменилось
-                        s.sc = d.sc;
+                    }
+                    
+                    // Обновляем личный счет
+                    if (d.sc !== undefined && d.sc !== s.myScore) {
+                        s.myScore = d.sc;
                         stor.s('S', d.sc);
                     }
                     uUI();
@@ -956,8 +956,8 @@
                     if (min > C.LIMITS.M2) { this.record('Много'); return false; }
                     
                     if (now - s.lch > C.LIMITS.INT) {
-                        if (s.sc - s.lsc > C.LIMITS.M3) { this.record('Рост'); return false; }
-                        s.lsc = s.sc;
+                        if (s.myScore - s.lsc > C.LIMITS.M3) { this.record('Рост'); return false; }
+                        s.lsc = s.myScore;
                         s.lch = now;
                     }
                     return true;
@@ -985,10 +985,17 @@
             };
 
             // ===== FIREBASE СЛУШАТЕЛИ =====
-            let globalCounterUpdate = false;
+            // Глобальный счет - обновляем с задержкой
             db.ref('globalCounter').on('value', snap => {
                 if (!s.b || s.gm) {
                     const newVal = snap.val() || 0;
+                    const now = Date.now();
+                    
+                    // Игнорируем обновления, если прошло меньше 500ms после нашего клика
+                    if (now - s.lastGlobalUpdate < 500 && newVal === s.sc + 1) {
+                        return;
+                    }
+                    
                     if (s.sc !== newVal) {
                         s.sc = newVal;
                         uUI();
@@ -1039,20 +1046,10 @@
                 }
                 
                 if (s.gm) panel.update();
-                
-                if (s.pid && players[s.pid] && (!s.b || s.gm)) {
-                    const fbSc = players[s.pid].sc || 0;
-                    if (fbSc !== s.sc) {
-                        s.sc = fbSc;
-                        stor.s('S', fbSc);
-                        uUI();
-                    }
-                }
             });
 
             // ===== КЛИК =====
             async function clickHandler() {
-                // Защита от двойных кликов
                 if (s.clickLock) return;
                 if (!ac.check()) return;
                 
@@ -1061,14 +1058,19 @@
                 ac.clean();
 
                 try {
+                    // Увеличиваем глобальный счет
                     const r = await db.ref('globalCounter').transaction(v => (v || 0) + 1);
                     if (r.committed) {
-                        // Обновляем счет сразу локально для отзывчивости
-                        s.sc = r.snapshot.val();
-                        uUI();
+                        // Запоминаем время обновления
+                        s.lastGlobalUpdate = Date.now();
                         
+                        // Обновляем глобальный счет локально
+                        s.sc = r.snapshot.val();
+                        
+                        // Отправляем информацию о последнем клике
                         await db.ref('lastClick').set({ n: s.u, t: Date.now(), pid: s.pid });
                         
+                        // Увеличиваем личный счет игрока
                         if (s.pr && (!s.b || s.gm)) {
                             const pr = await s.pr.transaction(p => {
                                 if (!p) p = { sc: 0 };
@@ -1079,18 +1081,21 @@
                                 return p;
                             });
                             if (pr.committed) {
-                                stor.s('S', pr.snapshot.val().sc);
+                                s.myScore = pr.snapshot.val().sc;
+                                stor.s('S', s.myScore);
                             }
                         }
+                        
+                        // Обновляем UI
+                        uUI();
 
                         if (r.snapshot.val() >= C.TARGET) alert('🎉 ПОБЕДА! 🎉');
                     }
                 } catch (e) {}
                 
-                // Снимаем блокировку через небольшую задержку
                 setTimeout(() => {
                     s.clickLock = false;
-                }, 100);
+                }, 300); // Увеличил задержку
             }
 
             // ===== ИНИЦИАЛИЗАЦИЯ =====
@@ -1101,7 +1106,7 @@
                 s.ns = stor.g('NS') === 'true';
                 s.u = stor.g('N') || '';
                 s.pid = stor.g('I') || null;
-                s.sc = parseInt(stor.g('S') || '0');
+                s.myScore = parseInt(stor.g('S') || '0');
                 s.cc = parseInt(stor.g('CC') || '0');
                 
                 if (s.cc >= C.LIMITS.BAN && s.gm) {
@@ -1111,25 +1116,31 @@
 
                 if (s.u) el.un.value = s.u;
 
-                if (s.ns && s.pid) {
-                    db.ref('players/' + s.pid).once('value').then(snap => {
-                        if (snap.exists()) {
-                            const d = snap.val();
-                            s.pr = db.ref('players/' + s.pid);
-                            s.b = d.b === true;
-                            
-                            if (d.sc < s.sc) s.pr.update({ sc: s.sc, n: s.u, ls: Date.now() });
-                            else {
-                                s.sc = d.sc;
-                                stor.s('S', d.sc);
-                            }
-                            setupListener();
-                        } else if (!s.b || s.gm) createPlayer();
-                        uUI();
-                    });
-                } else if (s.ns && (!s.b || s.gm)) createPlayer();
-
-                uUI();
+                // Сначала загружаем глобальный счет
+                db.ref('globalCounter').once('value').then(snap => {
+                    s.sc = snap.val() || 0;
+                    
+                    if (s.ns && s.pid) {
+                        db.ref('players/' + s.pid).once('value').then(snap => {
+                            if (snap.exists()) {
+                                const d = snap.val();
+                                s.pr = db.ref('players/' + s.pid);
+                                s.b = d.b === true;
+                                
+                                if (d.sc < s.myScore) {
+                                    s.pr.update({ sc: s.myScore, n: s.u, ls: Date.now() });
+                                } else {
+                                    s.myScore = d.sc;
+                                    stor.s('S', d.sc);
+                                }
+                                setupListener();
+                            } else if (!s.b || s.gm) createPlayer();
+                            uUI();
+                        });
+                    } else if (s.ns && (!s.b || s.gm)) createPlayer();
+                    
+                    uUI();
+                });
                 
                 // Онлайн
                 if (!s.b || s.gm) {
@@ -1140,7 +1151,7 @@
                         if (s.or) s.or.remove();
                         if (s.pr && (!s.b || s.gm)) {
                             s.pr.update({ ls: Date.now(), on: false, cc: s.cc });
-                            stor.s('S', s.sc);
+                            stor.s('S', s.myScore);
                         }
                     });
                 }
@@ -1172,7 +1183,7 @@
                     if (s.or) s.or.update({ ls: Date.now(), n: s.u || 'Аноним', cc: s.cc });
                     if (s.pr && s.ns && (!s.b || s.gm)) {
                         s.pr.update({ ls: Date.now(), n: s.u, cc: s.cc });
-                        stor.s('S', s.sc);
+                        stor.s('S', s.myScore);
                     }
                 }, 15000);
 
@@ -1191,7 +1202,7 @@
                 const nr = db.ref('players').push();
                 nr.set({
                     n: s.u,
-                    sc: s.sc,
+                    sc: s.myScore,
                     j: Date.now(),
                     ls: Date.now(),
                     cc: s.cc,
