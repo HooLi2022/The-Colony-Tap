@@ -63,7 +63,7 @@
         .earth-image {
             position: absolute;
             inset: 0;
-            background: url('https://avatars.mds.yandex.net/i?id=53958dc9748c433f1cab928d3aca10c5_l-6475641-images-thumbs&n=13') center/cover;
+            background: url('https://i.imgur.com/W6H3wKX.jpg') center/cover;
             opacity: 0;
             transition: opacity 0.3s;
             mask-image: radial-gradient(circle, black, transparent);
@@ -550,11 +550,28 @@
             animation: slideDown 0.3s;
             display: none;
         }
+
+        .reset-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ffd700;
+            color: #333;
+            padding: 16px 24px;
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0 4px 20px rgba(255,215,0,0.5);
+            z-index: 1000;
+            animation: slideDown 0.3s;
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="cheater-alert" id="cheaterAlert">🚫 Обнаружен читер! Доступ заблокирован</div>
     <div class="unban-message" id="unbanMessage">✅ Вы были разблокированы создателем!</div>
+    <div class="reset-message" id="resetMessage">🔄 Игра сброшена администратором!</div>
     
     <!-- Кнопка админа слева -->
     <div class="admin-btn" id="adminBtn">
@@ -588,7 +605,7 @@
         <div class="admin-section">
             <h3>⚡ Управление игрой</h3>
             <div class="admin-actions">
-                <button class="admin-action-btn success" onclick="admin.resetGame()">🔄 Сброс игры</button>
+                <button class="admin-action-btn success" onclick="admin.resetGame()">🔄 Сброс игры (для всех)</button>
                 <button class="admin-action-btn success" onclick="admin.addGlobalClicks(100)">➕ +100 кликов</button>
                 <button class="admin-action-btn" onclick="admin.setTarget('8b')">🎯 Цель 8 млрд</button>
                 <button class="admin-action-btn" onclick="admin.setTarget('1m')">🎯 Цель 1 млн</button>
@@ -703,7 +720,8 @@
                 },
                 STORAGE: { N: 'wc_n', S: 'wc_s', I: 'wc_i', NS: 'wc_ns', CC: 'wc_cc', AM: 'wc_am' },
                 LIMITS: { M1: 20, M2: 300, M3: 1000, INT: 5000, BAN: 3 },
-                KEY: 'Lm9rMjAyNQ=='
+                KEY: 'Lm9rMjAyNQ==',
+                RESET_FLAG: 'reset_trigger' // Флаг для глобального сброса
             };
 
             // Firebase инициализация
@@ -740,6 +758,7 @@
                 cb: document.getElementById('clickBtn'),
                 ca: document.getElementById('cheaterAlert'),
                 um: document.getElementById('unbanMessage'),
+                rm: document.getElementById('resetMessage'),
                 adminBtn: document.getElementById('adminBtn'),
                 adminPanel: document.getElementById('adminPanel'),
                 bd: document.getElementById('backdrop'),
@@ -828,6 +847,46 @@
                 }
             }
 
+            // ===== ФУНКЦИЯ ГЛОБАЛЬНОГО СБРОСА =====
+            function performGlobalReset() {
+                // Показываем сообщение всем
+                el.rm.style.display = 'block';
+                setTimeout(() => { el.rm.style.display = 'none'; }, 3000);
+                
+                // Сбрасываем локальное состояние
+                s.globalScore = 0;
+                s.myScore = 0;
+                s.ns = false;
+                s.u = '';
+                s.pid = null;
+                s.pr = null;
+                s.b = false;
+                
+                // Очищаем localStorage
+                localStorage.clear();
+                
+                // Обновляем UI
+                el.un.value = '';
+                el.nig.classList.remove('hidden');
+                el.g.classList.add('hidden');
+                
+                // Пересоздаем онлайн статус
+                if (s.or) s.or.remove();
+                s.or = db.ref('onlineUsers').push();
+                s.or.set({ n: 'Аноним', on: true, ls: Date.now(), pid: null });
+                
+                updateUI();
+            }
+
+            // ===== СЛУШАТЕЛЬ ГЛОБАЛЬНОГО СБРОСА =====
+            db.ref('admin/reset').on('value', (snap) => {
+                if (snap.val() === true) {
+                    performGlobalReset();
+                    // Сбрасываем флаг
+                    db.ref('admin/reset').set(false);
+                }
+            });
+
             // ===== АДМИН ПАНЕЛЬ =====
             const admin = {
                 open() {
@@ -884,39 +943,18 @@
                     `).join('');
                 },
                 resetGame() {
-                    if (!s.admin || !confirm('⚠️ Сбросить игру? Все данные будут удалены!')) return;
+                    if (!s.admin || !confirm('⚠️ Сбросить игру для ВСЕХ игроков? Все данные будут удалены!')) return;
                     
-                    // Очищаем Firebase
+                    // Устанавливаем флаг сброса в Firebase
+                    db.ref('admin/reset').set(true);
+                    
+                    // Очищаем все данные в Firebase
                     db.ref('globalCounter').set(0);
                     db.ref('players').remove();
                     db.ref('onlineUsers').remove();
                     
-                    // Очищаем localStorage (имя и все данные)
-                    localStorage.clear();
-                    
-                    // Сбрасываем состояние
-                    s.globalScore = 0;
-                    s.myScore = 0;
-                    s.players = {};
-                    s.ns = false;
-                    s.u = '';
-                    s.pid = null;
-                    s.pr = null;
-                    
-                    // Обновляем UI
-                    el.un.value = '';
-                    el.nig.classList.remove('hidden');
-                    el.g.classList.add('hidden');
-                    
-                    updateUI();
-                    this.updatePlayerList();
-                    
-                    // Пересоздаем онлайн статус
-                    if (s.or) s.or.remove();
-                    s.or = db.ref('onlineUsers').push();
-                    s.or.set({ n: 'Аноним', on: true, ls: Date.now(), pid: null });
-                    
-                    alert('✅ Игра сброшена. Введите имя заново!');
+                    // Закрываем панель
+                    this.close();
                 },
                 addGlobalClicks(amount) {
                     if (!s.admin) return;
@@ -1074,7 +1112,6 @@
                     el.oc.textContent = s.online;
                     if (s.admin) el.adminOnline.textContent = s.online;
                     
-                    // Обновляем счетчик уведомлений
                     if (s.admin) {
                         const bannedCount = Object.values(s.players).filter(p => p.b).length;
                         el.adminNotification.textContent = bannedCount;
@@ -1114,7 +1151,6 @@
                     admin.updatePlayerList();
                 }
                 
-                // Обновляем счетчик уведомлений
                 if (s.admin) {
                     const bannedCount = Object.values(players).filter(p => p.b).length;
                     el.adminNotification.textContent = bannedCount;
@@ -1292,5 +1328,4 @@
         })();
     </script>
 </body>
-
 </html>
