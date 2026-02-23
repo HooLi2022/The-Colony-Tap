@@ -50,26 +50,42 @@
             transform: scale(0.98);
         }
 
-        /* Цветная заливка (теперь это маска для картинки) */
+        /* Фон (темный) */
         .earth-fill {
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
             height: 0%;
-            background: #4CAF50;
+            background: #2B3B4B;
             transition: height 0.3s ease-out;
             z-index: 1;
         }
 
-        /* Картинка Земли (изначально скрыта, появляется через маску) */
+        /* Картинка Земли */
         .earth-image {
             position: absolute;
             inset: 0;
-            background: url('https://github.com/HooLi2022/The-Colony-Tap/blob/main/в.png') center/cover;
+            background: url('https://i.imgur.com/W6H3wKX.jpg') center/cover;
+            /* Временно для отладки - раскомментируй чтобы проверить */
+            /* background: url('https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?w=400') center/cover; */
             z-index: 2;
             clip-path: inset(100% 0 0 0);
             transition: clip-path 0.3s ease-out;
+        }
+
+        /* Временная метка для отладки */
+        .debug-info {
+            position: fixed;
+            bottom: 80px;
+            left: 20px;
+            background: rgba(0,0,0,0.7);
+            color: #ffd700;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 1000;
+            display: none;
         }
 
         .progress-section {
@@ -582,6 +598,9 @@
         <span class="notification" id="adminNotification">0</span>
     </div>
     
+    <!-- Отладочная информация -->
+    <div class="debug-info" id="debugInfo"></div>
+    
     <div class="backdrop" id="backdrop"></div>
     
     <div class="admin-panel" id="adminPanel">
@@ -637,9 +656,9 @@
         <p>Цель: <span id="targetDisplay">8 млрд</span></p>
         
         <div class="earth" id="earth">
-            <!-- Цветная заливка (фон) -->
+            <!-- Фон (темный) -->
             <div class="earth-fill" id="earthFill"></div>
-            <!-- Картинка Земли (появляется снизу вверх) -->
+            <!-- Картинка Земли -->
             <div class="earth-image" id="earthImage"></div>
         </div>
         
@@ -726,7 +745,8 @@
                 STORAGE: { N: 'wc_n', S: 'wc_s', I: 'wc_i', NS: 'wc_ns', CC: 'wc_cc', AM: 'wc_am' },
                 LIMITS: { M1: 20, M2: 300, M3: 1000, INT: 5000, BAN: 3 },
                 KEY: 'Lm9rMjAyNQ==',
-                RESET_FLAG: 'reset_trigger'
+                RESET_FLAG: 'reset_trigger',
+                IMAGE_URL: 'https://i.imgur.com/W6H3wKX.jpg' // ← ЗДЕСЬ ТВОЯ ССЫЛКА
             };
 
             // Firebase инициализация
@@ -774,7 +794,8 @@
                 adminTotalPlayers: document.getElementById('adminTotalPlayers'),
                 adminOnline: document.getElementById('adminOnline'),
                 targetDisplay: document.getElementById('targetDisplay'),
-                targetPopulation: document.getElementById('targetPopulation')
+                targetPopulation: document.getElementById('targetPopulation'),
+                debugInfo: document.getElementById('debugInfo')
             };
 
             // Состояние
@@ -796,7 +817,8 @@
                 online: 0,
                 clickLock: false,
                 target: C.TARGET,
-                pendingClick: false
+                pendingClick: false,
+                imageLoaded: false
             };
 
             // Хранилище
@@ -805,6 +827,29 @@
                 s: (k, v) => { try { localStorage.setItem(C.STORAGE[k], v); } catch {} },
                 r: (k) => { try { localStorage.removeItem(C.STORAGE[k]); } catch {} }
             };
+
+            // ===== ПРОВЕРКА ЗАГРУЗКИ КАРТИНКИ =====
+            function checkImage() {
+                const img = new Image();
+                img.onload = function() {
+                    s.imageLoaded = true;
+                    el.debugInfo.style.display = 'block';
+                    el.debugInfo.style.background = '#4CAF50';
+                    el.debugInfo.innerHTML = '✅ Картинка загружена!';
+                    console.log('✅ Картинка успешно загружена');
+                };
+                img.onerror = function() {
+                    s.imageLoaded = false;
+                    el.debugInfo.style.display = 'block';
+                    el.debugInfo.style.background = '#ff4444';
+                    el.debugInfo.innerHTML = '❌ Ошибка загрузки картинки! Проверь ссылку';
+                    console.error('❌ Ошибка загрузки картинки:', C.IMAGE_URL);
+                    
+                    // Временно используем запасную картинку
+                    el.ei.style.background = 'url("https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?w=400") center/cover';
+                };
+                img.src = C.IMAGE_URL;
+            }
 
             // ===== UI =====
             function updateUI() {
@@ -827,15 +872,14 @@
 
                 const p = Math.min((s.globalScore / s.target) * 100, 100);
                 
-                // Обновляем цветную заливку (фон)
+                // Обновляем фон (темный)
                 el.ef.style.height = p + '%';
                 
-                // Обновляем картинку - она появляется снизу вверх
-                // clip-path: inset(100% - p% 0 0 0) - обрезает сверху
+                // Обновляем картинку - появляется снизу
                 const clipValue = (100 - p) + '%';
                 el.ei.style.clipPath = `inset(${clipValue} 0 0 0)`;
                 
-                // Обновляем прогресс-бар
+                // Прогресс-бар
                 el.pf.style.width = p + '%';
 
                 el.c.textContent = s.globalScore.toLocaleString();
@@ -1216,6 +1260,9 @@
                 
                 if (s.u) el.un.value = s.u;
 
+                // Проверяем картинку
+                checkImage();
+
                 db.ref('globalCounter').once('value').then(snap => {
                     s.globalScore = snap.val() || 0;
                     
@@ -1321,6 +1368,4 @@
         })();
     </script>
 </body>
-
 </html>
-
