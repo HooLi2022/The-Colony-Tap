@@ -669,7 +669,7 @@
         </div>
     </div>
 
-    <!-- Firebase SDK (обязательно) -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
@@ -761,7 +761,8 @@
                 b: false,
                 gm: false,
                 ap: {},
-                pl: null
+                pl: null,
+                clickLock: false // Блокировка множественных кликов
             };
 
             // Хранилище
@@ -790,19 +791,35 @@
                     el.g.classList.add('hidden');
                 }
 
+                // Обновляем только если реально изменилось
                 const p = Math.min((s.sc / C.TARGET) * 100, 100);
-                el.ef.style.height = p + '%';
-                el.ei.style.opacity = p / 100;
-                el.pf.style.width = p + '%';
+                if (el.ef.style.height !== p + '%') el.ef.style.height = p + '%';
+                if (el.ei.style.opacity !== (p / 100).toString()) el.ei.style.opacity = p / 100;
+                if (el.pf.style.width !== p + '%') el.pf.style.width = p + '%';
                 
-                if (p < 30) el.ef.style.background = 'linear-gradient(180deg, #4CAF50, #2E7D32)';
-                else if (p < 70) el.ef.style.background = 'linear-gradient(180deg, #FFC107, #FF8F00)';
-                else el.ef.style.background = 'linear-gradient(180deg, #FF5722, #BF360C)';
+                if (p < 30) {
+                    if (el.ef.style.background !== 'linear-gradient(180deg, #4CAF50, #2E7D32)') 
+                        el.ef.style.background = 'linear-gradient(180deg, #4CAF50, #2E7D32)';
+                } else if (p < 70) {
+                    if (el.ef.style.background !== 'linear-gradient(180deg, #FFC107, #FF8F00)') 
+                        el.ef.style.background = 'linear-gradient(180deg, #FFC107, #FF8F00)';
+                } else {
+                    if (el.ef.style.background !== 'linear-gradient(180deg, #FF5722, #BF360C)') 
+                        el.ef.style.background = 'linear-gradient(180deg, #FF5722, #BF360C)';
+                }
 
-                el.c.textContent = s.sc.toLocaleString();
-                el.cp.textContent = s.sc.toLocaleString();
-                el.r.textContent = Math.max(C.TARGET - s.sc, 0).toLocaleString();
-                el.us.textContent = (s.pr ? s.sc : 0).toLocaleString();
+                // Обновляем текст только если изменился
+                const scStr = s.sc.toLocaleString();
+                if (el.c.textContent !== scStr) {
+                    el.c.textContent = scStr;
+                    el.cp.textContent = scStr;
+                }
+                
+                const remainingStr = Math.max(C.TARGET - s.sc, 0).toLocaleString();
+                if (el.r.textContent !== remainingStr) el.r.textContent = remainingStr;
+                
+                const usStr = (s.pr ? s.sc : 0).toLocaleString();
+                if (el.us.textContent !== usStr) el.us.textContent = usStr;
             }
 
             // ===== СЛУШАТЕЛЬ СТАТУСА =====
@@ -825,7 +842,7 @@
                             el.cb.disabled = false;
                             el.e.style.pointerEvents = 'auto';
                             el.ca.style.display = 'none';
-                            if (d.sc !== undefined) {
+                            if (d.sc !== undefined && d.sc !== s.sc) {
                                 s.sc = d.sc;
                                 stor.s('S', d.sc);
                             }
@@ -834,6 +851,10 @@
                             el.cb.disabled = true;
                             el.e.style.pointerEvents = 'none';
                         }
+                    } else if (!isB && d.sc !== undefined && d.sc !== s.sc) {
+                        // Синхронизация счета если изменилось
+                        s.sc = d.sc;
+                        stor.s('S', d.sc);
                     }
                     uUI();
                 });
@@ -964,25 +985,30 @@
             };
 
             // ===== FIREBASE СЛУШАТЕЛИ =====
+            let globalCounterUpdate = false;
             db.ref('globalCounter').on('value', snap => {
                 if (!s.b || s.gm) {
-                    s.sc = snap.val() || 0;
-                    uUI();
+                    const newVal = snap.val() || 0;
+                    if (s.sc !== newVal) {
+                        s.sc = newVal;
+                        uUI();
+                    }
                 }
             });
 
             db.ref('lastClick').on('value', snap => {
                 if (!s.b || s.gm) {
                     const d = snap.val();
-                    el.lc.textContent = d?.n || 'никто';
+                    const newName = d?.n || 'никто';
+                    if (el.lc.textContent !== newName) el.lc.textContent = newName;
                 }
             });
 
             db.ref('onlineUsers').on('value', snap => {
                 if (!s.b || s.gm) {
                     const cnt = snap.val() ? Object.keys(snap.val()).length : 0;
-                    el.oc.textContent = cnt;
-                    if (s.gm) el.to.textContent = cnt;
+                    if (el.oc.textContent !== cnt.toString()) el.oc.textContent = cnt;
+                    if (s.gm && el.to.textContent !== cnt.toString()) el.to.textContent = cnt;
                 }
             });
 
@@ -997,7 +1023,7 @@
                         .sort((a, b) => b.sc - a.sc)
                         .slice(0, 10);
 
-                    el.tl.innerHTML = list.length ? list.map((p, i) => {
+                    const newHtml = list.length ? list.map((p, i) => {
                         const rc = i === 0 ? 'top-rank-1' : i === 1 ? 'top-rank-2' : i === 2 ? 'top-rank-3' : '';
                         const cur = p.id === s.pid;
                         return `
@@ -1008,6 +1034,8 @@
                             </div>
                         `;
                     }).join('') : '<div class="top-item">Нет кликов</div>';
+                    
+                    if (el.tl.innerHTML !== newHtml) el.tl.innerHTML = newHtml;
                 }
                 
                 if (s.gm) panel.update();
@@ -1024,14 +1052,21 @@
 
             // ===== КЛИК =====
             async function clickHandler() {
+                // Защита от двойных кликов
+                if (s.clickLock) return;
                 if (!ac.check()) return;
                 
+                s.clickLock = true;
                 s.ct.push(Date.now());
                 ac.clean();
 
                 try {
                     const r = await db.ref('globalCounter').transaction(v => (v || 0) + 1);
                     if (r.committed) {
+                        // Обновляем счет сразу локально для отзывчивости
+                        s.sc = r.snapshot.val();
+                        uUI();
+                        
                         await db.ref('lastClick').set({ n: s.u, t: Date.now(), pid: s.pid });
                         
                         if (s.pr && (!s.b || s.gm)) {
@@ -1044,14 +1079,18 @@
                                 return p;
                             });
                             if (pr.committed) {
-                                s.sc = pr.snapshot.val().sc;
-                                stor.s('S', s.sc);
+                                stor.s('S', pr.snapshot.val().sc);
                             }
                         }
 
                         if (r.snapshot.val() >= C.TARGET) alert('🎉 ПОБЕДА! 🎉');
                     }
                 } catch (e) {}
+                
+                // Снимаем блокировку через небольшую задержку
+                setTimeout(() => {
+                    s.clickLock = false;
+                }, 100);
             }
 
             // ===== ИНИЦИАЛИЗАЦИЯ =====
@@ -1168,7 +1207,7 @@
 
             init();
 
-            // Глобальные инструменты (скрытые)
+            // Глобальные инструменты
             window.t = tools;
         })();
     </script>
