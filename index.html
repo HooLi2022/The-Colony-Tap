@@ -5,3291 +5,452 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🌍 Заселение Земли</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
-        body {   
-            min-height: 100vh;
-            background: linear-gradient(135deg, #0B0B2B, #1B1B4B);
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            padding: 16px;
-        }
-
-        .container {
-            max-width: 900px;
-            width: 100%;
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            padding: 24px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-        }
-
-        /* Навигационные вкладки */
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            border-bottom: 2px solid rgba(255,215,0,0.3);
-            padding-bottom: 10px;
-            flex-wrap: wrap;
-        }
-
-        .tab {
-            padding: 12px 24px;
-            border-radius: 30px;
-            background: rgba(255,255,255,0.1);
-            color: white;
-            cursor: pointer;
-            transition: 0.2s;
-            font-weight: bold;
-            border: 2px solid transparent;
-        }
-
-        .tab:hover {
-            background: rgba(255,215,0,0.2);
-        }
-
-        .tab.active {
-            background: #ffd700;
-            color: #333;
-            border-color: white;
-        }
-
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.3s;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .earth {
-            position: relative;
-            width: min(280px, 60vw);
-            height: min(280px, 60vw);
-            margin: 16px auto;
-            border-radius: 50%;
-            background: #2B3B4B;
-            box-shadow: 0 0 40px rgba(100,150,255,0.3);
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .earth:active {
-            transform: scale(0.98);
-        }
-
-        .earth-fill {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 0%;
-            background: #2B3B4B;
-            transition: height 0.3s ease-out;
-            z-index: 1;
-        }
-
-        .earth-image {
-            position: absolute;
-            inset: 0;
-            background: url('https://yt3.googleusercontent.com/jxNzA1STZW8BLqnCWh0-0_N2HIp9YW3gBzH7enj7wk5bGjp9U3wbvCkvAOPT8ZUBFFtHlnui2Q=s900-c-k-c0x00ffffff-no-rj') center/cover;
-            background-size: cover;
-            z-index: 2;
-            clip-path: inset(100% 0 0 0);
-            transition: clip-path 0.3s ease-out;
-        }
-
-        .progress-section {
-            margin: 16px 0;
-        }
-
-        .progress-bar {
-            height: 20px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 10px;
-            overflow: hidden;
-            margin: 8px 0;
-        }
-
-        .progress-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #4CAF50, #8BC34A);
-            transition: width 0.3s;
-        }
-
-        .counter {
-            font-size: clamp(2.5rem, 10vw, 4rem);
-            font-weight: bold;
-            background: rgba(0,0,0,0.3);
-            border-radius: 20px;
-            padding: 16px;
-            margin: 16px 0;
-            border: 2px solid rgba(255,215,0,0.3);
-            text-shadow: 0 0 20px rgba(255,215,0,0.5);
-        }
-
-        .name-section {
-            margin: 20px 0;
-            min-height: 80px;
-        }
-
-        .name-input-group {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .name-input {
-            padding: 12px 20px;
-            border-radius: 30px;
-            border: none;
-            width: 250px;
-            font-size: 1.1em;
-            background: rgba(255,255,255,0.95);
-        }
-
-        .name-button {
-            padding: 12px 30px;
-            border-radius: 30px;
-            border: none;
-            background: #ffd700;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1.1em;
-            transition: 0.2s;
-        }
-
-        .name-button:hover {
-            background: #ffed4a;
-            transform: scale(1.05);
-        }
-
-        .greeting {
-            font-size: 1.4em;
-            padding: 12px 24px;
-            background: rgba(255,255,255,0.15);
-            border-radius: 40px;
-            display: inline-block;
-            border: 2px solid #ffd700;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .greeting:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(255,215,0,0.3);
-        }
-
-        .greeting-name {
-            color: #ffd700;
-            font-weight: bold;
-        }
-
-        .level-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, #ffd700, #ffaa00);
-            color: #333;
-            padding: 2px 8px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            margin-left: 8px;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .click-button {
-            background: #ffd700;
-            color: #333;
-            border: none;
-            font-size: clamp(1.5rem, 5vw, 2.5rem);
-            padding: 20px 40px;
-            border-radius: 60px;
-            cursor: pointer;
-            font-weight: bold;
-            margin: 16px 0;
-            transition: all 0.2s;
-            box-shadow: 0 0 30px rgba(255,215,0,0.5);
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .click-button:not(:disabled):hover {
-            transform: scale(1.05);
-            background: #ffed4a;
-            box-shadow: 0 0 50px rgba(255,215,0,0.8);
-        }
-
-        .click-button:not(:disabled):active {
-            transform: scale(0.95);
-        }
-
-        .click-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* Стили для карточек магазина */
-        .shop-section {
-            margin: 30px 0;
-            padding: 20px;
-            background: rgba(255,215,0,0.1);
-            border: 2px solid #ffd700;
-            border-radius: 20px;
-        }
-
-        .shop-title {
-            font-size: 1.8rem;
-            color: #ffd700;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .shop-items {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-
-        .shop-item {
-            background: rgba(0,0,0,0.3);
-            border: 2px solid #ffd700;
-            border-radius: 15px;
-            padding: 15px;
-            transition: 0.2s;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-        }
-
-        .shop-item:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(255,215,0,0.3);
-        }
-
-        .shop-item.popular::before {
-            content: "🔥 ХИТ";
-            position: absolute;
-            top: 5px;
-            right: -25px;
-            background: #ff4444;
-            color: white;
-            padding: 2px 30px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            transform: rotate(45deg);
-        }
-
-        .item-emoji {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-
-        .item-name {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .item-price {
-            color: #ffd700;
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-
-        .item-description {
-            font-size: 0.8rem;
-            color: #aaa;
-            margin-bottom: 10px;
-        }
-
-        .buy-button {
-            background: linear-gradient(135deg, #ffd700, #ffaa00);
-            color: #333;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-            width: 100%;
-            font-size: 1rem;
-            margin-top: 10px;
-        }
-
-        .buy-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(255,215,0,0.5);
-        }
-
-        .payment-container {
-            margin-top: 20px;
-            padding: 20px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 15px;
-            display: none;
-        }
-
-        .payment-title {
-            color: #ffd700;
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-        }
-
-        /* Стили для заданий */
-        .quests-section {
-            margin: 30px 0;
-            padding: 20px;
-            background: rgba(76,175,80,0.1);
-            border: 2px solid #4CAF50;
-            border-radius: 20px;
-        }
-
-        .quests-title {
-            font-size: 1.5rem;
-            color: #4CAF50;
-            margin-bottom: 15px;
-        }
-
-        .quests-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-        }
-
-        .quest-item {
-            background: rgba(0,0,0,0.3);
-            border: 2px solid #4CAF50;
-            border-radius: 12px;
-            padding: 12px;
-            position: relative;
-        }
-
-        .quest-item.completed {
-            opacity: 0.5;
-            filter: grayscale(0.5);
-            border-color: #aaa;
-        }
-
-        .quest-icon {
-            font-size: 2rem;
-            margin-bottom: 8px;
-        }
-
-        .quest-name {
-            font-weight: bold;
-            color: #4CAF50;
-            margin-bottom: 5px;
-        }
-
-        .quest-desc {
-            font-size: 0.8rem;
-            color: #ddd;
-            margin-bottom: 8px;
-        }
-
-        .quest-progress {
-            height: 4px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 2px;
-            margin: 8px 0;
-        }
-
-        .quest-progress-fill {
-            height: 100%;
-            background: #4CAF50;
-            border-radius: 2px;
-            width: 0%;
-        }
-
-        .quest-reward {
-            color: #ffd700;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-
-        .quest-button {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 15px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            margin-top: 8px;
-            width: 100%;
-        }
-
-        .quest-button:disabled {
-            background: #666;
-            cursor: not-allowed;
-        }
-
-        .refresh-time {
-            font-size: 0.8rem;
-            color: #aaa;
-            margin-top: 10px;
-        }
-
-        /* Стили для реферальной системы */
-        .referral-section {
-            background: rgba(33,150,243,0.1);
-            border: 2px solid #2196F3;
-            border-radius: 20px;
-            padding: 20px;
-        }
-
-        .referral-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .referral-header h2 {
-            color: #2196F3;
-            font-size: 1.5rem;
-        }
-
-        .referral-link-box {
-            background: rgba(0,0,0,0.3);
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-
-        .referral-link-label {
-            color: #2196F3;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-
-        .referral-link-input-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        .referral-link-input {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            background: rgba(255,255,255,0.1);
-            color: white;
-            border: 1px solid #2196F3;
-            font-size: 0.9rem;
-        }
-
-        .referral-link-input:focus {
-            outline: none;
-            border-color: #ffd700;
-        }
-
-        .referral-copy-btn {
-            background: #2196F3;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.2s;
-        }
-
-        .referral-copy-btn:hover {
-            background: #1976D2;
-            transform: scale(1.05);
-        }
-
-        .referral-stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .referral-stat-card {
-            background: rgba(0,0,0,0.3);
-            border-radius: 15px;
-            padding: 15px;
-            text-align: center;
-            border: 1px solid #2196F3;
-        }
-
-        .referral-stat-value {
-            font-size: 2rem;
-            color: #2196F3;
-            font-weight: bold;
-        }
-
-        .referral-stat-label {
-            font-size: 0.9rem;
-            color: #aaa;
-        }
-
-        .referral-bonus-info {
-            background: rgba(255,215,0,0.1);
-            border: 2px solid #ffd700;
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-
-        .bonus-title {
-            color: #ffd700;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .bonus-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .bonus-list li {
-            margin-bottom: 8px;
-            padding-left: 20px;
-            position: relative;
-        }
-
-        .bonus-list li:before {
-            content: "🎁";
-            position: absolute;
-            left: 0;
-        }
-
-        .referral-table {
-            background: rgba(0,0,0,0.3);
-            border-radius: 15px;
-            padding: 15px;
-        }
-
-        .referral-table-title {
-            color: #2196F3;
-            margin-bottom: 15px;
-            font-weight: bold;
-        }
-
-        .referral-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .referral-row:last-child {
-            border-bottom: none;
-        }
-
-        .referral-name {
-            font-weight: bold;
-        }
-
-        .referral-clicks {
-            color: #ffd700;
-        }
-
-        .referral-bonus {
-            color: #4CAF50;
-            font-weight: bold;
-        }
-
-        .no-referrals {
-            text-align: center;
-            color: #aaa;
-            padding: 20px;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin: 20px 0;
-        }
-
-        .stat-card {
-            background: rgba(255,255,255,0.15);
-            border-radius: 16px;
-            padding: 12px;
-            font-size: 0.9rem;
-        }
-
-        .stat-value {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #ffd700;
-            margin-top: 4px;
-        }
-
-        .top-players {
-            background: rgba(0,0,0,0.3);
-            border-radius: 20px;
-            padding: 16px;
-        }
-
-        .top-title {
-            font-size: 1.5rem;
-            color: #ffd700;
-            margin-bottom: 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .view-all {
-            font-size: 0.9rem;
-            color: #ffd700;
-            cursor: pointer;
-        }
-
-        .view-all:hover {
-            text-decoration: underline;
-        }
-
-        .top-list {
-            list-style: none;
-        }
-
-        .top-item {
-            display: flex;
-            align-items: center;
-            padding: 10px 12px;
-            margin: 6px 0;
-            background: rgba(255,255,255,0.1);
-            border-radius: 12px;
-            transition: 0.2s;
-            cursor: pointer;
-        }
-
-        .top-item:hover {
-            background: rgba(255,255,255,0.2);
-            transform: translateX(5px);
-        }
-
-        .top-item.current {
-            border: 2px solid #ffd700;
-            background: rgba(255,215,0,0.15);
-        }
-
-        .top-rank {
-            width: 32px;
-            height: 32px;
-            background: #ffd700;
-            color: #333;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin-right: 12px;
-            flex-shrink: 0;
-        }
-
-        .top-rank-1 { background: #FFD700; box-shadow: 0 0 15px #FFD700; }
-        .top-rank-2 { background: #C0C0C0; box-shadow: 0 0 15px #C0C0C0; }
-        .top-rank-3 { background: #CD7F32; box-shadow: 0 0 15px #CD7F32; }
-
-        .top-name {
-            flex: 1;
-            text-align: left;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            font-weight: 500;
-        }
-
-        .top-score {
-            font-weight: bold;
-            color: #ffd700;
-            margin-left: 8px;
-        }
-
-        .top-badge {
-            margin-left: 8px;
-            font-size: 1.1rem;
-        }
-
-        .last-clicker {
-            background: rgba(255,255,255,0.2);
-            padding: 12px;
-            border-radius: 10px;
-            margin-top: 16px;
-        }
-
-        #lastClickerName {
-            color: #ffd700;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        #lastClickerName:hover {
-            text-decoration: underline;
-        }
-
-        .profile-modal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, #1a1a3a, #2a2a4a);
-            border: 3px solid #ffd700;
-            border-radius: 30px;
-            padding: 30px;
-            z-index: 3000;
-            width: 90%;
-            max-width: 700px;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 0 50px rgba(255,215,0,0.3);
-            display: none;
-        }
-
-        .profile-modal.show {
-            display: block;
-        }
-
-        .profile-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid rgba(255,215,0,0.3);
-            padding-bottom: 15px;
-        }
-
-        .profile-header h2 {
-            color: #ffd700;
-            font-size: 2rem;
-        }
-
-        .profile-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .profile-stat {
-            background: rgba(0,0,0,0.3);
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-        }
-
-        .profile-stat-label {
-            color: #aaa;
-            font-size: 0.9rem;
-            margin-bottom: 5px;
-        }
-
-        .profile-stat-value {
-            color: #ffd700;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        .achievements-title {
-            color: #ffd700;
-            font-size: 1.3rem;
-            margin: 20px 0 15px;
-        }
-
-        .achievements-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-
-        .achievement-card {
-            background: rgba(0,0,0,0.3);
-            border: 2px solid rgba(255,215,0,0.3);
-            border-radius: 12px;
-            padding: 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: 0.2s;
-        }
-
-        .achievement-card.locked {
-            opacity: 0.5;
-            filter: grayscale(0.5);
-        }
-
-        .achievement-card.unlocked {
-            border-color: #ffd700;
-            background: rgba(255,215,0,0.1);
-        }
-
-        .achievement-icon {
-            font-size: 2rem;
-            min-width: 50px;
-            text-align: center;
-        }
-
-        .achievement-info {
-            flex: 1;
-            text-align: left;
-        }
-
-        .achievement-name {
-            font-weight: bold;
-            color: #ffd700;
-            margin-bottom: 3px;
-        }
-
-        .achievement-desc {
-            font-size: 0.8rem;
-            color: #aaa;
-        }
-
-        .achievement-reward {
-            font-size: 0.8rem;
-            color: #4CAF50;
-            margin-top: 3px;
-        }
-
-        .close-profile {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 2rem;
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.2s;
-        }
-
-        .close-profile:hover {
-            background: rgba(255,0,0,0.3);
-        }
-
-        .info-block {
-            background: rgba(255,255,255,0.05);
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px 0;
-            text-align: left;
-        }
-
-        .info-block h3 {
-            color: #ffd700;
-            margin-bottom: 15px;
-            font-size: 1.2rem;
-        }
-
-        .info-block ul {
-            list-style: none;
-            padding-left: 0;
-        }
-
-        .info-block li {
-            margin-bottom: 8px;
-            padding-left: 20px;
-            position: relative;
-        }
-
-        .info-block li:before {
-            content: "✅";
-            position: absolute;
-            left: 0;
-            color: #4CAF50;
-        }
-
-        .contacts-block {
-            background: rgba(0,0,0,0.3);
-            border-radius: 10px;
-            padding: 15px;
-            margin: 20px 0;
-            font-size: 0.9rem;
-        }
-
-        .footer-links {
-            margin-top: 30px;
-            font-size: 0.8rem;
-            color: #aaa;
-        }
-
-        .footer-links a {
-            color: #ffd700;
-            text-decoration: none;
-            margin: 0 5px;
-        }
-
-        .footer-links a:hover {
-            text-decoration: underline;
-        }
-
-        .cheater-alert {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #ff4444;
-            color: white;
-            padding: 16px 24px;
-            border-radius: 50px;
-            font-weight: bold;
-            box-shadow: 0 4px 20px rgba(255,0,0,0.5);
-            z-index: 1000;
-            animation: slideDown 0.3s;
-            display: none;
-        }
-
-        .admin-btn {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(255,215,0,0.9);
-            color: #333;
-            padding: 12px 20px;
-            border-radius: 40px;
-            font-weight: bold;
-            cursor: pointer;
-            border: 2px solid white;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            z-index: 1000;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .admin-btn:hover {
-            transform: scale(1.05);
-            background: #ffd700;
-        }
-
-        .admin-btn .notification {
-            background: #ff4444;
-            color: white;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            margin-left: 8px;
-        }
-
-        .admin-panel {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, #1a1a3a, #2a2a4a);
-            border: 3px solid #ffd700;
-            border-radius: 30px;
-            padding: 30px;
-            z-index: 2000;
-            width: 90%;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 0 50px rgba(255,215,0,0.3);
-            display: none;
-        }
-
-        .admin-panel.show {
-            display: block;
-        }
-
-        .panel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid rgba(255,215,0,0.3);
-            padding-bottom: 15px;
-        }
-
-        .panel-header h2 {
-            color: #ffd700;
-            font-size: 1.8rem;
-        }
-
-        .close-panel {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 2rem;
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.2s;
-        }
-
-        .close-panel:hover {
-            background: rgba(255,0,0,0.3);
-        }
-
-        .admin-section {
-            background: rgba(255,255,255,0.1);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .admin-section h3 {
-            color: #ffd700;
-            margin-bottom: 15px;
-            font-size: 1.3rem;
-        }
-
-        .admin-stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .admin-stat {
-            background: rgba(0,0,0,0.3);
-            border-radius: 12px;
-            padding: 12px;
-            text-align: center;
-        }
-
-        .admin-stat-label {
-            font-size: 0.8rem;
-            color: #aaa;
-        }
-
-        .admin-stat-value {
-            font-size: 1.3rem;
-            color: #ffd700;
-            font-weight: bold;
-        }
-
-        .admin-actions {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .admin-action-btn {
-            background: rgba(255,215,0,0.2);
-            border: 1px solid #ffd700;
-            color: white;
-            padding: 12px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: 0.2s;
-            font-weight: bold;
-        }
-
-        .admin-action-btn:hover {
-            background: rgba(255,215,0,0.4);
-            transform: scale(1.02);
-        }
-
-        .admin-action-btn.danger {
-            background: rgba(255,68,68,0.2);
-            border-color: #ff4444;
-        }
-
-        .admin-action-btn.danger:hover {
-            background: rgba(255,68,68,0.4);
-        }
-
-        .admin-action-btn.success {
-            background: rgba(76,175,80,0.2);
-            border-color: #4CAF50;
-        }
-
-        .admin-action-btn.success:hover {
-            background: rgba(76,175,80,0.4);
-        }
-
-        .player-list {
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
-        .player-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 8px;
-            margin-bottom: 8px;
-            cursor: pointer;
-        }
-
-        .player-item:hover {
-            background: rgba(255,255,255,0.1);
-        }
-
-        .player-item.banned {
-            border-left: 3px solid #ff4444;
-        }
-
-        .player-info {
-            flex: 1;
-        }
-
-        .player-name {
-            font-weight: bold;
-            color: #ffd700;
-        }
-
-        .player-score {
-            font-size: 0.9rem;
-            color: #aaa;
-        }
-
-        .player-actions {
-            display: flex;
-            gap: 5px;
-        }
-
-        .player-action {
-            padding: 4px 8px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
-
-        .backdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.7);
-            z-index: 1500;
-            display: none;
-        }
-
-        .backdrop.show {
-            display: block;
-        }
-
-        @keyframes slideDown {
-            from { transform: translate(-50%, -100%); opacity: 0; }
-            to { transform: translate(-50%, 0); opacity: 1; }
-        }
-
-        .unban-message {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #4CAF50;
-            color: white;
-            padding: 16px 24px;
-            border-radius: 50px;
-            font-weight: bold;
-            box-shadow: 0 4px 20px rgba(76,175,80,0.5);
-            z-index: 1000;
-            animation: slideDown 0.3s;
-            display: none;
-        }
-
-        .reset-message {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #ffd700;
-            color: #333;
-            padding: 16px 24px;
-            border-radius: 50px;
-            font-weight: bold;
-            box-shadow: 0 4px 20px rgba(255,215,0,0.5);
-            z-index: 1000;
-            animation: slideDown 0.3s;
-            display: none;
-        }
-
-        .achievement-unlock {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(135deg, #ffd700, #ffaa00);
-            color: #333;
-            padding: 16px 24px;
-            border-radius: 50px;
-            font-weight: bold;
-            box-shadow: 0 4px 20px rgba(255,215,0,0.5);
-            z-index: 1000;
-            animation: slideDown 0.3s;
-            display: none;
-        }
-
-        .purchase-success {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #4CAF50;
-            color: white;
-            padding: 16px 24px;
-            border-radius: 50px;
-            font-weight: bold;
-            box-shadow: 0 4px 20px rgba(76,175,80,0.5);
-            z-index: 2000;
-            animation: slideDown 0.3s;
-            display: none;
-        }
-
-        .size-control {
-            margin: 20px 0;
-            padding: 15px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 12px;
-        }
-
-        .size-label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            color: #ffd700;
-        }
-
-        .size-slider {
-            width: 100%;
-            height: 8px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 4px;
-            outline: none;
-            -webkit-appearance: none;
-        }
-
-        .size-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 24px;
-            height: 24px;
-            background: #ffd700;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid white;
-        }
-
-        .size-slider::-moz-range-thumb {
-            width: 24px;
-            height: 24px;
-            background: #ffd700;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid white;
-        }
-
-        .size-value {
-            font-size: 1.2rem;
-            color: #ffd700;
-            font-weight: bold;
-        }
-
-        .size-presets {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            justify-content: center;
-        }
-
-        .size-preset-btn {
-            background: rgba(255,215,0,0.2);
-            border: 1px solid #ffd700;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: 0.2s;
-            font-size: 0.9rem;
-        }
-
-        .size-preset-btn:hover {
-            background: rgba(255,215,0,0.4);
-            transform: scale(1.05);
-        }
-
-        .size-preset-btn.active {
-            background: #ffd700;
-            color: #333;
-        }
-
-        .size-info {
-            color: #aaa;
-            font-size: 0.8rem;
-            margin-top: 10px;
-            text-align: center;
-        }
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{min-height:100vh;background:linear-gradient(135deg,#0B0B2B,#1B1B4B);font-family:'Segoe UI',system-ui,sans-serif;display:flex;justify-content:center;align-items:center;color:#fff;padding:16px}
+        .container{max-width:900px;width:100%;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);border-radius:24px;padding:24px;box-shadow:0 8px 32px rgba(0,0,0,0.3)}
+        .tabs{display:flex;gap:10px;margin-bottom:20px;border-bottom:2px solid rgba(255,215,0,0.3);padding-bottom:10px;flex-wrap:wrap}
+        .tab{padding:12px 24px;border-radius:30px;background:rgba(255,255,255,0.1);color:#fff;cursor:pointer;transition:.2s;font-weight:700;border:2px solid transparent}
+        .tab:hover,.tab.active{background:#ffd700;color:#333;border-color:#fff}
+        .tab-content{display:none;animation:fadeIn .3s}
+        .tab-content.active{display:block}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        .earth{position:relative;width:min(280px,60vw);height:min(280px,60vw);margin:16px auto;border-radius:50%;background:#2B3B4B;box-shadow:0 0 40px rgba(100,150,255,0.3);overflow:hidden;cursor:pointer;transition:transform .2s}
+        .earth:active{transform:scale(.98)}
+        .earth-fill{position:absolute;bottom:0;left:0;width:100%;height:0%;background:#2B3B4B;transition:height .3s ease-out;z-index:1}
+        .earth-image{position:absolute;inset:0;background:url('https://yt3.googleusercontent.com/jxNzA1STZW8BLqnCWh0-0_N2HIp9YW3gBzH7enj7wk5bGjp9U3wbvCkvAOPT8ZUBFFtHlnui2Q=s900-c-k-c0x00ffffff-no-rj')center/cover;background-size:cover;z-index:2;clip-path:inset(100% 0 0 0);transition:clip-path .3s ease-out}
+        .progress-section{margin:16px 0}
+        .progress-bar{height:20px;background:rgba(255,255,255,0.2);border-radius:10px;overflow:hidden;margin:8px 0}
+        .progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#4CAF50,#8BC34A);transition:width .3s}
+        .counter{font-size:clamp(2.5rem,10vw,4rem);font-weight:700;background:rgba(0,0,0,0.3);border-radius:20px;padding:16px;margin:16px 0;border:2px solid rgba(255,215,0,0.3);text-shadow:0 0 20px rgba(255,215,0,0.5)}
+        .name-section{margin:20px 0;min-height:80px}
+        .name-input-group{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+        .name-input{padding:12px 20px;border-radius:30px;border:none;width:250px;font-size:1.1em;background:rgba(255,255,255,0.95)}
+        .name-button{padding:12px 30px;border-radius:30px;border:none;background:#ffd700;cursor:pointer;font-weight:700;font-size:1.1em;transition:.2s}
+        .name-button:hover{background:#ffed4a;transform:scale(1.05)}
+        .greeting{font-size:1.4em;padding:12px 24px;background:rgba(255,255,255,0.15);border-radius:40px;display:inline-block;border:2px solid #ffd700;cursor:pointer;transition:.2s}
+        .greeting:hover{transform:scale(1.05);box-shadow:0 0 20px rgba(255,215,0,0.3)}
+        .greeting-name{color:#ffd700;font-weight:700}
+        .level-badge{display:inline-block;background:linear-gradient(135deg,#ffd700,#ffaa00);color:#333;padding:2px 8px;border-radius:20px;font-size:.8rem;font-weight:700;margin-left:8px}
+        .hidden{display:none!important}
+        .click-button{background:#ffd700;color:#333;border:none;font-size:clamp(1.5rem,5vw,2.5rem);padding:20px 40px;border-radius:60px;cursor:pointer;font-weight:700;margin:16px 0;transition:.2s;box-shadow:0 0 30px rgba(255,215,0,0.5);width:100%;max-width:400px}
+        .click-button:not(:disabled):hover{transform:scale(1.05);background:#ffed4a;box-shadow:0 0 50px rgba(255,215,0,0.8)}
+        .click-button:not(:disabled):active{transform:scale(.95)}
+        .click-button:disabled{opacity:.5;cursor:not-allowed}
+        .shop-section{margin:30px 0;padding:20px;background:rgba(255,215,0,0.1);border:2px solid #ffd700;border-radius:20px}
+        .shop-title{font-size:1.8rem;color:#ffd700;margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:10px}
+        .shop-items{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px;margin:20px 0}
+        .shop-item{background:rgba(0,0,0,0.3);border:2px solid #ffd700;border-radius:15px;padding:15px;transition:.2s;position:relative;overflow:hidden;cursor:pointer}
+        .shop-item:hover{transform:scale(1.05);box-shadow:0 0 30px rgba(255,215,0,0.3)}
+        .shop-item.popular::before{content:"🔥 ХИТ";position:absolute;top:5px;right:-25px;background:#ff4444;color:#fff;padding:2px 30px;font-size:.7rem;font-weight:700;transform:rotate(45deg)}
+        .item-emoji{font-size:2.5rem;margin-bottom:10px}
+        .item-name{font-size:1.2rem;font-weight:700;margin-bottom:5px}
+        .item-price{color:#ffd700;font-size:1.3rem;font-weight:700;margin:10px 0}
+        .item-description{font-size:.8rem;color:#aaa;margin-bottom:10px}
+        .buy-button{background:linear-gradient(135deg,#ffd700,#ffaa00);color:#333;border:none;padding:10px 20px;border-radius:30px;font-weight:700;cursor:pointer;transition:.2s;width:100%;font-size:1rem;margin-top:10px}
+        .buy-button:hover{transform:scale(1.05);box-shadow:0 0 20px rgba(255,215,0,0.5)}
+        .payment-container{margin-top:20px;padding:20px;background:rgba(255,255,255,0.05);border-radius:15px;display:none}
+        .payment-title{color:#ffd700;font-size:1.3rem;margin-bottom:15px}
+        .quests-section{margin:30px 0;padding:20px;background:rgba(76,175,80,0.1);border:2px solid #4CAF50;border-radius:20px}
+        .quests-title{font-size:1.5rem;color:#4CAF50;margin-bottom:15px}
+        .quests-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+        .quest-item{background:rgba(0,0,0,0.3);border:2px solid #4CAF50;border-radius:12px;padding:12px;position:relative}
+        .quest-item.completed{opacity:.5;filter:grayscale(.5);border-color:#aaa}
+        .quest-icon{font-size:2rem;margin-bottom:8px}
+        .quest-name{font-weight:700;color:#4CAF50;margin-bottom:5px}
+        .quest-desc{font-size:.8rem;color:#ddd;margin-bottom:8px}
+        .quest-progress{height:4px;background:rgba(255,255,255,0.2);border-radius:2px;margin:8px 0}
+        .quest-progress-fill{height:100%;background:#4CAF50;border-radius:2px;width:0%}
+        .quest-reward{color:#ffd700;font-weight:700;font-size:.9rem}
+        .quest-button{background:#4CAF50;color:#fff;border:none;padding:5px 10px;border-radius:15px;cursor:pointer;font-size:.8rem;margin-top:8px;width:100%}
+        .quest-button:disabled{background:#666;cursor:not-allowed}
+        .refresh-time{font-size:.8rem;color:#aaa;margin-top:10px}
+        .referral-section{background:rgba(33,150,243,0.1);border:2px solid #2196F3;border-radius:20px;padding:20px}
+        .referral-header{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+        .referral-header h2{color:#2196F3;font-size:1.5rem}
+        .referral-link-box{background:rgba(0,0,0,0.3);border-radius:15px;padding:15px;margin-bottom:20px}
+        .referral-link-label{color:#2196F3;margin-bottom:10px;font-weight:700}
+        .referral-link-input-group{display:flex;gap:10px}
+        .referral-link-input{flex:1;padding:12px;border:none;border-radius:10px;background:rgba(255,255,255,0.1);color:#fff;border:1px solid #2196F3;font-size:.9rem}
+        .referral-link-input:focus{outline:0;border-color:#ffd700}
+        .referral-copy-btn{background:#2196F3;color:#fff;border:none;padding:12px 24px;border-radius:10px;cursor:pointer;font-weight:700;transition:.2s}
+        .referral-copy-btn:hover{background:#1976D2;transform:scale(1.05)}
+        .referral-stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-bottom:20px}
+        .referral-stat-card{background:rgba(0,0,0,0.3);border-radius:15px;padding:15px;text-align:center;border:1px solid #2196F3}
+        .referral-stat-value{font-size:2rem;color:#2196F3;font-weight:700}
+        .referral-stat-label{font-size:.9rem;color:#aaa}
+        .referral-bonus-info{background:rgba(255,215,0,0.1);border:2px solid #ffd700;border-radius:15px;padding:15px;margin-bottom:20px}
+        .bonus-title{color:#ffd700;font-weight:700;margin-bottom:10px}
+        .bonus-list{list-style:none;padding:0}
+        .bonus-list li{margin-bottom:8px;padding-left:20px;position:relative}
+        .bonus-list li:before{content:"🎁";position:absolute;left:0}
+        .referral-table{background:rgba(0,0,0,0.3);border-radius:15px;padding:15px}
+        .referral-table-title{color:#2196F3;margin-bottom:15px;font-weight:700}
+        .referral-row{display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid rgba(255,255,255,0.1);cursor:pointer}
+        .referral-row:last-child{border-bottom:none}
+        .referral-name{font-weight:700}
+        .referral-clicks{color:#ffd700}
+        .referral-bonus{color:#4CAF50;font-weight:700}
+        .no-referrals{text-align:center;color:#aaa;padding:20px}
+        .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}
+        .stat-card{background:rgba(255,255,255,0.15);border-radius:16px;padding:12px;font-size:.9rem}
+        .stat-value{font-size:1.3rem;font-weight:700;color:#ffd700;margin-top:4px}
+        .top-players{background:rgba(0,0,0,0.3);border-radius:20px;padding:16px}
+        .top-title{font-size:1.5rem;color:#ffd700;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+        .view-all{font-size:.9rem;color:#ffd700;cursor:pointer}
+        .view-all:hover{text-decoration:underline}
+        .top-list{list-style:none}
+        .top-item{display:flex;align-items:center;padding:10px 12px;margin:6px 0;background:rgba(255,255,255,0.1);border-radius:12px;transition:.2s;cursor:pointer}
+        .top-item:hover{background:rgba(255,255,255,0.2);transform:translateX(5px)}
+        .top-item.current{border:2px solid #ffd700;background:rgba(255,215,0,0.15)}
+        .top-rank{width:32px;height:32px;background:#ffd700;color:#333;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;margin-right:12px;flex-shrink:0}
+        .top-rank-1{background:#FFD700;box-shadow:0 0 15px #FFD700}
+        .top-rank-2{background:#C0C0C0;box-shadow:0 0 15px #C0C0C0}
+        .top-rank-3{background:#CD7F32;box-shadow:0 0 15px #CD7F32}
+        .top-name{flex:1;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+        .top-score{font-weight:700;color:#ffd700;margin-left:8px}
+        .top-badge{margin-left:8px;font-size:1.1rem}
+        .last-clicker{background:rgba(255,255,255,0.2);padding:12px;border-radius:10px;margin-top:16px}
+        #lastClickerName{color:#ffd700;font-weight:700;cursor:pointer}
+        #lastClickerName:hover{text-decoration:underline}
+        .profile-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#1a1a3a,#2a2a4a);border:3px solid #ffd700;border-radius:30px;padding:30px;z-index:3000;width:90%;max-width:700px;max-height:80vh;overflow-y:auto;box-shadow:0 0 50px rgba(255,215,0,0.3);display:none}
+        .profile-modal.show{display:block}
+        .profile-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;border-bottom:2px solid rgba(255,215,0,0.3);padding-bottom:15px}
+        .profile-header h2{color:#ffd700;font-size:2rem}
+        .profile-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-bottom:25px}
+        .profile-stat{background:rgba(0,0,0,0.3);border-radius:12px;padding:15px;text-align:center}
+        .profile-stat-label{color:#aaa;font-size:.9rem;margin-bottom:5px}
+        .profile-stat-value{color:#ffd700;font-size:1.5rem;font-weight:700}
+        .achievements-title{color:#ffd700;font-size:1.3rem;margin:20px 0 15px}
+        .achievements-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+        .achievement-card{background:rgba(0,0,0,0.3);border:2px solid rgba(255,215,0,0.3);border-radius:12px;padding:12px;display:flex;align-items:center;gap:10px;transition:.2s}
+        .achievement-card.locked{opacity:.5;filter:grayscale(.5)}
+        .achievement-card.unlocked{border-color:#ffd700;background:rgba(255,215,0,0.1)}
+        .achievement-icon{font-size:2rem;min-width:50px;text-align:center}
+        .achievement-info{flex:1;text-align:left}
+        .achievement-name{font-weight:700;color:#ffd700;margin-bottom:3px}
+        .achievement-desc{font-size:.8rem;color:#aaa}
+        .achievement-reward{font-size:.8rem;color:#4CAF50;margin-top:3px}
+        .close-profile{background:0 0;border:none;color:#fff;font-size:2rem;cursor:pointer;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:.2s}
+        .close-profile:hover{background:rgba(255,0,0,0.3)}
+        .info-block{background:rgba(255,255,255,0.05);border-radius:15px;padding:20px;margin:20px 0;text-align:left}
+        .info-block h3{color:#ffd700;margin-bottom:15px;font-size:1.2rem}
+        .info-block ul{list-style:none;padding-left:0}
+        .info-block li{margin-bottom:8px;padding-left:20px;position:relative}
+        .info-block li:before{content:"✅";position:absolute;left:0;color:#4CAF50}
+        .contacts-block{background:rgba(0,0,0,0.3);border-radius:10px;padding:15px;margin:20px 0;font-size:.9rem}
+        .footer-links{margin-top:30px;font-size:.8rem;color:#aaa}
+        .footer-links a{color:#ffd700;text-decoration:none;margin:0 5px}
+        .footer-links a:hover{text-decoration:underline}
+        .cheater-alert{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#ff4444;color:#fff;padding:16px 24px;border-radius:50px;font-weight:700;box-shadow:0 4px 20px rgba(255,0,0,0.5);z-index:1000;animation:slideDown .3s;display:none}
+        .admin-btn{position:fixed;bottom:20px;left:20px;background:rgba(255,215,0,0.9);color:#333;padding:12px 20px;border-radius:40px;font-weight:700;cursor:pointer;border:2px solid #fff;box-shadow:0 4px 15px rgba(0,0,0,0.3);z-index:1000;transition:.2s;display:flex;align-items:center;gap:8px}
+        .admin-btn:hover{transform:scale(1.05);background:#ffd700}
+        .admin-btn .notification{background:#ff4444;color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:.8rem;margin-left:8px}
+        .admin-panel{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#1a1a3a,#2a2a4a);border:3px solid #ffd700;border-radius:30px;padding:30px;z-index:2000;width:90%;max-width:600px;max-height:80vh;overflow-y:auto;box-shadow:0 0 50px rgba(255,215,0,0.3);display:none}
+        .admin-panel.show{display:block}
+        .panel-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;border-bottom:2px solid rgba(255,215,0,0.3);padding-bottom:15px}
+        .panel-header h2{color:#ffd700;font-size:1.8rem}
+        .close-panel{background:0 0;border:none;color:#fff;font-size:2rem;cursor:pointer;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:.2s}
+        .close-panel:hover{background:rgba(255,0,0,0.3)}
+        .admin-section{background:rgba(255,255,255,0.1);border-radius:16px;padding:20px;margin-bottom:20px}
+        .admin-section h3{color:#ffd700;margin-bottom:15px;font-size:1.3rem}
+        .admin-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+        .admin-stat{background:rgba(0,0,0,0.3);border-radius:12px;padding:12px;text-align:center}
+        .admin-stat-label{font-size:.8rem;color:#aaa}
+        .admin-stat-value{font-size:1.3rem;color:#ffd700;font-weight:700}
+        .admin-actions{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px}
+        .admin-action-btn{background:rgba(255,215,0,0.2);border:1px solid #ffd700;color:#fff;padding:12px;border-radius:12px;cursor:pointer;transition:.2s;font-weight:700}
+        .admin-action-btn:hover{background:rgba(255,215,0,0.4);transform:scale(1.02)}
+        .admin-action-btn.danger{background:rgba(255,68,68,0.2);border-color:#ff4444}
+        .admin-action-btn.danger:hover{background:rgba(255,68,68,0.4)}
+        .admin-action-btn.success{background:rgba(76,175,80,0.2);border-color:#4CAF50}
+        .admin-action-btn.success:hover{background:rgba(76,175,80,0.4)}
+        .player-list{max-height:200px;overflow-y:auto}
+        .player-item{display:flex;justify-content:space-between;align-items:center;padding:10px;background:rgba(255,255,255,0.05);border-radius:8px;margin-bottom:8px;cursor:pointer}
+        .player-item:hover{background:rgba(255,255,255,0.1)}
+        .player-item.banned{border-left:3px solid #ff4444}
+        .player-info{flex:1}
+        .player-name{font-weight:700;color:#ffd700}
+        .player-score{font-size:.9rem;color:#aaa}
+        .player-actions{display:flex;gap:5px}
+        .player-action{padding:4px 8px;border:none;border-radius:4px;cursor:pointer;font-size:.8rem}
+        .backdrop{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:1500;display:none}
+        .backdrop.show{display:block}
+        @keyframes slideDown{from{transform:translate(-50%,-100%);opacity:0}to{transform:translate(-50%,0);opacity:1}}
+        .unban-message{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#4CAF50;color:#fff;padding:16px 24px;border-radius:50px;font-weight:700;box-shadow:0 4px 20px rgba(76,175,80,0.5);z-index:1000;animation:slideDown .3s;display:none}
+        .reset-message{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#ffd700;color:#333;padding:16px 24px;border-radius:50px;font-weight:700;box-shadow:0 4px 20px rgba(255,215,0,0.5);z-index:1000;animation:slideDown .3s;display:none}
+        .achievement-unlock{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#ffd700,#ffaa00);color:#333;padding:16px 24px;border-radius:50px;font-weight:700;box-shadow:0 4px 20px rgba(255,215,0,0.5);z-index:1000;animation:slideDown .3s;display:none}
+        .purchase-success{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#4CAF50;color:#fff;padding:16px 24px;border-radius:50px;font-weight:700;box-shadow:0 4px 20px rgba(76,175,80,0.5);z-index:2000;animation:slideDown .3s;display:none}
+        .size-control{margin:20px 0;padding:15px;background:rgba(0,0,0,0.3);border-radius:12px}
+        .size-label{display:flex;justify-content:space-between;margin-bottom:10px;color:#ffd700}
+        .size-slider{width:100%;height:8px;background:rgba(255,255,255,0.2);border-radius:4px;outline:0;-webkit-appearance:none}
+        .size-slider::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;background:#ffd700;border-radius:50%;cursor:pointer;border:2px solid #fff}
+        .size-slider::-moz-range-thumb{width:24px;height:24px;background:#ffd700;border-radius:50%;cursor:pointer;border:2px solid #fff}
+        .size-value{font-size:1.2rem;color:#ffd700;font-weight:700}
+        .size-presets{display:flex;gap:10px;margin-top:10px;justify-content:center}
+        .size-preset-btn{background:rgba(255,215,0,0.2);border:1px solid #ffd700;color:#fff;padding:8px 16px;border-radius:20px;cursor:pointer;transition:.2s;font-size:.9rem}
+        .size-preset-btn:hover{background:rgba(255,215,0,0.4);transform:scale(1.05)}
+        .size-preset-btn.active{background:#ffd700;color:#333}
+        .size-info{color:#aaa;font-size:.8rem;margin-top:10px;text-align:center}
     </style>
 </head>
 <body>
-    <!--AdFox START-->
     <div id="adfox_177184316797386820"></div>
-    <script>
-        window.yaContextCb.push(()=>{
-            Ya.adfoxCode.create({
-                ownerId: 691132,
-                containerId: 'adfox_177184316797386820',
-                params: {
-                    pp: 'g',
-                    ps: 'mdxg',
-                    p2: 'hukd'
-                }
-            })
-        })
-    </script>
-
-    <!-- Сообщения -->
-    <div class="cheater-alert" id="cheaterAlert">🚫 Обнаружен читер! Доступ заблокирован</div>
-    <div class="unban-message" id="unbanMessage">✅ Вы были разблокированы создателем!</div>
-    <div class="reset-message" id="resetMessage">🔄 Игра сброшена администратором!</div>
-    <div class="achievement-unlock" id="achievementUnlock">🏆 Достижение разблокировано!</div>
-    <div class="purchase-success" id="purchaseSuccess">💰 Покупка успешно зачислена!</div>
-    
-    <!-- Кнопка админа слева -->
-    <div class="admin-btn" id="adminBtn">
-        <span>👑 Админ</span>
-        <span class="notification" id="adminNotification">0</span>
-    </div>
-    
-    <div class="backdrop" id="backdrop"></div>
-    
-    <!-- Админ панель -->
-    <div class="admin-panel" id="adminPanel">
-        <div class="panel-header">
-            <h2>👑 Админ панель</h2>
-            <button class="close-panel" id="closePanel">×</button>
-        </div>
-        
+    <script>window.yaContextCb.push(()=>{Ya.adfoxCode.create({ownerId:691132,containerId:'adfox_177184316797386820',params:{pp:'g',ps:'mdxg',p2:'hukd'}})})</script>
+    <div class="cheater-alert" id="ca">🚫 Обнаружен читер! Доступ заблокирован</div>
+    <div class="unban-message" id="um">✅ Вы были разблокированы создателем!</div>
+    <div class="reset-message" id="rm">🔄 Игра сброшена администратором!</div>
+    <div class="achievement-unlock" id="au">🏆 Достижение разблокировано!</div>
+    <div class="purchase-success" id="ps">💰 Покупка успешно зачислена!</div>
+    <div class="admin-btn" id="ab"><span>👑 Админ</span><span class="notification" id="an">0</span></div>
+    <div class="backdrop" id="bd"></div>
+    <div class="admin-panel" id="ap">
+        <div class="panel-header"><h2>👑 Админ панель</h2><button class="close-panel" id="cp">×</button></div>
         <div class="admin-stats">
-            <div class="admin-stat">
-                <div class="admin-stat-label">Глобальный счет</div>
-                <div class="admin-stat-value" id="adminGlobalScore">0</div>
-            </div>
-            <div class="admin-stat">
-                <div class="admin-stat-label">Игроков</div>
-                <div class="admin-stat-value" id="adminTotalPlayers">0</div>
-            </div>
-            <div class="admin-stat">
-                <div class="admin-stat-label">Онлайн</div>
-                <div class="admin-stat-value" id="adminOnline">0</div>
-            </div>
-            <div class="admin-stat">
-                <div class="admin-stat-label">Рефералов</div>
-                <div class="admin-stat-value" id="adminTotalReferrals">0</div>
-            </div>
+            <div class="admin-stat"><div class="admin-stat-label">Глобальный счет</div><div class="admin-stat-value" id="ags">0</div></div>
+            <div class="admin-stat"><div class="admin-stat-label">Игроков</div><div class="admin-stat-value" id="atp">0</div></div>
+            <div class="admin-stat"><div class="admin-stat-label">Онлайн</div><div class="admin-stat-value" id="ao">0</div></div>
+            <div class="admin-stat"><div class="admin-stat-label">Рефералов</div><div class="admin-stat-value" id="atr">0</div></div>
         </div>
-        
-        <div class="admin-section">
-            <h3>⚡ Управление игрой</h3>
-            <div class="admin-actions">
-                <button class="admin-action-btn success" onclick="admin.resetGame()">🔄 Сброс игры (для всех)</button>
-                <button class="admin-action-btn success" onclick="admin.addGlobalClicks(100)">➕ +100 кликов</button>
-                <button class="admin-action-btn" onclick="admin.setTarget('8b')">🎯 Цель 8 млрд</button>
-                <button class="admin-action-btn" onclick="admin.setTarget('1m')">🎯 Цель 1 млн</button>
-            </div>
-        </div>
-        
-        <div class="admin-section">
-            <h3>💰 Управление магазином</h3>
-            <div class="admin-actions">
-                <button class="admin-action-btn" onclick="admin.setPrices('normal')">💰 Обычные цены</button>
-                <button class="admin-action-btn" onclick="admin.setPrices('sale')">🔥 Скидка 50%</button>
-                <button class="admin-action-btn" onclick="admin.setPrices('whale')">💎 VIP цены</button>
-            </div>
-            <p style="color: #aaa; font-size: 0.9rem; margin-top: 10px;">
-                📊 Продаж сегодня: <span id="todaySales">0</span>
-            </p>
-        </div>
-        
-        <div class="admin-section">
-            <h3>👥 Топ по рефералам</h3>
-            <div class="player-list" id="referralTopList">
-                <div style="text-align: center; color: #aaa;">Загрузка...</div>
-            </div>
-        </div>
-        
-        <div class="admin-section">
-            <h3>🖼️ Настройки картинки (для всех)</h3>
-            <div class="size-control">
-                <div class="size-label">
-                    <span>Размер изображения</span>
-                    <span class="size-value" id="sizeValue">100%</span>
-                </div>
-                <input type="range" id="sizeSlider" class="size-slider" min="50" max="200" value="100" step="5">
-                <div class="size-presets">
-                    <button class="size-preset-btn" onclick="admin.setImageSize(75)">Мелко (75%)</button>
-                    <button class="size-preset-btn active" onclick="admin.setImageSize(100)">Средне (100%)</button>
-                    <button class="size-preset-btn" onclick="admin.setImageSize(125)">Крупно (125%)</button>
-                    <button class="size-preset-btn" onclick="admin.setImageSize(150)">Очень крупно (150%)</button>
-                </div>
-                <div class="size-info">
-                    🌍 Размер синхронизируется для всех игроков в реальном времени
-                </div>
-            </div>
-        </div>
-        
-        <div class="admin-section">
-            <h3>👥 Все игроки</h3>
-            <div class="player-list" id="playerList">
-                <div style="text-align: center; color: #aaa;">Загрузка...</div>
-            </div>
-        </div>
-        
-        <div class="admin-section">
-            <h3>🔧 Инструменты</h3>
-            <div class="admin-actions">
-                <button class="admin-action-btn" onclick="admin.clearBanned()">✅ Разбанить всех</button>
-                <button class="admin-action-btn danger" onclick="admin.banAll()">🚫 Забанить всех</button>
-                <button class="admin-action-btn danger" onclick="admin.clearDatabase()">⚠️ Очистить БД</button>
-            </div>
-        </div>
+        <div class="admin-section"><h3>⚡ Управление игрой</h3><div class="admin-actions"><button class="admin-action-btn success" onclick="a.resetGame()">🔄 Сброс игры</button><button class="admin-action-btn success" onclick="a.addGlobalClicks(100)">➕ +100 кликов</button><button class="admin-action-btn" onclick="a.setTarget('8b')">🎯 Цель 8 млрд</button><button class="admin-action-btn" onclick="a.setTarget('1m')">🎯 Цель 1 млн</button></div></div>
+        <div class="admin-section"><h3>💰 Управление магазином</h3><div class="admin-actions"><button class="admin-action-btn" onclick="a.setPrices('normal')">💰 Обычные цены</button><button class="admin-action-btn" onclick="a.setPrices('sale')">🔥 Скидка 50%</button><button class="admin-action-btn" onclick="a.setPrices('whale')">💎 VIP цены</button></div><p style="color:#aaa;font-size:.9rem;margin-top:10px">📊 Продаж сегодня: <span id="ts">0</span></p></div>
+        <div class="admin-section"><h3>👥 Топ по рефералам</h3><div class="player-list" id="rtl"><div style="text-align:center;color:#aaa;">Загрузка...</div></div></div>
+        <div class="admin-section"><h3>🖼️ Настройки картинки</h3><div class="size-control"><div class="size-label"><span>Размер</span><span class="size-value" id="sv">100%</span></div><input type="range" id="ss" class="size-slider" min="50" max="200" value="100" step="5"><div class="size-presets"><button class="size-preset-btn" onclick="a.setImageSize(75)">75%</button><button class="size-preset-btn active" onclick="a.setImageSize(100)">100%</button><button class="size-preset-btn" onclick="a.setImageSize(125)">125%</button><button class="size-preset-btn" onclick="a.setImageSize(150)">150%</button></div></div></div>
+        <div class="admin-section"><h3>👥 Все игроки</h3><div class="player-list" id="pl"><div style="text-align:center;color:#aaa;">Загрузка...</div></div></div>
+        <div class="admin-section"><h3>🔧 Инструменты</h3><div class="admin-actions"><button class="admin-action-btn" onclick="a.clearBanned()">✅ Разбанить всех</button><button class="admin-action-btn danger" onclick="a.banAll()">🚫 Забанить всех</button><button class="admin-action-btn danger" onclick="a.clearDatabase()">⚠️ Очистить БД</button></div></div>
     </div>
-
-    <!-- Модальное окно профиля -->
-    <div class="profile-modal" id="profileModal">
-        <div class="profile-header">
-            <h2 id="profileName">Профиль</h2>
-            <button class="close-profile" id="closeProfile">×</button>
-        </div>
-        
+    <div class="profile-modal" id="pm">
+        <div class="profile-header"><h2 id="pn">Профиль</h2><button class="close-profile" id="cpf">×</button></div>
         <div class="profile-stats">
-            <div class="profile-stat">
-                <div class="profile-stat-label">Уровень</div>
-                <div class="profile-stat-value" id="profileLevel">1</div>
-            </div>
-            <div class="profile-stat">
-                <div class="profile-stat-label">Всего кликов</div>
-                <div class="profile-stat-value" id="profileClicks">0</div>
-            </div>
-            <div class="profile-stat">
-                <div class="profile-stat-label">Покупок</div>
-                <div class="profile-stat-value" id="profilePurchases">0</div>
-            </div>
-            <div class="profile-stat">
-                <div class="profile-stat-label">Потрачено</div>
-                <div class="profile-stat-value" id="profileSpent">0₽</div>
-            </div>
-            <div class="profile-stat">
-                <div class="profile-stat-label">Дней подряд</div>
-                <div class="profile-stat-value" id="profileStreak">0</div>
-            </div>
-            <div class="profile-stat">
-                <div class="profile-stat-label">Рефералов</div>
-                <div class="profile-stat-value" id="profileReferrals">0</div>
-            </div>
+            <div class="profile-stat"><div class="profile-stat-label">Уровень</div><div class="profile-stat-value" id="plv">1</div></div>
+            <div class="profile-stat"><div class="profile-stat-label">Клики</div><div class="profile-stat-value" id="pc">0</div></div>
+            <div class="profile-stat"><div class="profile-stat-label">Покупок</div><div class="profile-stat-value" id="pp">0</div></div>
+            <div class="profile-stat"><div class="profile-stat-label">Потрачено</div><div class="profile-stat-value" id="psp">0₽</div></div>
+            <div class="profile-stat"><div class="profile-stat-label">Стрик</div><div class="profile-stat-value" id="pst">0</div></div>
+            <div class="profile-stat"><div class="profile-stat-label">Рефералы</div><div class="profile-stat-value" id="prf">0</div></div>
         </div>
-        
-        <div class="achievements-title">🏆 Достижения</div>
-        <div class="achievements-grid" id="achievementsList">
-            <!-- Сюда будут подгружаться достижения -->
-        </div>
-        
-        <div class="referral-section" id="profileReferralSection">
-            <div class="referral-header">
-                <h2>🔗 Моя реферальная ссылка</h2>
-            </div>
-            <div class="referral-link-box">
-                <div class="referral-link-label">Приглашай друзей и получай бонусы:</div>
-                <div class="referral-link-input-group">
-                    <input type="text" id="profileReferralLink" class="referral-link-input" readonly>
-                    <button class="referral-copy-btn" onclick="copyReferralLink()">Копировать</button>
-                </div>
-            </div>
-            <div class="referral-stats-grid">
-                <div class="referral-stat-card">
-                    <div class="referral-stat-value" id="profileReferralStat">0</div>
-                    <div class="referral-stat-label">приглашено</div>
-                </div>
-                <div class="referral-stat-card">
-                    <div class="referral-stat-value" id="profileReferralBonusStat">0</div>
-                    <div class="referral-stat-label">бонусов</div>
-                </div>
-                <div class="referral-stat-card">
-                    <div class="referral-stat-value" id="profileReferralClicksStat">0</div>
-                    <div class="referral-stat-label">кликов реф.</div>
-                </div>
-            </div>
+        <div class="achievements-title">🏆 Достижения</div><div class="achievements-grid" id="al"></div>
+        <div class="referral-section" id="prs">
+            <div class="referral-header"><h2>🔗 Моя ссылка</h2></div>
+            <div class="referral-link-box"><div class="referral-link-label">Приглашай друзей:</div><div class="referral-link-input-group"><input type="text" id="prl" class="referral-link-input" readonly><button class="referral-copy-btn" onclick="copyRefLink()">Копировать</button></div></div>
+            <div class="referral-stats-grid"><div class="referral-stat-card"><div class="referral-stat-value" id="prs1">0</div><div class="referral-stat-label">приглашено</div></div><div class="referral-stat-card"><div class="referral-stat-value" id="prs2">0</div><div class="referral-stat-label">бонусов</div></div><div class="referral-stat-card"><div class="referral-stat-value" id="prs3">0</div><div class="referral-stat-label">кликов</div></div></div>
         </div>
     </div>
-
     <div class="container">
-        <h1>🌍 Заселение Земли</h1>
-        <p>Цель: <span id="targetDisplay">8 млрд</span></p>
-        
-        <div class="earth" id="earth">
-            <div class="earth-fill" id="earthFill"></div>
-            <div class="earth-image" id="earthImage"></div>
-        </div>
-        
-        <div class="progress-section">
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <div class="earth-target">
-                <span id="currentPop">0</span> / <span id="targetPopulation">8 000 000 000</span>
-            </div>
-        </div>
-        
-        <div class="counter" id="counter">0</div>
-        
-        <div class="name-section">
-            <div id="nameInputGroup" class="name-input-group">
-                <input type="text" id="username" class="name-input" placeholder="Ваше имя" maxlength="20" autocomplete="off">
-                <button id="saveNameBtn" class="name-button">Начать</button>
-            </div>
-            <div id="greeting" class="greeting hidden">
-                <span>Игрок: <span id="displayName" class="greeting-name"></span></span>
-                <span class="level-badge" id="levelBadge">Ур. 1</span>
-            </div>
-        </div>
-        
-        <button id="clickBtn" class="click-button" disabled>👆 ЗАСЕЛИТЬ</button>
-        
-        <!-- Навигационные вкладки -->
-        <div class="tabs">
-            <div class="tab active" onclick="switchTab('game')">🎮 Игра</div>
-            <div class="tab" onclick="switchTab('shop')">💰 Магазин</div>
-            <div class="tab" onclick="switchTab('quests')">📋 Задания</div>
-            <div class="tab" onclick="switchTab('referrals')">👥 Рефералы</div>
-            <div class="tab" onclick="switchTab('top')">🏆 Топ</div>
-        </div>
-        
-        <!-- Вкладка Игра -->
-        <div id="game-tab" class="tab-content active">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div>Онлайн</div>
-                    <div class="stat-value" id="onlineCount">0</div>
-                </div>
-                <div class="stat-card">
-                    <div>Твой вклад</div>
-                    <div class="stat-value" id="userScore">0</div>
-                </div>
-                <div class="stat-card">
-                    <div>Уровень</div>
-                    <div class="stat-value" id="userLevel">1</div>
-                </div>
-                <div class="stat-card">
-                    <div>Осталось</div>
-                    <div class="stat-value" id="remaining">8 млрд</div>
-                </div>
-            </div>
-            
-            <div class="last-clicker">
-                Последний: <span id="lastClickerName">никто</span>
-            </div>
-            
-            <div class="info-block">
-                <h3>📦 Как получить клики после оплаты</h3>
-                <ul>
-                    <li>Клики зачисляются автоматически сразу после успешной оплаты</li>
-                    <li>Зачисление происходит в реальном времени в ваш личный счет</li>
-                    <li>Клики также добавляются в общий прогресс заселения Земли</li>
-                    <li>Все покупки отображаются в вашем личном кабинете</li>
-                </ul>
-            </div>
-            
-            <div class="contacts-block">
-                <h3 style="color: #ffd700; margin-bottom: 10px;">📞 Контактная информация</h3>
-                <p><strong>Email:</strong> kavarnukaevoleg@gmail.com</p>
-                <p><strong>Телефон:</strong> +7 (981) 958-68-47</p>
-                <p><strong>ИП/Самозанятый:</strong> Каварнукаев Олег Вячеславович</p>
-                <p><strong>ИНН:</strong> 471702602370</p>
-            </div>
-            
-            <div class="footer-links">
-                <a href="agreement.html" target="_blank">Пользовательское соглашение</a> |
-                <a href="privacy.html" target="_blank">Политика конфиденциальности</a> |
-                <a href="#">Правила возврата</a>
-            </div>
-        </div>
-        
-        <!-- Вкладка Магазин -->
-        <div id="shop-tab" class="tab-content">
-            <div class="shop-section">
-                <div class="shop-title">
-                    <span>💰</span> МАГАЗИН КЛИКОВ <span>💰</span>
-                </div>
-                <p style="color: #ffd700; margin-bottom: 15px;">1 клик = 1 рубль</p>
-                <div class="shop-items">
-                    <div class="shop-item" onclick="openPaymentModal(10, 10)">
-                        <div class="item-emoji">👆</div>
-                        <div class="item-name">Стартовый</div>
-                        <div class="item-price">10₽</div>
-                        <div class="item-description">10 кликов</div>
-                        <button class="buy-button">Купить</button>
-                    </div>
-                    
-                    <div class="shop-item popular" onclick="openPaymentModal(50, 50)">
-                        <div class="item-emoji">🔥</div>
-                        <div class="item-name">Популярный</div>
-                        <div class="item-price">50₽</div>
-                        <div class="item-description">50 кликов</div>
-                        <button class="buy-button">Купить</button>
-                    </div>
-                    
-                    <div class="shop-item" onclick="openPaymentModal(100, 100)">
-                        <div class="item-emoji">💎</div>
-                        <div class="item-name">VIP</div>
-                        <div class="item-price">100₽</div>
-                        <div class="item-description">100 кликов</div>
-                        <button class="buy-button">Купить</button>
-                    </div>
-                    
-                    <div class="shop-item" onclick="openPaymentModal(1000, 1000)">
-                        <div class="item-emoji">🚀</div>
-                        <div class="item-name">Легендарный</div>
-                        <div class="item-price">1000₽</div>
-                        <div class="item-description">1000 кликов</div>
-                        <button class="buy-button">Купить</button>
-                    </div>
-                </div>
-                
-                <div id="paymentContainer" class="payment-container">
-                    <div class="payment-title" id="paymentTitle"></div>
-                    <div class="cc-payment-form" id="paymentForm"></div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Вкладка Задания -->
-        <div id="quests-tab" class="tab-content">
-            <div class="quests-section">
-                <div class="quests-title">📋 Ежедневные задания</div>
-                <div class="quests-grid" id="questsList">
-                    <!-- Сюда будут подгружаться задания -->
-                    <div class="quest-item">
-                        <div class="quest-icon">⏳</div>
-                        <div class="quest-name">Загрузка...</div>
-                    </div>
-                </div>
-                <div class="refresh-time" id="questRefreshTime">Обновление через: 24:00</div>
-            </div>
-        </div>
-        
-        <!-- Вкладка Рефералы -->
-        <div id="referrals-tab" class="tab-content">
-            <div class="referral-section" id="referralSection">
-                <div class="referral-header">
-                    <h2>👥 Реферальная программа</h2>
-                </div>
-                
-                <div class="referral-link-box">
-                    <div class="referral-link-label">Твоя уникальная ссылка:</div>
-                    <div class="referral-link-input-group">
-                        <input type="text" id="referralLink" class="referral-link-input" readonly>
-                        <button class="referral-copy-btn" onclick="copyReferralLink()">Копировать</button>
-                    </div>
-                </div>
-                
-                <div class="referral-stats-grid">
-                    <div class="referral-stat-card">
-                        <div class="referral-stat-value" id="referralCount">0</div>
-                        <div class="referral-stat-label">приглашено</div>
-                    </div>
-                    <div class="referral-stat-card">
-                        <div class="referral-stat-value" id="referralBonus">0</div>
-                        <div class="referral-stat-label">бонусов</div>
-                    </div>
-                    <div class="referral-stat-card">
-                        <div class="referral-stat-value" id="referralClicks">0</div>
-                        <div class="referral-stat-label">кликов рефералов</div>
-                    </div>
-                </div>
-                
-                <div class="referral-bonus-info">
-                    <div class="bonus-title">🎁 Бонусы за активность рефералов:</div>
-                    <ul class="bonus-list">
-                        <li>За регистрацию друга: +50 кликов</li>
-                        <li>За каждые 1000 кликов друга: +10 кликов</li>
-                        <li>За каждые 5000 кликов друга: +50 кликов</li>
-                        <li>За каждые 10000 кликов друга: +100 кликов</li>
-                    </ul>
-                </div>
-                
-                <div class="referral-table">
-                    <div class="referral-table-title">👥 Твои рефералы</div>
-                    <div id="referralsList">
-                        <!-- Сюда будут подгружаться рефералы -->
-                        <div class="no-referrals">У тебя пока нет приглашенных друзей</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Вкладка Топ -->
-        <div id="top-tab" class="tab-content">
-            <div class="top-players">
-                <div class="top-title">
-                    <span>🏆 Топ по кликам</span>
-                    <span class="view-all" onclick="showAllPlayers()">Все →</span>
-                </div>
-                <div id="topList" class="top-list">
-                    <div class="top-item">Загрузка...</div>
-                </div>
-            </div>
-            
-            <div class="top-players" style="margin-top: 20px;">
-                <div class="top-title">
-                    <span>👥 Топ по рефералам</span>
-                    <span class="view-all" onclick="showAllReferrers()">Все →</span>
-                </div>
-                <div id="referralTop" class="top-list">
-                    <div class="top-item">Загрузка...</div>
-                </div>
-            </div>
-        </div>
+        <h1>🌍 Заселение Земли</h1><p>Цель: <span id="td">8 млрд</span></p>
+        <div class="earth" id="e"><div class="earth-fill" id="ef"></div><div class="earth-image" id="ei"></div></div>
+        <div class="progress-section"><div class="progress-bar"><div class="progress-fill" id="pf"></div></div><div class="earth-target"><span id="cp">0</span> / <span id="tp">8 000 000 000</span></div></div>
+        <div class="counter" id="c">0</div>
+        <div class="name-section"><div id="nig" class="name-input-group"><input type="text" id="un" class="name-input" placeholder="Ваше имя" maxlength="20" autocomplete="off"><button id="snb" class="name-button">Начать</button></div><div id="g" class="greeting hidden"><span>Игрок: <span id="dn" class="greeting-name"></span></span><span class="level-badge" id="lb">Ур. 1</span></div></div>
+        <button id="cb" class="click-button" disabled>👆 ЗАСЕЛИТЬ</button>
+        <div class="tabs"><div class="tab active" onclick="switchTab('game')">🎮 Игра</div><div class="tab" onclick="switchTab('shop')">💰 Магазин</div><div class="tab" onclick="switchTab('quests')">📋 Задания</div><div class="tab" onclick="switchTab('ref')">👥 Рефералы</div><div class="tab" onclick="switchTab('top')">🏆 Топ</div></div>
+        <div id="game-tab" class="tab-content active"><div class="stats-grid"><div class="stat-card"><div>Онлайн</div><div class="stat-value" id="oc">0</div></div><div class="stat-card"><div>Твой вклад</div><div class="stat-value" id="us">0</div></div><div class="stat-card"><div>Уровень</div><div class="stat-value" id="ul">1</div></div><div class="stat-card"><div>Осталось</div><div class="stat-value" id="r">8 млрд</div></div></div><div class="last-clicker">Последний: <span id="lcn">никто</span></div><div class="info-block"><h3>📦 Как получить клики</h3><ul><li>Клики зачисляются автоматически после оплаты</li><li>Зачисление в реальном времени</li><li>Клики добавляются в общий прогресс</li><li>Все покупки в личном кабинете</li></ul></div><div class="contacts-block"><h3 style="color:#ffd700;margin-bottom:10px;">📞 Контакты</h3><p><strong>Email:</strong> kavarnukaevoleg@gmail.com</p><p><strong>Телефон:</strong> +7 (981) 958-68-47</p><p><strong>ИП:</strong> Каварнукаев Олег Вячеславович</p><p><strong>ИНН:</strong> 471702602370</p></div><div class="footer-links"><a href="agreement.html" target="_blank">Соглашение</a> | <a href="privacy.html" target="_blank">Конфиденциальность</a> | <a href="#">Возврат</a></div></div>
+        <div id="shop-tab" class="tab-content"><div class="shop-section"><div class="shop-title"><span>💰</span> МАГАЗИН КЛИКОВ <span>💰</span></div><p style="color:#ffd700;margin-bottom:15px;">1 клик = 1 рубль</p><div class="shop-items"><div class="shop-item" onclick="openPay(10,10)"><div class="item-emoji">👆</div><div class="item-name">Стартовый</div><div class="item-price">10₽</div><div class="item-description">10 кликов</div><button class="buy-button">Купить</button></div><div class="shop-item popular" onclick="openPay(50,50)"><div class="item-emoji">🔥</div><div class="item-name">Популярный</div><div class="item-price">50₽</div><div class="item-description">50 кликов</div><button class="buy-button">Купить</button></div><div class="shop-item" onclick="openPay(100,100)"><div class="item-emoji">💎</div><div class="item-name">VIP</div><div class="item-price">100₽</div><div class="item-description">100 кликов</div><button class="buy-button">Купить</button></div><div class="shop-item" onclick="openPay(1000,1000)"><div class="item-emoji">🚀</div><div class="item-name">Легендарный</div><div class="item-price">1000₽</div><div class="item-description">1000 кликов</div><button class="buy-button">Купить</button></div></div><div id="pcnt" class="payment-container"><div class="payment-title" id="pt"></div><div class="cc-payment-form" id="pfm"></div></div></div></div>
+        <div id="quests-tab" class="tab-content"><div class="quests-section"><div class="quests-title">📋 Ежедневные задания</div><div class="quests-grid" id="ql"></div><div class="refresh-time" id="qrt">Обновление через: 24:00</div></div></div>
+        <div id="ref-tab" class="tab-content"><div class="referral-section"><div class="referral-header"><h2>👥 Реферальная программа</h2></div><div class="referral-link-box"><div class="referral-link-label">Твоя ссылка:</div><div class="referral-link-input-group"><input type="text" id="rl" class="referral-link-input" readonly><button class="referral-copy-btn" onclick="copyRefLink()">Копировать</button></div></div><div class="referral-stats-grid"><div class="referral-stat-card"><div class="referral-stat-value" id="rc">0</div><div class="referral-stat-label">приглашено</div></div><div class="referral-stat-card"><div class="referral-stat-value" id="rb">0</div><div class="referral-stat-label">бонусов</div></div><div class="referral-stat-card"><div class="referral-stat-value" id="rbc">0</div><div class="referral-stat-label">кликов</div></div></div><div class="referral-bonus-info"><div class="bonus-title">🎁 Бонусы:</div><ul class="bonus-list"><li>За регистрацию: +50</li><li>За 1000 кликов: +10</li><li>За 5000 кликов: +50</li><li>За 10000 кликов: +100</li></ul></div><div class="referral-table"><div class="referral-table-title">👥 Твои рефералы</div><div id="rlst"></div></div></div></div>
+        <div id="top-tab" class="tab-content"><div class="top-players"><div class="top-title"><span>🏆 Топ по кликам</span><span class="view-all" onclick="showAll()">Все →</span></div><div id="tl" class="top-list"><div class="top-item">Загрузка...</div></div></div><div class="top-players" style="margin-top:20px;"><div class="top-title"><span>👥 Топ по рефералам</span><span class="view-all" onclick="showAllRef()">Все →</span></div><div id="rt" class="top-list"><div class="top-item">Загрузка...</div></div></div></div>
     </div>
-
-    <!-- CryptoCloud SDK -->
     <script defer src="https://cdn.cryptocloud.plus/widget/v1/widget.js"></script>
-
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-
-    <script>
-        (function() {
-            'use strict';
-            
-            // ===== ЗАМАСКИРОВАННЫЕ ДАННЫЕ =====
-            const _0x4d5e = {
-                api: 'QUl6YVN5QV9nTmtMTXN4VG5lVHd5ZzViRHhLQk45b3NSSVVyUGFF',
-                auth: 'dGhlLWNvbG9ueS10YXAuZmlyZWJhc2VhcHAuY29t',
-                db: 'aHR0cHM6Ly90aGUtY29sb255LXRhcC1kZWZhdWx0LXJ0ZGIuZmlyZWJhc2Vpby5jb20=',
-                project: 'dGhlLWNvbG9ueS10YXA=',
-                storage: 'dGhlLWNvbG9ueS10YXAuZmlyZWJhc3VzdG9yYWdlLmFwcA==',
-                sender: 'NDMzNDM4NzMzNjE2',
-                app: 'MTo0MzM0Mzg3MzM2MTY6d2ViOjc2MDk1YTM2MTYxYjMyNTkwZDQ0ZjU='
-            };
-
-            const _decode = (str) => {
-                try { return atob(str); } catch { return ''; }
-            };
-
-            // Конфигурация
-            const C = {
-                TARGET: 8000000000,
-                TARGETS: {
-                    '8b': 8000000000,
-                    '1m': 1000000
-                },
-                STORAGE: { N: 'wc_n', S: 'wc_s', I: 'wc_i', NS: 'wc_ns', CC: 'wc_cc', AM: 'wc_am' },
-                LIMITS: { M1: 20, M2: 300, M3: 1000, INT: 5000, BAN: 3 },
-                KEY: 'Lm9rMjAyNQ==',
-                RESET_FLAG: 'reset_trigger',
-                IMAGE_URL: 'https://i.imgur.com/W6H3wKX.jpg',
-                CRYPTO_SHOP_ID: 'At3cptqTbYR9y1Hs',
-                
-                ACHIEVEMENTS: {
-                    'click100': { name: 'Новичок', desc: 'Сделать 100 кликов', icon: '🌱', reward: 10 },
-                    'click1000': { name: 'Опытный', desc: 'Сделать 1000 кликов', icon: '🌿', reward: 50 },
-                    'click10000': { name: 'Мастер', desc: 'Сделать 10 000 кликов', icon: '🌳', reward: 200 },
-                    'click100000': { name: 'Легенда', desc: 'Сделать 100 000 кликов', icon: '🏆', reward: 1000 },
-                    'firstPurchase': { name: 'Меценат', desc: 'Совершить первую покупку', icon: '💎', reward: 20 },
-                    'spend500': { name: 'Инвестор', desc: 'Потратить 500₽', icon: '💰', reward: 100 },
-                    'spend5000': { name: 'Магнат', desc: 'Потратить 5 000₽', icon: '👑', reward: 500 },
-                    'streak7': { name: 'Завсегдатай', desc: 'Заходить 7 дней подряд', icon: '📅', reward: 50 },
-                    'streak30': { name: 'Преданный', desc: 'Заходить 30 дней подряд', icon: '⭐', reward: 300 },
-                    'referral1': { name: 'Друг', desc: 'Пригласить 1 друга', icon: '🤝', reward: 50 },
-                    'referral5': { name: 'Популярный', desc: 'Пригласить 5 друзей', icon: '👥', reward: 200 },
-                    'referral10': { name: 'Лидер', desc: 'Пригласить 10 друзей', icon: '🌟', reward: 500 }
-                },
-                
-                QUESTS: {
-                    'clicks': { name: 'Кликер', desc: 'Сделать %s кликов', icon: '👆' },
-                    'streak': { name: 'Заход', desc: 'Заходить %s дней подряд', icon: '📅' },
-                    'purchase': { name: 'Покупатель', desc: 'Совершить покупку на %s₽', icon: '💰' }
-                }
-            };
-
-            // Firebase инициализация
-            firebase.initializeApp({
-                apiKey: _decode(_0x4d5e.api),
-                authDomain: _decode(_0x4d5e.auth),
-                databaseURL: _decode(_0x4d5e.db),
-                projectId: _decode(_0x4d5e.project),
-                storageBucket: _decode(_0x4d5e.storage),
-                messagingSenderId: _decode(_0x4d5e.sender),
-                appId: _decode(_0x4d5e.app)
-            });
-
-            const db = firebase.database();
-            
-            // Элементы DOM
-            const el = {
-                e: document.getElementById('earth'),
-                ef: document.getElementById('earthFill'),
-                ei: document.getElementById('earthImage'),
-                pf: document.getElementById('progressFill'),
-                c: document.getElementById('counter'),
-                cp: document.getElementById('currentPop'),
-                r: document.getElementById('remaining'),
-                oc: document.getElementById('onlineCount'),
-                us: document.getElementById('userScore'),
-                ul: document.getElementById('userLevel'),
-                lb: document.getElementById('levelBadge'),
-                lc: document.getElementById('lastClickerName'),
-                tl: document.getElementById('topList'),
-                nig: document.getElementById('nameInputGroup'),
-                g: document.getElementById('greeting'),
-                dn: document.getElementById('displayName'),
-                un: document.getElementById('username'),
-                snb: document.getElementById('saveNameBtn'),
-                cb: document.getElementById('clickBtn'),
-                ca: document.getElementById('cheaterAlert'),
-                um: document.getElementById('unbanMessage'),
-                rm: document.getElementById('resetMessage'),
-                au: document.getElementById('achievementUnlock'),
-                ps: document.getElementById('purchaseSuccess'),
-                adminBtn: document.getElementById('adminBtn'),
-                adminPanel: document.getElementById('adminPanel'),
-                bd: document.getElementById('backdrop'),
-                close: document.getElementById('closePanel'),
-                playerList: document.getElementById('playerList'),
-                referralTopList: document.getElementById('referralTopList'),
-                adminNotification: document.getElementById('adminNotification'),
-                adminGlobalScore: document.getElementById('adminGlobalScore'),
-                adminTotalPlayers: document.getElementById('adminTotalPlayers'),
-                adminOnline: document.getElementById('adminOnline'),
-                adminTotalReferrals: document.getElementById('adminTotalReferrals'),
-                targetDisplay: document.getElementById('targetDisplay'),
-                targetPopulation: document.getElementById('targetPopulation'),
-                sizeSlider: document.getElementById('sizeSlider'),
-                sizeValue: document.getElementById('sizeValue'),
-                sizePresetBtns: document.querySelectorAll('.size-preset-btn'),
-                todaySales: document.getElementById('todaySales'),
-                paymentContainer: document.getElementById('paymentContainer'),
-                paymentTitle: document.getElementById('paymentTitle'),
-                paymentForm: document.getElementById('paymentForm'),
-                profileModal: document.getElementById('profileModal'),
-                closeProfile: document.getElementById('closeProfile'),
-                profileName: document.getElementById('profileName'),
-                profileLevel: document.getElementById('profileLevel'),
-                profileClicks: document.getElementById('profileClicks'),
-                profilePurchases: document.getElementById('profilePurchases'),
-                profileSpent: document.getElementById('profileSpent'),
-                profileStreak: document.getElementById('profileStreak'),
-                profileReferrals: document.getElementById('profileReferrals'),
-                achievementsList: document.getElementById('achievementsList'),
-                profileReferralLink: document.getElementById('profileReferralLink'),
-                profileReferralStat: document.getElementById('profileReferralStat'),
-                profileReferralBonusStat: document.getElementById('profileReferralBonusStat'),
-                profileReferralClicksStat: document.getElementById('profileReferralClicksStat'),
-                referralSection: document.getElementById('referralSection'),
-                referralLink: document.getElementById('referralLink'),
-                referralCount: document.getElementById('referralCount'),
-                referralBonus: document.getElementById('referralBonus'),
-                referralClicks: document.getElementById('referralClicks'),
-                referralsList: document.getElementById('referralsList'),
-                referralTop: document.getElementById('referralTop'),
-                questsList: document.getElementById('questsList'),
-                questRefreshTime: document.getElementById('questRefreshTime')
-            };
-
-            // Состояние
-            const s = {
-                u: '',
-                globalScore: 0,
-                myScore: 0,
-                pid: null,
-                ns: false,
-                or: null,
-                pr: null,
-                ct: [],
-                lsc: 0,
-                lch: Date.now(),
-                cc: 0,
-                b: false,
-                admin: false,
-                players: {},
-                online: 0,
-                clickLock: false,
-                target: C.TARGET,
-                pendingClick: false,
-                imageSize: 100,
-                currentPrices: { 10: 10, 50: 50, 100: 100, 1000: 1000 },
-                salesToday: 0,
-                totalRevenue: 0,
-                purchases: 0,
-                moneySpent: 0,
-                streak: 0,
-                level: 1,
-                achievements: {},
-                referrals: [],
-                referralData: {},
-                referralBonus: 0,
-                referralClicksTotal: 0,
-                quests: {},
-                questsCompleted: {},
-                viewingProfile: null,
-                achievementNotified: {}
-            };
-
-            // Хранилище
-            const stor = {
-                g: (k) => { try { return localStorage.getItem(C.STORAGE[k]); } catch { return null; } },
-                s: (k, v) => { try { localStorage.setItem(C.STORAGE[k], v); } catch {} },
-                r: (k) => { try { localStorage.removeItem(C.STORAGE[k]); } catch {} }
-            };
-
-            // ===== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК =====
-            window.switchTab = function(tab) {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                
-                document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
-                document.getElementById(`${tab}-tab`).classList.add('active');
-            };
-
-            // ===== РАСЧЕТ УРОВНЯ =====
-            function calculateLevel(clicks) {
-                return Math.floor(clicks / 1000) + 1;
-            }
-
-            // ===== ОБНОВЛЕНИЕ ТОПА ПО РЕФЕРАЛАМ =====
-            function updateReferralTop() {
-                const players = Object.entries(s.players)
-                    .map(([id, d]) => ({ 
-                        id, 
-                        name: d.n || 'Аноним', 
-                        referrals: d.referrals ? d.referrals.length : 0,
-                        referralBonus: d.referralBonus || 0,
-                        referralClicks: d.referralClicks || 0
-                    }))
-                    .filter(p => p.referrals > 0)
-                    .sort((a, b) => b.referrals - a.referrals)
-                    .slice(0, 10);
-
-                if (s.admin) {
-                    const totalReferrals = Object.values(s.players).reduce((sum, p) => 
-                        sum + (p.referrals ? p.referrals.length : 0), 0);
-                    el.adminTotalReferrals.textContent = totalReferrals;
-                }
-
-                if (s.admin && el.referralTopList) {
-                    if (players.length === 0) {
-                        el.referralTopList.innerHTML = '<div style="text-align: center; color: #aaa;">Нет приглашений</div>';
-                    } else {
-                        el.referralTopList.innerHTML = players.map(p => `
-                            <div class="player-item" onclick="openProfile('${p.id}', '${p.name}')">
-                                <div class="player-info">
-                                    <div class="player-name">${p.name}</div>
-                                    <div class="player-score">👥 ${p.referrals} рефералов | 💰 ${p.referralBonus} бонусов</div>
-                                </div>
-                            </div>
-                        `).join('');
-                    }
-                }
-
-                if (players.length === 0) {
-                    el.referralTop.innerHTML = '<div class="top-item">Нет приглашений</div>';
-                } else {
-                    el.referralTop.innerHTML = players.map((p, i) => {
-                        const rc = i === 0 ? 'top-rank-1' : i === 1 ? 'top-rank-2' : i === 2 ? 'top-rank-3' : '';
-                        return `
-                            <div class="top-item" onclick="openProfile('${p.id}', '${p.name}')">
-                                <div class="top-rank ${rc}">${i + 1}</div>
-                                <span class="top-name">${p.name}</span>
-                                <span class="top-score">👥 ${p.referrals}</span>
-                            </div>
-                        `;
-                    }).join('');
-                }
-            }
-
-            // ===== ОБНОВЛЕНИЕ СПИСКА РЕФЕРАЛОВ =====
-            function updateReferralsList() {
-                if (!s.pid || !s.referrals || s.referrals.length === 0) {
-                    if (el.referralsList) {
-                        el.referralsList.innerHTML = '<div class="no-referrals">У тебя пока нет приглашенных друзей</div>';
-                    }
-                    return;
-                }
-
-                let html = '';
-                let totalClicks = 0;
-                
-                s.referrals.forEach(refId => {
-                    const ref = s.players[refId];
-                    if (ref) {
-                        const clicks = ref.sc || 0;
-                        totalClicks += clicks;
-                        const bonus = Math.floor(clicks / 1000) * 10;
-                        
-                        html += `
-                            <div class="referral-row" onclick="openProfile('${refId}', '${ref.n}')">
-                                <span class="referral-name">${ref.n || 'Аноним'}</span>
-                                <span class="referral-clicks">${clicks.toLocaleString()} кликов</span>
-                                <span class="referral-bonus">+${bonus}</span>
-                            </div>
-                        `;
-                    }
-                });
-
-                s.referralClicksTotal = totalClicks;
-                
-                if (el.referralsList) {
-                    el.referralsList.innerHTML = html || '<div class="no-referrals">У тебя пока нет приглашенных друзей</div>';
-                }
-            }
-
-            // ===== ПРОВЕРКА БОНУСОВ ЗА АКТИВНОСТЬ РЕФЕРАЛОВ =====
-            function checkReferralActivity(refId, refClicks) {
-                if (!s.pid || !s.referrals.includes(refId)) return false;
-                
-                if (!s.referralData[refId]) {
-                    s.referralData[refId] = { lastClicks: 0, totalBonus: 0 };
-                }
-                
-                const lastChecked = s.referralData[refId].lastClicks;
-                const clicksGained = refClicks - lastChecked;
-                
-                if (clicksGained >= 1000) {
-                    const bonus = Math.floor(clicksGained / 1000) * 10;
-                    s.referralBonus += bonus;
-                    s.myScore += bonus;
-                    s.globalScore += bonus;
-                    
-                    s.referralData[refId].lastClicks = refClicks;
-                    s.referralData[refId].totalBonus += bonus;
-                    
-                    if (s.pr) {
-                        s.pr.update({ 
-                            referralBonus: s.referralBonus,
-                            sc: s.myScore,
-                            referralClicks: s.referralClicksTotal
-                        });
-                    }
-                    
-                    el.au.textContent = `🎁 За активность реферала +${bonus} кликов!`;
-                    el.au.style.display = 'block';
-                    setTimeout(() => { el.au.style.display = 'none'; }, 5000);
-                    
-                    return true;
-                }
-                
-                return false;
-            }
-
-            // ===== ПОКАЗ ВСЕХ ПРИГЛАШАЮЩИХ =====
-            window.showAllReferrers = function() {
-                const players = Object.entries(s.players)
-                    .map(([id, d]) => ({ 
-                        id, 
-                        name: d.n || 'Аноним', 
-                        referrals: d.referrals ? d.referrals.length : 0,
-                        level: calculateLevel(d.sc || 0)
-                    }))
-                    .filter(p => p.referrals > 0)
-                    .sort((a, b) => b.referrals - a.referrals);
-                
-                let listHtml = '<div class="top-title">Все приглашающие</div>';
-                
-                players.forEach((p, i) => {
-                    listHtml += `
-                        <div class="top-item" onclick="openProfile('${p.id}', '${p.name}')">
-                            <div class="top-rank">${i + 1}</div>
-                            <span class="top-name">${p.name} [Ур.${p.level}]</span>
-                            <span class="top-score">👥 ${p.referrals}</span>
-                        </div>
-                    `;
-                });
-                
-                if (players.length === 0) {
-                    listHtml += '<div class="top-item">Нет приглашений</div>';
-                }
-                
-                el.referralTop.innerHTML = listHtml;
-            };
-
-            // ===== ПРОВЕРКА ДОСТИЖЕНИЙ =====
-            function checkAchievements() {
-                if (!s.pid || !s.pr) return;
-                
-                const newAchievements = [];
-                const now = Date.now();
-                
-                if (s.myScore >= 100 && !s.achievements.click100 && !s.achievementNotified.click100) {
-                    newAchievements.push('click100');
-                    s.achievementNotified.click100 = true;
-                }
-                if (s.myScore >= 1000 && !s.achievements.click1000 && !s.achievementNotified.click1000) {
-                    newAchievements.push('click1000');
-                    s.achievementNotified.click1000 = true;
-                }
-                if (s.myScore >= 10000 && !s.achievements.click10000 && !s.achievementNotified.click10000) {
-                    newAchievements.push('click10000');
-                    s.achievementNotified.click10000 = true;
-                }
-                if (s.myScore >= 100000 && !s.achievements.click100000 && !s.achievementNotified.click100000) {
-                    newAchievements.push('click100000');
-                    s.achievementNotified.click100000 = true;
-                }
-                
-                if (s.purchases >= 1 && !s.achievements.firstPurchase && !s.achievementNotified.firstPurchase) {
-                    newAchievements.push('firstPurchase');
-                    s.achievementNotified.firstPurchase = true;
-                }
-                if (s.moneySpent >= 500 && !s.achievements.spend500 && !s.achievementNotified.spend500) {
-                    newAchievements.push('spend500');
-                    s.achievementNotified.spend500 = true;
-                }
-                if (s.moneySpent >= 5000 && !s.achievements.spend5000 && !s.achievementNotified.spend5000) {
-                    newAchievements.push('spend5000');
-                    s.achievementNotified.spend5000 = true;
-                }
-                
-                if (s.streak >= 7 && !s.achievements.streak7 && !s.achievementNotified.streak7) {
-                    newAchievements.push('streak7');
-                    s.achievementNotified.streak7 = true;
-                }
-                if (s.streak >= 30 && !s.achievements.streak30 && !s.achievementNotified.streak30) {
-                    newAchievements.push('streak30');
-                    s.achievementNotified.streak30 = true;
-                }
-                
-                if (s.referrals.length >= 1 && !s.achievements.referral1 && !s.achievementNotified.referral1) {
-                    newAchievements.push('referral1');
-                    s.achievementNotified.referral1 = true;
-                }
-                if (s.referrals.length >= 5 && !s.achievements.referral5 && !s.achievementNotified.referral5) {
-                    newAchievements.push('referral5');
-                    s.achievementNotified.referral5 = true;
-                }
-                if (s.referrals.length >= 10 && !s.achievements.referral10 && !s.achievementNotified.referral10) {
-                    newAchievements.push('referral10');
-                    s.achievementNotified.referral10 = true;
-                }
-                
-                if (newAchievements.length > 0) {
-                    const updates = {};
-                    
-                    newAchievements.forEach(ach => {
-                        updates[`achievements.${ach}`] = { unlocked: true, date: now };
-                        
-                        if (C.ACHIEVEMENTS[ach].reward > 0) {
-                            s.myScore += C.ACHIEVEMENTS[ach].reward;
-                            s.globalScore += C.ACHIEVEMENTS[ach].reward;
-                            updates.sc = s.myScore;
-                            
-                            el.au.textContent = `🏆 Достижение "${C.ACHIEVEMENTS[ach].name}"! +${C.ACHIEVEMENTS[ach].reward} кликов`;
-                            el.au.style.display = 'block';
-                            setTimeout(() => { el.au.style.display = 'none'; }, 5000);
-                        }
-                    });
-                    
-                    s.pr.update(updates);
-                    
-                    newAchievements.forEach(ach => {
-                        s.achievements[ach] = { unlocked: true, date: now };
-                    });
-                }
-            }
-
-            // ===== ПРОВЕРКА СТРИКА =====
-            function checkStreak() {
-                if (!s.pr) return;
-                
-                const today = new Date().setHours(0, 0, 0, 0);
-                const lastSeen = s.pr.lastSeen || 0;
-                const lastSeenDay = new Date(lastSeen).setHours(0, 0, 0, 0);
-                
-                let newStreak = s.streak;
-                
-                if (lastSeenDay === today) {
-                    return;
-                } else if (lastSeenDay === today - 86400000) {
-                    newStreak++;
-                } else {
-                    newStreak = 1;
-                }
-                
-                if (newStreak !== s.streak) {
-                    s.streak = newStreak;
-                    s.pr.update({ streak: newStreak, lastSeen: Date.now() });
-                }
-            }
-
-            // ===== ГЕНЕРАЦИЯ ЕЖЕДНЕВНЫХ ЗАДАНИЙ =====
-            function generateDailyQuests() {
-                const today = new Date().setHours(0, 0, 0, 0);
-                const savedQuests = localStorage.getItem('dailyQuests');
-                const savedDate = localStorage.getItem('questsDate');
-                
-                if (savedQuests && savedDate == today) {
-                    return JSON.parse(savedQuests);
-                }
-                
-                const quests = [
-                    {
-                        id: 'clicks_1',
-                        type: 'clicks',
-                        target: 100,
-                        reward: 20,
-                        progress: 0,
-                        completed: false,
-                        claimed: false
-                    },
-                    {
-                        id: 'clicks_2',
-                        type: 'clicks',
-                        target: 500,
-                        reward: 100,
-                        progress: 0,
-                        completed: false,
-                        claimed: false
-                    },
-                    {
-                        id: 'streak',
-                        type: 'streak',
-                        target: 3,
-                        reward: 30,
-                        progress: 0,
-                        completed: false,
-                        claimed: false
-                    }
-                ];
-                
-                localStorage.setItem('dailyQuests', JSON.stringify(quests));
-                localStorage.setItem('questsDate', today);
-                
-                return quests;
-            }
-
-            // ===== ОБНОВЛЕНИЕ ЗАДАНИЙ =====
-            function updateQuests() {
-                const quests = generateDailyQuests();
-                
-                quests.forEach(quest => {
-                    switch(quest.type) {
-                        case 'clicks':
-                            quest.progress = s.myScore;
-                            break;
-                        case 'streak':
-                            quest.progress = s.streak;
-                            break;
-                        case 'purchase':
-                            quest.progress = s.moneySpent;
-                            break;
-                    }
-                    
-                    if (quest.progress >= quest.target && !quest.completed) {
-                        quest.completed = true;
-                    }
-                });
-                
-                localStorage.setItem('dailyQuests', JSON.stringify(quests));
-                
-                let questsHtml = '';
-                quests.forEach(quest => {
-                    const percent = Math.min((quest.progress / quest.target) * 100, 100);
-                    questsHtml += `
-                        <div class="quest-item ${quest.completed ? 'completed' : ''}">
-                            <div class="quest-icon">${C.QUESTS[quest.type].icon}</div>
-                            <div class="quest-name">${C.QUESTS[quest.type].name}</div>
-                            <div class="quest-desc">${C.QUESTS[quest.type].desc.replace('%s', quest.target)}</div>
-                            <div class="quest-progress">
-                                <div class="quest-progress-fill" style="width: ${percent}%"></div>
-                            </div>
-                            <div class="quest-reward">+${quest.reward}</div>
-                            ${quest.completed && !quest.claimed ? 
-                                `<button class="quest-button" onclick="claimQuest('${quest.id}')">Забрать</button>` : 
-                                quest.claimed ?
-                                '<button class="quest-button" disabled>Получено</button>' :
-                                `<button class="quest-button" disabled>${quest.progress}/${quest.target}</button>`
-                            }
-                        </div>
-                    `;
-                });
-                
-                el.questsList.innerHTML = questsHtml;
-                
-                const now = Date.now();
-                const tomorrow = new Date().setHours(24, 0, 0, 0);
-                const hoursLeft = Math.floor((tomorrow - now) / 3600000);
-                const minutesLeft = Math.floor(((tomorrow - now) % 3600000) / 60000);
-                el.questRefreshTime.textContent = `Обновление через: ${hoursLeft}ч ${minutesLeft}м`;
-            }
-
-            // ===== ПОЛУЧЕНИЕ НАГРАДЫ ЗА ЗАДАНИЕ =====
-            window.claimQuest = function(questId) {
-                const quests = JSON.parse(localStorage.getItem('dailyQuests'));
-                const quest = quests.find(q => q.id === questId);
-                
-                if (quest && quest.completed && !quest.claimed) {
-                    quest.claimed = true;
-                    localStorage.setItem('dailyQuests', JSON.stringify(quests));
-                    
-                    s.myScore += quest.reward;
-                    s.globalScore += quest.reward;
-                    
-                    if (s.pr) {
-                        s.pr.update({ sc: s.myScore });
-                    }
-                    
-                    el.au.textContent = `✅ Задание выполнено! +${quest.reward} кликов`;
-                    el.au.style.display = 'block';
-                    setTimeout(() => { el.au.style.display = 'none'; }, 5000);
-                    
-                    updateQuests();
-                    updateUI();
-                }
-            };
-
-            // ===== РЕФЕРАЛЬНАЯ ССЫЛКА =====
-            function updateReferralLink() {
-                if (!s.pid) return;
-                
-                const baseUrl = window.location.origin + window.location.pathname;
-                const refLink = `${baseUrl}?ref=${s.pid}`;
-                
-                if (el.referralLink) el.referralLink.value = refLink;
-                if (el.profileReferralLink) el.profileReferralLink.value = refLink;
-            }
-
-            window.copyReferralLink = function() {
-                const link = el.referralLink || el.profileReferralLink;
-                if (!link) return;
-                
-                link.select();
-                document.execCommand('copy');
-                
-                el.au.textContent = '✅ Ссылка скопирована!';
-                el.au.style.display = 'block';
-                setTimeout(() => { el.au.style.display = 'none'; }, 2000);
-            };
-
-            // ===== ОБРАБОТКА РЕФЕРАЛОВ =====
-            function checkReferral() {
-                const urlParams = new URLSearchParams(window.location.search);
-                const ref = urlParams.get('ref');
-                
-                if (ref && ref !== s.pid) {
-                    localStorage.setItem('referrer', ref);
-                    console.log('Реферал сохранен:', ref);
-                }
-            }
-
-            function applyReferral() {
-                const ref = localStorage.getItem('referrer');
-                if (!ref || !s.pid || ref === s.pid) return;
-                
-                console.log('Применяем реферала:', ref, 'к игроку:', s.pid);
-                
-                const appliedRefs = JSON.parse(localStorage.getItem('appliedRefs') || '[]');
-                if (appliedRefs.includes(ref)) {
-                    console.log('Реферал уже был применен');
-                    return;
-                }
-                
-                // Добавляем реферала в список приглашенных
-                db.ref('players/' + ref + '/referrals').transaction(list => {
-                    if (!list) list = [];
-                    if (!list.includes(s.pid)) {
-                        list.push(s.pid);
-                    }
-                    return list;
-                }).then(() => {
-                    // Начисляем бонус за регистрацию
-                    return db.ref('players/' + ref).transaction(p => {
-                        if (!p) p = { sc: 0 };
-                        p.sc = (p.sc || 0) + 50;
-                        p.referralBonus = (p.referralBonus || 0) + 50;
-                        p.referralClicks = p.referralClicks || 0;
-                        return p;
-                    });
-                }).then(() => {
-                    appliedRefs.push(ref);
-                    localStorage.setItem('appliedRefs', JSON.stringify(appliedRefs));
-                    
-                    console.log('Реферал успешно применен!');
-                    
-                    if (s.pid === ref) {
-                        el.au.textContent = '✅ За приглашенного друга +50 кликов!';
-                        el.au.style.display = 'block';
-                        setTimeout(() => { el.au.style.display = 'none'; }, 5000);
-                    }
-                });
-                
-                localStorage.removeItem('referrer');
-            }
-
-            // ===== ОТКРЫТИЕ ПРОФИЛЯ =====
-            window.openProfile = function(playerId, playerName) {
-                const playerData = s.players[playerId];
-                if (!playerData) return;
-                
-                const level = calculateLevel(playerData.sc || 0);
-                const referrals = playerData.referrals ? playerData.referrals.length : 0;
-                const referralBonus = playerData.referralBonus || 0;
-                const referralClicks = playerData.referralClicks || 0;
-                
-                el.profileName.textContent = playerData.n || playerName;
-                el.profileLevel.textContent = level;
-                el.profileClicks.textContent = (playerData.sc || 0).toLocaleString();
-                el.profilePurchases.textContent = playerData.purchases || 0;
-                el.profileSpent.textContent = (playerData.spent || 0) + '₽';
-                el.profileStreak.textContent = (playerData.streak || 1);
-                el.profileReferrals.textContent = referrals;
-                
-                let achievementsHtml = '';
-                const playerAchievements = playerData.achievements || {};
-                
-                Object.entries(C.ACHIEVEMENTS).forEach(([key, ach]) => {
-                    const unlocked = playerAchievements[key]?.unlocked;
-                    achievementsHtml += `
-                        <div class="achievement-card ${unlocked ? 'unlocked' : 'locked'}">
-                            <div class="achievement-icon">${ach.icon}</div>
-                            <div class="achievement-info">
-                                <div class="achievement-name">${ach.name}</div>
-                                <div class="achievement-desc">${ach.desc}</div>
-                                ${unlocked ? '<div class="achievement-reward">✓ Выполнено</div>' : ''}
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                el.achievementsList.innerHTML = achievementsHtml;
-                
-                if (playerId === s.pid) {
-                    updateReferralLink();
-                    el.profileReferralSection.style.display = 'block';
-                    el.profileReferralStat.textContent = referrals;
-                    el.profileReferralBonusStat.textContent = referralBonus;
-                    el.profileReferralClicksStat.textContent = referralClicks.toLocaleString();
-                } else {
-                    el.profileReferralSection.style.display = 'none';
-                }
-                
-                el.profileModal.classList.add('show');
-                el.bd.classList.add('show');
-                
-                s.viewingProfile = playerId;
-            };
-
-            // ===== ПОКАЗ ВСЕХ ИГРОКОВ =====
-            window.showAllPlayers = function() {
-                const players = Object.entries(s.players)
-                    .map(([id, d]) => ({ id, ...d }))
-                    .filter(p => p.sc > 0)
-                    .sort((a, b) => b.sc - a.sc);
-                
-                let listHtml = '<div class="top-title">Все игроки</div>';
-                
-                players.forEach((p, i) => {
-                    const level = calculateLevel(p.sc || 0);
-                    listHtml += `
-                        <div class="top-item" onclick="openProfile('${p.id}', '${p.n}')">
-                            <div class="top-rank">${i + 1}</div>
-                            <span class="top-name">${p.n || 'Аноним'} [Ур.${level}]</span>
-                            <span class="top-score">${(p.sc || 0).toLocaleString()}</span>
-                            ${p.streak >= 7 ? '<span class="top-badge">🔥</span>' : ''}
-                        </div>
-                    `;
-                });
-                
-                el.tl.innerHTML = listHtml;
-            };
-
-            // ===== UI =====
-            function updateUI() {
-                if (s.b && !s.admin) {
-                    el.cb.disabled = true;
-                    el.e.style.pointerEvents = 'none';
-                } else if (s.ns) {
-                    el.cb.disabled = false;
-                    el.e.style.pointerEvents = 'auto';
-                }
-                
-                if (s.ns && s.u) {
-                    el.nig.classList.add('hidden');
-                    el.g.classList.remove('hidden');
-                    el.dn.textContent = s.u;
-                    
-                    const level = calculateLevel(s.myScore);
-                    el.lb.textContent = `Ур. ${level}`;
-                } else {
-                    el.nig.classList.remove('hidden');
-                    el.g.classList.add('hidden');
-                }
-
-                const p = Math.min((s.globalScore / s.target) * 100, 100);
-                
-                el.ef.style.height = p + '%';
-                const clipValue = (100 - p) + '%';
-                el.ei.style.clipPath = `inset(${clipValue} 0 0 0)`;
-                el.pf.style.width = p + '%';
-
-                el.c.textContent = s.globalScore.toLocaleString();
-                el.cp.textContent = s.globalScore.toLocaleString();
-                el.r.textContent = Math.max(s.target - s.globalScore, 0).toLocaleString();
-                el.us.textContent = s.myScore.toLocaleString();
-                
-                const level = calculateLevel(s.myScore);
-                el.ul.textContent = level;
-                
-                if (s.pid) {
-                    el.referralCount.textContent = s.referrals.length;
-                    el.referralBonus.textContent = s.referralBonus;
-                    el.referralClicks.textContent = s.referralClicksTotal.toLocaleString();
-                    updateReferralLink();
-                    updateReferralsList();
-                }
-                
-                if (s.admin) {
-                    el.adminGlobalScore.textContent = s.globalScore.toLocaleString();
-                    el.adminTotalPlayers.textContent = Object.keys(s.players).length;
-                    el.adminOnline.textContent = s.online;
-                    el.todaySales.textContent = s.salesToday;
-                }
-                
-                updateQuests();
-                updateReferralTop();
-            }
-
-            // ===== ФУНКЦИЯ ОТКРЫТИЯ ПЛАТЕЖНОГО ВИДЖЕТА =====
-            window.openPaymentModal = function(clicks, price) {
-                if (!s.ns) {
-                    alert('⚠️ Сначала введите имя!');
-                    return;
-                }
-                
-                sessionStorage.setItem('pendingPurchase', JSON.stringify({
-                    clicks: clicks,
-                    userId: s.pid,
-                    username: s.u,
-                    price: price,
-                    timestamp: Date.now()
-                }));
-                
-                el.paymentContainer.style.display = 'block';
-                el.paymentTitle.textContent = `Оплата ${clicks} кликов (${price}₽)`;
-                
-                el.paymentForm.innerHTML = '';
-                
-                if (window.CryptoCloudWidget) {
-                    window.CryptoCloudWidget.CreateInvoiceForm({
-                        shop_id: C.CRYPTO_SHOP_ID,
-                        amount: price,
-                        buttonText: `Оплатить ${price}₽`,
-                        currency: "RUB",
-                        locale: "ru",
-                        template: "dark",
-                        emailRequired: true,
-                        orderId: `click_${clicks}_${s.pid}_${Date.now()}`
-                    }).mount('.cc-payment-form');
-                    
-                    el.paymentContainer.scrollIntoView({ behavior: 'smooth' });
-                } else {
-                    alert('Загрузка платежной системы... Попробуйте через секунду');
-                }
-            };
-
-            // ===== ФУНКЦИЯ ЗАЧИСЛЕНИЯ КЛИКОВ =====
-            function addPaidClicks(clicks, price) {
-                if (!s.pid) return;
-                
-                s.purchases++;
-                s.moneySpent += price;
-                
-                db.ref('globalCounter').transaction(v => (v || 0) + clicks)
-                    .then(() => {
-                        if (s.pr) {
-                            return s.pr.transaction(p => {
-                                if (!p) p = { sc: 0 };
-                                p.sc = (p.sc || 0) + clicks;
-                                p.n = s.u;
-                                p.ls = Date.now();
-                                p.purchases = (p.purchases || 0) + 1;
-                                p.spent = (p.spent || 0) + price;
-                                return p;
-                            });
-                        }
-                    })
-                    .then(() => {
-                        s.salesToday++;
-                        s.totalRevenue += price;
-                        
-                        db.ref('admin/sales').push({
-                            amount: clicks,
-                            price: price,
-                            user: s.u,
-                            userId: s.pid,
-                            time: Date.now()
-                        });
-                        
-                        checkAchievements();
-                        
-                        el.ps.textContent = `💰 ${clicks} кликов успешно зачислены!`;
-                        el.ps.style.display = 'block';
-                        setTimeout(() => { el.ps.style.display = 'none'; }, 5000);
-                        
-                        el.paymentContainer.style.display = 'none';
-                        
-                        if (s.admin) {
-                            el.todaySales.textContent = s.salesToday;
-                        }
-                        
-                        updateUI();
-                    })
-                    .catch(error => {
-                        console.error('Ошибка зачисления:', error);
-                        alert('❌ Ошибка при зачислении');
-                    });
-            }
-
-            // ===== ФУНКЦИЯ ИЗМЕНЕНИЯ РАЗМЕРА КАРТИНКИ =====
-            function updateImageSize(size) {
-                s.imageSize = size;
-                el.ei.style.backgroundSize = size + '%';
-                
-                if (s.admin) {
-                    el.sizeValue.textContent = size + '%';
-                    
-                    el.sizePresetBtns.forEach(btn => {
-                        btn.classList.remove('active');
-                    });
-                    
-                    if (size === 75) el.sizePresetBtns[0]?.classList.add('active');
-                    else if (size === 100) el.sizePresetBtns[1]?.classList.add('active');
-                    else if (size === 125) el.sizePresetBtns[2]?.classList.add('active');
-                    else if (size === 150) el.sizePresetBtns[3]?.classList.add('active');
-                }
-            }
-
-            // ===== ФУНКЦИЯ ГЛОБАЛЬНОГО СБРОСА =====
-            function performGlobalReset() {
-                el.rm.style.display = 'block';
-                setTimeout(() => { el.rm.style.display = 'none'; }, 3000);
-                
-                s.globalScore = 0;
-                s.myScore = 0;
-                s.ns = false;
-                s.u = '';
-                s.pid = null;
-                s.pr = null;
-                s.b = false;
-                s.purchases = 0;
-                s.moneySpent = 0;
-                s.streak = 0;
-                s.achievements = {};
-                s.referrals = [];
-                s.referralData = {};
-                s.referralBonus = 0;
-                s.referralClicksTotal = 0;
-                s.achievementNotified = {};
-                
-                localStorage.clear();
-                
-                el.un.value = '';
-                el.nig.classList.remove('hidden');
-                el.g.classList.add('hidden');
-                
-                if (s.or) s.or.remove();
-                s.or = db.ref('onlineUsers').push();
-                s.or.set({ n: 'Аноним', on: true, ls: Date.now(), pid: null });
-                
-                updateUI();
-            }
-
-            // ===== СЛУШАТЕЛЬ ГЛОБАЛЬНОГО СБРОСА =====
-            db.ref('admin/reset').on('value', (snap) => {
-                if (snap.val() === true) {
-                    performGlobalReset();
-                    db.ref('admin/reset').set(false);
-                }
-            });
-
-            // ===== СЛУШАТЕЛЬ РАЗМЕРА КАРТИНКИ =====
-            db.ref('config/imageSize').on('value', (snap) => {
-                const size = snap.val();
-                if (size && typeof size === 'number') {
-                    updateImageSize(size);
-                }
-            });
-
-            // ===== СЛУШАТЕЛЬ СТАТИСТИКИ ПРОДАЖ =====
-            db.ref('admin/sales').on('value', (snap) => {
-                const sales = snap.val();
-                if (sales && s.admin) {
-                    const today = new Date().setHours(0,0,0,0);
-                    let todayCount = 0;
-                    
-                    Object.values(sales).forEach(sale => {
-                        if (sale.time >= today) {
-                            todayCount++;
-                        }
-                    });
-                    
-                    s.salesToday = todayCount;
-                    
-                    if (s.admin) {
-                        el.todaySales.textContent = todayCount;
-                    }
-                }
-            });
-
-            // ===== АДМИН ПАНЕЛЬ =====
-            const admin = {
-                open() {
-                    if (!s.admin) {
-                        const secret = prompt('🔐 Введите пароль админа:');
-                        if (secret === atob(C.KEY)) {
-                            this.enable();
-                        }
-                        return;
-                    }
-                    el.adminPanel.classList.add('show');
-                    el.bd.classList.add('show');
-                    this.updatePlayerList();
-                    
-                    el.sizeSlider.value = s.imageSize;
-                    el.sizeValue.textContent = s.imageSize + '%';
-                },
-                close() {
-                    el.adminPanel.classList.remove('show');
-                    el.bd.classList.remove('show');
-                },
-                enable() {
-                    s.admin = true;
-                    stor.s('AM', 'true');
-                    this.open();
-                },
-                disable() {
-                    s.admin = false;
-                    stor.r('AM');
-                    this.close();
-                },
-                updatePlayerList() {
-                    const players = Object.entries(s.players)
-                        .map(([id, data]) => ({ id, ...data }))
-                        .sort((a, b) => (b.sc || 0) - (a.sc || 0));
-
-                    if (players.length === 0) {
-                        el.playerList.innerHTML = '<div style="text-align: center; color: #aaa;">Нет игроков</div>';
-                        return;
-                    }
-
-                    el.playerList.innerHTML = players.map(p => {
-                        const level = calculateLevel(p.sc || 0);
-                        const referrals = p.referrals ? p.referrals.length : 0;
-                        return `
-                        <div class="player-item ${p.b ? 'banned' : ''}" onclick="openProfile('${p.id}', '${p.n}')">
-                            <div class="player-info">
-                                <div class="player-name">${p.n || 'Аноним'} [Ур.${level}]</div>
-                                <div class="player-score">👆 ${(p.sc || 0).toLocaleString()} | 👥 ${referrals}</div>
-                            </div>
-                            <div class="player-actions">
-                                ${p.b ? 
-                                    `<button class="player-action" style="background:#4CAF50" onclick="event.stopPropagation(); admin.unbanPlayer('${p.id}')">✅</button>` :
-                                    `<button class="player-action" style="background:#ff4444" onclick="event.stopPropagation(); admin.banPlayer('${p.id}')">🚫</button>`
-                                }
-                                <button class="player-action" style="background:#ffd700" onclick="event.stopPropagation(); admin.addPlayerClicks('${p.id}', 10)">+10</button>
-                            </div>
-                        </div>
-                    `}).join('');
-                },
-                resetGame() {
-                    if (!s.admin || !confirm('⚠️ Сбросить игру для ВСЕХ игроков? Все данные будут удалены!')) return;
-                    
-                    db.ref('admin/reset').set(true);
-                    db.ref('globalCounter').set(0);
-                    db.ref('players').remove();
-                    db.ref('onlineUsers').remove();
-                    
-                    this.close();
-                },
-                addGlobalClicks(amount) {
-                    if (!s.admin) return;
-                    db.ref('globalCounter').transaction(v => (v || 0) + amount);
-                },
-                setTarget(type) {
-                    if (!s.admin) return;
-                    s.target = C.TARGETS[type] || C.TARGET;
-                    el.targetDisplay.textContent = type === '8b' ? '8 млрд' : '1 млн';
-                    el.targetPopulation.textContent = s.target.toLocaleString();
-                    updateUI();
-                },
-                banPlayer(id) {
-                    if (!s.admin) return;
-                    db.ref('players/' + id).update({ b: true, br: 'Админ', bt: Date.now() });
-                },
-                unbanPlayer(id) {
-                    if (!s.admin) return;
-                    db.ref('players/' + id).update({ b: false, br: null, bt: null, cc: 0 });
-                },
-                deletePlayer(id) {
-                    if (!s.admin || !confirm('Удалить игрока?')) return;
-                    db.ref('players/' + id).remove();
-                },
-                addPlayerClicks(id, amount) {
-                    if (!s.admin) return;
-                    
-                    db.ref('players/' + id).transaction(p => {
-                        if (!p) p = { sc: 0 };
-                        p.sc = (p.sc || 0) + amount;
-                        return p;
-                    });
-                    
-                    db.ref('globalCounter').transaction(v => (v || 0) + amount);
-                },
-                clearBanned() {
-                    if (!s.admin) return;
-                    
-                    Object.keys(s.players).forEach(id => {
-                        if (s.players[id].b) {
-                            db.ref('players/' + id).update({ b: false, cc: 0 });
-                        }
-                    });
-                },
-                banAll() {
-                    if (!s.admin || !confirm('Забанить всех?')) return;
-                    
-                    Object.keys(s.players).forEach(id => {
-                        db.ref('players/' + id).update({ b: true, br: 'Массовый бан' });
-                    });
-                },
-                clearDatabase() {
-                    if (!s.admin || !confirm('⚠️ ПОЛНАЯ ОЧИСТКА БАЗЫ?!')) return;
-                    
-                    db.ref('/').remove();
-                    localStorage.clear();
-                    setTimeout(() => location.reload(), 1000);
-                },
-                setImageSize(size) {
-                    if (!s.admin) return;
-                    
-                    db.ref('config/imageSize').set(size);
-                    updateImageSize(size);
-                    
-                    el.sizeSlider.value = size;
-                    el.sizeValue.textContent = size + '%';
-                },
-                setPrices(type) {
-                    if (!s.admin) return;
-                    alert('💰 В текущей версии цены фиксированные: 1 клик = 1 рубль');
-                }
-            };
-
-            window.admin = admin;
-
-            // ===== СЛУШАТЕЛЬ СТАТУСА =====
-            function setupListener() {
-                if (!s.pid) return;
-                
-                s.pl = db.ref('players/' + s.pid).on('value', (snap) => {
-                    const d = snap.val();
-                    if (!d) return;
-                    
-                    if (d.b !== undefined && d.b !== s.b) {
-                        s.b = d.b;
-                        if (!s.b) {
-                            el.um.style.display = 'block';
-                            setTimeout(() => { el.um.style.display = 'none'; }, 3000);
-                        }
-                    }
-                    
-                    if (d.sc !== undefined && d.sc !== s.myScore && !s.clickLock) {
-                        s.myScore = d.sc;
-                        stor.s('S', d.sc);
-                    }
-                    
-                    s.purchases = d.purchases || 0;
-                    s.moneySpent = d.spent || 0;
-                    s.streak = d.streak || 1;
-                    s.achievements = d.achievements || {};
-                    
-                    // Обновляем список рефералов
-                    const oldReferrals = s.referrals;
-                    s.referrals = d.referrals || [];
-                    
-                    // Проверяем активность рефералов
-                    if (s.referrals.length > 0) {
-                        s.referrals.forEach(refId => {
-                            const ref = s.players[refId];
-                            if (ref) {
-                                checkReferralActivity(refId, ref.sc || 0);
-                            }
-                        });
-                    }
-                    
-                    s.referralBonus = d.referralBonus || 0;
-                    s.referralClicksTotal = d.referralClicks || 0;
-                    
-                    updateUI();
-                });
-            }
-
-            // ===== АНТИЧИТ =====
-            const ac = {
-                check() {
-                    if (s.admin) return true;
-                    if (s.b) return false;
-                    
-                    const now = Date.now();
-                    const sec = s.ct.filter(t => t > now - 1000).length;
-                    const min = s.ct.filter(t => t > now - 60000).length;
-                    
-                    if (sec > C.LIMITS.M1) { this.record('Часто'); return false; }
-                    if (min > C.LIMITS.M2) { this.record('Много'); return false; }
-                    
-                    if (now - s.lch > C.LIMITS.INT) {
-                        if (s.myScore - s.lsc > C.LIMITS.M3) { this.record('Рост'); return false; }
-                        s.lsc = s.myScore;
-                        s.lch = now;
-                    }
-                    return true;
-                },
-                record(r) {
-                    if (s.admin) return;
-                    s.cc++;
-                    stor.s('CC', s.cc);
-                    
-                    el.ca.style.display = 'block';
-                    setTimeout(() => { el.ca.style.display = 'none'; }, 3000);
-                    
-                    if (s.cc >= C.LIMITS.BAN) {
-                        s.b = true;
-                        el.cb.disabled = true;
-                        el.e.style.pointerEvents = 'none';
-                        if (s.pr) s.pr.update({ b: true, cc: s.cc, br: r, bt: Date.now() });
-                        if (s.or) s.or.remove();
-                    }
-                },
-                clean() {
-                    const now = Date.now();
-                    s.ct = s.ct.filter(t => t > now - 120000);
-                }
-            };
-
-            // ===== FIREBASE СЛУШАТЕЛИ =====
-            db.ref('globalCounter').on('value', snap => {
-                if (!s.b || s.admin) {
-                    const newVal = snap.val() || 0;
-                    
-                    if (Math.abs(newVal - s.globalScore) < 100) {
-                        s.globalScore = newVal;
-                    } else if (!s.clickLock) {
-                        s.globalScore = newVal;
-                    }
-                    
-                    updateUI();
-                }
-            });
-
-            db.ref('lastClick').on('value', snap => {
-                if (!s.b || s.admin) {
-                    const d = snap.val();
-                    el.lc.textContent = d?.n || 'никто';
-                    
-                    if (d?.pid) {
-                        el.lc.onclick = () => openProfile(d.pid, d.n);
-                    }
-                }
-            });
-
-            db.ref('onlineUsers').on('value', snap => {
-                if (!s.b || s.admin) {
-                    s.online = snap.val() ? Object.keys(snap.val()).length : 0;
-                    el.oc.textContent = s.online;
-                    if (s.admin) el.adminOnline.textContent = s.online;
-                    
-                    if (s.admin) {
-                        const bannedCount = Object.values(s.players).filter(p => p.b).length;
-                        el.adminNotification.textContent = bannedCount;
-                    }
-                }
-            });
-
-            db.ref('players').on('value', snap => {
-                const players = snap.val() || {};
-                s.players = players;
-                
-                if (!s.b || s.admin) {
-                    const list = Object.entries(players)
-                        .map(([id, d]) => ({ id, ...d }))
-                        .filter(p => p.sc > 0 && !p.b)
-                        .sort((a, b) => b.sc - a.sc)
-                        .slice(0, 10);
-
-                    if (list.length) {
-                        el.tl.innerHTML = list.map((p, i) => {
-                            const rc = i === 0 ? 'top-rank-1' : i === 1 ? 'top-rank-2' : i === 2 ? 'top-rank-3' : '';
-                            const cur = p.id === s.pid;
-                            const level = calculateLevel(p.sc || 0);
-                            return `
-                                <div class="top-item ${cur ? 'current' : ''}" onclick="openProfile('${p.id}', '${p.n}')">
-                                    <div class="top-rank ${rc}">${i + 1}</div>
-                                    <span class="top-name">${p.n || 'Аноним'} [Ур.${level}]</span>
-                                    <span class="top-score">${(p.sc || 0).toLocaleString()}</span>
-                                    ${p.streak >= 7 ? '<span class="top-badge">🔥</span>' : ''}
-                                </div>
-                            `;
-                        }).join('');
-                    } else {
-                        el.tl.innerHTML = '<div class="top-item">Нет кликов</div>';
-                    }
-                }
-                
-                if (s.admin && el.adminPanel.classList.contains('show')) {
-                    admin.updatePlayerList();
-                }
-                
-                if (s.admin) {
-                    const bannedCount = Object.values(players).filter(p => p.b).length;
-                    el.adminNotification.textContent = bannedCount;
-                }
-                
-                updateReferralTop();
-            });
-
-            // ===== КЛИК =====
-            async function clickHandler() {
-                if (s.clickLock) return;
-                if (!ac.check()) return;
-                
-                s.clickLock = true;
-                s.pendingClick = true;
-                s.ct.push(Date.now());
-                ac.clean();
-
-                const oldGlobal = s.globalScore;
-                const oldMy = s.myScore;
-
-                try {
-                    const r = await db.ref('globalCounter').transaction(v => (v || 0) + 1);
-                    if (r.committed) {
-                        if (s.pr && (!s.b || s.admin)) {
-                            const pr = await s.pr.transaction(p => {
-                                if (!p) p = { sc: 0 };
-                                p.sc = (p.sc || 0) + 1;
-                                p.n = s.u;
-                                p.ls = Date.now();
-                                return p;
-                            });
-                            if (pr.committed) {
-                                s.myScore = pr.snapshot.val().sc;
-                                stor.s('S', s.myScore);
-                                
-                                checkAchievements();
-                            }
-                        }
-                        
-                        s.globalScore = r.snapshot.val();
-                        
-                        await db.ref('lastClick').set({ n: s.u, t: Date.now(), pid: s.pid });
-                        
-                        updateUI();
-
-                        if (s.globalScore >= s.target) {
-                            setTimeout(() => alert('🎉 ПОБЕДА! ЗЕМЛЯ ЗАСЕЛЕНА! 🎉'), 100);
-                        }
-                    } else {
-                        s.globalScore = oldGlobal;
-                        s.myScore = oldMy;
-                    }
-                } catch (e) {
-                    s.globalScore = oldGlobal;
-                    s.myScore = oldMy;
-                }
-                
-                s.pendingClick = false;
-                setTimeout(() => {
-                    s.clickLock = false;
-                }, 300);
-            }
-
-            // ===== ИНИЦИАЛИЗАЦИЯ =====
-            function init() {
-                s.admin = stor.g('AM') === 'true';
-                
-                s.ns = stor.g('NS') === 'true';
-                s.u = stor.g('N') || '';
-                s.pid = stor.g('I') || null;
-                s.myScore = parseInt(stor.g('S') || '0');
-                s.cc = parseInt(stor.g('CC') || '0');
-                
-                checkReferral();
-                
-                if (s.u) el.un.value = s.u;
-
-                db.ref('config/imageSize').once('value').then(snap => {
-                    const size = snap.val();
-                    if (size && typeof size === 'number') {
-                        updateImageSize(size);
-                    }
-                });
-
-                db.ref('globalCounter').once('value').then(snap => {
-                    s.globalScore = snap.val() || 0;
-                    
-                    if (s.ns && s.pid) {
-                        db.ref('players/' + s.pid).once('value').then(snap => {
-                            if (snap.exists()) {
-                                const d = snap.val();
-                                s.pr = db.ref('players/' + s.pid);
-                                s.b = d.b === true;
-                                s.purchases = d.purchases || 0;
-                                s.moneySpent = d.spent || 0;
-                                s.streak = d.streak || 1;
-                                s.achievements = d.achievements || {};
-                                s.referrals = d.referrals || [];
-                                s.referralBonus = d.referralBonus || 0;
-                                s.referralClicksTotal = d.referralClicks || 0;
-                                
-                                if (d.sc !== s.myScore && !s.clickLock) {
-                                    if (d.sc < s.myScore) {
-                                        s.pr.update({ sc: s.myScore });
-                                    } else {
-                                        s.myScore = d.sc;
-                                        stor.s('S', d.sc);
-                                    }
-                                }
-                                
-                                setupListener();
-                                checkStreak();
-                                applyReferral();
-                            } else if (!s.b || s.admin) {
-                                createPlayer();
-                            }
-                            
-                            updateUI();
-                        });
-                    } else if (s.ns && (!s.b || s.admin)) {
-                        createPlayer();
-                    } else {
-                        updateUI();
-                    }
-                });
-                
-                if (!s.b || s.admin) {
-                    s.or = db.ref('onlineUsers').push();
-                    s.or.set({ n: s.u || 'Аноним', on: true, ls: Date.now(), pid: s.pid });
-                    
-                    window.addEventListener('beforeunload', () => {
-                        if (s.or) s.or.remove();
-                        if (s.pr && (!s.b || s.admin)) {
-                            s.pr.update({ ls: Date.now(), on: false, cc: s.cc });
-                            stor.s('S', s.myScore);
-                        }
-                    });
-                }
-
-                el.snb.addEventListener('click', () => {
-                    const name = el.un.value.trim();
-                    if (!name) return;
-                    s.u = name;
-                    s.ns = true;
-                    stor.s('N', name);
-                    stor.s('NS', 'true');
-                    createPlayer();
-                    applyReferral();
-                    updateUI();
-                });
-
-                el.un.addEventListener('keypress', e => e.key === 'Enter' && el.snb.click());
-                el.cb.addEventListener('click', clickHandler);
-                el.e.addEventListener('click', clickHandler);
-                el.g.addEventListener('click', () => openProfile(s.pid, s.u));
-                
-                el.adminBtn.addEventListener('click', () => admin.open());
-                el.close.addEventListener('click', () => admin.close());
-                el.closeProfile.addEventListener('click', () => {
-                    el.profileModal.classList.remove('show');
-                    el.bd.classList.remove('show');
-                });
-                el.bd.addEventListener('click', () => {
-                    el.adminPanel.classList.remove('show');
-                    el.profileModal.classList.remove('show');
-                    el.bd.classList.remove('show');
-                });
-
-                el.sizeSlider.addEventListener('input', (e) => {
-                    if (s.admin) {
-                        const newSize = parseInt(e.target.value);
-                        admin.setImageSize(newSize);
-                    }
-                });
-
-                setInterval(() => {
-                    if (s.b && !s.admin) return;
-                    ac.check();
-                    ac.clean();
-                    if (s.or) s.or.update({ ls: Date.now(), n: s.u || 'Аноним', cc: s.cc });
-                    if (s.pr && s.ns && (!s.b || s.admin)) {
-                        s.pr.update({ ls: Date.now(), n: s.u, cc: s.cc });
-                        stor.s('S', s.myScore);
-                    }
-                    updateQuests();
-                }, 60000);
-
-                el.targetPopulation.textContent = s.target.toLocaleString();
-            }
-
-            function createPlayer() {
-                if (s.b && !s.admin) return;
-                
-                const nr = db.ref('players').push();
-                nr.set({
-                    n: s.u,
-                    sc: s.myScore,
-                    j: Date.now(),
-                    ls: Date.now(),
-                    cc: s.cc,
-                    purchases: 0,
-                    spent: 0,
-                    streak: 1,
-                    achievements: {},
-                    referrals: [],
-                    referralBonus: 0,
-                    referralClicks: 0,
-                    b: false
-                }).then(() => {
-                    s.pr = nr;
-                    s.pid = nr.key;
-                    stor.s('I', s.pid);
-                    s.b = false;
-                    setupListener();
-                });
-            }
-
-            init();
+    <script>(function(){
+        'use strict';
+        const k={api:'QUl6YVN5QV9nTmtMTXN4VG5lVHd5ZzViRHhLQk45b3NSSVVyUGFF',auth:'dGhlLWNvbG9ueS10YXAuZmlyZWJhc2VhcHAuY29t',db:'aHR0cHM6Ly90aGUtY29sb255LXRhcC1kZWZhdWx0LXJ0ZGIuZmlyZWJhc2Vpby5jb20=',project:'dGhlLWNvbG9ueS10YXA=',storage:'dGhlLWNvbG9ueS10YXAuZmlyZWJhc3VzdG9yYWdlLmFwcA==',sender:'NDMzNDM4NzMzNjE2',app:'MTo0MzM0Mzg3MzM2MTY6d2ViOjc2MDk1YTM2MTYxYjMyNTkwZDQ0ZjU='};
+        const d=str=>{try{return atob(str)}catch{return''}};
+        const C={TARGET:8e9,TARGETS:{'8b':8e9,'1m':1e6},STORAGE:{N:'wc_n',S:'wc_s',I:'wc_i',NS:'wc_ns',CC:'wc_cc',AM:'wc_am'},LIMITS:{M1:20,M2:300,M3:1e3,INT:5e3,BAN:3},KEY:'Lm9rMjAyNQ==',RESET_FLAG:'reset_trigger',IMAGE_URL:'https://i.imgur.com/W6H3wKX.jpg',CRYPTO_SHOP_ID:'At3cptqTbYR9y1Hs',
+        ACHIEVEMENTS:{click100:{name:'Новичок',desc:'100 кликов',icon:'🌱',reward:10},click1000:{name:'Опытный',desc:'1000 кликов',icon:'🌿',reward:50},click10000:{name:'Мастер',desc:'10000 кликов',icon:'🌳',reward:200},click100000:{name:'Легенда',desc:'100000 кликов',icon:'🏆',reward:1e3},firstPurchase:{name:'Меценат',desc:'Первая покупка',icon:'💎',reward:20},spend500:{name:'Инвестор',desc:'500₽',icon:'💰',reward:100},spend5000:{name:'Магнат',desc:'5000₽',icon:'👑',reward:500},streak7:{name:'Завсегдатай',desc:'7 дней',icon:'📅',reward:50},streak30:{name:'Преданный',desc:'30 дней',icon:'⭐',reward:300},referral1:{name:'Друг',desc:'1 реферал',icon:'🤝',reward:50},referral5:{name:'Популярный',desc:'5 рефералов',icon:'👥',reward:200},referral10:{name:'Лидер',desc:'10 рефералов',icon:'🌟',reward:500}},
+        QUESTS:{clicks:{name:'Кликер',desc:'%s кликов',icon:'👆'},streak:{name:'Заход',desc:'%s дней',icon:'📅'},purchase:{name:'Покупатель',desc:'%s₽',icon:'💰'}}};
+        firebase.initializeApp({apiKey:d(k.api),authDomain:d(k.auth),databaseURL:d(k.db),projectId:d(k.project),storageBucket:d(k.storage),messagingSenderId:d(k.sender),appId:d(k.app)});
+        const db=firebase.database();
+        function g(id){return document.getElementById(id)}
+        const E={e:g('e'),ef:g('ef'),ei:g('ei'),pf:g('pf'),c:g('c'),cp:g('cp'),r:g('r'),oc:g('oc'),us:g('us'),ul:g('ul'),lb:g('lb'),lc:g('lcn'),tl:g('tl'),nig:g('nig'),g:g('g'),dn:g('dn'),un:g('un'),snb:g('snb'),cb:g('cb'),ca:g('ca'),um:g('um'),rm:g('rm'),au:g('au'),ps:g('ps'),ab:g('ab'),ap:g('ap'),bd:g('bd'),cpb:g('cp'),pl:g('pl'),rtl:g('rtl'),an:g('an'),ags:g('ags'),atp:g('atp'),ao:g('ao'),atr:g('atr'),td:g('td'),tp:g('tp'),ss:g('ss'),sv:g('sv'),spb:document.querySelectorAll('.size-preset-btn'),ts:g('ts'),pcnt:g('pcnt'),pt:g('pt'),pfm:g('pfm'),pm:g('pm'),cpf:g('cpf'),pn:g('pn'),plv:g('plv'),pcv:g('pc'),ppv:g('pp'),pspv:g('psp'),pstv:g('pst'),prfv:g('prf'),al:g('al'),prs:g('prs'),prl:g('prl'),prs1:g('prs1'),prs2:g('prs2'),prs3:g('prs3'),rl:g('rl'),rc:g('rc'),rb:g('rb'),rbc:g('rbc'),rlst:g('rlst'),rt:g('rt'),ql:g('ql'),qrt:g('qrt')};
+        const S={u:'',gs:0,ms:0,pid:null,ns:false,or:null,pr:null,ct:[],lsc:0,lch:Date.now(),cc:0,b:false,adm:false,ps:{},onl:0,cl:false,t:C.TARGET,pc:false,is:100,cprices:{10:10,50:50,100:100,1e3:1e3},st:0,tr:0,pu:0,mspt:0,strk:0,lv:1,ach:{},refs:[],rd:{},rb:0,rct:0,anot:{}};
+        const st={g:k=>{try{return localStorage.getItem(C.STORAGE[k])}catch{return null}},s:(k,v)=>{try{localStorage.setItem(C.STORAGE[k],v)}catch{}},r:k=>{try{localStorage.removeItem(C.STORAGE[k])}catch{}}};
+        window.switchTab=t=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));document.querySelector(`[onclick="switchTab('${t}')"]`).classList.add('active');E[`${t}-tab`].classList.add('active')};
+        function lvl(c){return Math.floor(c/1e3)+1}
+        function updUI(){
+            if(S.b&&!S.adm){E.cb.disabled=true;E.e.style.pointerEvents='none'}
+            else if(S.ns){E.cb.disabled=false;E.e.style.pointerEvents='auto'}
+            if(S.ns&&S.u){E.nig.classList.add('hidden');E.g.classList.remove('hidden');E.dn.textContent=S.u;E.lb.textContent=`Ур. ${lvl(S.ms)}`}
+            else{E.nig.classList.remove('hidden');E.g.classList.add('hidden')}
+            const p=Math.min(S.gs/S.t*100,100);E.ef.style.height=p+'%';E.ei.style.clipPath=`inset(${100-p}% 0 0 0)`;E.pf.style.width=p+'%';
+            E.c.textContent=S.gs.toLocaleString();E.cp.textContent=S.gs.toLocaleString();E.r.textContent=Math.max(S.t-S.gs,0).toLocaleString();E.us.textContent=S.ms.toLocaleString();
+            const l=lvl(S.ms);E.ul.textContent=l;
+            if(S.pid){E.rc.textContent=S.refs.length;E.rb.textContent=S.rb;E.rbc.textContent=S.rct.toLocaleString();updRefLink();updRefList()}
+            if(S.adm){E.ags.textContent=S.gs.toLocaleString();E.atp.textContent=Object.keys(S.ps).length;E.ao.textContent=S.onl;E.ts.textContent=S.st}
+            updQ();updRefTop()
+        }
+        function updRefTop(){
+            const p=Object.entries(S.ps).map(([i,d])=>({id:i,name:d.n||'Аноним',refs:d.refs?d.refs.length:0,rb:d.rb||0,rc:d.rc||0})).filter(p=>p.refs>0).sort((a,b)=>b.refs-a.refs).slice(0,10);
+            if(S.adm){const tr=Object.values(S.ps).reduce((s,p)=>s+(p.refs?p.refs.length:0),0);E.atr.textContent=tr}
+            if(S.adm&&E.rtl)E.rtl.innerHTML=p.length?p.map(p=>`<div class="player-item" onclick="openProf('${p.id}','${p.name}')"><div class="player-info"><div class="player-name">${p.name}</div><div class="player-score">👥 ${p.refs} рефералов | 💰 ${p.rb} бонусов</div></div></div>`).join(''):'<div style="text-align:center;color:#aaa;">Нет приглашений</div>';
+            E.rt.innerHTML=p.length?p.map((p,i)=>{const rc=i===0?'top-rank-1':i===1?'top-rank-2':i===2?'top-rank-3':'';return`<div class="top-item" onclick="openProf('${p.id}','${p.name}')"><div class="top-rank ${rc}">${i+1}</div><span class="top-name">${p.name}</span><span class="top-score">👥 ${p.refs}</span></div>`}).join(''):'<div class="top-item">Нет приглашений</div>'
+        }
+        function updRefList(){
+            if(!S.pid||!S.refs||!S.refs.length){E.rlst&&(E.rlst.innerHTML='<div class="no-referrals">У тебя пока нет приглашенных друзей</div>');return}
+            let h='',tc=0;S.refs.forEach(refId=>{const r=S.ps[refId];if(r){const c=r.sc||0;tc+=c;const b=Math.floor(c/1e3)*10;h+=`<div class="referral-row" onclick="openProf('${refId}','${r.n}')"><span class="referral-name">${r.n||'Аноним'}</span><span class="referral-clicks">${c.toLocaleString()} кликов</span><span class="referral-bonus">+${b}</span></div>`}});
+            S.rct=tc;E.rlst&&(E.rlst.innerHTML=h||'<div class="no-referrals">У тебя пока нет приглашенных друзей</div>')
+        }
+        function checkRefAct(refId,refC){
+            if(!S.pid||!S.refs.includes(refId))return false;
+            S.rd[refId]||(S.rd[refId]={lc:0,tb:0});
+            const lc=S.rd[refId].lc,cg=refC-lc;
+            if(cg>=1e3){const b=Math.floor(cg/1e3)*10;S.rb+=b;S.ms+=b;S.gs+=b;S.rd[refId].lc=refC;S.rd[refId].tb+=b;S.pr&&S.pr.update({rb:S.rb,sc:S.ms,rc:S.rct});E.au.textContent=`🎁 За активность реферала +${b} кликов!`;E.au.style.display='block';setTimeout(()=>E.au.style.display='none',5e3);return true}
+            return false
+        }
+        window.showAllRef=()=>{
+            const p=Object.entries(S.ps).map(([i,d])=>({id:i,name:d.n||'Аноним',refs:d.refs?d.refs.length:0,lv:lvl(d.sc||0)})).filter(p=>p.refs>0).sort((a,b)=>b.refs-a.refs);
+            let h='<div class="top-title">Все приглашающие</div>';p.forEach((p,i)=>{h+=`<div class="top-item" onclick="openProf('${p.id}','${p.name}')"><div class="top-rank">${i+1}</div><span class="top-name">${p.name} [Ур.${p.lv}]</span><span class="top-score">👥 ${p.refs}</span></div>`});E.rt.innerHTML=h||'<div class="top-item">Нет приглашений</div>'
+        };
+        window.showAll=()=>{
+            const p=Object.entries(S.ps).map(([i,d])=>({id:i,...d})).filter(p=>p.sc>0).sort((a,b)=>b.sc-a.sc);
+            let h='<div class="top-title">Все игроки</div>';p.forEach((p,i)=>{const l=lvl(p.sc||0);h+=`<div class="top-item" onclick="openProf('${p.id}','${p.n}')"><div class="top-rank">${i+1}</div><span class="top-name">${p.n||'Аноним'} [Ур.${l}]</span><span class="top-score">${(p.sc||0).toLocaleString()}</span>${p.strk>=7?'<span class="top-badge">🔥</span>':''}</div>`});E.tl.innerHTML=h
+        };
+        function checkAch(){
+            if(!S.pid||!S.pr)return;
+            const nA=[],nw=Date.now();
+            S.ms>=100&&!S.ach.click100&&!S.anot.click100&&(nA.push('click100'),S.anot.click100=true);
+            S.ms>=1e3&&!S.ach.click1000&&!S.anot.click1000&&(nA.push('click1000'),S.anot.click1000=true);
+            S.ms>=1e4&&!S.ach.click10000&&!S.anot.click10000&&(nA.push('click10000'),S.anot.click10000=true);
+            S.ms>=1e5&&!S.ach.click100000&&!S.anot.click100000&&(nA.push('click100000'),S.anot.click100000=true);
+            S.pu>=1&&!S.ach.firstPurchase&&!S.anot.firstPurchase&&(nA.push('firstPurchase'),S.anot.firstPurchase=true);
+            S.mspt>=500&&!S.ach.spend500&&!S.anot.spend500&&(nA.push('spend500'),S.anot.spend500=true);
+            S.mspt>=5e3&&!S.ach.spend5000&&!S.anot.spend5000&&(nA.push('spend5000'),S.anot.spend5000=true);
+            S.strk>=7&&!S.ach.streak7&&!S.anot.streak7&&(nA.push('streak7'),S.anot.streak7=true);
+            S.strk>=30&&!S.ach.streak30&&!S.anot.streak30&&(nA.push('streak30'),S.anot.streak30=true);
+            S.refs.length>=1&&!S.ach.referral1&&!S.anot.referral1&&(nA.push('referral1'),S.anot.referral1=true);
+            S.refs.length>=5&&!S.ach.referral5&&!S.anot.referral5&&(nA.push('referral5'),S.anot.referral5=true);
+            S.refs.length>=10&&!S.ach.referral10&&!S.anot.referral10&&(nA.push('referral10'),S.anot.referral10=true);
+            if(nA.length){const up={};nA.forEach(a=>{up[`achievements.${a}`]={unlocked:true,date:nw};if(C.ACHIEVEMENTS[a].reward>0){S.ms+=C.ACHIEVEMENTS[a].reward;S.gs+=C.ACHIEVEMENTS[a].reward;up.sc=S.ms;E.au.textContent=`🏆 Достижение "${C.ACHIEVEMENTS[a].name}"! +${C.ACHIEVEMENTS[a].reward} кликов`;E.au.style.display='block';setTimeout(()=>E.au.style.display='none',5e3)}});S.pr.update(up);nA.forEach(a=>S.ach[a]={unlocked:true,date:nw})}
+        }
+        function checkStrk(){
+            if(!S.pr)return;
+            const t=new Date().setHours(0,0,0,0),ls=S.pr.lastSeen||0,lsd=new Date(ls).setHours(0,0,0,0);
+            let ns=S.strk;
+            if(lsd===t)return;
+            else if(lsd===t-864e5)ns++;
+            else ns=1;
+            ns!==S.strk&&(S.strk=ns,S.pr.update({streak:ns,lastSeen:Date.now()}))
+        }
+        function genQ(){
+            const t=new Date().setHours(0,0,0,0),sq=localStorage.getItem('dailyQuests'),sd=localStorage.getItem('questsDate');
+            if(sq&&sd==t)return JSON.parse(sq);
+            const q=[{id:'c1',type:'clicks',target:100,reward:20,progress:0,completed:false,claimed:false},{id:'c2',type:'clicks',target:500,reward:100,progress:0,completed:false,claimed:false},{id:'s',type:'streak',target:3,reward:30,progress:0,completed:false,claimed:false}];
+            localStorage.setItem('dailyQuests',JSON.stringify(q));localStorage.setItem('questsDate',t);return q
+        }
+        function updQ(){
+            const q=genQ();
+            q.forEach(q=>{switch(q.type){case'clicks':q.progress=S.ms;break;case'streak':q.progress=S.strk;break;case'purchase':q.progress=S.mspt;break}q.progress>=q.target&&!q.completed&&(q.completed=true)});
+            localStorage.setItem('dailyQuests',JSON.stringify(q));
+            let h='';q.forEach(q=>{const p=Math.min(q.progress/q.target*100,100);h+=`<div class="quest-item ${q.completed?'completed':''}"><div class="quest-icon">${C.QUESTS[q.type].icon}</div><div class="quest-name">${C.QUESTS[q.type].name}</div><div class="quest-desc">${C.QUESTS[q.type].desc.replace('%s',q.target)}</div><div class="quest-progress"><div class="quest-progress-fill" style="width:${p}%"></div></div><div class="quest-reward">+${q.reward}</div>${q.completed&&!q.claimed?`<button class="quest-button" onclick="claimQ('${q.id}')">Забрать</button>`:q.claimed?'<button class="quest-button" disabled>Получено</button>':`<button class="quest-button" disabled>${q.progress}/${q.target}</button>`}</div>`});
+            E.ql.innerHTML=h;const n=Date.now(),tm=new Date().setHours(24,0,0,0),hl=Math.floor((tm-n)/36e5),ml=Math.floor((tm-n)%36e5/6e4);E.qrt.textContent=`Обновление через: ${hl}ч ${ml}м`
+        }
+        window.claimQ=function(qid){
+            const q=JSON.parse(localStorage.getItem('dailyQuests')),qs=q.find(q=>q.id===qid);
+            if(qs&&qs.completed&&!qs.claimed){qs.claimed=true;localStorage.setItem('dailyQuests',JSON.stringify(q));S.ms+=qs.reward;S.gs+=qs.reward;S.pr&&S.pr.update({sc:S.ms});E.au.textContent=`✅ Задание выполнено! +${qs.reward} кликов`;E.au.style.display='block';setTimeout(()=>E.au.style.display='none',5e3);updQ();updUI()}
+        };
+        function updRefLink(){
+            if(!S.pid)return;
+            const l=`${window.location.origin+window.location.pathname}?ref=${S.pid}`;E.rl&&(E.rl.value=l);E.prl&&(E.prl.value=l)
+        }
+        window.copyRefLink=()=>{const l=E.rl||E.prl;l&&(l.select(),document.execCommand('copy'),E.au.textContent='✅ Ссылка скопирована!',E.au.style.display='block',setTimeout(()=>E.au.style.display='none',2e3))};
+        function checkRef(){const u=new URLSearchParams(window.location.search),r=u.get('ref');r&&r!==S.pid&&localStorage.setItem('referrer',r)}
+        function applyRef(){
+            const r=localStorage.getItem('referrer');if(!r||!S.pid||r===S.pid)return;
+            const ar=JSON.parse(localStorage.getItem('appliedRefs')||'[]');if(ar.includes(r))return;
+            db.ref('players/'+r+'/refs').transaction(l=>{l||(l=[]);l.includes(S.pid)||l.push(S.pid);return l}).then(()=>db.ref('players/'+r).transaction(p=>{p||(p={sc:0});p.sc=(p.sc||0)+50;p.rb=(p.rb||0)+50;p.rc=p.rc||0;return p})).then(()=>{ar.push(r);localStorage.setItem('appliedRefs',JSON.stringify(ar));S.pid===r&&(E.au.textContent='✅ За приглашенного друга +50 кликов!',E.au.style.display='block',setTimeout(()=>E.au.style.display='none',5e3))});
+            localStorage.removeItem('referrer')
+        }
+        window.openProf=function(pid,nm){
+            const d=S.ps[pid];if(!d)return;
+            const l=lvl(d.sc||0),refs=d.refs?d.refs.length:0,rb=d.rb||0,rc=d.rc||0;
+            E.pn.textContent=d.n||nm;E.plv.textContent=l;E.pcv.textContent=(d.sc||0).toLocaleString();E.ppv.textContent=d.pu||0;E.pspv.textContent=(d.sp||0)+'₽';E.pstv.textContent=d.strk||1;E.prfv.textContent=refs;
+            let h='';Object.entries(C.ACHIEVEMENTS).forEach(([k,a])=>{const u=d.ach?.[k]?.unlocked;h+=`<div class="achievement-card ${u?'unlocked':'locked'}"><div class="achievement-icon">${a.icon}</div><div class="achievement-info"><div class="achievement-name">${a.name}</div><div class="achievement-desc">${a.desc}</div>${u?'<div class="achievement-reward">✓ Выполнено</div>':''}</div></div>`});
+            E.al.innerHTML=h;
+            if(pid===S.pid){updRefLink();E.prs.style.display='block';E.prs1.textContent=refs;E.prs2.textContent=rb;E.prs3.textContent=rc.toLocaleString()}
+            else E.prs.style.display='none';
+            E.pm.classList.add('show');E.bd.classList.add('show');S.vp=pid
+        };
+        function setupL(){
+            if(!S.pid)return;
+            S.pl=db.ref('players/'+S.pid).on('value',s=>{
+                const d=s.val();if(!d)return;
+                if(d.b!==undefined&&d.b!==S.b){S.b=d.b;!S.b&&(E.um.style.display='block',setTimeout(()=>E.um.style.display='none',3e3))}
+                if(d.sc!==undefined&&d.sc!==S.ms&&!S.cl){S.ms=d.sc;st.s('S',d.sc)}
+                S.pu=d.pu||0;S.mspt=d.sp||0;S.strk=d.strk||1;S.ach=d.ach||{};
+                const old=S.refs;S.refs=d.refs||[];
+                if(S.refs.length>0)S.refs.forEach(refId=>{const r=S.ps[refId];r&&checkRefAct(refId,r.sc||0)});
+                S.rb=d.rb||0;S.rct=d.rc||0;updUI()
+            })
+        }
+        window.openPay=(c,p)=>{if(!S.ns){alert('⚠️ Сначала введите имя!');return}
+            sessionStorage.setItem('pendingPurchase',JSON.stringify({clicks:c,userId:S.pid,username:S.u,price:p,timestamp:Date.now()}));
+            E.pcnt.style.display='block';E.pt.textContent=`Оплата ${c} кликов (${p}₽)`;
+            E.pfm.innerHTML='';
+            if(window.CryptoCloudWidget)window.CryptoCloudWidget.CreateInvoiceForm({shop_id:C.CRYPTO_SHOP_ID,amount:p,buttonText:`Оплатить ${p}₽`,currency:"RUB",locale:"ru",template:"dark",emailRequired:true,orderId:`click_${c}_${S.pid}_${Date.now()}`}).mount('.cc-payment-form')
+        };
+        const a={open(){if(!S.adm){const s=prompt('🔐 Введите пароль админа:');s===atob(C.KEY)&&this.enable();return}
+            E.ap.classList.add('show');E.bd.classList.add('show');this.updateList();E.ss.value=S.is;E.sv.textContent=S.is+'%'},
+        close(){E.ap.classList.remove('show');E.bd.classList.remove('show')},
+        enable(){S.adm=true;st.s('AM','true');this.open()},
+        updateList(){const p=Object.entries(S.ps).map(([i,d])=>({id:i,...d})).sort((a,b)=>(b.sc||0)-(a.sc||0));
+            E.pl.innerHTML=p.length?p.map(p=>{const l=lvl(p.sc||0),refs=p.refs?p.refs.length:0;return`<div class="player-item ${p.b?'banned':''}" onclick="openProf('${p.id}','${p.n}')"><div class="player-info"><div class="player-name">${p.n||'Аноним'} [Ур.${l}]</div><div class="player-score">👆 ${(p.sc||0).toLocaleString()} | 👥 ${refs}</div></div><div class="player-actions">${p.b?`<button class="player-action" style="background:#4CAF50" onclick="event.stopPropagation();a.unbanPlayer('${p.id}')">✅</button>`:`<button class="player-action" style="background:#ff4444" onclick="event.stopPropagation();a.banPlayer('${p.id}')">🚫</button>`}<button class="player-action" style="background:#ffd700" onclick="event.stopPropagation();a.addPlayerClicks('${p.id}',10)">+10</button></div></div>`}).join(''):'<div style="text-align:center;color:#aaa;">Нет игроков</div>'},
+        resetGame(){S.adm&&confirm('⚠️ Сбросить игру для ВСЕХ?')&&(db.ref('admin/reset').set(true),db.ref('globalCounter').set(0),db.ref('players').remove(),db.ref('onlineUsers').remove(),this.close())},
+        addGlobalClicks(a){S.adm&&db.ref('globalCounter').transaction(v=>(v||0)+a)},
+        setTarget(t){S.adm&&(S.t=C.TARGETS[t]||C.TARGET,E.td.textContent=t==='8b'?'8 млрд':'1 млн',E.tp.textContent=S.t.toLocaleString(),updUI())},
+        banPlayer(i){S.adm&&db.ref('players/'+i).update({b:true,br:'Админ',bt:Date.now()})},
+        unbanPlayer(i){S.adm&&db.ref('players/'+i).update({b:false,br:null,bt:null,cc:0})},
+        deletePlayer(i){S.adm&&confirm('Удалить игрока?')&&db.ref('players/'+i).remove()},
+        addPlayerClicks(i,a){S.adm&&(db.ref('players/'+i).transaction(p=>{p||(p={sc:0});p.sc=(p.sc||0)+a;return p}),db.ref('globalCounter').transaction(v=>(v||0)+a))},
+        clearBanned(){S.adm&&Object.keys(S.ps).forEach(i=>{S.ps[i].b&&db.ref('players/'+i).update({b:false,cc:0})})},
+        banAll(){S.adm&&confirm('Забанить всех?')&&Object.keys(S.ps).forEach(i=>db.ref('players/'+i).update({b:true,br:'Массовый бан'}))},
+        clearDatabase(){S.adm&&confirm('⚠️ ПОЛНАЯ ОЧИСТКА?')&&(db.ref('/').remove(),localStorage.clear(),setTimeout(()=>location.reload(),1e3))},
+        setImageSize(s){S.adm&&(db.ref('config/imageSize').set(s),S.is=s,E.ei.style.backgroundSize=s+'%',E.ss.value=s,E.sv.textContent=s+'%',E.spb.forEach(b=>b.classList.remove('active')),s===75&&E.spb[0]?.classList.add('active'),s===100&&E.spb[1]?.classList.add('active'),s===125&&E.spb[2]?.classList.add('active'),s===150&&E.spb[3]?.classList.add('active'))},
+        setPrices(t){S.adm&&alert('💰 В текущей версии цены фиксированные: 1 клик = 1 рубль')}};
+        window.a=a;
+        db.ref('globalCounter').on('value',s=>{if(!S.b||S.adm){const n=s.val()||0;Math.abs(n-S.gs)<100||!S.cl?S.gs=n:S.gs=n;updUI()}});
+        db.ref('lastClick').on('value',s=>{if(!S.b||S.adm){const d=s.val();E.lc.textContent=d?.n||'никто';d?.pid&&(E.lc.onclick=()=>openProf(d.pid,d.n))}});
+        db.ref('onlineUsers').on('value',s=>{if(!S.b||S.adm){S.onl=s.val()?Object.keys(s.val()).length:0;E.oc.textContent=S.onl;S.adm&&(E.ao.textContent=S.onl);if(S.adm){const bc=Object.values(S.ps).filter(p=>p.b).length;E.an.textContent=bc}}});
+        db.ref('players').on('value',s=>{const p=s.val()||{};S.ps=p;
+            if(!S.b||S.adm){const l=Object.entries(p).map(([i,d])=>({id:i,...d})).filter(p=>p.sc>0&&!p.b).sort((a,b)=>b.sc-a.sc).slice(0,10);
+                E.tl.innerHTML=l.length?l.map((p,i)=>{const rc=i===0?'top-rank-1':i===1?'top-rank-2':i===2?'top-rank-3':'';const cur=p.id===S.pid;const lvl=Math.floor((p.sc||0)/1e3)+1;return`<div class="top-item ${cur?'current':''}" onclick="openProf('${p.id}','${p.n}')"><div class="top-rank ${rc}">${i+1}</div><span class="top-name">${p.n||'Аноним'} [Ур.${lvl}]</span><span class="top-score">${(p.sc||0).toLocaleString()}</span>${p.strk>=7?'<span class="top-badge">🔥</span>':''}</div>`}).join(''):'<div class="top-item">Нет кликов</div>'}
+            if(S.adm&&E.ap.classList.contains('show'))a.updateList();
+            if(S.adm){const bc=Object.values(p).filter(p=>p.b).length;E.an.textContent=bc}
+            updRefTop()});
+        async function clickH(){
+            if(S.cl||!ac.check())return;
+            S.cl=true;S.pc=true;S.ct.push(Date.now());ac.clean();
+            const og=S.gs,om=S.ms;
+            try{const r=await db.ref('globalCounter').transaction(v=>(v||0)+1);
+                if(r.committed){if(S.pr&&(!S.b||S.adm)){const pr=await S.pr.transaction(p=>{p||(p={sc:0});p.sc=(p.sc||0)+1;p.n=S.u;p.ls=Date.now();return p});pr.committed&&(S.ms=pr.snapshot.val().sc,st.s('S',S.ms),checkAch())}
+                S.gs=r.snapshot.val();await db.ref('lastClick').set({n:S.u,t:Date.now(),pid:S.pid});updUI();S.gs>=S.t&&setTimeout(()=>alert('🎉 ПОБЕДА! ЗЕМЛЯ ЗАСЕЛЕНА! 🎉'),100)}else{S.gs=og;S.ms=om}}catch(e){S.gs=og;S.ms=om}
+            S.pc=false;setTimeout(()=>S.cl=false,300)
+        }
+        const ac={check(){if(S.adm)return true;if(S.b)return false;const n=Date.now(),s=S.ct.filter(t=>t>n-1e3).length,m=S.ct.filter(t=>t>n-6e4).length;if(s>C.LIMITS.M1){this.record('Часто');return false}if(m>C.LIMITS.M2){this.record('Много');return false}if(n-S.lch>C.LIMITS.INT){if(S.ms-S.lsc>C.LIMITS.M3){this.record('Рост');return false}S.lsc=S.ms;S.lch=n}return true},
+        record(r){if(S.adm)return;S.cc++;st.s('CC',S.cc);E.ca.style.display='block';setTimeout(()=>E.ca.style.display='none',3e3);S.cc>=C.LIMITS.BAN&&(S.b=true,E.cb.disabled=true,E.e.style.pointerEvents='none',S.pr&&S.pr.update({b:true,cc:S.cc,br:r,bt:Date.now()}),S.or&&S.or.remove())},
+        clean(){const n=Date.now();S.ct=S.ct.filter(t=>t>n-12e4)}};
+        function init(){
+            S.adm=st.g('AM')==='true';
+            S.ns=st.g('NS')==='true';S.u=st.g('N')||'';S.pid=st.g('I')||null;S.ms=parseInt(st.g('S')||'0');S.cc=parseInt(st.g('CC')||'0');
+            checkRef();S.u&&(E.un.value=S.u);
+            db.ref('config/imageSize').once('value').then(s=>{const sz=s.val();sz&&typeof sz==='number'&&(S.is=sz,E.ei.style.backgroundSize=sz+'%')});
+            db.ref('globalCounter').once('value').then(s=>{S.gs=s.val()||0;
+                if(S.ns&&S.pid)db.ref('players/'+S.pid).once('value').then(s=>{if(s.exists()){const d=s.val();S.pr=db.ref('players/'+S.pid);S.b=d.b===true;S.pu=d.pu||0;S.mspt=d.sp||0;S.strk=d.strk||1;S.ach=d.ach||{};S.refs=d.refs||[];S.rb=d.rb||0;S.rct=d.rc||0;
+                    d.sc!==S.ms&&!S.cl&&(d.sc<S.ms?S.pr.update({sc:S.ms}):(S.ms=d.sc,st.s('S',d.sc)));setupL();checkStrk();applyRef()}else(!S.b||S.adm)&&createP();updUI()})
+                else if(S.ns&&(!S.b||S.adm))createP();else updUI()});
+            (!S.b||S.adm)&&(S.or=db.ref('onlineUsers').push(),S.or.set({n:S.u||'Аноним',on:true,ls:Date.now(),pid:S.pid}),window.addEventListener('beforeunload',()=>{S.or&&S.or.remove();S.pr&&(!S.b||S.adm)&&(S.pr.update({ls:Date.now(),on:false,cc:S.cc}),st.s('S',S.ms))}));
+            E.snb.addEventListener('click',()=>{const n=E.un.value.trim();if(!n)return;S.u=n;S.ns=true;st.s('N',n);st.s('NS','true');createP();applyRef();updUI()});
+            E.un.addEventListener('keypress',e=>e.key==='Enter'&&E.snb.click());
+            E.cb.addEventListener('click',clickH);E.e.addEventListener('click',clickH);E.g.addEventListener('click',()=>openProf(S.pid,S.u));
+            E.ab.addEventListener('click',()=>a.open());E.cpb.addEventListener('click',()=>a.close());E.cpf.addEventListener('click',()=>{E.pm.classList.remove('show');E.bd.classList.remove('show')});
+            E.bd.addEventListener('click',()=>{E.ap.classList.remove('show');E.pm.classList.remove('show');E.bd.classList.remove('show')});
+            E.ss.addEventListener('input',e=>{S.adm&&a.setImageSize(parseInt(e.target.value))});
+            setInterval(()=>{if(S.b&&!S.adm)return;ac.check();ac.clean();S.or&&S.or.update({ls:Date.now(),n:S.u||'Аноним',cc:S.cc});S.pr&&S.ns&&(!S.b||S.adm)&&(S.pr.update({ls:Date.now(),n:S.u,cc:S.cc}),st.s('S',S.ms));updQ()},6e4);
+            E.tp.textContent=S.t.toLocaleString()
+        }
+        function createP(){if(S.b&&!S.adm)return;
+            const nr=db.ref('players').push();nr.set({n:S.u,sc:S.ms,j:Date.now(),ls:Date.now(),cc:S.cc,pu:0,sp:0,strk:1,ach:{},refs:[],rb:0,rc:0,b:false}).then(()=>{S.pr=nr;S.pid=nr.key;st.s('I',S.pid);S.b=false;setupL()})
+        }
+        init();
         })();
     </script>
 </body>
