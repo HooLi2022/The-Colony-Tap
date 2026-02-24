@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌍 Заселение Земли</title>
+    <title>🌍 Заселение Земли - Конкурс</title>
     <style>
         * {
             box-sizing: border-box;
@@ -462,6 +462,240 @@
             font-size: 0.8rem;
             color: #aaa;
             margin-top: 10px;
+        }
+
+        /* Стили для конкурса */
+        .contest-section {
+            background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,165,0,0.2));
+            border: 3px solid #ffd700;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contest-section::before {
+            content: "🏆";
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            font-size: 150px;
+            opacity: 0.1;
+            transform: rotate(15deg);
+        }
+
+        .contest-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .contest-header h2 {
+            color: #ffd700;
+            font-size: 2rem;
+            text-shadow: 0 0 10px rgba(255,215,0,0.5);
+        }
+
+        .contest-badge {
+            background: #ff4444;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            animation: pulse 2s infinite;
+        }
+
+        .contest-timer {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .timer-display {
+            font-size: 2.5rem;
+            color: #ffd700;
+            font-weight: bold;
+            font-family: monospace;
+            text-shadow: 0 0 15px rgba(255,215,0,0.5);
+        }
+
+        .contest-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .contest-stat-card {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #ffd700;
+        }
+
+        .contest-stat-value {
+            font-size: 2rem;
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .contest-stat-label {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .contest-progress {
+            margin: 20px 0;
+        }
+
+        .contest-progress-bar {
+            height: 30px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 2px solid #ffd700;
+            position: relative;
+        }
+
+        .contest-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd700, #ffaa00);
+            width: 0%;
+            transition: width 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contest-progress-fill::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .contest-leader {
+            background: rgba(255,215,0,0.1);
+            border: 2px solid #ffd700;
+            border-radius: 15px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .leader-name {
+            font-size: 1.5rem;
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .leader-score {
+            font-size: 2rem;
+            color: white;
+        }
+
+        .contest-top {
+            margin-top: 20px;
+        }
+
+        .contest-top-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin: 8px 0;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+
+        .contest-top-rank {
+            width: 30px;
+            height: 30px;
+            background: #ffd700;
+            color: #333;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .contest-top-name {
+            flex: 1;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .contest-top-score {
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .winner-form {
+            background: rgba(76,175,80,0.1);
+            border: 2px solid #4CAF50;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .winner-form.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        .winner-form h3 {
+            color: #4CAF50;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .winner-input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid #4CAF50;
+        }
+
+        .winner-input:focus {
+            outline: none;
+            border-color: #ffd700;
+        }
+
+        .winner-submit {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.2s;
+        }
+
+        .winner-submit:hover {
+            background: #45a049;
+            transform: scale(1.02);
         }
 
         .referral-section {
@@ -1150,6 +1384,29 @@
             background: rgba(76,175,80,0.4);
         }
 
+        .admin-contest-settings {
+            background: rgba(255,215,0,0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .admin-contest-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        .admin-contest-input {
+            width: 100px;
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid #ffd700;
+            background: rgba(0,0,0,0.3);
+            color: white;
+        }
+
         .player-list {
             max-height: 200px;
             overflow-y: auto;
@@ -1616,6 +1873,44 @@
             </p>
         </div>
         
+        <!-- НОВЫЙ РАЗДЕЛ: УПРАВЛЕНИЕ КОНКУРСОМ -->
+        <div class="admin-section">
+            <h3>🏆 Управление конкурсом</h3>
+            <div class="admin-actions">
+                <button class="admin-action-btn success" onclick="admin.startContest()">▶️ Запустить конкурс</button>
+                <button class="admin-action-btn danger" onclick="admin.endContest()">⏹️ Завершить конкурс</button>
+                <button class="admin-action-btn" onclick="admin.resetContest()">🔄 Сбросить конкурс</button>
+                <button class="admin-action-btn" onclick="admin.payWinner()">💰 Выплатить победителю</button>
+            </div>
+            
+            <div class="admin-contest-settings">
+                <div class="admin-contest-row">
+                    <span>🎁 Призовой фонд:</span>
+                    <input type="number" id="contestPrize" class="admin-contest-input" value="1000" min="100" step="100">
+                </div>
+                <div class="admin-contest-row">
+                    <span>⏱️ Длительность (часы):</span>
+                    <input type="number" id="contestDuration" class="admin-contest-input" value="24" min="1" max="168">
+                </div>
+                <div class="admin-contest-row">
+                    <span>👑 Текущий лидер:</span>
+                    <span id="contestLeader">Нет</span>
+                </div>
+                <div class="admin-contest-row">
+                    <span>📊 Участников:</span>
+                    <span id="contestParticipants">0</span>
+                </div>
+                <div class="admin-contest-row">
+                    <span>⏳ Осталось:</span>
+                    <span id="contestTimeLeft">00:00:00</span>
+                </div>
+                <div class="admin-contest-row">
+                    <span>🏆 Статус:</span>
+                    <span id="contestStatus" style="color: #ff4444;">Не активен</span>
+                </div>
+            </div>
+        </div>
+        
         <div class="admin-section">
             <h3>👥 Топ по рефералам</h3>
             <div class="player-list" id="referralTopList">
@@ -1759,6 +2054,60 @@
         </div>
         
         <button id="clickBtn" class="click-button" disabled>👆 ЗАСЕЛИТЬ</button>
+        
+        <!-- Секция конкурса -->
+        <div class="contest-section" id="contestSection" style="display: none;">
+            <div class="contest-header">
+                <h2>🏆 КОНКУРС</h2>
+                <span class="contest-badge" id="contestBadge">АКТИВЕН</span>
+            </div>
+            
+            <div class="contest-timer">
+                <div>До конца конкурса:</div>
+                <div class="timer-display" id="contestTimer">00:00:00</div>
+            </div>
+            
+            <div class="contest-stats">
+                <div class="contest-stat-card">
+                    <div class="contest-stat-value" id="contestPrizeDisplay">1000₽</div>
+                    <div class="contest-stat-label">призовой фонд</div>
+                </div>
+                <div class="contest-stat-card">
+                    <div class="contest-stat-value" id="contestParticipantsDisplay">0</div>
+                    <div class="contest-stat-label">участников</div>
+                </div>
+                <div class="contest-stat-card">
+                    <div class="contest-stat-value" id="contestMyScore">0</div>
+                    <div class="contest-stat-label">мой вклад</div>
+                </div>
+            </div>
+            
+            <div class="contest-progress">
+                <div class="contest-progress-bar">
+                    <div class="contest-progress-fill" id="contestProgress" style="width: 0%;"></div>
+                </div>
+            </div>
+            
+            <div class="contest-leader" id="contestLeaderBoard">
+                <div>🏆 ЛИДЕР 🏆</div>
+                <div class="leader-name" id="contestLeaderName">-</div>
+                <div class="leader-score" id="contestLeaderScore">0 кликов</div>
+            </div>
+            
+            <div class="contest-top" id="contestTop3">
+                <!-- Топ-3 будет подгружаться -->
+            </div>
+            
+            <!-- Форма для победителя -->
+            <div class="winner-form" id="winnerForm">
+                <h3>🎉 ПОЗДРАВЛЯЕМ! ВЫ ПОБЕДИТЕЛЬ!</h3>
+                <p>Введите данные для получения выигрыша (1000₽)</p>
+                <input type="text" class="winner-input" id="winnerCard" placeholder="Номер карты">
+                <input type="text" class="winner-input" id="winnerName" placeholder="Ваше имя">
+                <input type="text" class="winner-input" id="winnerPhone" placeholder="Телефон">
+                <button class="winner-submit" onclick="submitWinnerData()">✅ ПОЛУЧИТЬ ВЫИГРЫШ</button>
+            </div>
+        </div>
         
         <!-- Навигационные вкладки -->
         <div class="tabs">
@@ -2112,7 +2461,30 @@
                 questRefreshTime: getEl('questRefreshTime'),
                 adModal: getEl('adModal'),
                 adBadge: getEl('adBadge'),
-                adCountdown: getEl('adCountdown')
+                adCountdown: getEl('adCountdown'),
+                
+                // Элементы конкурса
+                contestSection: getEl('contestSection'),
+                contestTimer: getEl('contestTimer'),
+                contestPrizeDisplay: getEl('contestPrizeDisplay'),
+                contestParticipantsDisplay: getEl('contestParticipantsDisplay'),
+                contestMyScore: getEl('contestMyScore'),
+                contestProgress: getEl('contestProgress'),
+                contestLeaderName: getEl('contestLeaderName'),
+                contestLeaderScore: getEl('contestLeaderScore'),
+                contestTop3: getEl('contestTop3'),
+                winnerForm: getEl('winnerForm'),
+                winnerCard: getEl('winnerCard'),
+                winnerName: getEl('winnerName'),
+                winnerPhone: getEl('winnerPhone'),
+                
+                // Элементы админки для конкурса
+                contestPrize: getEl('contestPrize'),
+                contestDuration: getEl('contestDuration'),
+                contestLeader: getEl('contestLeader'),
+                contestParticipants: getEl('contestParticipants'),
+                contestTimeLeft: getEl('contestTimeLeft'),
+                contestStatus: getEl('contestStatus')
             };
 
             // Состояние
@@ -2154,7 +2526,19 @@
                 achievementNotified: {},
                 processedReferrals: new Set(),
                 adTimer: null,
-                adTimeLeft: 0
+                adTimeLeft: 0,
+                
+                // Данные конкурса
+                contest: {
+                    active: false,
+                    startTime: 0,
+                    endTime: 0,
+                    prize: 1000,
+                    duration: 24,
+                    winner: null,
+                    winnerData: null,
+                    participants: {}
+                }
             };
 
             // Хранилище
@@ -2168,7 +2552,6 @@
             window.showAdModal = function() {
                 if (!el.adModal) return;
                 
-                // Проверяем, не забирал ли уже бонус
                 if (stor.g('AD_CLAIMED') === 'true') {
                     alert('Вы уже получали этот бонус!');
                     return;
@@ -2177,8 +2560,7 @@
                 el.adModal.classList.add('show');
                 if (el.bd) el.bd.classList.add('show');
                 
-                // Запускаем таймер
-                s.adTimeLeft = 60; // 60 секунд на принятие решения
+                s.adTimeLeft = 60;
                 updateAdCountdown();
                 
                 s.adTimer = setInterval(() => {
@@ -2215,15 +2597,11 @@
                     return;
                 }
                 
-                // Открываем ссылку в новом окне
                 window.open(C.AD_LINK, '_blank');
                 
-                // Начисляем бонус (и в личный, и в глобальный счет)
                 if (s.pr) {
-                    // Обновляем глобальный счет
                     db.ref('globalCounter').transaction(v => (v || 0) + C.AD_BONUS)
                         .then(() => {
-                            // Обновляем личный счет
                             return s.pr.transaction(p => {
                                 if (!p) p = { sc: 0 };
                                 p.sc = (p.sc || 0) + C.AD_BONUS;
@@ -2231,11 +2609,9 @@
                             });
                         })
                         .then(() => {
-                            // Обновляем локальные данные
                             s.myScore += C.AD_BONUS;
                             s.globalScore += C.AD_BONUS;
                             
-                            // Отмечаем, что бонус получен
                             stor.s('AD_CLAIMED', 'true');
                             
                             if (el.au) {
@@ -2247,12 +2623,203 @@
                             closeAdModal();
                             updateUI();
                             
-                            // Скрываем бейдж
                             if (el.adBadge) {
                                 el.adBadge.style.display = 'none';
                             }
                         });
                 }
+            };
+
+            // ===== ФУНКЦИИ ДЛЯ КОНКУРСА =====
+            function updateContestUI() {
+                if (!el.contestSection) return;
+                
+                if (s.contest.active) {
+                    el.contestSection.style.display = 'block';
+                    
+                    // Обновляем время
+                    const now = Date.now();
+                    const timeLeft = Math.max(0, s.contest.endTime - now);
+                    
+                    if (timeLeft <= 0 && s.contest.active) {
+                        // Конкурс закончился
+                        endContest();
+                        return;
+                    }
+                    
+                    const hours = Math.floor(timeLeft / 3600000);
+                    const minutes = Math.floor((timeLeft % 3600000) / 60000);
+                    const seconds = Math.floor((timeLeft % 60000) / 1000);
+                    
+                    if (el.contestTimer) {
+                        el.contestTimer.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    }
+                    
+                    // Обновляем приз
+                    if (el.contestPrizeDisplay) {
+                        el.contestPrizeDisplay.textContent = s.contest.prize + '₽';
+                    }
+                    
+                    // Собираем участников конкурса (клики за последние 24 часа)
+                    const contestStart = s.contest.startTime;
+                    const contestEnd = s.contest.endTime;
+                    
+                    const participants = [];
+                    
+                    Object.entries(s.players).forEach(([id, data]) => {
+                        // Здесь нужно хранить историю кликов за время конкурса
+                        // Для простоты будем использовать общий счет
+                        if (data.sc > 0 && data.n) {
+                            participants.push({
+                                id,
+                                name: data.n,
+                                score: data.sc || 0
+                            });
+                        }
+                    });
+                    
+                    // Сортируем по убыванию
+                    participants.sort((a, b) => b.score - a.score);
+                    
+                    // Обновляем количество участников
+                    if (el.contestParticipantsDisplay) {
+                        el.contestParticipantsDisplay.textContent = participants.length;
+                    }
+                    
+                    // Обновляем личный счет в конкурсе
+                    if (s.pid && el.contestMyScore) {
+                        const myParticipant = participants.find(p => p.id === s.pid);
+                        el.contestMyScore.textContent = myParticipant ? myParticipant.score.toLocaleString() : '0';
+                    }
+                    
+                    // Обновляем прогресс (относительно лидера)
+                    if (participants.length > 0 && el.contestProgress) {
+                        const leaderScore = participants[0].score;
+                        const myScore = participants.find(p => p.id === s.pid)?.score || 0;
+                        const percent = leaderScore > 0 ? (myScore / leaderScore) * 100 : 0;
+                        el.contestProgress.style.width = Math.min(percent, 100) + '%';
+                    }
+                    
+                    // Обновляем лидера
+                    if (participants.length > 0) {
+                        if (el.contestLeaderName) el.contestLeaderName.textContent = participants[0].name;
+                        if (el.contestLeaderScore) el.contestLeaderScore.textContent = participants[0].score.toLocaleString() + ' кликов';
+                        
+                        // Топ-3
+                        if (el.contestTop3) {
+                            let topHtml = '';
+                            for (let i = 0; i < Math.min(3, participants.length); i++) {
+                                const p = participants[i];
+                                const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : '🥉';
+                                topHtml += `
+                                    <div class="contest-top-item" onclick="openProfile('${p.id}', '${p.name}')">
+                                        <div class="contest-top-rank">${medal}</div>
+                                        <span class="contest-top-name">${p.name}</span>
+                                        <span class="contest-top-score">${p.score.toLocaleString()}</span>
+                                    </div>
+                                `;
+                            }
+                            el.contestTop3.innerHTML = topHtml;
+                        }
+                        
+                        // Проверяем, не победитель ли текущий игрок
+                        if (s.pid && participants[0]?.id === s.pid && timeLeft <= 0) {
+                            if (el.winnerForm) el.winnerForm.classList.add('show');
+                        } else {
+                            if (el.winnerForm) el.winnerForm.classList.remove('show');
+                        }
+                    } else {
+                        if (el.contestLeaderName) el.contestLeaderName.textContent = '-';
+                        if (el.contestLeaderScore) el.contestLeaderScore.textContent = '0 кликов';
+                    }
+                } else {
+                    el.contestSection.style.display = 'none';
+                }
+            }
+
+            function startContest(prize, duration) {
+                const now = Date.now();
+                s.contest.active = true;
+                s.contest.startTime = now;
+                s.contest.endTime = now + (duration * 3600000);
+                s.contest.prize = prize;
+                s.contest.duration = duration;
+                s.contest.winner = null;
+                s.contest.winnerData = null;
+                
+                // Сохраняем в Firebase
+                db.ref('contest').set({
+                    active: true,
+                    startTime: now,
+                    endTime: now + (duration * 3600000),
+                    prize: prize,
+                    duration: duration
+                });
+                
+                updateContestUI();
+            }
+
+            function endContest() {
+                s.contest.active = false;
+                
+                // Находим победителя
+                const participants = [];
+                Object.entries(s.players).forEach(([id, data]) => {
+                    if (data.sc > 0 && data.n) {
+                        participants.push({
+                            id,
+                            name: data.n,
+                            score: data.sc || 0
+                        });
+                    }
+                });
+                
+                participants.sort((a, b) => b.score - a.score);
+                
+                if (participants.length > 0) {
+                    s.contest.winner = participants[0];
+                    
+                    // Сохраняем в Firebase
+                    db.ref('contest/winner').set({
+                        id: participants[0].id,
+                        name: participants[0].name,
+                        score: participants[0].score,
+                        prize: s.contest.prize
+                    });
+                    
+                    // Если победитель сейчас онлайн, показываем форму
+                    if (s.pid === participants[0].id) {
+                        if (el.winnerForm) el.winnerForm.classList.add('show');
+                    }
+                }
+                
+                db.ref('contest/active').set(false);
+                
+                updateContestUI();
+            }
+
+            window.submitWinnerData = function() {
+                if (!el.winnerCard || !el.winnerName || !el.winnerPhone) return;
+                
+                const card = el.winnerCard.value.trim();
+                const name = el.winnerName.value.trim();
+                const phone = el.winnerPhone.value.trim();
+                
+                if (!card || !name || !phone) {
+                    alert('Заполните все поля!');
+                    return;
+                }
+                
+                // Сохраняем данные победителя
+                db.ref('contest/winner/data').set({
+                    card: card,
+                    name: name,
+                    phone: phone,
+                    timestamp: Date.now()
+                }).then(() => {
+                    alert('✅ Данные отправлены! Ожидайте выплату в течение 24 часов.');
+                    if (el.winnerForm) el.winnerForm.classList.remove('show');
+                });
             };
 
             // ===== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК =====
@@ -2276,7 +2843,6 @@
             function updateUI() {
                 if (!el.cb || !el.e) return;
                 
-                // Блокировка элементов до подтверждения имени
                 const canClick = s.ns && !s.b;
                 
                 el.cb.disabled = !canClick;
@@ -2328,10 +2894,49 @@
                     if (el.adminTotalPlayers) el.adminTotalPlayers.textContent = Object.keys(s.players).length;
                     if (el.adminOnline) el.adminOnline.textContent = s.online;
                     if (el.todaySales) el.todaySales.textContent = s.salesToday;
+                    
+                    // Обновляем админские данные конкурса
+                    if (el.contestPrize) el.contestPrize.value = s.contest.prize;
+                    if (el.contestDuration) el.contestDuration.value = s.contest.duration;
+                    if (el.contestStatus) el.contestStatus.textContent = s.contest.active ? 'Активен' : 'Не активен';
+                    if (el.contestStatus) el.contestStatus.style.color = s.contest.active ? '#4CAF50' : '#ff4444';
+                    
+                    // Находим лидера для админки
+                    const participants = [];
+                    Object.entries(s.players).forEach(([id, data]) => {
+                        if (data.sc > 0 && data.n) {
+                            participants.push({
+                                id,
+                                name: data.n,
+                                score: data.sc || 0
+                            });
+                        }
+                    });
+                    participants.sort((a, b) => b.score - a.score);
+                    
+                    if (participants.length > 0 && el.contestLeader) {
+                        el.contestLeader.textContent = participants[0].name;
+                    }
+                    if (el.contestParticipants) {
+                        el.contestParticipants.textContent = participants.length;
+                    }
+                    
+                    // Время до конца конкурса для админки
+                    if (s.contest.active && el.contestTimeLeft) {
+                        const now = Date.now();
+                        const timeLeft = Math.max(0, s.contest.endTime - now);
+                        const hours = Math.floor(timeLeft / 3600000);
+                        const minutes = Math.floor((timeLeft % 3600000) / 60000);
+                        const seconds = Math.floor((timeLeft % 60000) / 1000);
+                        el.contestTimeLeft.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    } else if (el.contestTimeLeft) {
+                        el.contestTimeLeft.textContent = '00:00:00';
+                    }
                 }
                 
                 updateQuests();
                 updateReferralTop();
+                updateContestUI();
             }
 
             // ===== ОБНОВЛЕНИЕ ТОПА ПО РЕФЕРАЛАМ =====
@@ -2779,10 +3384,8 @@
                     localStorage.setItem('dailyQuests', JSON.stringify(quests));
                     
                     if (s.pr) {
-                        // Обновляем глобальный счет
                         db.ref('globalCounter').transaction(v => (v || 0) + quest.reward)
                             .then(() => {
-                                // Обновляем личный счет
                                 return s.pr.transaction(p => {
                                     if (!p) p = { sc: 0 };
                                     p.sc = (p.sc || 0) + quest.reward;
@@ -2790,7 +3393,6 @@
                                 });
                             })
                             .then(() => {
-                                // Обновляем локальные данные
                                 s.myScore += quest.reward;
                                 s.globalScore += quest.reward;
                                 
@@ -3161,6 +3763,25 @@
                 }
             });
 
+            // ===== СЛУШАТЕЛЬ КОНКУРСА =====
+            db.ref('contest').on('value', (snap) => {
+                const contest = snap.val();
+                if (contest) {
+                    s.contest.active = contest.active || false;
+                    s.contest.startTime = contest.startTime || 0;
+                    s.contest.endTime = contest.endTime || 0;
+                    s.contest.prize = contest.prize || 1000;
+                    s.contest.duration = contest.duration || 24;
+                    if (contest.winner) {
+                        s.contest.winner = contest.winner;
+                    }
+                    if (contest.winner?.data) {
+                        s.contest.winnerData = contest.winner.data;
+                    }
+                    updateUI();
+                }
+            });
+
             // ===== АДМИН ПАНЕЛЬ =====
             const admin = {
                 open() {
@@ -3179,6 +3800,9 @@
                     
                     if (el.sizeSlider) el.sizeSlider.value = s.imageSize;
                     if (el.sizeValue) el.sizeValue.textContent = s.imageSize + '%';
+                    
+                    // Обновляем данные конкурса в админке
+                    updateUI();
                 },
                 close() {
                     if (el.adminPanel && el.bd) {
@@ -3303,6 +3927,40 @@
                 setPrices(type) {
                     if (!s.admin) return;
                     alert('💰 В текущей версии цены фиксированные: 1 клик = 1 рубль');
+                },
+                
+                // Функции для конкурса
+                startContest() {
+                    if (!s.admin) return;
+                    
+                    const prize = parseInt(el.contestPrize?.value || '1000');
+                    const duration = parseInt(el.contestDuration?.value || '24');
+                    
+                    startContest(prize, duration);
+                },
+                
+                endContest() {
+                    if (!s.admin || !confirm('Завершить конкурс?')) return;
+                    endContest();
+                },
+                
+                resetContest() {
+                    if (!s.admin || !confirm('Сбросить данные конкурса?')) return;
+                    
+                    db.ref('contest').remove();
+                    s.contest.active = false;
+                    s.contest.winner = null;
+                    s.contest.winnerData = null;
+                    updateUI();
+                },
+                
+                payWinner() {
+                    if (!s.admin || !s.contest.winner) {
+                        alert('Нет победителя');
+                        return;
+                    }
+                    
+                    alert(`Выплатить ${s.contest.prize}₽ игроку ${s.contest.winner.name}?\nДанные: ${s.contest.winnerData ? JSON.stringify(s.contest.winnerData) : 'не указаны'}`);
                 }
             };
 
@@ -3706,7 +4364,8 @@
                         stor.s('S', s.myScore);
                     }
                     updateQuests();
-                }, 60000);
+                    updateContestUI();
+                }, 1000); // Обновляем каждую секунду для таймера
 
                 if (el.targetPopulation) el.targetPopulation.textContent = s.target.toLocaleString();
             }
