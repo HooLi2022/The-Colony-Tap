@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌍 Заселение Земли - Достижения и профили</title>
+    <title>🌍 Заселение Земли - Уровни и задания</title>
     <style>
         * {
             box-sizing: border-box;
@@ -159,6 +159,17 @@
             font-weight: bold;
         }
 
+        .level-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            color: #333;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+
         .hidden {
             display: none !important;
         }
@@ -304,7 +315,173 @@
             margin-bottom: 15px;
         }
 
-        /* Стили для профиля */
+        /* Секция заданий */
+        .quests-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(76,175,80,0.1);
+            border: 2px solid #4CAF50;
+            border-radius: 20px;
+        }
+
+        .quests-title {
+            font-size: 1.5rem;
+            color: #4CAF50;
+            margin-bottom: 15px;
+        }
+
+        .quests-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .quest-item {
+            background: rgba(0,0,0,0.3);
+            border: 2px solid #4CAF50;
+            border-radius: 12px;
+            padding: 12px;
+            position: relative;
+        }
+
+        .quest-item.completed {
+            opacity: 0.5;
+            filter: grayscale(0.5);
+            border-color: #aaa;
+        }
+
+        .quest-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .quest-name {
+            font-weight: bold;
+            color: #4CAF50;
+            margin-bottom: 5px;
+        }
+
+        .quest-desc {
+            font-size: 0.8rem;
+            color: #ddd;
+            margin-bottom: 8px;
+        }
+
+        .quest-progress {
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+            margin: 8px 0;
+        }
+
+        .quest-progress-fill {
+            height: 100%;
+            background: #4CAF50;
+            border-radius: 2px;
+            width: 0%;
+        }
+
+        .quest-reward {
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .quest-button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-top: 8px;
+            width: 100%;
+        }
+
+        .quest-button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+
+        .refresh-time {
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-top: 10px;
+        }
+
+        /* Секция рефералов */
+        .referral-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(33,150,243,0.1);
+            border: 2px solid #2196F3;
+            border-radius: 15px;
+        }
+
+        .referral-title {
+            font-size: 1.2rem;
+            color: #2196F3;
+            margin-bottom: 10px;
+        }
+
+        .referral-link {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .referral-input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid #2196F3;
+        }
+
+        .referral-input:focus {
+            outline: none;
+            border-color: #ffd700;
+        }
+
+        .copy-button {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .copy-button:hover {
+            background: #1976D2;
+        }
+
+        .referral-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+        }
+
+        .referral-stat {
+            text-align: center;
+        }
+
+        .referral-stat-value {
+            font-size: 1.3rem;
+            color: #2196F3;
+            font-weight: bold;
+        }
+
+        .referral-stat-label {
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+
+        /* Профиль */
         .profile-modal {
             position: fixed;
             top: 50%;
@@ -316,7 +493,7 @@
             padding: 30px;
             z-index: 3000;
             width: 90%;
-            max-width: 600px;
+            max-width: 700px;
             max-height: 80vh;
             overflow-y: auto;
             box-shadow: 0 0 50px rgba(255,215,0,0.3);
@@ -343,7 +520,7 @@
 
         .profile-stats {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 15px;
             margin-bottom: 25px;
         }
@@ -505,7 +682,7 @@
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 12px;
             margin: 20px 0;
         }
@@ -1158,6 +1335,10 @@
         
         <div class="profile-stats">
             <div class="profile-stat">
+                <div class="profile-stat-label">Уровень</div>
+                <div class="profile-stat-value" id="profileLevel">1</div>
+            </div>
+            <div class="profile-stat">
                 <div class="profile-stat-label">Всего кликов</div>
                 <div class="profile-stat-value" id="profileClicks">0</div>
             </div>
@@ -1173,11 +1354,23 @@
                 <div class="profile-stat-label">Дней подряд</div>
                 <div class="profile-stat-value" id="profileStreak">0</div>
             </div>
+            <div class="profile-stat">
+                <div class="profile-stat-label">Рефералов</div>
+                <div class="profile-stat-value" id="profileReferrals">0</div>
+            </div>
         </div>
         
         <div class="achievements-title">🏆 Достижения</div>
         <div class="achievements-grid" id="achievementsList">
             <!-- Сюда будут подгружаться достижения -->
+        </div>
+        
+        <div class="referral-section" id="profileReferralSection">
+            <div class="referral-title">🔗 Реферальная ссылка</div>
+            <div class="referral-link">
+                <input type="text" id="profileReferralLink" class="referral-input" readonly>
+                <button class="copy-button" onclick="copyReferralLink()">Копировать</button>
+            </div>
         </div>
     </div>
 
@@ -1208,7 +1401,7 @@
             </div>
             <div id="greeting" class="greeting hidden">
                 <span>Игрок: <span id="displayName" class="greeting-name"></span></span>
-                <span style="font-size: 0.8rem; margin-left: 10px; color: #ffd700;">👤</span>
+                <span class="level-badge" id="levelBadge">Ур. 1</span>
             </div>
         </div>
         
@@ -1260,6 +1453,38 @@
             </div>
         </div>
         
+        <!-- ===== ЕЖЕДНЕВНЫЕ ЗАДАНИЯ ===== -->
+        <div class="quests-section">
+            <div class="quests-title">📋 Ежедневные задания</div>
+            <div class="quests-grid" id="questsList">
+                <!-- Сюда будут подгружаться задания -->
+                <div class="quest-item">
+                    <div class="quest-icon">⏳</div>
+                    <div class="quest-name">Загрузка...</div>
+                </div>
+            </div>
+            <div class="refresh-time" id="questRefreshTime">Обновление через: 24:00</div>
+        </div>
+        
+        <!-- ===== РЕФЕРАЛЬНАЯ СИСТЕМА ===== -->
+        <div class="referral-section" id="referralSection">
+            <div class="referral-title">👥 Пригласи друга</div>
+            <div class="referral-link">
+                <input type="text" id="referralLink" class="referral-input" readonly>
+                <button class="copy-button" onclick="copyReferralLink()">Копировать</button>
+            </div>
+            <div class="referral-stats">
+                <div class="referral-stat">
+                    <div class="referral-stat-value" id="referralCount">0</div>
+                    <div class="referral-stat-label">приглашено</div>
+                </div>
+                <div class="referral-stat">
+                    <div class="referral-stat-value" id="referralBonus">0</div>
+                    <div class="referral-stat-label">бонусов</div>
+                </div>
+            </div>
+        </div>
+        
         <div class="stats-grid">
             <div class="stat-card">
                 <div>Онлайн</div>
@@ -1268,6 +1493,10 @@
             <div class="stat-card">
                 <div>Твой вклад</div>
                 <div class="stat-value" id="userScore">0</div>
+            </div>
+            <div class="stat-card">
+                <div>Уровень</div>
+                <div class="stat-value" id="userLevel">1</div>
             </div>
             <div class="stat-card">
                 <div>Осталось</div>
@@ -1365,7 +1594,17 @@
                     'spend500': { name: 'Инвестор', desc: 'Потратить 500₽', icon: '💰', reward: 100 },
                     'spend5000': { name: 'Магнат', desc: 'Потратить 5 000₽', icon: '👑', reward: 500 },
                     'streak7': { name: 'Завсегдатай', desc: 'Заходить 7 дней подряд', icon: '📅', reward: 50 },
-                    'streak30': { name: 'Преданный', desc: 'Заходить 30 дней подряд', icon: '⭐', reward: 300 }
+                    'streak30': { name: 'Преданный', desc: 'Заходить 30 дней подряд', icon: '⭐', reward: 300 },
+                    'referral1': { name: 'Друг', desc: 'Пригласить 1 друга', icon: '🤝', reward: 50 },
+                    'referral5': { name: 'Популярный', desc: 'Пригласить 5 друзей', icon: '👥', reward: 200 },
+                    'referral10': { name: 'Лидер', desc: 'Пригласить 10 друзей', icon: '🌟', reward: 500 }
+                },
+                
+                // Ежедневные задания
+                QUESTS: {
+                    'clicks': { name: 'Кликер', desc: 'Сделать %s кликов', icon: '👆' },
+                    'streak': { name: 'Заход', desc: 'Заходить %s дней подряд', icon: '📅' },
+                    'purchase': { name: 'Покупатель', desc: 'Совершить покупку на %s₽', icon: '💰' }
                 }
             };
 
@@ -1393,6 +1632,8 @@
                 r: document.getElementById('remaining'),
                 oc: document.getElementById('onlineCount'),
                 us: document.getElementById('userScore'),
+                ul: document.getElementById('userLevel'),
+                lb: document.getElementById('levelBadge'),
                 lc: document.getElementById('lastClickerName'),
                 tl: document.getElementById('topList'),
                 nig: document.getElementById('nameInputGroup'),
@@ -1427,11 +1668,20 @@
                 profileModal: document.getElementById('profileModal'),
                 closeProfile: document.getElementById('closeProfile'),
                 profileName: document.getElementById('profileName'),
+                profileLevel: document.getElementById('profileLevel'),
                 profileClicks: document.getElementById('profileClicks'),
                 profilePurchases: document.getElementById('profilePurchases'),
                 profileSpent: document.getElementById('profileSpent'),
                 profileStreak: document.getElementById('profileStreak'),
-                achievementsList: document.getElementById('achievementsList')
+                profileReferrals: document.getElementById('profileReferrals'),
+                achievementsList: document.getElementById('achievementsList'),
+                profileReferralLink: document.getElementById('profileReferralLink'),
+                referralSection: document.getElementById('referralSection'),
+                referralLink: document.getElementById('referralLink'),
+                referralCount: document.getElementById('referralCount'),
+                referralBonus: document.getElementById('referralBonus'),
+                questsList: document.getElementById('questsList'),
+                questRefreshTime: document.getElementById('questRefreshTime')
             };
 
             // Состояние
@@ -1461,7 +1711,12 @@
                 purchases: 0,
                 moneySpent: 0,
                 streak: 0,
+                level: 1,
                 achievements: {},
+                referrals: [],
+                referralBonus: 0,
+                quests: {},
+                questsCompleted: {},
                 viewingProfile: null
             };
 
@@ -1472,6 +1727,11 @@
                 r: (k) => { try { localStorage.removeItem(C.STORAGE[k]); } catch {} }
             };
 
+            // ===== РАСЧЕТ УРОВНЯ =====
+            function calculateLevel(clicks) {
+                return Math.floor(clicks / 1000) + 1;
+            }
+
             // ===== ПРОВЕРКА ДОСТИЖЕНИЙ =====
             function checkAchievements() {
                 if (!s.pid || !s.pr) return;
@@ -1479,63 +1739,41 @@
                 const newAchievements = [];
                 const now = Date.now();
                 
-                // Проверяем достижения по кликам
-                if (s.myScore >= 100 && !s.achievements.click100) {
-                    newAchievements.push('click100');
-                }
-                if (s.myScore >= 1000 && !s.achievements.click1000) {
-                    newAchievements.push('click1000');
-                }
-                if (s.myScore >= 10000 && !s.achievements.click10000) {
-                    newAchievements.push('click10000');
-                }
-                if (s.myScore >= 100000 && !s.achievements.click100000) {
-                    newAchievements.push('click100000');
-                }
+                if (s.myScore >= 100 && !s.achievements.click100) newAchievements.push('click100');
+                if (s.myScore >= 1000 && !s.achievements.click1000) newAchievements.push('click1000');
+                if (s.myScore >= 10000 && !s.achievements.click10000) newAchievements.push('click10000');
+                if (s.myScore >= 100000 && !s.achievements.click100000) newAchievements.push('click100000');
                 
-                // Проверяем достижения по покупкам
-                if (s.purchases >= 1 && !s.achievements.firstPurchase) {
-                    newAchievements.push('firstPurchase');
-                }
-                if (s.moneySpent >= 500 && !s.achievements.spend500) {
-                    newAchievements.push('spend500');
-                }
-                if (s.moneySpent >= 5000 && !s.achievements.spend5000) {
-                    newAchievements.push('spend5000');
-                }
+                if (s.purchases >= 1 && !s.achievements.firstPurchase) newAchievements.push('firstPurchase');
+                if (s.moneySpent >= 500 && !s.achievements.spend500) newAchievements.push('spend500');
+                if (s.moneySpent >= 5000 && !s.achievements.spend5000) newAchievements.push('spend5000');
                 
-                // Проверяем достижения по стрику
-                if (s.streak >= 7 && !s.achievements.streak7) {
-                    newAchievements.push('streak7');
-                }
-                if (s.streak >= 30 && !s.achievements.streak30) {
-                    newAchievements.push('streak30');
-                }
+                if (s.streak >= 7 && !s.achievements.streak7) newAchievements.push('streak7');
+                if (s.streak >= 30 && !s.achievements.streak30) newAchievements.push('streak30');
                 
-                // Если есть новые достижения
+                if (s.referrals.length >= 1 && !s.achievements.referral1) newAchievements.push('referral1');
+                if (s.referrals.length >= 5 && !s.achievements.referral5) newAchievements.push('referral5');
+                if (s.referrals.length >= 10 && !s.achievements.referral10) newAchievements.push('referral10');
+                
                 if (newAchievements.length > 0) {
                     const updates = {};
                     
                     newAchievements.forEach(ach => {
                         updates[`achievements.${ach}`] = { unlocked: true, date: now };
                         
-                        // Начисляем награду
                         if (C.ACHIEVEMENTS[ach].reward > 0) {
                             s.myScore += C.ACHIEVEMENTS[ach].reward;
                             s.globalScore += C.ACHIEVEMENTS[ach].reward;
                             updates.sc = s.myScore;
                             
-                            // Показываем уведомление
                             el.au.textContent = `🏆 Достижение "${C.ACHIEVEMENTS[ach].name}"! +${C.ACHIEVEMENTS[ach].reward} кликов`;
                             el.au.style.display = 'block';
                             setTimeout(() => { el.au.style.display = 'none'; }, 5000);
                         }
                     });
                     
-                    // Обновляем в Firebase
                     s.pr.update(updates);
                     
-                    // Обновляем локально
                     newAchievements.forEach(ach => {
                         s.achievements[ach] = { unlocked: true, date: now };
                     });
@@ -1553,13 +1791,10 @@
                 let newStreak = s.streak;
                 
                 if (lastSeenDay === today) {
-                    // Уже сегодня заходил
                     return;
                 } else if (lastSeenDay === today - 86400000) {
-                    // Заходил вчера
                     newStreak++;
                 } else {
-                    // Пропустил день
                     newStreak = 1;
                 }
                 
@@ -1569,18 +1804,190 @@
                 }
             }
 
+            // ===== ГЕНЕРАЦИЯ ЕЖЕДНЕВНЫХ ЗАДАНИЙ =====
+            function generateDailyQuests() {
+                const today = new Date().setHours(0, 0, 0, 0);
+                const savedQuests = localStorage.getItem('dailyQuests');
+                const savedDate = localStorage.getItem('questsDate');
+                
+                if (savedQuests && savedDate == today) {
+                    return JSON.parse(savedQuests);
+                }
+                
+                const quests = [
+                    {
+                        id: 'clicks_1',
+                        type: 'clicks',
+                        target: 100,
+                        reward: 20,
+                        progress: 0,
+                        completed: false
+                    },
+                    {
+                        id: 'clicks_2',
+                        type: 'clicks',
+                        target: 500,
+                        reward: 100,
+                        progress: 0,
+                        completed: false
+                    },
+                    {
+                        id: 'streak',
+                        type: 'streak',
+                        target: 3,
+                        reward: 30,
+                        progress: 0,
+                        completed: false
+                    }
+                ];
+                
+                localStorage.setItem('dailyQuests', JSON.stringify(quests));
+                localStorage.setItem('questsDate', today);
+                
+                return quests;
+            }
+
+            // ===== ОБНОВЛЕНИЕ ЗАДАНИЙ =====
+            function updateQuests() {
+                const quests = generateDailyQuests();
+                
+                quests.forEach(quest => {
+                    switch(quest.type) {
+                        case 'clicks':
+                            quest.progress = s.myScore;
+                            break;
+                        case 'streak':
+                            quest.progress = s.streak;
+                            break;
+                        case 'purchase':
+                            quest.progress = s.moneySpent;
+                            break;
+                    }
+                    
+                    if (quest.progress >= quest.target && !quest.completed) {
+                        quest.completed = true;
+                        s.myScore += quest.reward;
+                        s.globalScore += quest.reward;
+                        
+                        el.au.textContent = `✅ Задание выполнено! +${quest.reward} кликов`;
+                        el.au.style.display = 'block';
+                        setTimeout(() => { el.au.style.display = 'none'; }, 5000);
+                    }
+                });
+                
+                localStorage.setItem('dailyQuests', JSON.stringify(quests));
+                
+                // Отображаем задания
+                let questsHtml = '';
+                quests.forEach(quest => {
+                    const percent = (quest.progress / quest.target) * 100;
+                    questsHtml += `
+                        <div class="quest-item ${quest.completed ? 'completed' : ''}">
+                            <div class="quest-icon">${C.QUESTS[quest.type].icon}</div>
+                            <div class="quest-name">${C.QUESTS[quest.type].name}</div>
+                            <div class="quest-desc">${C.QUESTS[quest.type].desc.replace('%s', quest.target)}</div>
+                            <div class="quest-progress">
+                                <div class="quest-progress-fill" style="width: ${percent}%"></div>
+                            </div>
+                            <div class="quest-reward">+${quest.reward}</div>
+                            ${quest.completed ? 
+                                '<button class="quest-button" disabled>Выполнено</button>' : 
+                                `<button class="quest-button" onclick="claimQuest('${quest.id}')">${quest.progress}/${quest.target}</button>`
+                            }
+                        </div>
+                    `;
+                });
+                
+                el.questsList.innerHTML = questsHtml;
+                
+                // Время до обновления
+                const now = Date.now();
+                const tomorrow = new Date().setHours(24, 0, 0, 0);
+                const hoursLeft = Math.floor((tomorrow - now) / 3600000);
+                const minutesLeft = Math.floor(((tomorrow - now) % 3600000) / 60000);
+                el.questRefreshTime.textContent = `Обновление через: ${hoursLeft}ч ${minutesLeft}м`;
+            }
+
+            // ===== ПОЛУЧЕНИЕ НАГРАДЫ ЗА ЗАДАНИЕ =====
+            window.claimQuest = function(questId) {
+                const quests = JSON.parse(localStorage.getItem('dailyQuests'));
+                const quest = quests.find(q => q.id === questId);
+                
+                if (quest && quest.completed && !quest.claimed) {
+                    quest.claimed = true;
+                    localStorage.setItem('dailyQuests', JSON.stringify(quests));
+                    updateQuests();
+                }
+            };
+
+            // ===== РЕФЕРАЛЬНАЯ ССЫЛКА =====
+            function updateReferralLink() {
+                if (!s.pid) return;
+                
+                const baseUrl = window.location.origin + window.location.pathname;
+                const refLink = `${baseUrl}?ref=${s.pid}`;
+                
+                if (el.referralLink) el.referralLink.value = refLink;
+                if (el.profileReferralLink) el.profileReferralLink.value = refLink;
+            }
+
+            window.copyReferralLink = function() {
+                const link = el.referralLink || el.profileReferralLink;
+                link.select();
+                document.execCommand('copy');
+                
+                el.au.textContent = '✅ Ссылка скопирована!';
+                el.au.style.display = 'block';
+                setTimeout(() => { el.au.style.display = 'none'; }, 2000);
+            };
+
+            // ===== ОБРАБОТКА РЕФЕРАЛОВ =====
+            function checkReferral() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const ref = urlParams.get('ref');
+                
+                if (ref && ref !== s.pid) {
+                    localStorage.setItem('referrer', ref);
+                }
+            }
+
+            function applyReferral() {
+                const ref = localStorage.getItem('referrer');
+                if (ref && s.pid && ref !== s.pid) {
+                    db.ref('players/' + ref + '/referrals').transaction(list => {
+                        if (!list) list = [];
+                        if (!list.includes(s.pid)) {
+                            list.push(s.pid);
+                            
+                            // Начисляем бонус пригласившему
+                            db.ref('players/' + ref).transaction(p => {
+                                if (!p) p = { sc: 0 };
+                                p.sc = (p.sc || 0) + 50;
+                                return p;
+                            });
+                        }
+                        return list;
+                    });
+                    
+                    localStorage.removeItem('referrer');
+                }
+            }
+
             // ===== ОТКРЫТИЕ ПРОФИЛЯ =====
             window.openProfile = function(playerId, playerName) {
                 const playerData = s.players[playerId];
                 if (!playerData) return;
                 
+                const level = calculateLevel(playerData.sc || 0);
+                
                 el.profileName.textContent = playerData.n || playerName;
+                el.profileLevel.textContent = level;
                 el.profileClicks.textContent = (playerData.sc || 0).toLocaleString();
                 el.profilePurchases.textContent = playerData.purchases || 0;
                 el.profileSpent.textContent = (playerData.spent || 0) + '₽';
                 el.profileStreak.textContent = (playerData.streak || 1);
+                el.profileReferrals.textContent = (playerData.referrals || []).length;
                 
-                // Загружаем достижения
                 let achievementsHtml = '';
                 const playerAchievements = playerData.achievements || {};
                 
@@ -1599,6 +2006,14 @@
                 });
                 
                 el.achievementsList.innerHTML = achievementsHtml;
+                
+                if (playerId === s.pid) {
+                    updateReferralLink();
+                    el.profileReferralSection.style.display = 'block';
+                } else {
+                    el.profileReferralSection.style.display = 'none';
+                }
+                
                 el.profileModal.classList.add('show');
                 el.bd.classList.add('show');
                 
@@ -1615,11 +2030,13 @@
                 let listHtml = '<div class="top-title">Все игроки</div>';
                 
                 players.forEach((p, i) => {
+                    const level = calculateLevel(p.sc || 0);
                     listHtml += `
                         <div class="top-item" onclick="openProfile('${p.id}', '${p.n}')">
                             <div class="top-rank">${i + 1}</div>
-                            <span class="top-name">${p.n || 'Аноним'}</span>
+                            <span class="top-name">${p.n || 'Аноним'} [Ур.${level}]</span>
                             <span class="top-score">${(p.sc || 0).toLocaleString()}</span>
+                            ${p.streak >= 7 ? '<span class="top-badge">🔥</span>' : ''}
                         </div>
                     `;
                 });
@@ -1641,6 +2058,9 @@
                     el.nig.classList.add('hidden');
                     el.g.classList.remove('hidden');
                     el.dn.textContent = s.u;
+                    
+                    const level = calculateLevel(s.myScore);
+                    el.lb.textContent = `Ур. ${level}`;
                 } else {
                     el.nig.classList.remove('hidden');
                     el.g.classList.add('hidden');
@@ -1658,12 +2078,23 @@
                 el.r.textContent = Math.max(s.target - s.globalScore, 0).toLocaleString();
                 el.us.textContent = s.myScore.toLocaleString();
                 
+                const level = calculateLevel(s.myScore);
+                el.ul.textContent = level;
+                
+                if (s.pid) {
+                    el.referralCount.textContent = s.referrals.length;
+                    el.referralBonus.textContent = s.referralBonus;
+                    updateReferralLink();
+                }
+                
                 if (s.admin) {
                     el.adminGlobalScore.textContent = s.globalScore.toLocaleString();
                     el.adminTotalPlayers.textContent = Object.keys(s.players).length;
                     el.adminOnline.textContent = s.online;
                     el.todaySales.textContent = s.salesToday;
                 }
+                
+                updateQuests();
             }
 
             // ===== ФУНКЦИЯ ОТКРЫТИЯ ПЛАТЕЖНОГО ВИДЖЕТА =====
@@ -1737,7 +2168,6 @@
                             time: Date.now()
                         });
                         
-                        // Проверяем достижения после покупки
                         checkAchievements();
                         
                         el.ps.textContent = `💰 ${clicks} кликов успешно зачислены!`;
@@ -1793,6 +2223,7 @@
                 s.moneySpent = 0;
                 s.streak = 0;
                 s.achievements = {};
+                s.referrals = [];
                 
                 localStorage.clear();
                 
@@ -1885,10 +2316,12 @@
                         return;
                     }
 
-                    el.playerList.innerHTML = players.map(p => `
+                    el.playerList.innerHTML = players.map(p => {
+                        const level = calculateLevel(p.sc || 0);
+                        return `
                         <div class="player-item ${p.b ? 'banned' : ''}" onclick="openProfile('${p.id}', '${p.n}')">
                             <div class="player-info">
-                                <div class="player-name">${p.n || 'Аноним'}</div>
+                                <div class="player-name">${p.n || 'Аноним'} [Ур.${level}]</div>
                                 <div class="player-score">👆 ${(p.sc || 0).toLocaleString()} | ⚠️ ${p.cc || 0}</div>
                             </div>
                             <div class="player-actions">
@@ -1899,7 +2332,7 @@
                                 <button class="player-action" style="background:#ffd700" onclick="event.stopPropagation(); admin.addPlayerClicks('${p.id}', 10)">+10</button>
                             </div>
                         </div>
-                    `).join('');
+                    `}).join('');
                 },
                 resetGame() {
                     if (!s.admin || !confirm('⚠️ Сбросить игру для ВСЕХ игроков? Все данные будут удалены!')) return;
@@ -2006,11 +2439,11 @@
                         stor.s('S', d.sc);
                     }
                     
-                    // Обновляем дополнительные данные
                     s.purchases = d.purchases || 0;
                     s.moneySpent = d.spent || 0;
                     s.streak = d.streak || 1;
                     s.achievements = d.achievements || {};
+                    s.referrals = d.referrals || [];
                     
                     updateUI();
                 });
@@ -2078,7 +2511,6 @@
                     const d = snap.val();
                     el.lc.textContent = d?.n || 'никто';
                     
-                    // Добавляем кликабельность по последнему игроку
                     if (d?.pid) {
                         el.lc.onclick = () => openProfile(d.pid, d.n);
                     }
@@ -2113,10 +2545,11 @@
                         el.tl.innerHTML = list.map((p, i) => {
                             const rc = i === 0 ? 'top-rank-1' : i === 1 ? 'top-rank-2' : i === 2 ? 'top-rank-3' : '';
                             const cur = p.id === s.pid;
+                            const level = calculateLevel(p.sc || 0);
                             return `
                                 <div class="top-item ${cur ? 'current' : ''}" onclick="openProfile('${p.id}', '${p.n}')">
                                     <div class="top-rank ${rc}">${i + 1}</div>
-                                    <span class="top-name">${p.n || 'Аноним'}</span>
+                                    <span class="top-name">${p.n || 'Аноним'} [Ур.${level}]</span>
                                     <span class="top-score">${(p.sc || 0).toLocaleString()}</span>
                                     ${p.streak >= 7 ? '<span class="top-badge">🔥</span>' : ''}
                                 </div>
@@ -2165,7 +2598,6 @@
                                 s.myScore = pr.snapshot.val().sc;
                                 stor.s('S', s.myScore);
                                 
-                                // Проверяем достижения после изменения счета
                                 checkAchievements();
                             }
                         }
@@ -2204,6 +2636,8 @@
                 s.myScore = parseInt(stor.g('S') || '0');
                 s.cc = parseInt(stor.g('CC') || '0');
                 
+                checkReferral();
+                
                 if (s.u) el.un.value = s.u;
 
                 db.ref('config/imageSize').once('value').then(snap => {
@@ -2226,6 +2660,7 @@
                                 s.moneySpent = d.spent || 0;
                                 s.streak = d.streak || 1;
                                 s.achievements = d.achievements || {};
+                                s.referrals = d.referrals || [];
                                 
                                 if (d.sc !== s.myScore && !s.clickLock) {
                                     if (d.sc < s.myScore) {
@@ -2238,6 +2673,7 @@
                                 
                                 setupListener();
                                 checkStreak();
+                                applyReferral();
                             } else if (!s.b || s.admin) {
                                 createPlayer();
                             }
@@ -2264,7 +2700,6 @@
                     });
                 }
 
-                // Обработчики
                 el.snb.addEventListener('click', () => {
                     const name = el.un.value.trim();
                     if (!name) return;
@@ -2273,6 +2708,7 @@
                     stor.s('N', name);
                     stor.s('NS', 'true');
                     createPlayer();
+                    applyReferral();
                     updateUI();
                 });
 
@@ -2309,7 +2745,8 @@
                         s.pr.update({ ls: Date.now(), n: s.u, cc: s.cc });
                         stor.s('S', s.myScore);
                     }
-                }, 15000);
+                    updateQuests();
+                }, 60000);
 
                 el.targetPopulation.textContent = s.target.toLocaleString();
             }
@@ -2328,6 +2765,7 @@
                     spent: 0,
                     streak: 1,
                     achievements: {},
+                    referrals: [],
                     b: false
                 }).then(() => {
                     s.pr = nr;
