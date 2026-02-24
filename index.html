@@ -797,6 +797,11 @@
         .profile-header h2 {
             color: #ffd700;
             font-size: 2rem;
+            cursor: pointer;
+        }
+
+        .profile-header h2:hover {
+            text-decoration: underline;
         }
 
         .profile-stats {
@@ -1428,7 +1433,7 @@
         <div class="admin-section">
             <h3>⚡ Управление игрой</h3>
             <div class="admin-actions">
-                <button class="admin-action-btn success" onclick="admin.resetGame()">🔄 Сброс игры (для всех)</button>
+                <button class="admin-action-btn success" onclick="admin.resetGame()">🔄 ПОЛНЫЙ СБРОС ИГРЫ</button>
                 <button class="admin-action-btn success" onclick="admin.addGlobalClicks(100)">➕ +100 кликов</button>
                 <button class="admin-action-btn" onclick="admin.setTarget('8b')">🎯 Цель 8 млрд</button>
                 <button class="admin-action-btn" onclick="admin.setTarget('1m')">🎯 Цель 1 млн</button>
@@ -1494,7 +1499,7 @@
     <!-- Модальное окно профиля -->
     <div class="profile-modal" id="profileModal">
         <div class="profile-header">
-            <h2 id="profileName">Профиль</h2>
+            <h2 id="profileName" onclick="openProfileFromHeader()">Профиль</h2>
             <button class="close-profile" id="closeProfile">×</button>
         </div>
         
@@ -1986,6 +1991,13 @@
                 
                 document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
                 document.getElementById(`${tab}-tab`).classList.add('active');
+            };
+
+            // ===== ОТКРЫТИЕ ПРОФИЛЯ ИЗ ЗАГОЛОВКА =====
+            window.openProfileFromHeader = function() {
+                if (s.viewingProfile) {
+                    openProfile(s.viewingProfile, s.players[s.viewingProfile]?.n || 'Профиль');
+                }
             };
 
             // ===== РАСЧЕТ УРОВНЯ =====
@@ -2540,22 +2552,31 @@
                 el.profileStreak.textContent = (playerData.streak || 1);
                 el.profileReferrals.textContent = referrals;
                 
+                // Показываем только разблокированные достижения
                 let achievementsHtml = '';
                 const playerAchievements = playerData.achievements || {};
                 
+                // Сначала показываем разблокированные
                 Object.entries(C.ACHIEVEMENTS).forEach(([key, ach]) => {
                     const unlocked = playerAchievements[key]?.unlocked;
-                    achievementsHtml += `
-                        <div class="achievement-card ${unlocked ? 'unlocked' : 'locked'}">
-                            <div class="achievement-icon">${ach.icon}</div>
-                            <div class="achievement-info">
-                                <div class="achievement-name">${ach.name}</div>
-                                <div class="achievement-desc">${ach.desc}</div>
-                                ${unlocked ? '<div class="achievement-reward">✓ Выполнено</div>' : ''}
+                    if (unlocked) {
+                        achievementsHtml += `
+                            <div class="achievement-card unlocked">
+                                <div class="achievement-icon">${ach.icon}</div>
+                                <div class="achievement-info">
+                                    <div class="achievement-name">${ach.name}</div>
+                                    <div class="achievement-desc">${ach.desc}</div>
+                                    <div class="achievement-reward">✓ Выполнено</div>
+                                </div>
                             </div>
-                        </div>
-                    `;
+                        `;
+                    }
                 });
+                
+                // Если нет разблокированных, показываем сообщение
+                if (achievementsHtml === '') {
+                    achievementsHtml = '<div style="text-align: center; color: #aaa; grid-column: span 2;">Пока нет достижений</div>';
+                }
                 
                 el.achievementsList.innerHTML = achievementsHtml;
                 
@@ -2709,39 +2730,65 @@
                 }
             }
 
-            // ===== ФУНКЦИЯ ГЛОБАЛЬНОГО СБРОСА =====
+            // ===== ФУНКЦИЯ ГЛОБАЛЬНОГО СБРОСА (ПОЛНЫЙ) =====
             function performGlobalReset() {
                 el.rm.style.display = 'block';
                 setTimeout(() => { el.rm.style.display = 'none'; }, 3000);
                 
-                s.globalScore = 0;
-                s.myScore = 0;
-                s.ns = false;
-                s.u = '';
-                s.pid = null;
-                s.pr = null;
-                s.b = false;
-                s.purchases = 0;
-                s.moneySpent = 0;
-                s.streak = 0;
-                s.achievements = {};
-                s.referrals = [];
-                s.referralData = {};
-                s.referralBonus = 0;
-                s.referralClicksTotal = 0;
-                s.achievementNotified = {};
-                
-                localStorage.clear();
-                
-                el.un.value = '';
-                el.nig.classList.remove('hidden');
-                el.g.classList.add('hidden');
-                
-                if (s.or) s.or.remove();
-                s.or = db.ref('onlineUsers').push();
-                s.or.set({ n: 'Аноним', on: true, ls: Date.now(), pid: null });
-                
-                updateUI();
+                // Полная очистка Firebase
+                db.ref('/').remove()
+                    .then(() => {
+                        // Сбрасываем глобальный счетчик
+                        db.ref('globalCounter').set(0);
+                        
+                        // Сбрасываем конфиг
+                        db.ref('config/imageSize').set(100);
+                        
+                        // Очищаем localStorage у всех, кто сейчас онлайн
+                        localStorage.clear();
+                        
+                        // Сбрасываем локальное состояние
+                        s.globalScore = 0;
+                        s.myScore = 0;
+                        s.ns = false;
+                        s.u = '';
+                        s.pid = null;
+                        s.pr = null;
+                        s.b = false;
+                        s.purchases = 0;
+                        s.moneySpent = 0;
+                        s.streak = 0;
+                        s.achievements = {};
+                        s.referrals = [];
+                        s.referralData = {};
+                        s.referralBonus = 0;
+                        s.referralClicksTotal = 0;
+                        s.achievementNotified = {};
+                        
+                        // Обновляем UI
+                        el.un.value = '';
+                        el.nig.classList.remove('hidden');
+                        el.g.classList.add('hidden');
+                        
+                        // Пересоздаем онлайн статус
+                        if (s.or) s.or.remove();
+                        s.or = db.ref('onlineUsers').push();
+                        s.or.set({ n: 'Аноним', on: true, ls: Date.now(), pid: null });
+                        
+                        // Сбрасываем размер картинки
+                        s.imageSize = 100;
+                        el.ei.style.backgroundSize = '100%';
+                        el.sizeSlider.value = 100;
+                        el.sizeValue.textContent = '100%';
+                        
+                        updateUI();
+                        
+                        console.log('✅ Полный сброс игры выполнен');
+                    })
+                    .catch(error => {
+                        console.error('Ошибка при сбросе:', error);
+                        alert('❌ Ошибка при сбросе игры');
+                    });
             }
 
             // ===== СЛУШАТЕЛЬ ГЛОБАЛЬНОГО СБРОСА =====
@@ -2842,12 +2889,9 @@
                     `}).join('');
                 },
                 resetGame() {
-                    if (!s.admin || !confirm('⚠️ Сбросить игру для ВСЕХ игроков? Все данные будут удалены!')) return;
+                    if (!s.admin || !confirm('⚠️ ПОЛНЫЙ СБРОС ИГРЫ? Все данные всех игроков будут удалены безвозвратно!')) return;
                     
-                    db.ref('admin/reset').set(true);
-                    db.ref('globalCounter').set(0);
-                    db.ref('players').remove();
-                    db.ref('onlineUsers').remove();
+                    performGlobalReset();
                     
                     this.close();
                 },
