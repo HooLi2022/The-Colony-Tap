@@ -30,6 +30,7 @@
             border-radius: 24px;
             padding: 24px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            text-align: center;
         }
 
         /* Навигационные вкладки */
@@ -40,6 +41,7 @@
             border-bottom: 2px solid rgba(255,215,0,0.3);
             padding-bottom: 10px;
             flex-wrap: wrap;
+            justify-content: center;
         }
 
         .tab {
@@ -94,6 +96,12 @@
             transform: scale(0.98);
         }
 
+        .earth.disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
         .earth-fill {
             position: absolute;
             bottom: 0;
@@ -140,9 +148,11 @@
             background: rgba(0,0,0,0.3);
             border-radius: 20px;
             padding: 16px;
-            margin: 16px 0;
+            margin: 16px auto;
             border: 2px solid rgba(255,215,0,0.3);
             text-shadow: 0 0 20px rgba(255,215,0,0.5);
+            display: inline-block;
+            min-width: 300px;
         }
 
         .name-section {
@@ -227,11 +237,12 @@
             border-radius: 60px;
             cursor: pointer;
             font-weight: bold;
-            margin: 16px 0;
+            margin: 16px auto;
             transition: all 0.2s;
             box-shadow: 0 0 30px rgba(255,215,0,0.5);
             width: 100%;
             max-width: 400px;
+            display: block;
         }
 
         .click-button:not(:disabled):hover {
@@ -1982,6 +1993,67 @@
                 return Math.floor(clicks / 1000) + 1;
             }
 
+            // ===== ФУНКЦИЯ ОБНОВЛЕНИЯ UI =====
+            function updateUI() {
+                // Блокировка элементов до подтверждения имени
+                const canClick = s.ns && !s.b;
+                
+                el.cb.disabled = !canClick;
+                
+                if (canClick) {
+                    el.e.classList.remove('disabled');
+                    el.e.style.pointerEvents = 'auto';
+                } else {
+                    el.e.classList.add('disabled');
+                    el.e.style.pointerEvents = 'none';
+                }
+                
+                if (s.ns && s.u) {
+                    el.nig.classList.add('hidden');
+                    el.g.classList.remove('hidden');
+                    el.dn.textContent = s.u;
+                    
+                    const level = calculateLevel(s.myScore);
+                    el.lb.textContent = `Ур. ${level}`;
+                } else {
+                    el.nig.classList.remove('hidden');
+                    el.g.classList.add('hidden');
+                }
+
+                const p = Math.min((s.globalScore / s.target) * 100, 100);
+                
+                el.ef.style.height = p + '%';
+                const clipValue = (100 - p) + '%';
+                el.ei.style.clipPath = `inset(${clipValue} 0 0 0)`;
+                el.pf.style.width = p + '%';
+
+                el.c.textContent = s.globalScore.toLocaleString();
+                el.cp.textContent = s.globalScore.toLocaleString();
+                el.r.textContent = Math.max(s.target - s.globalScore, 0).toLocaleString();
+                el.us.textContent = s.myScore.toLocaleString();
+                
+                const level = calculateLevel(s.myScore);
+                el.ul.textContent = level;
+                
+                if (s.pid) {
+                    el.referralCount.textContent = s.referrals.length;
+                    el.referralBonus.textContent = s.referralBonus;
+                    el.referralClicks.textContent = s.referralClicksTotal.toLocaleString();
+                    updateReferralLink();
+                    updateReferralsList();
+                }
+                
+                if (s.admin) {
+                    el.adminGlobalScore.textContent = s.globalScore.toLocaleString();
+                    el.adminTotalPlayers.textContent = Object.keys(s.players).length;
+                    el.adminOnline.textContent = s.online;
+                    el.todaySales.textContent = s.salesToday;
+                }
+                
+                updateQuests();
+                updateReferralTop();
+            }
+
             // ===== ОБНОВЛЕНИЕ ТОПА ПО РЕФЕРАЛАМ =====
             function updateReferralTop() {
                 const players = Object.entries(s.players)
@@ -2527,62 +2599,6 @@
                 el.tl.innerHTML = listHtml;
             };
 
-            // ===== UI =====
-            function updateUI() {
-                if (s.b && !s.admin) {
-                    el.cb.disabled = true;
-                    el.e.style.pointerEvents = 'none';
-                } else if (s.ns) {
-                    el.cb.disabled = false;
-                    el.e.style.pointerEvents = 'auto';
-                }
-                
-                if (s.ns && s.u) {
-                    el.nig.classList.add('hidden');
-                    el.g.classList.remove('hidden');
-                    el.dn.textContent = s.u;
-                    
-                    const level = calculateLevel(s.myScore);
-                    el.lb.textContent = `Ур. ${level}`;
-                } else {
-                    el.nig.classList.remove('hidden');
-                    el.g.classList.add('hidden');
-                }
-
-                const p = Math.min((s.globalScore / s.target) * 100, 100);
-                
-                el.ef.style.height = p + '%';
-                const clipValue = (100 - p) + '%';
-                el.ei.style.clipPath = `inset(${clipValue} 0 0 0)`;
-                el.pf.style.width = p + '%';
-
-                el.c.textContent = s.globalScore.toLocaleString();
-                el.cp.textContent = s.globalScore.toLocaleString();
-                el.r.textContent = Math.max(s.target - s.globalScore, 0).toLocaleString();
-                el.us.textContent = s.myScore.toLocaleString();
-                
-                const level = calculateLevel(s.myScore);
-                el.ul.textContent = level;
-                
-                if (s.pid) {
-                    el.referralCount.textContent = s.referrals.length;
-                    el.referralBonus.textContent = s.referralBonus;
-                    el.referralClicks.textContent = s.referralClicksTotal.toLocaleString();
-                    updateReferralLink();
-                    updateReferralsList();
-                }
-                
-                if (s.admin) {
-                    el.adminGlobalScore.textContent = s.globalScore.toLocaleString();
-                    el.adminTotalPlayers.textContent = Object.keys(s.players).length;
-                    el.adminOnline.textContent = s.online;
-                    el.todaySales.textContent = s.salesToday;
-                }
-                
-                updateQuests();
-                updateReferralTop();
-            }
-
             // ===== ФУНКЦИЯ ОТКРЫТИЯ ПЛАТЕЖНОГО ВИДЖЕТА =====
             window.openPaymentModal = function(clicks, price) {
                 if (!s.ns) {
@@ -2987,6 +3003,7 @@
                     if (s.cc >= C.LIMITS.BAN) {
                         s.b = true;
                         el.cb.disabled = true;
+                        el.e.classList.add('disabled');
                         el.e.style.pointerEvents = 'none';
                         if (s.pr) s.pr.update({ b: true, cc: s.cc, br: r, bt: Date.now() });
                         if (s.or) s.or.remove();
@@ -3081,6 +3098,11 @@
 
             // ===== КЛИК =====
             async function clickHandler() {
+                if (!s.ns) {
+                    alert('⚠️ Сначала введите имя!');
+                    return;
+                }
+                
                 if (s.clickLock) return;
                 if (!ac.check()) return;
                 
