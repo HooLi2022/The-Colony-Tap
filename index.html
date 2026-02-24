@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌍 Заселение Земли</title>
+    <title>🌍 Заселение Земли - Достижения и профили</title>
     <style>
-        /* Все стили остаются без изменений - они очень большие, 
-           я их не менял, чтобы не сломать дизайн */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -25,7 +23,7 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 900px;
             width: 100%;
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
@@ -66,7 +64,7 @@
         .earth-image {
             position: absolute;
             inset: 0;
-            background: url('https://github.com/HooLi2022/The-Colony-Tap/blob/main/в.png') center/cover;
+            background: url('https://yt3.googleusercontent.com/jxNzA1STZW8BLqnCWh0-0_N2HIp9YW3gBzH7enj7wk5bGjp9U3wbvCkvAOPT8ZUBFFtHlnui2Q=s900-c-k-c0x00ffffff-no-rj') center/cover;
             background-size: cover;
             z-index: 2;
             clip-path: inset(100% 0 0 0);
@@ -147,6 +145,13 @@
             border-radius: 40px;
             display: inline-block;
             border: 2px solid #ffd700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .greeting:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255,215,0,0.3);
         }
 
         .greeting-name {
@@ -299,6 +304,149 @@
             margin-bottom: 15px;
         }
 
+        /* Стили для профиля */
+        .profile-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #1a1a3a, #2a2a4a);
+            border: 3px solid #ffd700;
+            border-radius: 30px;
+            padding: 30px;
+            z-index: 3000;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 0 50px rgba(255,215,0,0.3);
+            display: none;
+        }
+
+        .profile-modal.show {
+            display: block;
+        }
+
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(255,215,0,0.3);
+            padding-bottom: 15px;
+        }
+
+        .profile-header h2 {
+            color: #ffd700;
+            font-size: 2rem;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .profile-stat {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .profile-stat-label {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .profile-stat-value {
+            color: #ffd700;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .achievements-title {
+            color: #ffd700;
+            font-size: 1.3rem;
+            margin: 20px 0 15px;
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .achievement-card {
+            background: rgba(0,0,0,0.3);
+            border: 2px solid rgba(255,215,0,0.3);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.2s;
+        }
+
+        .achievement-card.locked {
+            opacity: 0.5;
+            filter: grayscale(0.5);
+        }
+
+        .achievement-card.unlocked {
+            border-color: #ffd700;
+            background: rgba(255,215,0,0.1);
+        }
+
+        .achievement-icon {
+            font-size: 2rem;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .achievement-info {
+            flex: 1;
+            text-align: left;
+        }
+
+        .achievement-name {
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 3px;
+        }
+
+        .achievement-desc {
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+
+        .achievement-reward {
+            font-size: 0.8rem;
+            color: #4CAF50;
+            margin-top: 3px;
+        }
+
+        .close-profile {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+
+        .close-profile:hover {
+            background: rgba(255,0,0,0.3);
+        }
+
         .info-block {
             background: rgba(255,255,255,0.05);
             border-radius: 15px;
@@ -311,12 +459,6 @@
             color: #ffd700;
             margin-bottom: 15px;
             font-size: 1.2rem;
-        }
-
-        .info-block p {
-            margin-bottom: 10px;
-            color: #ddd;
-            line-height: 1.5;
         }
 
         .info-block ul {
@@ -393,6 +535,19 @@
             font-size: 1.5rem;
             color: #ffd700;
             margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .view-all {
+            font-size: 0.9rem;
+            color: #ffd700;
+            cursor: pointer;
+        }
+
+        .view-all:hover {
+            text-decoration: underline;
         }
 
         .top-list {
@@ -407,6 +562,12 @@
             background: rgba(255,255,255,0.1);
             border-radius: 12px;
             transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .top-item:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateX(5px);
         }
 
         .top-item.current {
@@ -438,12 +599,18 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            font-weight: 500;
         }
 
         .top-score {
             font-weight: bold;
             color: #ffd700;
             margin-left: 8px;
+        }
+
+        .top-badge {
+            margin-left: 8px;
+            font-size: 1.1rem;
         }
 
         .last-clicker {
@@ -456,6 +623,11 @@
         #lastClickerName {
             color: #ffd700;
             font-weight: bold;
+            cursor: pointer;
+        }
+
+        #lastClickerName:hover {
+            text-decoration: underline;
         }
 
         .cheater-alert {
@@ -658,6 +830,11 @@
             background: rgba(255,255,255,0.05);
             border-radius: 8px;
             margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .player-item:hover {
+            background: rgba(255,255,255,0.1);
         }
 
         .player-item.banned {
@@ -733,6 +910,22 @@
             left: 50%;
             transform: translateX(-50%);
             background: #ffd700;
+            color: #333;
+            padding: 16px 24px;
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0 4px 20px rgba(255,215,0,0.5);
+            z-index: 1000;
+            animation: slideDown 0.3s;
+            display: none;
+        }
+
+        .achievement-unlock {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
             color: #333;
             padding: 16px 24px;
             border-radius: 50px;
@@ -864,6 +1057,7 @@
     <div class="cheater-alert" id="cheaterAlert">🚫 Обнаружен читер! Доступ заблокирован</div>
     <div class="unban-message" id="unbanMessage">✅ Вы были разблокированы создателем!</div>
     <div class="reset-message" id="resetMessage">🔄 Игра сброшена администратором!</div>
+    <div class="achievement-unlock" id="achievementUnlock">🏆 Достижение разблокировано!</div>
     <div class="purchase-success" id="purchaseSuccess">💰 Покупка успешно зачислена!</div>
     
     <!-- Кнопка админа слева -->
@@ -955,6 +1149,38 @@
         </div>
     </div>
 
+    <!-- Модальное окно профиля -->
+    <div class="profile-modal" id="profileModal">
+        <div class="profile-header">
+            <h2 id="profileName">Профиль</h2>
+            <button class="close-profile" id="closeProfile">×</button>
+        </div>
+        
+        <div class="profile-stats">
+            <div class="profile-stat">
+                <div class="profile-stat-label">Всего кликов</div>
+                <div class="profile-stat-value" id="profileClicks">0</div>
+            </div>
+            <div class="profile-stat">
+                <div class="profile-stat-label">Покупок</div>
+                <div class="profile-stat-value" id="profilePurchases">0</div>
+            </div>
+            <div class="profile-stat">
+                <div class="profile-stat-label">Потрачено</div>
+                <div class="profile-stat-value" id="profileSpent">0₽</div>
+            </div>
+            <div class="profile-stat">
+                <div class="profile-stat-label">Дней подряд</div>
+                <div class="profile-stat-value" id="profileStreak">0</div>
+            </div>
+        </div>
+        
+        <div class="achievements-title">🏆 Достижения</div>
+        <div class="achievements-grid" id="achievementsList">
+            <!-- Сюда будут подгружаться достижения -->
+        </div>
+    </div>
+
     <div class="container">
         <h1>🌍 Заселение Земли</h1>
         <p>Цель: <span id="targetDisplay">8 млрд</span></p>
@@ -982,6 +1208,7 @@
             </div>
             <div id="greeting" class="greeting hidden">
                 <span>Игрок: <span id="displayName" class="greeting-name"></span></span>
+                <span style="font-size: 0.8rem; margin-left: 10px; color: #ffd700;">👤</span>
             </div>
         </div>
         
@@ -994,7 +1221,6 @@
             </div>
             <p style="color: #ffd700; margin-bottom: 15px;">1 клик = 1 рубль</p>
             <div class="shop-items">
-                <!-- Товар 1 - 10 кликов -->
                 <div class="shop-item" onclick="openPaymentModal(10, 10)">
                     <div class="item-emoji">👆</div>
                     <div class="item-name">Стартовый</div>
@@ -1003,7 +1229,6 @@
                     <button class="buy-button">Купить</button>
                 </div>
                 
-                <!-- Товар 2 - 50 кликов -->
                 <div class="shop-item popular" onclick="openPaymentModal(50, 50)">
                     <div class="item-emoji">🔥</div>
                     <div class="item-name">Популярный</div>
@@ -1012,7 +1237,6 @@
                     <button class="buy-button">Купить</button>
                 </div>
                 
-                <!-- Товар 3 - 100 кликов -->
                 <div class="shop-item" onclick="openPaymentModal(100, 100)">
                     <div class="item-emoji">💎</div>
                     <div class="item-name">VIP</div>
@@ -1021,7 +1245,6 @@
                     <button class="buy-button">Купить</button>
                 </div>
                 
-                <!-- Товар 4 - 1000 кликов -->
                 <div class="shop-item" onclick="openPaymentModal(1000, 1000)">
                     <div class="item-emoji">🚀</div>
                     <div class="item-name">Легендарный</div>
@@ -1031,23 +1254,10 @@
                 </div>
             </div>
             
-            <!-- Контейнер для виджета оплаты -->
             <div id="paymentContainer" class="payment-container">
                 <div class="payment-title" id="paymentTitle"></div>
                 <div class="cc-payment-form" id="paymentForm"></div>
             </div>
-        </div>
-        
-        <!-- ===== ИНФОРМАЦИЯ О ПОЛУЧЕНИИ ТОВАРА ===== -->
-        <div class="info-block">
-            <h3>📦 Как получить клики после оплаты</h3>
-            <ul>
-                <li>Клики зачисляются автоматически сразу после успешной оплаты</li>
-                <li>Зачисление происходит в реальном времени в ваш личный счет</li>
-                <li>Клики также добавляются в общий прогресс заселения Земли</li>
-                <li>После оплаты обновите страницу, чтобы увидеть новый баланс</li>
-                <li>Все покупки отображаются в вашем личном кабинете</li>
-            </ul>
         </div>
         
         <div class="stats-grid">
@@ -1066,7 +1276,10 @@
         </div>
         
         <div class="top-players">
-            <div class="top-title">🏆 Топ</div>
+            <div class="top-title">
+                <span>🏆 Топ игроков</span>
+                <span class="view-all" onclick="showAllPlayers()">Все →</span>
+            </div>
             <div id="topList" class="top-list">
                 <div class="top-item">Загрузка...</div>
             </div>
@@ -1076,7 +1289,17 @@
             Последний: <span id="lastClickerName">никто</span>
         </div>
         
-        <!-- ===== КОНТАКТЫ И РЕКВИЗИТЫ ===== -->
+        <div class="info-block">
+            <h3>📦 Как получить клики после оплаты</h3>
+            <ul>
+                <li>Клики зачисляются автоматически сразу после успешной оплаты</li>
+                <li>Зачисление происходит в реальном времени в ваш личный счет</li>
+                <li>Клики также добавляются в общий прогресс заселения Земли</li>
+                <li>После оплаты обновите страницу, чтобы увидеть новый баланс</li>
+                <li>Все покупки отображаются в вашем личном кабинете</li>
+            </ul>
+        </div>
+        
         <div class="contacts-block">
             <h3 style="color: #ffd700; margin-bottom: 10px;">📞 Контактная информация</h3>
             <p><strong>Email:</strong> kavarnukaevoleg@gmail.com</p>
@@ -1085,7 +1308,6 @@
             <p><strong>ИНН:</strong> 471702602370</p>
         </div>
         
-        <!-- ===== ССЫЛКИ НА ДОКУМЕНТЫ ===== -->
         <div class="footer-links">
             <a href="agreement.html" target="_blank">Пользовательское соглашение</a> |
             <a href="privacy.html" target="_blank">Политика конфиденциальности</a> |
@@ -1131,7 +1353,20 @@
                 KEY: 'Lm9rMjAyNQ==',
                 RESET_FLAG: 'reset_trigger',
                 IMAGE_URL: 'https://i.imgur.com/W6H3wKX.jpg',
-                CRYPTO_SHOP_ID: 'At3cptqTbYR9y1Hs' // Твой Shop ID из CryptoCloud
+                CRYPTO_SHOP_ID: 'At3cptqTbYR9y1Hs',
+                
+                // Достижения
+                ACHIEVEMENTS: {
+                    'click100': { name: 'Новичок', desc: 'Сделать 100 кликов', icon: '🌱', reward: 10 },
+                    'click1000': { name: 'Опытный', desc: 'Сделать 1000 кликов', icon: '🌿', reward: 50 },
+                    'click10000': { name: 'Мастер', desc: 'Сделать 10 000 кликов', icon: '🌳', reward: 200 },
+                    'click100000': { name: 'Легенда', desc: 'Сделать 100 000 кликов', icon: '🏆', reward: 1000 },
+                    'firstPurchase': { name: 'Меценат', desc: 'Совершить первую покупку', icon: '💎', reward: 20 },
+                    'spend500': { name: 'Инвестор', desc: 'Потратить 500₽', icon: '💰', reward: 100 },
+                    'spend5000': { name: 'Магнат', desc: 'Потратить 5 000₽', icon: '👑', reward: 500 },
+                    'streak7': { name: 'Завсегдатай', desc: 'Заходить 7 дней подряд', icon: '📅', reward: 50 },
+                    'streak30': { name: 'Преданный', desc: 'Заходить 30 дней подряд', icon: '⭐', reward: 300 }
+                }
             };
 
             // Firebase инициализация
@@ -1169,6 +1404,7 @@
                 ca: document.getElementById('cheaterAlert'),
                 um: document.getElementById('unbanMessage'),
                 rm: document.getElementById('resetMessage'),
+                au: document.getElementById('achievementUnlock'),
                 ps: document.getElementById('purchaseSuccess'),
                 adminBtn: document.getElementById('adminBtn'),
                 adminPanel: document.getElementById('adminPanel'),
@@ -1187,7 +1423,15 @@
                 todaySales: document.getElementById('todaySales'),
                 paymentContainer: document.getElementById('paymentContainer'),
                 paymentTitle: document.getElementById('paymentTitle'),
-                paymentForm: document.getElementById('paymentForm')
+                paymentForm: document.getElementById('paymentForm'),
+                profileModal: document.getElementById('profileModal'),
+                closeProfile: document.getElementById('closeProfile'),
+                profileName: document.getElementById('profileName'),
+                profileClicks: document.getElementById('profileClicks'),
+                profilePurchases: document.getElementById('profilePurchases'),
+                profileSpent: document.getElementById('profileSpent'),
+                profileStreak: document.getElementById('profileStreak'),
+                achievementsList: document.getElementById('achievementsList')
             };
 
             // Состояние
@@ -1213,7 +1457,12 @@
                 imageSize: 100,
                 currentPrices: { 10: 10, 50: 50, 100: 100, 1000: 1000 },
                 salesToday: 0,
-                totalRevenue: 0
+                totalRevenue: 0,
+                purchases: 0,
+                moneySpent: 0,
+                streak: 0,
+                achievements: {},
+                viewingProfile: null
             };
 
             // Хранилище
@@ -1221,6 +1470,161 @@
                 g: (k) => { try { return localStorage.getItem(C.STORAGE[k]); } catch { return null; } },
                 s: (k, v) => { try { localStorage.setItem(C.STORAGE[k], v); } catch {} },
                 r: (k) => { try { localStorage.removeItem(C.STORAGE[k]); } catch {} }
+            };
+
+            // ===== ПРОВЕРКА ДОСТИЖЕНИЙ =====
+            function checkAchievements() {
+                if (!s.pid || !s.pr) return;
+                
+                const newAchievements = [];
+                const now = Date.now();
+                
+                // Проверяем достижения по кликам
+                if (s.myScore >= 100 && !s.achievements.click100) {
+                    newAchievements.push('click100');
+                }
+                if (s.myScore >= 1000 && !s.achievements.click1000) {
+                    newAchievements.push('click1000');
+                }
+                if (s.myScore >= 10000 && !s.achievements.click10000) {
+                    newAchievements.push('click10000');
+                }
+                if (s.myScore >= 100000 && !s.achievements.click100000) {
+                    newAchievements.push('click100000');
+                }
+                
+                // Проверяем достижения по покупкам
+                if (s.purchases >= 1 && !s.achievements.firstPurchase) {
+                    newAchievements.push('firstPurchase');
+                }
+                if (s.moneySpent >= 500 && !s.achievements.spend500) {
+                    newAchievements.push('spend500');
+                }
+                if (s.moneySpent >= 5000 && !s.achievements.spend5000) {
+                    newAchievements.push('spend5000');
+                }
+                
+                // Проверяем достижения по стрику
+                if (s.streak >= 7 && !s.achievements.streak7) {
+                    newAchievements.push('streak7');
+                }
+                if (s.streak >= 30 && !s.achievements.streak30) {
+                    newAchievements.push('streak30');
+                }
+                
+                // Если есть новые достижения
+                if (newAchievements.length > 0) {
+                    const updates = {};
+                    
+                    newAchievements.forEach(ach => {
+                        updates[`achievements.${ach}`] = { unlocked: true, date: now };
+                        
+                        // Начисляем награду
+                        if (C.ACHIEVEMENTS[ach].reward > 0) {
+                            s.myScore += C.ACHIEVEMENTS[ach].reward;
+                            s.globalScore += C.ACHIEVEMENTS[ach].reward;
+                            updates.sc = s.myScore;
+                            
+                            // Показываем уведомление
+                            el.au.textContent = `🏆 Достижение "${C.ACHIEVEMENTS[ach].name}"! +${C.ACHIEVEMENTS[ach].reward} кликов`;
+                            el.au.style.display = 'block';
+                            setTimeout(() => { el.au.style.display = 'none'; }, 5000);
+                        }
+                    });
+                    
+                    // Обновляем в Firebase
+                    s.pr.update(updates);
+                    
+                    // Обновляем локально
+                    newAchievements.forEach(ach => {
+                        s.achievements[ach] = { unlocked: true, date: now };
+                    });
+                }
+            }
+
+            // ===== ПРОВЕРКА СТРИКА =====
+            function checkStreak() {
+                if (!s.pr) return;
+                
+                const today = new Date().setHours(0, 0, 0, 0);
+                const lastSeen = s.pr.lastSeen || 0;
+                const lastSeenDay = new Date(lastSeen).setHours(0, 0, 0, 0);
+                
+                let newStreak = s.streak;
+                
+                if (lastSeenDay === today) {
+                    // Уже сегодня заходил
+                    return;
+                } else if (lastSeenDay === today - 86400000) {
+                    // Заходил вчера
+                    newStreak++;
+                } else {
+                    // Пропустил день
+                    newStreak = 1;
+                }
+                
+                if (newStreak !== s.streak) {
+                    s.streak = newStreak;
+                    s.pr.update({ streak: newStreak, lastSeen: Date.now() });
+                }
+            }
+
+            // ===== ОТКРЫТИЕ ПРОФИЛЯ =====
+            window.openProfile = function(playerId, playerName) {
+                const playerData = s.players[playerId];
+                if (!playerData) return;
+                
+                el.profileName.textContent = playerData.n || playerName;
+                el.profileClicks.textContent = (playerData.sc || 0).toLocaleString();
+                el.profilePurchases.textContent = playerData.purchases || 0;
+                el.profileSpent.textContent = (playerData.spent || 0) + '₽';
+                el.profileStreak.textContent = (playerData.streak || 1);
+                
+                // Загружаем достижения
+                let achievementsHtml = '';
+                const playerAchievements = playerData.achievements || {};
+                
+                Object.entries(C.ACHIEVEMENTS).forEach(([key, ach]) => {
+                    const unlocked = playerAchievements[key]?.unlocked;
+                    achievementsHtml += `
+                        <div class="achievement-card ${unlocked ? 'unlocked' : 'locked'}">
+                            <div class="achievement-icon">${ach.icon}</div>
+                            <div class="achievement-info">
+                                <div class="achievement-name">${ach.name}</div>
+                                <div class="achievement-desc">${ach.desc}</div>
+                                ${unlocked ? '<div class="achievement-reward">✓ Выполнено</div>' : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                el.achievementsList.innerHTML = achievementsHtml;
+                el.profileModal.classList.add('show');
+                el.bd.classList.add('show');
+                
+                s.viewingProfile = playerId;
+            };
+
+            // ===== ПОКАЗ ВСЕХ ИГРОКОВ =====
+            window.showAllPlayers = function() {
+                const players = Object.entries(s.players)
+                    .map(([id, d]) => ({ id, ...d }))
+                    .filter(p => p.sc > 0)
+                    .sort((a, b) => b.sc - a.sc);
+                
+                let listHtml = '<div class="top-title">Все игроки</div>';
+                
+                players.forEach((p, i) => {
+                    listHtml += `
+                        <div class="top-item" onclick="openProfile('${p.id}', '${p.n}')">
+                            <div class="top-rank">${i + 1}</div>
+                            <span class="top-name">${p.n || 'Аноним'}</span>
+                            <span class="top-score">${(p.sc || 0).toLocaleString()}</span>
+                        </div>
+                    `;
+                });
+                
+                el.tl.innerHTML = listHtml;
             };
 
             // ===== UI =====
@@ -1269,22 +1673,19 @@
                     return;
                 }
                 
-                // Сохраняем информацию о покупке
                 sessionStorage.setItem('pendingPurchase', JSON.stringify({
                     clicks: clicks,
                     userId: s.pid,
                     username: s.u,
+                    price: price,
                     timestamp: Date.now()
                 }));
                 
-                // Показываем контейнер с виджетом
                 el.paymentContainer.style.display = 'block';
                 el.paymentTitle.textContent = `Оплата ${clicks} кликов (${price}₽)`;
                 
-                // Очищаем предыдущий виджет
                 el.paymentForm.innerHTML = '';
                 
-                // Создаем новый виджет
                 if (window.CryptoCloudWidget) {
                     window.CryptoCloudWidget.CreateInvoiceForm({
                         shop_id: C.CRYPTO_SHOP_ID,
@@ -1297,7 +1698,6 @@
                         orderId: `click_${clicks}_${s.pid}_${Date.now()}`
                     }).mount('.cc-payment-form');
                     
-                    // Прокручиваем к виджету
                     el.paymentContainer.scrollIntoView({ behavior: 'smooth' });
                 } else {
                     alert('Загрузка платежной системы... Попробуйте через секунду');
@@ -1305,8 +1705,11 @@
             };
 
             // ===== ФУНКЦИЯ ЗАЧИСЛЕНИЯ КЛИКОВ =====
-            function addPaidClicks(clicks) {
+            function addPaidClicks(clicks, price) {
                 if (!s.pid) return;
+                
+                s.purchases++;
+                s.moneySpent += price;
                 
                 db.ref('globalCounter').transaction(v => (v || 0) + clicks)
                     .then(() => {
@@ -1316,21 +1719,26 @@
                                 p.sc = (p.sc || 0) + clicks;
                                 p.n = s.u;
                                 p.ls = Date.now();
+                                p.purchases = (p.purchases || 0) + 1;
+                                p.spent = (p.spent || 0) + price;
                                 return p;
                             });
                         }
                     })
                     .then(() => {
                         s.salesToday++;
-                        s.totalRevenue += clicks;
+                        s.totalRevenue += price;
                         
                         db.ref('admin/sales').push({
                             amount: clicks,
-                            price: clicks,
+                            price: price,
                             user: s.u,
                             userId: s.pid,
                             time: Date.now()
                         });
+                        
+                        // Проверяем достижения после покупки
+                        checkAchievements();
                         
                         el.ps.textContent = `💰 ${clicks} кликов успешно зачислены!`;
                         el.ps.style.display = 'block';
@@ -1381,6 +1789,10 @@
                 s.pid = null;
                 s.pr = null;
                 s.b = false;
+                s.purchases = 0;
+                s.moneySpent = 0;
+                s.streak = 0;
+                s.achievements = {};
                 
                 localStorage.clear();
                 
@@ -1474,18 +1886,17 @@
                     }
 
                     el.playerList.innerHTML = players.map(p => `
-                        <div class="player-item ${p.b ? 'banned' : ''}">
+                        <div class="player-item ${p.b ? 'banned' : ''}" onclick="openProfile('${p.id}', '${p.n}')">
                             <div class="player-info">
                                 <div class="player-name">${p.n || 'Аноним'}</div>
                                 <div class="player-score">👆 ${(p.sc || 0).toLocaleString()} | ⚠️ ${p.cc || 0}</div>
                             </div>
                             <div class="player-actions">
                                 ${p.b ? 
-                                    `<button class="player-action" style="background:#4CAF50" onclick="admin.unbanPlayer('${p.id}')">✅</button>` :
-                                    `<button class="player-action" style="background:#ff4444" onclick="admin.banPlayer('${p.id}')">🚫</button>`
+                                    `<button class="player-action" style="background:#4CAF50" onclick="event.stopPropagation(); admin.unbanPlayer('${p.id}')">✅</button>` :
+                                    `<button class="player-action" style="background:#ff4444" onclick="event.stopPropagation(); admin.banPlayer('${p.id}')">🚫</button>`
                                 }
-                                <button class="player-action" style="background:#ffd700" onclick="admin.addPlayerClicks('${p.id}', 10)">+10</button>
-                                <button class="player-action" style="background:#666" onclick="admin.deletePlayer('${p.id}')">🗑️</button>
+                                <button class="player-action" style="background:#ffd700" onclick="event.stopPropagation(); admin.addPlayerClicks('${p.id}', 10)">+10</button>
                             </div>
                         </div>
                     `).join('');
@@ -1578,7 +1989,7 @@
             function setupListener() {
                 if (!s.pid) return;
                 
-                db.ref('players/' + s.pid).on('value', (snap) => {
+                s.pl = db.ref('players/' + s.pid).on('value', (snap) => {
                     const d = snap.val();
                     if (!d) return;
                     
@@ -1594,6 +2005,12 @@
                         s.myScore = d.sc;
                         stor.s('S', d.sc);
                     }
+                    
+                    // Обновляем дополнительные данные
+                    s.purchases = d.purchases || 0;
+                    s.moneySpent = d.spent || 0;
+                    s.streak = d.streak || 1;
+                    s.achievements = d.achievements || {};
                     
                     updateUI();
                 });
@@ -1660,6 +2077,11 @@
                 if (!s.b || s.admin) {
                     const d = snap.val();
                     el.lc.textContent = d?.n || 'никто';
+                    
+                    // Добавляем кликабельность по последнему игроку
+                    if (d?.pid) {
+                        el.lc.onclick = () => openProfile(d.pid, d.n);
+                    }
                 }
             });
 
@@ -1692,10 +2114,11 @@
                             const rc = i === 0 ? 'top-rank-1' : i === 1 ? 'top-rank-2' : i === 2 ? 'top-rank-3' : '';
                             const cur = p.id === s.pid;
                             return `
-                                <div class="top-item ${cur ? 'current' : ''}">
+                                <div class="top-item ${cur ? 'current' : ''}" onclick="openProfile('${p.id}', '${p.n}')">
                                     <div class="top-rank ${rc}">${i + 1}</div>
                                     <span class="top-name">${p.n || 'Аноним'}</span>
-                                    <span class="top-score">${p.sc.toLocaleString()}</span>
+                                    <span class="top-score">${(p.sc || 0).toLocaleString()}</span>
+                                    ${p.streak >= 7 ? '<span class="top-badge">🔥</span>' : ''}
                                 </div>
                             `;
                         }).join('');
@@ -1741,6 +2164,9 @@
                             if (pr.committed) {
                                 s.myScore = pr.snapshot.val().sc;
                                 stor.s('S', s.myScore);
+                                
+                                // Проверяем достижения после изменения счета
+                                checkAchievements();
                             }
                         }
                         
@@ -1796,6 +2222,10 @@
                                 const d = snap.val();
                                 s.pr = db.ref('players/' + s.pid);
                                 s.b = d.b === true;
+                                s.purchases = d.purchases || 0;
+                                s.moneySpent = d.spent || 0;
+                                s.streak = d.streak || 1;
+                                s.achievements = d.achievements || {};
                                 
                                 if (d.sc !== s.myScore && !s.clickLock) {
                                     if (d.sc < s.myScore) {
@@ -1807,6 +2237,7 @@
                                 }
                                 
                                 setupListener();
+                                checkStreak();
                             } else if (!s.b || s.admin) {
                                 createPlayer();
                             }
@@ -1833,6 +2264,7 @@
                     });
                 }
 
+                // Обработчики
                 el.snb.addEventListener('click', () => {
                     const name = el.un.value.trim();
                     if (!name) return;
@@ -1847,10 +2279,19 @@
                 el.un.addEventListener('keypress', e => e.key === 'Enter' && el.snb.click());
                 el.cb.addEventListener('click', clickHandler);
                 el.e.addEventListener('click', clickHandler);
+                el.g.addEventListener('click', () => openProfile(s.pid, s.u));
                 
                 el.adminBtn.addEventListener('click', () => admin.open());
                 el.close.addEventListener('click', () => admin.close());
-                el.bd.addEventListener('click', () => admin.close());
+                el.closeProfile.addEventListener('click', () => {
+                    el.profileModal.classList.remove('show');
+                    el.bd.classList.remove('show');
+                });
+                el.bd.addEventListener('click', () => {
+                    el.adminPanel.classList.remove('show');
+                    el.profileModal.classList.remove('show');
+                    el.bd.classList.remove('show');
+                });
 
                 el.sizeSlider.addEventListener('input', (e) => {
                     if (s.admin) {
@@ -1883,6 +2324,10 @@
                     j: Date.now(),
                     ls: Date.now(),
                     cc: s.cc,
+                    purchases: 0,
+                    spent: 0,
+                    streak: 1,
+                    achievements: {},
                     b: false
                 }).then(() => {
                     s.pr = nr;
@@ -1898,4 +2343,3 @@
     </script>
 </body>
 </html>
-
