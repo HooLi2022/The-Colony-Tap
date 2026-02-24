@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta name="regru-verification" content="df0169a0dfea6b85415f08fdca7c65ccbfeddcc768dfcdd5df3d2248bfc9d164" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🌍 Заселение Земли</title>
     <style>
-        /* Все стили остаются без изменений */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -2334,16 +2332,21 @@
                         }
                     });
                     
-                    s.pr.update(updates);
-                    
-                    newAchievements.forEach(ach => {
-                        s.achievements[ach] = { unlocked: true, date: now };
-                    });
-                    
-                    // Обновляем отображение в профиле, если он открыт
-                    if (s.viewingProfile === s.pid && el.profileModal && el.profileModal.classList.contains('show')) {
-                        updateProfileDisplay();
-                    }
+                    s.pr.update(updates)
+                        .then(() => {
+                            // Обновляем локальные данные после успешного сохранения
+                            newAchievements.forEach(ach => {
+                                s.achievements[ach] = { unlocked: true, date: now };
+                            });
+                            
+                            // Обновляем отображение в профиле, если он открыт
+                            if (s.viewingProfile === s.pid && el.profileModal && el.profileModal.classList.contains('show')) {
+                                updateProfileDisplay();
+                            }
+                            
+                            // Принудительно обновляем UI
+                            updateUI();
+                        });
                 }
             }
 
@@ -2540,21 +2543,27 @@
                     quest.claimed = true;
                     localStorage.setItem('dailyQuests', JSON.stringify(quests));
                     
-                    s.myScore += quest.reward;
-                    s.globalScore += quest.reward;
-                    
+                    // Сохраняем награду в Firebase
                     if (s.pr) {
-                        s.pr.update({ sc: s.myScore });
+                        s.pr.transaction(p => {
+                            if (!p) p = { sc: 0 };
+                            p.sc = (p.sc || 0) + quest.reward;
+                            return p;
+                        }).then(() => {
+                            // Обновляем локальные данные
+                            s.myScore += quest.reward;
+                            s.globalScore += quest.reward;
+                            
+                            if (el.au) {
+                                el.au.textContent = `✅ Задание выполнено! +${quest.reward} кликов`;
+                                el.au.style.display = 'block';
+                                setTimeout(() => { el.au.style.display = 'none'; }, 5000);
+                            }
+                            
+                            updateQuests();
+                            updateUI();
+                        });
                     }
-                    
-                    if (el.au) {
-                        el.au.textContent = `✅ Задание выполнено! +${quest.reward} кликов`;
-                        el.au.style.display = 'block';
-                        setTimeout(() => { el.au.style.display = 'none'; }, 5000);
-                    }
-                    
-                    updateQuests();
-                    updateUI();
                 }
             };
 
