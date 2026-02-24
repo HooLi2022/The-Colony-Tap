@@ -189,6 +189,120 @@
             cursor: not-allowed;
         }
 
+        /* Стили для магазина */
+        .shop-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(255,215,0,0.1);
+            border: 2px solid #ffd700;
+            border-radius: 20px;
+        }
+
+        .shop-title {
+            font-size: 1.8rem;
+            color: #ffd700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .shop-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .shop-item {
+            background: rgba(0,0,0,0.3);
+            border: 2px solid #ffd700;
+            border-radius: 15px;
+            padding: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .shop-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255,215,0,0.3);
+        }
+
+        .shop-item.popular::before {
+            content: "🔥 ХИТ";
+            position: absolute;
+            top: 5px;
+            right: -25px;
+            background: #ff4444;
+            color: white;
+            padding: 2px 30px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            transform: rotate(45deg);
+        }
+
+        .item-emoji {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .item-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .item-price {
+            color: #ffd700;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .item-old-price {
+            color: #aaa;
+            font-size: 0.9rem;
+            text-decoration: line-through;
+            margin-right: 5px;
+        }
+
+        .buy-button {
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            color: #333;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .buy-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255,215,0,0.5);
+        }
+
+        .purchase-success {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4CAF50;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0 4px 20px rgba(76,175,80,0.5);
+            z-index: 2000;
+            animation: slideDown 0.3s;
+            display: none;
+        }
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -657,30 +771,31 @@
     </style>
 </head>
 <body>
-                <!--AdFox START-->
-<!--yandex_oleg228231124-->
-<!--Площадка: Заселение Земли / * / *-->
-<!--Тип баннера: 100%x100% Turbo-->
-<!--Расположение: верх страницы-->
-<div id="adfox_177184316797386820"></div>
-<script>
-    window.yaContextCb.push(()=>{
-        Ya.adfoxCode.create({
-            ownerId: 691132,
-            containerId: 'adfox_177184316797386820',
-            params: {
-                pp: 'g',
-                ps: 'mdxg',
-                p2: 'hukd'
-            }
+    <!--AdFox START-->
+    <!--yandex_oleg228231124-->
+    <!--Площадка: Заселение Земли / * / *-->
+    <!--Тип баннера: 100%x100% Turbo-->
+    <!--Расположение: верх страницы-->
+    <div id="adfox_177184316797386820"></div>
+    <script>
+        window.yaContextCb.push(()=>{
+            Ya.adfoxCode.create({
+                ownerId: 691132,
+                containerId: 'adfox_177184316797386820',
+                params: {
+                    pp: 'g',
+                    ps: 'mdxg',
+                    p2: 'hukd'
+                }
+            })
         })
-    })
-</script>
+    </script>
 
-    
+    <!-- Сообщения -->
     <div class="cheater-alert" id="cheaterAlert">🚫 Обнаружен читер! Доступ заблокирован</div>
     <div class="unban-message" id="unbanMessage">✅ Вы были разблокированы создателем!</div>
     <div class="reset-message" id="resetMessage">🔄 Игра сброшена администратором!</div>
+    <div class="purchase-success" id="purchaseSuccess">💰 Покупка успешно зачислена!</div>
     
     <!-- Кнопка админа слева -->
     <div class="admin-btn" id="adminBtn">
@@ -690,6 +805,7 @@
     
     <div class="backdrop" id="backdrop"></div>
     
+    <!-- Админ панель -->
     <div class="admin-panel" id="adminPanel">
         <div class="panel-header">
             <h2>👑 Админ панель</h2>
@@ -719,6 +835,18 @@
                 <button class="admin-action-btn" onclick="admin.setTarget('8b')">🎯 Цель 8 млрд</button>
                 <button class="admin-action-btn" onclick="admin.setTarget('1m')">🎯 Цель 1 млн</button>
             </div>
+        </div>
+        
+        <div class="admin-section">
+            <h3>💰 Управление магазином</h3>
+            <div class="admin-actions">
+                <button class="admin-action-btn" onclick="admin.setPrices('normal')">💰 Обычные цены</button>
+                <button class="admin-action-btn" onclick="admin.setPrices('sale')">🔥 Скидка 50%</button>
+                <button class="admin-action-btn" onclick="admin.setPrices('whale')">💎 VIP цены</button>
+            </div>
+            <p style="color: #aaa; font-size: 0.9rem; margin-top: 10px;">
+                📊 Продаж сегодня: <span id="todaySales">0</span>
+            </p>
         </div>
         
         <div class="admin-section">
@@ -792,6 +920,42 @@
         
         <button id="clickBtn" class="click-button" disabled>👆 ЗАСЕЛИТЬ</button>
         
+        <!-- ===== МАГАЗИН КЛИКОВ ===== -->
+        <div class="shop-section">
+            <div class="shop-title">
+                <span>💰</span> МАГАЗИН КЛИКОВ <span>💰</span>
+            </div>
+            <div class="shop-items">
+                <div class="shop-item" onclick="buyClicks(10, 50)">
+                    <div class="item-emoji">👆</div>
+                    <div class="item-name">Стартовый</div>
+                    <div class="item-price"><span class="item-old-price">100₽</span> 50₽</div>
+                    <div class="buy-button">10 кликов</div>
+                </div>
+                <div class="shop-item popular" onclick="buyClicks(50, 200)">
+                    <div class="item-emoji">🔥</div>
+                    <div class="item-name">Популярный</div>
+                    <div class="item-price"><span class="item-old-price">400₽</span> 200₽</div>
+                    <div class="buy-button">50 кликов</div>
+                </div>
+                <div class="shop-item" onclick="buyClicks(100, 350)">
+                    <div class="item-emoji">💎</div>
+                    <div class="item-name">VIP</div>
+                    <div class="item-price"><span class="item-old-price">700₽</span> 350₽</div>
+                    <div class="buy-button">100 кликов</div>
+                </div>
+                <div class="shop-item" onclick="buyClicks(1000, 3000)">
+                    <div class="item-emoji">🚀</div>
+                    <div class="item-name">Легендарный</div>
+                    <div class="item-price"><span class="item-old-price">6000₽</span> 3000₽</div>
+                    <div class="buy-button">1000 кликов</div>
+                </div>
+            </div>
+            <p style="color: #aaa; font-size: 0.9rem; margin-top: 10px;">
+                💳 Оплата картой, СБП, криптовалютой
+            </p>
+        </div>
+        
         <div class="stats-grid">
             <div class="stat-card">
                 <div>Онлайн</div>
@@ -853,7 +1017,13 @@
                 LIMITS: { M1: 20, M2: 300, M3: 1000, INT: 5000, BAN: 3 },
                 KEY: 'Lm9rMjAyNQ==',
                 RESET_FLAG: 'reset_trigger',
-                IMAGE_URL: 'https://i.imgur.com/W6H3wKX.jpg' // ← ЗДЕСЬ ТВОЯ ССЫЛКА
+                IMAGE_URL: 'https://i.imgur.com/W6H3wKX.jpg',
+                // Цены на клики
+                PRICES: {
+                    NORMAL: { 10: 50, 50: 200, 100: 350, 1000: 3000 },
+                    SALE: { 10: 25, 50: 100, 100: 175, 1000: 1500 },
+                    WHALE: { 10: 100, 50: 400, 100: 700, 1000: 6000 }
+                }
             };
 
             // Firebase инициализация
@@ -891,6 +1061,7 @@
                 ca: document.getElementById('cheaterAlert'),
                 um: document.getElementById('unbanMessage'),
                 rm: document.getElementById('resetMessage'),
+                ps: document.getElementById('purchaseSuccess'),
                 adminBtn: document.getElementById('adminBtn'),
                 adminPanel: document.getElementById('adminPanel'),
                 bd: document.getElementById('backdrop'),
@@ -904,7 +1075,8 @@
                 targetPopulation: document.getElementById('targetPopulation'),
                 sizeSlider: document.getElementById('sizeSlider'),
                 sizeValue: document.getElementById('sizeValue'),
-                sizePresetBtns: document.querySelectorAll('.size-preset-btn')
+                sizePresetBtns: document.querySelectorAll('.size-preset-btn'),
+                todaySales: document.getElementById('todaySales')
             };
 
             // Состояние
@@ -927,7 +1099,10 @@
                 clickLock: false,
                 target: C.TARGET,
                 pendingClick: false,
-                imageSize: 100 // Размер по умолчанию
+                imageSize: 100,
+                currentPrices: C.PRICES.NORMAL,
+                salesToday: 0,
+                totalRevenue: 0
             };
 
             // Хранилище
@@ -977,8 +1152,69 @@
                     el.adminGlobalScore.textContent = s.globalScore.toLocaleString();
                     el.adminTotalPlayers.textContent = Object.keys(s.players).length;
                     el.adminOnline.textContent = s.online;
+                    el.todaySales.textContent = s.salesToday;
                 }
             }
+
+            // ===== ФУНКЦИЯ ПОКУПКИ КЛИКОВ =====
+            window.buyClicks = function(amount, price) {
+                if (!s.ns) {
+                    alert('⚠️ Сначала введите имя!');
+                    return;
+                }
+                
+                // Здесь будет интеграция с платежной системой
+                // Пока используем демо-режим
+                if (confirm(`Купить ${amount} кликов за ${price}₽?\n\n💰 ДЕМО-РЕЖИМ: Сейчас произойдет тестовая оплата`)) {
+                    
+                    // Показываем процесс оплаты
+                    alert('⏳ Обработка платежа...');
+                    
+                    // Увеличиваем глобальный счет
+                    db.ref('globalCounter').transaction(v => (v || 0) + amount)
+                        .then(() => {
+                            // Увеличиваем личный счет игрока
+                            if (s.pr) {
+                                return s.pr.transaction(p => {
+                                    if (!p) p = { sc: 0 };
+                                    p.sc = (p.sc || 0) + amount;
+                                    p.n = s.u;
+                                    p.ls = Date.now();
+                                    p.cc = s.cc;
+                                    return p;
+                                });
+                            }
+                        })
+                        .then(() => {
+                            // Обновляем статистику продаж
+                            s.salesToday++;
+                            s.totalRevenue += price;
+                            
+                            // Сохраняем в Firebase для статистики
+                            db.ref('admin/sales').push({
+                                amount: amount,
+                                price: price,
+                                user: s.u,
+                                time: Date.now()
+                            });
+                            
+                            // Показываем сообщение об успехе
+                            el.ps.style.display = 'block';
+                            setTimeout(() => { el.ps.style.display = 'none'; }, 3000);
+                            
+                            // Логируем покупку
+                            console.log(`💰 Покупка: ${s.u} купил ${amount} кликов за ${price}₽`);
+                            
+                            if (s.admin) {
+                                el.todaySales.textContent = s.salesToday;
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Ошибка покупки:', error);
+                            alert('❌ Ошибка при покупке. Попробуйте позже.');
+                        });
+                }
+            };
 
             // ===== ФУНКЦИЯ ИЗМЕНЕНИЯ РАЗМЕРА КАРТИНКИ =====
             function updateImageSize(size) {
@@ -1040,6 +1276,31 @@
                 const size = snap.val();
                 if (size && typeof size === 'number') {
                     updateImageSize(size);
+                }
+            });
+
+            // ===== СЛУШАТЕЛЬ СТАТИСТИКИ ПРОДАЖ =====
+            db.ref('admin/sales').on('value', (snap) => {
+                const sales = snap.val();
+                if (sales && s.admin) {
+                    // Считаем продажи за сегодня
+                    const today = new Date().setHours(0,0,0,0);
+                    let todayCount = 0;
+                    let todayRevenue = 0;
+                    
+                    Object.values(sales).forEach(sale => {
+                        if (sale.time >= today) {
+                            todayCount++;
+                            todayRevenue += sale.price;
+                        }
+                    });
+                    
+                    s.salesToday = todayCount;
+                    s.totalRevenue = todayRevenue;
+                    
+                    if (s.admin) {
+                        el.todaySales.textContent = todayCount;
+                    }
                 }
             });
 
@@ -1181,6 +1442,27 @@
                     // Обновляем ползунок
                     el.sizeSlider.value = size;
                     el.sizeValue.textContent = size + '%';
+                },
+                // Управление ценами
+                setPrices(type) {
+                    if (!s.admin) return;
+                    
+                    switch(type) {
+                        case 'normal':
+                            s.currentPrices = C.PRICES.NORMAL;
+                            alert('💰 Установлены обычные цены');
+                            break;
+                        case 'sale':
+                            s.currentPrices = C.PRICES.SALE;
+                            alert('🔥 Установлены цены со скидкой 50%');
+                            break;
+                        case 'whale':
+                            s.currentPrices = C.PRICES.WHALE;
+                            alert('💎 Установлены VIP цены');
+                            break;
+                    }
+                    
+                    // Здесь можно добавить обновление цен в магазине
                 }
             };
 
@@ -1513,9 +1795,4 @@
         })();
     </script>
 </body>
-
 </html>
-
-
-
-
