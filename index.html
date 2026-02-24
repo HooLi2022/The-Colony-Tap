@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta name="regru-verification" content="9b32ac623886294c3bc8e1562f346bb6c8da337aeed7f85d39abc4d347e89c22" />
+    <meta name="regru-verification" content="df0169a0dfea6b85415f08fdca7c65ccbfeddcc768dfcdd5df3d2248bfc9d164" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🌍 Заселение Земли</title>
     <style>
+        /* Все стили остаются без изменений */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -2338,6 +2339,68 @@
                     newAchievements.forEach(ach => {
                         s.achievements[ach] = { unlocked: true, date: now };
                     });
+                    
+                    // Обновляем отображение в профиле, если он открыт
+                    if (s.viewingProfile === s.pid && el.profileModal && el.profileModal.classList.contains('show')) {
+                        updateProfileDisplay();
+                    }
+                }
+            }
+
+            // ===== ФУНКЦИЯ ДЛЯ ОБНОВЛЕНИЯ ОТОБРАЖЕНИЯ ПРОФИЛЯ =====
+            function updateProfileDisplay() {
+                if (!s.viewingProfile) return;
+                
+                const playerData = s.players[s.viewingProfile];
+                if (!playerData) return;
+                
+                const playerAchievements = playerData.achievements || {};
+                
+                // Обновляем статистику
+                if (el.profileLevel) {
+                    el.profileLevel.textContent = calculateLevel(playerData.sc || 0);
+                }
+                if (el.profileClicks) {
+                    el.profileClicks.textContent = (playerData.sc || 0).toLocaleString();
+                }
+                if (el.profilePurchases) {
+                    el.profilePurchases.textContent = playerData.purchases || 0;
+                }
+                if (el.profileSpent) {
+                    el.profileSpent.textContent = (playerData.spent || 0) + '₽';
+                }
+                if (el.profileStreak) {
+                    el.profileStreak.textContent = (playerData.streak || 1);
+                }
+                if (el.profileReferrals) {
+                    el.profileReferrals.textContent = playerData.referrals ? playerData.referrals.length : 0;
+                }
+                
+                // Обновляем достижения
+                let achievementsHtml = '';
+                
+                Object.entries(C.ACHIEVEMENTS).forEach(([key, ach]) => {
+                    const unlocked = playerAchievements[key]?.unlocked;
+                    if (unlocked) {
+                        achievementsHtml += `
+                            <div class="achievement-card unlocked">
+                                <div class="achievement-icon">${ach.icon}</div>
+                                <div class="achievement-info">
+                                    <div class="achievement-name">${ach.name}</div>
+                                    <div class="achievement-desc">${ach.desc}</div>
+                                    <div class="achievement-reward">✓ Выполнено</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+                
+                if (achievementsHtml === '') {
+                    achievementsHtml = '<div style="text-align: center; color: #aaa; grid-column: span 2;">Пока нет достижений</div>';
+                }
+                
+                if (el.achievementsList) {
+                    el.achievementsList.innerHTML = achievementsHtml;
                 }
             }
 
@@ -3068,6 +3131,11 @@
                     s.referralClicksTotal = d.referralClicks || 0;
                     
                     updateUI();
+                    
+                    // Если профиль текущего игрока открыт, обновляем его
+                    if (s.viewingProfile === s.pid && el.profileModal && el.profileModal.classList.contains('show')) {
+                        updateProfileDisplay();
+                    }
                 });
             }
 
@@ -3199,6 +3267,11 @@
                 }
                 
                 updateReferralTop();
+                
+                // Если профиль открыт, обновляем его
+                if (s.viewingProfile && el.profileModal && el.profileModal.classList.contains('show')) {
+                    updateProfileDisplay();
+                }
             });
 
             // ===== КЛИК =====
@@ -3381,11 +3454,15 @@
                         el.profileModal.classList.remove('show');
                         el.bd.classList.remove('show');
                     }
+                    s.viewingProfile = null;
                 });
                 if (el.bd) {
                     el.bd.addEventListener('click', () => {
                         if (el.adminPanel) el.adminPanel.classList.remove('show');
-                        if (el.profileModal) el.profileModal.classList.remove('show');
+                        if (el.profileModal) {
+                            el.profileModal.classList.remove('show');
+                            s.viewingProfile = null;
+                        }
                         if (el.bd) el.bd.classList.remove('show');
                     });
                 }
@@ -3448,5 +3525,3 @@
     </script>
 </body>
 </html>
-
-
