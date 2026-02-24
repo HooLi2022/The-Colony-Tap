@@ -211,7 +211,7 @@
             <div class="admin-stat"><div class="admin-stat-label">Онлайн</div><div class="admin-stat-value" id="ao">0</div></div>
             <div class="admin-stat"><div class="admin-stat-label">Рефералов</div><div class="admin-stat-value" id="atr">0</div></div>
         </div>
-        <div class="admin-section"><h3>⚡ Управление игрой</h3><div class="admin-actions"><button class="admin-action-btn success" onclick="a.resetGame()">🔄 Сброс игры</button><button class="admin-action-btn success" onclick="a.addGlobalClicks(100)">➕ +100 кликов</button><button class="admin-action-btn" onclick="a.setTarget('8b')">🎯 Цель 8 млрд</button><button class="admin-action-btn" onclick="a.setTarget('1m')">🎯 Цель 1 млн</button></div></div>
+        <div class="admin-section"><h3>⚡ Управление игрой</h3><div class="admin-actions"><button class="admin-action-btn success" onclick="a.resetGame()">🔄 Сброс игры (полный)</button><button class="admin-action-btn success" onclick="a.addGlobalClicks(100)">➕ +100 кликов</button><button class="admin-action-btn" onclick="a.setTarget('8b')">🎯 Цель 8 млрд</button><button class="admin-action-btn" onclick="a.setTarget('1m')">🎯 Цель 1 млн</button></div></div>
         <div class="admin-section"><h3>💰 Управление магазином</h3><div class="admin-actions"><button class="admin-action-btn" onclick="a.setPrices('normal')">💰 Обычные цены</button><button class="admin-action-btn" onclick="a.setPrices('sale')">🔥 Скидка 50%</button><button class="admin-action-btn" onclick="a.setPrices('whale')">💎 VIP цены</button></div><p style="color:#aaa;font-size:.9rem;margin-top:10px">📊 Продаж сегодня: <span id="ts">0</span></p></div>
         <div class="admin-section"><h3>👥 Топ по рефералам</h3><div class="player-list" id="rtl"><div style="text-align:center;color:#aaa;">Загрузка...</div></div></div>
         <div class="admin-section"><h3>🖼️ Настройки картинки</h3><div class="size-control"><div class="size-label"><span>Размер</span><span class="size-value" id="sv">100%</span></div><input type="range" id="ss" class="size-slider" min="50" max="200" value="100" step="5"><div class="size-presets"><button class="size-preset-btn" onclick="a.setImageSize(75)">75%</button><button class="size-preset-btn active" onclick="a.setImageSize(100)">100%</button><button class="size-preset-btn" onclick="a.setImageSize(125)">125%</button><button class="size-preset-btn" onclick="a.setImageSize(150)">150%</button></div></div></div>
@@ -451,7 +451,16 @@
         enable(){S.adm=true;st.s('AM','true');this.open()},
         updateList(){const p=Object.entries(S.ps).map(([i,d])=>({id:i,...d})).sort((a,b)=>(b.sc||0)-(a.sc||0));
             E.pl.innerHTML=p.length?p.map(p=>{const l=lvl(p.sc||0),refs=p.refs?p.refs.length:0;return`<div class="player-item ${p.b?'banned':''}" onclick="openProf('${p.id}','${p.n}')"><div class="player-info"><div class="player-name">${p.n||'Аноним'} [Ур.${l}]</div><div class="player-score">👆 ${(p.sc||0).toLocaleString()} | 👥 ${refs}</div></div><div class="player-actions">${p.b?`<button class="player-action" style="background:#4CAF50" onclick="event.stopPropagation();a.unbanPlayer('${p.id}')">✅</button>`:`<button class="player-action" style="background:#ff4444" onclick="event.stopPropagation();a.banPlayer('${p.id}')">🚫</button>`}<button class="player-action" style="background:#ffd700" onclick="event.stopPropagation();a.addPlayerClicks('${p.id}',10)">+10</button></div></div>`}).join(''):'<div style="text-align:center;color:#aaa;">Нет игроков</div>'},
-        resetGame(){S.adm&&confirm('⚠️ Сбросить игру для ВСЕХ?')&&(db.ref('admin/reset').set(true),db.ref('globalCounter').set(0),db.ref('players').remove(),db.ref('onlineUsers').remove(),this.close())},
+        resetGame(){if(!S.adm||!confirm('⚠️ ПОЛНЫЙ СБРОС? Все данные будут удалены!'))return;
+            db.ref('admin/reset').set(true);
+            db.ref('globalCounter').set(0);
+            db.ref('players').remove();
+            db.ref('onlineUsers').remove();
+            db.ref('config/imageSize').set(100);
+            localStorage.clear();
+            S.is=100;
+            E.ei.style.backgroundSize='100%';
+            this.close()},
         addGlobalClicks(a){S.adm&&db.ref('globalCounter').transaction(v=>(v||0)+a)},
         setTarget(t){S.adm&&(S.t=C.TARGETS[t]||C.TARGET,E.td.textContent=t==='8b'?'8 млрд':'1 млн',E.tp.textContent=S.t.toLocaleString(),updUI())},
         banPlayer(i){S.adm&&db.ref('players/'+i).update({b:true,br:'Админ',bt:Date.now()})},
