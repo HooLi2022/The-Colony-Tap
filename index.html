@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta name="regru-verification" content="3cf97675ea0862075485719431a615b900ff0b69041121bd08900c8ef254b7c1" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🌍 Заселение Земли</title>
@@ -1392,6 +1391,129 @@
             margin-top: 10px;
             text-align: center;
         }
+
+        /* Стили для рекламного модального окна */
+        .ad-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            border-radius: 40px;
+            padding: 40px;
+            z-index: 10000;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 0 50px rgba(255,215,0,0.5);
+            display: none;
+            text-align: center;
+            animation: adPopIn 0.5s;
+        }
+
+        .ad-modal.show {
+            display: block;
+        }
+
+        @keyframes adPopIn {
+            from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+            to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        .ad-modal h2 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0 rgba(255,255,255,0.3);
+        }
+
+        .ad-image {
+            width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+            margin: 20px 0;
+            border-radius: 20px;
+        }
+
+        .ad-text {
+            color: #333;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        .ad-button {
+            background: #333;
+            color: #ffd700;
+            border: none;
+            font-size: 1.8rem;
+            padding: 20px 40px;
+            border-radius: 60px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .ad-button:hover {
+            transform: scale(1.05);
+            background: #000;
+            color: #fff;
+            box-shadow: 0 0 30px rgba(255,255,255,0.5);
+        }
+
+        .ad-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: rgba(0,0,0,0.3);
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+
+        .ad-close:hover {
+            background: rgba(255,0,0,0.8);
+            transform: scale(1.1);
+        }
+
+        .ad-badge {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background: #ffd700;
+            color: #333;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 15px rgba(255,215,0,0.5);
+            z-index: 1000;
+            border: 2px solid white;
+            cursor: pointer;
+            transition: 0.2s;
+            animation: pulse 2s infinite;
+        }
+
+        .ad-badge:hover {
+            transform: scale(1.1);
+            background: #ffaa00;
+        }
+
+        .ad-countdown {
+            color: #333;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
@@ -1425,7 +1547,26 @@
         <span class="notification" id="adminNotification">0</span>
     </div>
     
+    <!-- Бейдж рекламы -->
+    <div class="ad-badge" id="adBadge" onclick="showAdModal()">
+        🎁 БОНУС +100 КЛИКОВ
+    </div>
+    
     <div class="backdrop" id="backdrop"></div>
+    
+    <!-- Рекламное модальное окно -->
+    <div class="ad-modal" id="adModal">
+        <button class="ad-close" onclick="closeAdModal()">×</button>
+        <h2>🎁 ПОЛУЧИ БОНУС!</h2>
+        <img src="https://i.imgur.com/9QqVv6l.png" alt="Бонус" class="ad-image" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'200\' viewBox=\'0 0 200 200\'><rect width=\'200\' height=\'200\' fill=\'%23333\'/><text x=\'50%25\' y=\'50%25\' fill=\'%23ffd700\' font-size=\'24\' text-anchor=\'middle\' dominant-baseline=\'middle\'>🎁 БОНУС</text></svg>'">
+        <div class="ad-text">
+            Перейди по ссылке и получи +100 кликов!
+        </div>
+        <button class="ad-button" onclick="claimAdBonus()">
+            👆 ЗАБРАТЬ БОНУС
+        </button>
+        <div class="ad-countdown" id="adCountdown"></div>
+    </div>
     
     <!-- Админ панель -->
     <div class="admin-panel" id="adminPanel">
@@ -1848,13 +1989,15 @@
                     '8b': 8000000000,
                     '1m': 1000000
                 },
-                STORAGE: { N: 'wc_n', S: 'wc_s', I: 'wc_i', NS: 'wc_ns', CC: 'wc_cc', AM: 'wc_am' },
+                STORAGE: { N: 'wc_n', S: 'wc_s', I: 'wc_i', NS: 'wc_ns', CC: 'wc_cc', AM: 'wc_am', AD_CLAIMED: 'ad_claimed' },
                 LIMITS: { M1: 20, M2: 300, M3: 1000, INT: 5000, BAN: 3 },
                 KEY: 'Lm9rMjAyNQ==',
                 RESET_FLAG: 'reset_trigger',
                 RESET_TIME: 'reset_time',
                 IMAGE_URL: 'https://i.imgur.com/W6H3wKX.jpg',
                 CRYPTO_SHOP_ID: 'At3cptqTbYR9y1Hs',
+                AD_LINK: '?rlink=reflink-31329889',
+                AD_BONUS: 100,
                 
                 ACHIEVEMENTS: {
                     'click100': { name: 'Новичок', desc: 'Сделать 100 кликов', icon: '🌱', reward: 10 },
@@ -1966,7 +2109,10 @@
                 referralsList: getEl('referralsList'),
                 referralTop: getEl('referralTop'),
                 questsList: getEl('questsList'),
-                questRefreshTime: getEl('questRefreshTime')
+                questRefreshTime: getEl('questRefreshTime'),
+                adModal: getEl('adModal'),
+                adBadge: getEl('adBadge'),
+                adCountdown: getEl('adCountdown')
             };
 
             // Состояние
@@ -2006,7 +2152,9 @@
                 questsCompleted: {},
                 viewingProfile: null,
                 achievementNotified: {},
-                processedReferrals: new Set()
+                processedReferrals: new Set(),
+                adTimer: null,
+                adTimeLeft: 0
             };
 
             // Хранилище
@@ -2014,6 +2162,90 @@
                 g: (k) => { try { return localStorage.getItem(C.STORAGE[k]); } catch { return null; } },
                 s: (k, v) => { try { localStorage.setItem(C.STORAGE[k], v); } catch {} },
                 r: (k) => { try { localStorage.removeItem(C.STORAGE[k]); } catch {} }
+            };
+
+            // ===== ФУНКЦИИ ДЛЯ РЕКЛАМНОГО ОКНА =====
+            window.showAdModal = function() {
+                if (!el.adModal) return;
+                
+                // Проверяем, не забирал ли уже бонус
+                if (stor.g('AD_CLAIMED') === 'true') {
+                    alert('Вы уже получали этот бонус!');
+                    return;
+                }
+                
+                el.adModal.classList.add('show');
+                if (el.bd) el.bd.classList.add('show');
+                
+                // Запускаем таймер
+                s.adTimeLeft = 60; // 60 секунд на принятие решения
+                updateAdCountdown();
+                
+                s.adTimer = setInterval(() => {
+                    s.adTimeLeft--;
+                    updateAdCountdown();
+                    
+                    if (s.adTimeLeft <= 0) {
+                        clearInterval(s.adTimer);
+                        closeAdModal();
+                    }
+                }, 1000);
+            };
+
+            window.closeAdModal = function() {
+                if (el.adModal) el.adModal.classList.remove('show');
+                if (el.bd && !el.adminPanel.classList.contains('show') && !el.profileModal.classList.contains('show')) {
+                    el.bd.classList.remove('show');
+                }
+                if (s.adTimer) {
+                    clearInterval(s.adTimer);
+                    s.adTimer = null;
+                }
+            };
+
+            function updateAdCountdown() {
+                if (el.adCountdown) {
+                    el.adCountdown.textContent = `Осталось: ${s.adTimeLeft} сек`;
+                }
+            }
+
+            window.claimAdBonus = function() {
+                if (!s.ns) {
+                    alert('⚠️ Сначала введите имя!');
+                    return;
+                }
+                
+                // Открываем ссылку в новом окне
+                window.open(C.AD_LINK, '_blank');
+                
+                // Начисляем бонус
+                if (s.pr) {
+                    s.pr.transaction(p => {
+                        if (!p) p = { sc: 0 };
+                        p.sc = (p.sc || 0) + C.AD_BONUS;
+                        return p;
+                    }).then(() => {
+                        s.myScore += C.AD_BONUS;
+                        s.globalScore += C.AD_BONUS;
+                        
+                        // Отмечаем, что бонус получен
+                        stor.s('AD_CLAIMED', 'true');
+                        
+                        if (el.au) {
+                            el.au.textContent = `🎁 Бонус +${C.AD_BONUS} кликов получен!`;
+                            el.au.style.display = 'block';
+                            setTimeout(() => { el.au.style.display = 'none'; }, 5000);
+                        }
+                        
+                        closeAdModal();
+                        updateUI();
+                        
+                        // Скрываем бейдж
+                        if (el.adBadge) {
+                            el.adBadge.style.display = 'none';
+                        }
+                    });
+                }
             };
 
             // ===== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК =====
@@ -2335,17 +2567,14 @@
                     
                     s.pr.update(updates)
                         .then(() => {
-                            // Обновляем локальные данные после успешного сохранения
                             newAchievements.forEach(ach => {
                                 s.achievements[ach] = { unlocked: true, date: now };
                             });
                             
-                            // Обновляем отображение в профиле, если он открыт
                             if (s.viewingProfile === s.pid && el.profileModal && el.profileModal.classList.contains('show')) {
                                 updateProfileDisplay();
                             }
                             
-                            // Принудительно обновляем UI
                             updateUI();
                         });
                 }
@@ -2360,7 +2589,6 @@
                 
                 const playerAchievements = playerData.achievements || {};
                 
-                // Обновляем статистику
                 if (el.profileLevel) {
                     el.profileLevel.textContent = calculateLevel(playerData.sc || 0);
                 }
@@ -2380,7 +2608,6 @@
                     el.profileReferrals.textContent = playerData.referrals ? playerData.referrals.length : 0;
                 }
                 
-                // Обновляем достижения
                 let achievementsHtml = '';
                 
                 Object.entries(C.ACHIEVEMENTS).forEach(([key, ach]) => {
@@ -2544,14 +2771,12 @@
                     quest.claimed = true;
                     localStorage.setItem('dailyQuests', JSON.stringify(quests));
                     
-                    // Сохраняем награду в Firebase
                     if (s.pr) {
                         s.pr.transaction(p => {
                             if (!p) p = { sc: 0 };
                             p.sc = (p.sc || 0) + quest.reward;
                             return p;
                         }).then(() => {
-                            // Обновляем локальные данные
                             s.myScore += quest.reward;
                             s.globalScore += quest.reward;
                             
@@ -2608,7 +2833,6 @@
                 const ref = localStorage.getItem('referrer');
                 if (!ref || !s.pid || ref === s.pid) return;
                 
-                // Проверяем, не обрабатывали ли мы уже этого реферала
                 const processedKey = `ref_${ref}_${s.pid}`;
                 if (s.processedReferrals.has(processedKey)) {
                     console.log('Реферал уже был обработан');
@@ -2617,26 +2841,20 @@
                 
                 console.log('Применяем реферала:', ref, 'к игроку:', s.pid);
                 
-                // Добавляем в обработанные
                 s.processedReferrals.add(processedKey);
                 
-                // Получаем текущий список рефералов
                 db.ref('players/' + ref + '/referrals').once('value', (snap) => {
                     const referrals = snap.val() || [];
                     
-                    // Проверяем, не добавлен ли уже
                     if (referrals.includes(s.pid)) {
                         console.log('Реферал уже есть в списке');
                         return;
                     }
                     
-                    // Добавляем реферала
                     const updatedReferrals = [...referrals, s.pid];
                     
-                    // Обновляем список рефералов
                     db.ref('players/' + ref + '/referrals').set(updatedReferrals)
                         .then(() => {
-                            // Начисляем бонус за регистрацию
                             return db.ref('players/' + ref).transaction(p => {
                                 if (!p) p = { sc: 0, referralBonus: 0, referralClicks: 0 };
                                 p.sc = (p.sc || 0) + 50;
@@ -2648,7 +2866,6 @@
                         .then(() => {
                             console.log('Реферал успешно применен!');
                             
-                            // Если пригласивший сейчас онлайн, показываем уведомление
                             if (s.pid === ref && el.au) {
                                 el.au.textContent = '✅ За приглашенного друга +50 кликов!';
                                 el.au.style.display = 'block';
@@ -2673,7 +2890,6 @@
                 const referralBonus = playerData.referralBonus || 0;
                 const referralClicks = playerData.referralClicks || 0;
                 
-                // Безопасное обновление DOM
                 if (el.profileName) el.profileName.textContent = playerData.n || playerName;
                 if (el.profileLevel) el.profileLevel.textContent = level;
                 if (el.profileClicks) el.profileClicks.textContent = (playerData.sc || 0).toLocaleString();
@@ -2682,7 +2898,6 @@
                 if (el.profileStreak) el.profileStreak.textContent = (playerData.streak || 1);
                 if (el.profileReferrals) el.profileReferrals.textContent = referrals;
                 
-                // Показываем только разблокированные достижения
                 let achievementsHtml = '';
                 const playerAchievements = playerData.achievements || {};
                 
@@ -2868,30 +3083,21 @@
             function performGlobalReset() {
                 if (el.rn) el.rn.style.display = 'block';
                 
-                // Записываем время сброса в Firebase
                 const resetTime = Date.now();
                 db.ref('admin/lastReset').set(resetTime);
                 
-                // Полная очистка Firebase
                 db.ref('/').remove()
                     .then(() => {
-                        // Сбрасываем глобальный счетчик
                         db.ref('globalCounter').set(0);
-                        
-                        // Сбрасываем конфиг
                         db.ref('config/imageSize').set(100);
-                        
-                        // Записываем время сброса для синхронизации
                         db.ref('admin/lastReset').set(resetTime);
                         
                         console.log('✅ Полный сброс игры выполнен');
                         
-                        // Показываем уведомление
                         setTimeout(() => {
                             if (el.rn) el.rn.style.display = 'none';
                         }, 3000);
                         
-                        // Перезагружаем страницу для полной очистки кэша
                         setTimeout(() => {
                             window.location.reload();
                         }, 1000);
@@ -2909,18 +3115,13 @@
                     const lastReset = snap.val();
                     const localReset = localStorage.getItem('lastReset');
                     
-                    // Если был глобальный сброс после нашего последнего визита
                     if (lastReset && (!localReset || lastReset > localReset)) {
-                        // Очищаем localStorage
                         localStorage.clear();
-                        // Сохраняем новое время сброса
                         localStorage.setItem('lastReset', lastReset);
-                        // Показываем уведомление
                         if (el.rn) el.rn.style.display = 'block';
                         setTimeout(() => {
                             if (el.rn) el.rn.style.display = 'none';
                         }, 3000);
-                        // Перезагружаем страницу для обновления данных
                         setTimeout(() => {
                             window.location.reload();
                         }, 1000);
@@ -2933,18 +3134,13 @@
                 const lastReset = snap.val();
                 const localReset = localStorage.getItem('lastReset');
                 
-                // Если был глобальный сброс после нашего последнего визита
                 if (lastReset && (!localReset || lastReset > localReset)) {
-                    // Очищаем localStorage
                     localStorage.clear();
-                    // Сохраняем новое время сброса
                     localStorage.setItem('lastReset', lastReset);
-                    // Показываем уведомление
                     if (el.rn) el.rn.style.display = 'block';
                     setTimeout(() => {
                         if (el.rn) el.rn.style.display = 'none';
                     }, 3000);
-                    // Перезагружаем страницу для обновления данных
                     setTimeout(() => {
                         window.location.reload();
                     }, 1000);
@@ -3124,10 +3320,8 @@
                     s.streak = d.streak || 1;
                     s.achievements = d.achievements || {};
                     
-                    // Обновляем список рефералов
                     s.referrals = d.referrals || [];
                     
-                    // Проверяем активность рефералов
                     if (s.referrals.length > 0) {
                         s.referrals.forEach(refId => {
                             const ref = s.players[refId];
@@ -3142,7 +3336,6 @@
                     
                     updateUI();
                     
-                    // Если профиль текущего игрока открыт, обновляем его
                     if (s.viewingProfile === s.pid && el.profileModal && el.profileModal.classList.contains('show')) {
                         updateProfileDisplay();
                     }
@@ -3278,7 +3471,6 @@
                 
                 updateReferralTop();
                 
-                // Если профиль открыт, обновляем его
                 if (s.viewingProfile && el.profileModal && el.profileModal.classList.contains('show')) {
                     updateProfileDisplay();
                 }
@@ -3362,6 +3554,11 @@
                 
                 if (s.u && el.un) el.un.value = s.u;
 
+                // Проверяем, не получал ли уже бонус
+                if (stor.g('AD_CLAIMED') === 'true' && el.adBadge) {
+                    el.adBadge.style.display = 'none';
+                }
+
                 db.ref('config/imageSize').once('value').then(snap => {
                     const size = snap.val();
                     if (size && typeof size === 'number') {
@@ -3398,7 +3595,6 @@
                                 setupListener();
                                 checkStreak();
                                 
-                                // Применяем реферала после загрузки данных
                                 setTimeout(() => {
                                     applyReferral();
                                 }, 500);
@@ -3440,7 +3636,6 @@
                         
                         createPlayer();
                         
-                        // Применяем реферала после создания игрока
                         setTimeout(() => {
                             applyReferral();
                         }, 1000);
@@ -3474,6 +3669,7 @@
                             s.viewingProfile = null;
                         }
                         if (el.bd) el.bd.classList.remove('show');
+                        closeAdModal();
                     });
                 }
 
@@ -3535,4 +3731,3 @@
     </script>
 </body>
 </html>
-
