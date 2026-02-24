@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌍 Заселение Земли - Реферальная система</title>
+    <title>🌍 Заселение Земли</title>
     <style>
-        /* Все стили остаются такими же */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -31,7 +30,51 @@
             border-radius: 24px;
             padding: 24px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-            text-align: center;
+        }
+
+        /* Навигационные вкладки */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(255,215,0,0.3);
+            padding-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            border-radius: 30px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: bold;
+            border: 2px solid transparent;
+        }
+
+        .tab:hover {
+            background: rgba(255,215,0,0.2);
+        }
+
+        .tab.active {
+            background: #ffd700;
+            color: #333;
+            border-color: white;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .earth {
@@ -206,6 +249,7 @@
             cursor: not-allowed;
         }
 
+        /* Стили для карточек магазина */
         .shop-section {
             margin: 30px 0;
             padding: 20px;
@@ -239,6 +283,7 @@
             transition: 0.2s;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
 
         .shop-item:hover {
@@ -316,6 +361,7 @@
             margin-bottom: 15px;
         }
 
+        /* Стили для заданий */
         .quests-section {
             margin: 30px 0;
             padding: 20px;
@@ -410,74 +456,300 @@
             margin-top: 10px;
         }
 
+        /* Стили для реферальной системы */
         .referral-section {
-            margin: 20px 0;
-            padding: 15px;
             background: rgba(33,150,243,0.1);
             border: 2px solid #2196F3;
-            border-radius: 15px;
+            border-radius: 20px;
+            padding: 20px;
         }
 
-        .referral-title {
-            font-size: 1.2rem;
+        .referral-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .referral-header h2 {
+            color: #2196F3;
+            font-size: 1.5rem;
+        }
+
+        .referral-link-box {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .referral-link-label {
             color: #2196F3;
             margin-bottom: 10px;
+            font-weight: bold;
         }
 
-        .referral-link {
+        .referral-link-input-group {
             display: flex;
             gap: 10px;
-            margin: 10px 0;
         }
 
-        .referral-input {
+        .referral-link-input {
             flex: 1;
-            padding: 10px;
+            padding: 12px;
             border: none;
-            border-radius: 20px;
+            border-radius: 10px;
             background: rgba(255,255,255,0.1);
             color: white;
             border: 1px solid #2196F3;
+            font-size: 0.9rem;
         }
 
-        .referral-input:focus {
+        .referral-link-input:focus {
             outline: none;
             border-color: #ffd700;
         }
 
-        .copy-button {
+        .referral-copy-btn {
             background: #2196F3;
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
+            padding: 12px 24px;
+            border-radius: 10px;
             cursor: pointer;
             font-weight: bold;
+            transition: 0.2s;
         }
 
-        .copy-button:hover {
+        .referral-copy-btn:hover {
             background: #1976D2;
+            transform: scale(1.05);
         }
 
-        .referral-stats {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 15px;
+        .referral-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
         }
 
-        .referral-stat {
+        .referral-stat-card {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 15px;
             text-align: center;
+            border: 1px solid #2196F3;
         }
 
         .referral-stat-value {
-            font-size: 1.3rem;
+            font-size: 2rem;
             color: #2196F3;
             font-weight: bold;
         }
 
         .referral-stat-label {
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             color: #aaa;
+        }
+
+        .referral-bonus-info {
+            background: rgba(255,215,0,0.1);
+            border: 2px solid #ffd700;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .bonus-title {
+            color: #ffd700;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .bonus-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .bonus-list li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .bonus-list li:before {
+            content: "🎁";
+            position: absolute;
+            left: 0;
+        }
+
+        .referral-table {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 15px;
+        }
+
+        .referral-table-title {
+            color: #2196F3;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .referral-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .referral-row:last-child {
+            border-bottom: none;
+        }
+
+        .referral-name {
+            font-weight: bold;
+        }
+
+        .referral-clicks {
+            color: #ffd700;
+        }
+
+        .referral-bonus {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .no-referrals {
+            text-align: center;
+            color: #aaa;
+            padding: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.15);
+            border-radius: 16px;
+            padding: 12px;
+            font-size: 0.9rem;
+        }
+
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #ffd700;
+            margin-top: 4px;
+        }
+
+        .top-players {
+            background: rgba(0,0,0,0.3);
+            border-radius: 20px;
+            padding: 16px;
+        }
+
+        .top-title {
+            font-size: 1.5rem;
+            color: #ffd700;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .view-all {
+            font-size: 0.9rem;
+            color: #ffd700;
+            cursor: pointer;
+        }
+
+        .view-all:hover {
+            text-decoration: underline;
+        }
+
+        .top-list {
+            list-style: none;
+        }
+
+        .top-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            margin: 6px 0;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .top-item:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateX(5px);
+        }
+
+        .top-item.current {
+            border: 2px solid #ffd700;
+            background: rgba(255,215,0,0.15);
+        }
+
+        .top-rank {
+            width: 32px;
+            height: 32px;
+            background: #ffd700;
+            color: #333;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .top-rank-1 { background: #FFD700; box-shadow: 0 0 15px #FFD700; }
+        .top-rank-2 { background: #C0C0C0; box-shadow: 0 0 15px #C0C0C0; }
+        .top-rank-3 { background: #CD7F32; box-shadow: 0 0 15px #CD7F32; }
+
+        .top-name {
+            flex: 1;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: 500;
+        }
+
+        .top-score {
+            font-weight: bold;
+            color: #ffd700;
+            margin-left: 8px;
+        }
+
+        .top-badge {
+            margin-left: 8px;
+            font-size: 1.1rem;
+        }
+
+        .last-clicker {
+            background: rgba(255,255,255,0.2);
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 16px;
+        }
+
+        #lastClickerName {
+            color: #ffd700;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #lastClickerName:hover {
+            text-decoration: underline;
         }
 
         .profile-modal {
@@ -675,133 +947,6 @@
         }
 
         .footer-links a:hover {
-            text-decoration: underline;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin: 20px 0;
-        }
-
-        .stat-card {
-            background: rgba(255,255,255,0.15);
-            border-radius: 16px;
-            padding: 12px;
-            font-size: 0.9rem;
-        }
-
-        .stat-value {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #ffd700;
-            margin-top: 4px;
-        }
-
-        .top-players {
-            background: rgba(0,0,0,0.3);
-            border-radius: 20px;
-            padding: 16px;
-            margin-top: 20px;
-        }
-
-        .top-title {
-            font-size: 1.5rem;
-            color: #ffd700;
-            margin-bottom: 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .view-all {
-            font-size: 0.9rem;
-            color: #ffd700;
-            cursor: pointer;
-        }
-
-        .view-all:hover {
-            text-decoration: underline;
-        }
-
-        .top-list {
-            list-style: none;
-        }
-
-        .top-item {
-            display: flex;
-            align-items: center;
-            padding: 10px 12px;
-            margin: 6px 0;
-            background: rgba(255,255,255,0.1);
-            border-radius: 12px;
-            transition: 0.2s;
-            cursor: pointer;
-        }
-
-        .top-item:hover {
-            background: rgba(255,255,255,0.2);
-            transform: translateX(5px);
-        }
-
-        .top-item.current {
-            border: 2px solid #ffd700;
-            background: rgba(255,215,0,0.15);
-        }
-
-        .top-rank {
-            width: 32px;
-            height: 32px;
-            background: #ffd700;
-            color: #333;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin-right: 12px;
-            flex-shrink: 0;
-        }
-
-        .top-rank-1 { background: #FFD700; box-shadow: 0 0 15px #FFD700; }
-        .top-rank-2 { background: #C0C0C0; box-shadow: 0 0 15px #C0C0C0; }
-        .top-rank-3 { background: #CD7F32; box-shadow: 0 0 15px #CD7F32; }
-
-        .top-name {
-            flex: 1;
-            text-align: left;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            font-weight: 500;
-        }
-
-        .top-score {
-            font-weight: bold;
-            color: #ffd700;
-            margin-left: 8px;
-        }
-
-        .top-badge {
-            margin-left: 8px;
-            font-size: 1.1rem;
-        }
-
-        .last-clicker {
-            background: rgba(255,255,255,0.2);
-            padding: 12px;
-            border-radius: 10px;
-            margin-top: 16px;
-        }
-
-        #lastClickerName {
-            color: #ffd700;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        #lastClickerName:hover {
             text-decoration: underline;
         }
 
@@ -1367,14 +1512,6 @@
                 <div class="profile-stat-label">Рефералов</div>
                 <div class="profile-stat-value" id="profileReferrals">0</div>
             </div>
-            <div class="profile-stat">
-                <div class="profile-stat-label">Бонусы с реф.</div>
-                <div class="profile-stat-value" id="profileReferralBonus">0</div>
-            </div>
-            <div class="profile-stat">
-                <div class="profile-stat-label">Клики рефералов</div>
-                <div class="profile-stat-value" id="profileReferralClicks">0</div>
-            </div>
         </div>
         
         <div class="achievements-title">🏆 Достижения</div>
@@ -1383,19 +1520,28 @@
         </div>
         
         <div class="referral-section" id="profileReferralSection">
-            <div class="referral-title">🔗 Реферальная ссылка</div>
-            <div class="referral-link">
-                <input type="text" id="profileReferralLink" class="referral-input" readonly>
-                <button class="copy-button" onclick="copyReferralLink()">Копировать</button>
+            <div class="referral-header">
+                <h2>🔗 Моя реферальная ссылка</h2>
             </div>
-            <div class="referral-stats">
-                <div class="referral-stat">
+            <div class="referral-link-box">
+                <div class="referral-link-label">Приглашай друзей и получай бонусы:</div>
+                <div class="referral-link-input-group">
+                    <input type="text" id="profileReferralLink" class="referral-link-input" readonly>
+                    <button class="referral-copy-btn" onclick="copyReferralLink()">Копировать</button>
+                </div>
+            </div>
+            <div class="referral-stats-grid">
+                <div class="referral-stat-card">
                     <div class="referral-stat-value" id="profileReferralStat">0</div>
                     <div class="referral-stat-label">приглашено</div>
                 </div>
-                <div class="referral-stat">
+                <div class="referral-stat-card">
                     <div class="referral-stat-value" id="profileReferralBonusStat">0</div>
                     <div class="referral-stat-label">бонусов</div>
+                </div>
+                <div class="referral-stat-card">
+                    <div class="referral-stat-value" id="profileReferralClicksStat">0</div>
+                    <div class="referral-stat-label">кликов реф.</div>
                 </div>
             </div>
         </div>
@@ -1434,154 +1580,199 @@
         
         <button id="clickBtn" class="click-button" disabled>👆 ЗАСЕЛИТЬ</button>
         
-        <!-- ===== МАГАЗИН КЛИКОВ ===== -->
-        <div class="shop-section">
-            <div class="shop-title">
-                <span>💰</span> МАГАЗИН КЛИКОВ <span>💰</span>
-            </div>
-            <p style="color: #ffd700; margin-bottom: 15px;">1 клик = 1 рубль</p>
-            <div class="shop-items">
-                <div class="shop-item" onclick="openPaymentModal(10, 10)">
-                    <div class="item-emoji">👆</div>
-                    <div class="item-name">Стартовый</div>
-                    <div class="item-price">10₽</div>
-                    <div class="item-description">10 кликов</div>
-                    <button class="buy-button">Купить</button>
+        <!-- Навигационные вкладки -->
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('game')">🎮 Игра</div>
+            <div class="tab" onclick="switchTab('shop')">💰 Магазин</div>
+            <div class="tab" onclick="switchTab('quests')">📋 Задания</div>
+            <div class="tab" onclick="switchTab('referrals')">👥 Рефералы</div>
+            <div class="tab" onclick="switchTab('top')">🏆 Топ</div>
+        </div>
+        
+        <!-- Вкладка Игра -->
+        <div id="game-tab" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div>Онлайн</div>
+                    <div class="stat-value" id="onlineCount">0</div>
                 </div>
-                
-                <div class="shop-item popular" onclick="openPaymentModal(50, 50)">
-                    <div class="item-emoji">🔥</div>
-                    <div class="item-name">Популярный</div>
-                    <div class="item-price">50₽</div>
-                    <div class="item-description">50 кликов</div>
-                    <button class="buy-button">Купить</button>
+                <div class="stat-card">
+                    <div>Твой вклад</div>
+                    <div class="stat-value" id="userScore">0</div>
                 </div>
-                
-                <div class="shop-item" onclick="openPaymentModal(100, 100)">
-                    <div class="item-emoji">💎</div>
-                    <div class="item-name">VIP</div>
-                    <div class="item-price">100₽</div>
-                    <div class="item-description">100 кликов</div>
-                    <button class="buy-button">Купить</button>
+                <div class="stat-card">
+                    <div>Уровень</div>
+                    <div class="stat-value" id="userLevel">1</div>
                 </div>
-                
-                <div class="shop-item" onclick="openPaymentModal(1000, 1000)">
-                    <div class="item-emoji">🚀</div>
-                    <div class="item-name">Легендарный</div>
-                    <div class="item-price">1000₽</div>
-                    <div class="item-description">1000 кликов</div>
-                    <button class="buy-button">Купить</button>
+                <div class="stat-card">
+                    <div>Осталось</div>
+                    <div class="stat-value" id="remaining">8 млрд</div>
                 </div>
             </div>
             
-            <div id="paymentContainer" class="payment-container">
-                <div class="payment-title" id="paymentTitle"></div>
-                <div class="cc-payment-form" id="paymentForm"></div>
+            <div class="last-clicker">
+                Последний: <span id="lastClickerName">никто</span>
+            </div>
+            
+            <div class="info-block">
+                <h3>📦 Как получить клики после оплаты</h3>
+                <ul>
+                    <li>Клики зачисляются автоматически сразу после успешной оплаты</li>
+                    <li>Зачисление происходит в реальном времени в ваш личный счет</li>
+                    <li>Клики также добавляются в общий прогресс заселения Земли</li>
+                    <li>Все покупки отображаются в вашем личном кабинете</li>
+                </ul>
+            </div>
+            
+            <div class="contacts-block">
+                <h3 style="color: #ffd700; margin-bottom: 10px;">📞 Контактная информация</h3>
+                <p><strong>Email:</strong> kavarnukaevoleg@gmail.com</p>
+                <p><strong>Телефон:</strong> +7 (981) 958-68-47</p>
+                <p><strong>ИП/Самозанятый:</strong> Каварнукаев Олег Вячеславович</p>
+                <p><strong>ИНН:</strong> 471702602370</p>
+            </div>
+            
+            <div class="footer-links">
+                <a href="agreement.html" target="_blank">Пользовательское соглашение</a> |
+                <a href="privacy.html" target="_blank">Политика конфиденциальности</a> |
+                <a href="#">Правила возврата</a>
             </div>
         </div>
         
-        <!-- ===== ЕЖЕДНЕВНЫЕ ЗАДАНИЯ ===== -->
-        <div class="quests-section">
-            <div class="quests-title">📋 Ежедневные задания</div>
-            <div class="quests-grid" id="questsList">
-                <!-- Сюда будут подгружаться задания -->
-                <div class="quest-item">
-                    <div class="quest-icon">⏳</div>
-                    <div class="quest-name">Загрузка...</div>
+        <!-- Вкладка Магазин -->
+        <div id="shop-tab" class="tab-content">
+            <div class="shop-section">
+                <div class="shop-title">
+                    <span>💰</span> МАГАЗИН КЛИКОВ <span>💰</span>
+                </div>
+                <p style="color: #ffd700; margin-bottom: 15px;">1 клик = 1 рубль</p>
+                <div class="shop-items">
+                    <div class="shop-item" onclick="openPaymentModal(10, 10)">
+                        <div class="item-emoji">👆</div>
+                        <div class="item-name">Стартовый</div>
+                        <div class="item-price">10₽</div>
+                        <div class="item-description">10 кликов</div>
+                        <button class="buy-button">Купить</button>
+                    </div>
+                    
+                    <div class="shop-item popular" onclick="openPaymentModal(50, 50)">
+                        <div class="item-emoji">🔥</div>
+                        <div class="item-name">Популярный</div>
+                        <div class="item-price">50₽</div>
+                        <div class="item-description">50 кликов</div>
+                        <button class="buy-button">Купить</button>
+                    </div>
+                    
+                    <div class="shop-item" onclick="openPaymentModal(100, 100)">
+                        <div class="item-emoji">💎</div>
+                        <div class="item-name">VIP</div>
+                        <div class="item-price">100₽</div>
+                        <div class="item-description">100 кликов</div>
+                        <button class="buy-button">Купить</button>
+                    </div>
+                    
+                    <div class="shop-item" onclick="openPaymentModal(1000, 1000)">
+                        <div class="item-emoji">🚀</div>
+                        <div class="item-name">Легендарный</div>
+                        <div class="item-price">1000₽</div>
+                        <div class="item-description">1000 кликов</div>
+                        <button class="buy-button">Купить</button>
+                    </div>
+                </div>
+                
+                <div id="paymentContainer" class="payment-container">
+                    <div class="payment-title" id="paymentTitle"></div>
+                    <div class="cc-payment-form" id="paymentForm"></div>
                 </div>
             </div>
-            <div class="refresh-time" id="questRefreshTime">Обновление через: 24:00</div>
         </div>
         
-        <!-- ===== РЕФЕРАЛЬНАЯ СИСТЕМА ===== -->
-        <div class="referral-section" id="referralSection">
-            <div class="referral-title">👥 Пригласи друга</div>
-            <div class="referral-link">
-                <input type="text" id="referralLink" class="referral-input" readonly>
-                <button class="copy-button" onclick="copyReferralLink()">Копировать</button>
-            </div>
-            <div class="referral-stats">
-                <div class="referral-stat">
-                    <div class="referral-stat-value" id="referralCount">0</div>
-                    <div class="referral-stat-label">приглашено</div>
+        <!-- Вкладка Задания -->
+        <div id="quests-tab" class="tab-content">
+            <div class="quests-section">
+                <div class="quests-title">📋 Ежедневные задания</div>
+                <div class="quests-grid" id="questsList">
+                    <!-- Сюда будут подгружаться задания -->
+                    <div class="quest-item">
+                        <div class="quest-icon">⏳</div>
+                        <div class="quest-name">Загрузка...</div>
+                    </div>
                 </div>
-                <div class="referral-stat">
-                    <div class="referral-stat-value" id="referralBonus">0</div>
-                    <div class="referral-stat-label">бонусов</div>
+                <div class="refresh-time" id="questRefreshTime">Обновление через: 24:00</div>
+            </div>
+        </div>
+        
+        <!-- Вкладка Рефералы -->
+        <div id="referrals-tab" class="tab-content">
+            <div class="referral-section" id="referralSection">
+                <div class="referral-header">
+                    <h2>👥 Реферальная программа</h2>
                 </div>
-                <div class="referral-stat">
-                    <div class="referral-stat-value" id="referralClicks">0</div>
-                    <div class="referral-stat-label">кликов рефералов</div>
+                
+                <div class="referral-link-box">
+                    <div class="referral-link-label">Твоя уникальная ссылка:</div>
+                    <div class="referral-link-input-group">
+                        <input type="text" id="referralLink" class="referral-link-input" readonly>
+                        <button class="referral-copy-btn" onclick="copyReferralLink()">Копировать</button>
+                    </div>
+                </div>
+                
+                <div class="referral-stats-grid">
+                    <div class="referral-stat-card">
+                        <div class="referral-stat-value" id="referralCount">0</div>
+                        <div class="referral-stat-label">приглашено</div>
+                    </div>
+                    <div class="referral-stat-card">
+                        <div class="referral-stat-value" id="referralBonus">0</div>
+                        <div class="referral-stat-label">бонусов</div>
+                    </div>
+                    <div class="referral-stat-card">
+                        <div class="referral-stat-value" id="referralClicks">0</div>
+                        <div class="referral-stat-label">кликов рефералов</div>
+                    </div>
+                </div>
+                
+                <div class="referral-bonus-info">
+                    <div class="bonus-title">🎁 Бонусы за активность рефералов:</div>
+                    <ul class="bonus-list">
+                        <li>За регистрацию друга: +50 кликов</li>
+                        <li>За каждые 1000 кликов друга: +10 кликов</li>
+                        <li>За каждые 5000 кликов друга: +50 кликов</li>
+                        <li>За каждые 10000 кликов друга: +100 кликов</li>
+                    </ul>
+                </div>
+                
+                <div class="referral-table">
+                    <div class="referral-table-title">👥 Твои рефералы</div>
+                    <div id="referralsList">
+                        <!-- Сюда будут подгружаться рефералы -->
+                        <div class="no-referrals">У тебя пока нет приглашенных друзей</div>
+                    </div>
                 </div>
             </div>
         </div>
         
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div>Онлайн</div>
-                <div class="stat-value" id="onlineCount">0</div>
+        <!-- Вкладка Топ -->
+        <div id="top-tab" class="tab-content">
+            <div class="top-players">
+                <div class="top-title">
+                    <span>🏆 Топ по кликам</span>
+                    <span class="view-all" onclick="showAllPlayers()">Все →</span>
+                </div>
+                <div id="topList" class="top-list">
+                    <div class="top-item">Загрузка...</div>
+                </div>
             </div>
-            <div class="stat-card">
-                <div>Твой вклад</div>
-                <div class="stat-value" id="userScore">0</div>
+            
+            <div class="top-players" style="margin-top: 20px;">
+                <div class="top-title">
+                    <span>👥 Топ по рефералам</span>
+                    <span class="view-all" onclick="showAllReferrers()">Все →</span>
+                </div>
+                <div id="referralTop" class="top-list">
+                    <div class="top-item">Загрузка...</div>
+                </div>
             </div>
-            <div class="stat-card">
-                <div>Уровень</div>
-                <div class="stat-value" id="userLevel">1</div>
-            </div>
-            <div class="stat-card">
-                <div>Осталось</div>
-                <div class="stat-value" id="remaining">8 млрд</div>
-            </div>
-        </div>
-        
-        <div class="top-players">
-            <div class="top-title">
-                <span>🏆 Топ по кликам</span>
-                <span class="view-all" onclick="showAllPlayers()">Все →</span>
-            </div>
-            <div id="topList" class="top-list">
-                <div class="top-item">Загрузка...</div>
-            </div>
-        </div>
-        
-        <div class="top-players">
-            <div class="top-title">
-                <span>👥 Топ по рефералам</span>
-                <span class="view-all" onclick="showAllReferrers()">Все →</span>
-            </div>
-            <div id="referralTop" class="top-list">
-                <div class="top-item">Загрузка...</div>
-            </div>
-        </div>
-        
-        <div class="last-clicker">
-            Последний: <span id="lastClickerName">никто</span>
-        </div>
-        
-        <div class="info-block">
-            <h3>📦 Как получить клики после оплаты</h3>
-            <ul>
-                <li>Клики зачисляются автоматически сразу после успешной оплаты</li>
-                <li>Зачисление происходит в реальном времени в ваш личный счет</li>
-                <li>Клики также добавляются в общий прогресс заселения Земли</li>
-                <li>После оплаты обновите страницу, чтобы увидеть новый баланс</li>
-                <li>Все покупки отображаются в вашем личном кабинете</li>
-            </ul>
-        </div>
-        
-        <div class="contacts-block">
-            <h3 style="color: #ffd700; margin-bottom: 10px;">📞 Контактная информация</h3>
-            <p><strong>Email:</strong> kavarnukaevoleg@gmail.com</p>
-            <p><strong>Телефон:</strong> +7 (981) 958-68-47</p>
-            <p><strong>ИП/Самозанятый:</strong> Каварнукаев Олег Вячеславович</p>
-            <p><strong>ИНН:</strong> 471702602370</p>
-        </div>
-        
-        <div class="footer-links">
-            <a href="agreement.html" target="_blank">Пользовательское соглашение</a> |
-            <a href="privacy.html" target="_blank">Политика конфиденциальности</a> |
-            <a href="#">Правила возврата</a>
         </div>
     </div>
 
@@ -1625,7 +1816,6 @@
                 IMAGE_URL: 'https://i.imgur.com/W6H3wKX.jpg',
                 CRYPTO_SHOP_ID: 'At3cptqTbYR9y1Hs',
                 
-                // Достижения
                 ACHIEVEMENTS: {
                     'click100': { name: 'Новичок', desc: 'Сделать 100 кликов', icon: '🌱', reward: 10 },
                     'click1000': { name: 'Опытный', desc: 'Сделать 1000 кликов', icon: '🌿', reward: 50 },
@@ -1641,7 +1831,6 @@
                     'referral10': { name: 'Лидер', desc: 'Пригласить 10 друзей', icon: '🌟', reward: 500 }
                 },
                 
-                // Ежедневные задания
                 QUESTS: {
                     'clicks': { name: 'Кликер', desc: 'Сделать %s кликов', icon: '👆' },
                     'streak': { name: 'Заход', desc: 'Заходить %s дней подряд', icon: '📅' },
@@ -1717,17 +1906,17 @@
                 profileSpent: document.getElementById('profileSpent'),
                 profileStreak: document.getElementById('profileStreak'),
                 profileReferrals: document.getElementById('profileReferrals'),
-                profileReferralBonus: document.getElementById('profileReferralBonus'),
-                profileReferralClicks: document.getElementById('profileReferralClicks'),
                 achievementsList: document.getElementById('achievementsList'),
                 profileReferralLink: document.getElementById('profileReferralLink'),
                 profileReferralStat: document.getElementById('profileReferralStat'),
                 profileReferralBonusStat: document.getElementById('profileReferralBonusStat'),
+                profileReferralClicksStat: document.getElementById('profileReferralClicksStat'),
                 referralSection: document.getElementById('referralSection'),
                 referralLink: document.getElementById('referralLink'),
                 referralCount: document.getElementById('referralCount'),
                 referralBonus: document.getElementById('referralBonus'),
                 referralClicks: document.getElementById('referralClicks'),
+                referralsList: document.getElementById('referralsList'),
                 referralTop: document.getElementById('referralTop'),
                 questsList: document.getElementById('questsList'),
                 questRefreshTime: document.getElementById('questRefreshTime')
@@ -1763,17 +1952,13 @@
                 level: 1,
                 achievements: {},
                 referrals: [],
+                referralData: {},
                 referralBonus: 0,
                 referralClicksTotal: 0,
                 quests: {},
                 questsCompleted: {},
                 viewingProfile: null,
-                
-                // Флаги для отслеживания показа уведомлений
-                achievementNotified: {},
-                
-                // Хранилище данных о рефералах
-                referralData: {}
+                achievementNotified: {}
             };
 
             // Хранилище
@@ -1781,6 +1966,15 @@
                 g: (k) => { try { return localStorage.getItem(C.STORAGE[k]); } catch { return null; } },
                 s: (k, v) => { try { localStorage.setItem(C.STORAGE[k], v); } catch {} },
                 r: (k) => { try { localStorage.removeItem(C.STORAGE[k]); } catch {} }
+            };
+
+            // ===== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК =====
+            window.switchTab = function(tab) {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
+                document.getElementById(`${tab}-tab`).classList.add('active');
             };
 
             // ===== РАСЧЕТ УРОВНЯ =====
@@ -1802,14 +1996,12 @@
                     .sort((a, b) => b.referrals - a.referrals)
                     .slice(0, 10);
 
-                // Обновляем общее количество рефералов для админ-панели
                 if (s.admin) {
                     const totalReferrals = Object.values(s.players).reduce((sum, p) => 
                         sum + (p.referrals ? p.referrals.length : 0), 0);
                     el.adminTotalReferrals.textContent = totalReferrals;
                 }
 
-                // Обновляем топ для админ-панели
                 if (s.admin && el.referralTopList) {
                     if (players.length === 0) {
                         el.referralTopList.innerHTML = '<div style="text-align: center; color: #aaa;">Нет приглашений</div>';
@@ -1825,7 +2017,6 @@
                     }
                 }
 
-                // Обновляем публичный топ
                 if (players.length === 0) {
                     el.referralTop.innerHTML = '<div class="top-item">Нет приглашений</div>';
                 } else {
@@ -1842,11 +2033,51 @@
                 }
             }
 
+            // ===== ОБНОВЛЕНИЕ СПИСКА РЕФЕРАЛОВ =====
+            function updateReferralsList() {
+                if (!s.pid || !s.referrals || s.referrals.length === 0) {
+                    if (el.referralsList) {
+                        el.referralsList.innerHTML = '<div class="no-referrals">У тебя пока нет приглашенных друзей</div>';
+                    }
+                    return;
+                }
+
+                let html = '';
+                let totalClicks = 0;
+                
+                s.referrals.forEach(refId => {
+                    const ref = s.players[refId];
+                    if (ref) {
+                        const clicks = ref.sc || 0;
+                        totalClicks += clicks;
+                        const bonus = Math.floor(clicks / 1000) * 10;
+                        
+                        html += `
+                            <div class="referral-row" onclick="openProfile('${refId}', '${ref.n}')">
+                                <span class="referral-name">${ref.n || 'Аноним'}</span>
+                                <span class="referral-clicks">${clicks.toLocaleString()} кликов</span>
+                                <span class="referral-bonus">+${bonus}</span>
+                            </div>
+                        `;
+                    }
+                });
+
+                s.referralClicksTotal = totalClicks;
+                
+                if (el.referralsList) {
+                    el.referralsList.innerHTML = html || '<div class="no-referrals">У тебя пока нет приглашенных друзей</div>';
+                }
+            }
+
             // ===== ПРОВЕРКА БОНУСОВ ЗА АКТИВНОСТЬ РЕФЕРАЛОВ =====
             function checkReferralActivity(refId, refClicks) {
-                if (!s.pid || !s.referrals.includes(refId)) return;
+                if (!s.pid || !s.referrals.includes(refId)) return false;
                 
-                const lastChecked = s.referralData[refId]?.lastClicks || 0;
+                if (!s.referralData[refId]) {
+                    s.referralData[refId] = { lastClicks: 0, totalBonus: 0 };
+                }
+                
+                const lastChecked = s.referralData[refId].lastClicks;
                 const clicksGained = refClicks - lastChecked;
                 
                 if (clicksGained >= 1000) {
@@ -1854,7 +2085,9 @@
                     s.referralBonus += bonus;
                     s.myScore += bonus;
                     s.globalScore += bonus;
-                    s.referralClicksTotal += clicksGained;
+                    
+                    s.referralData[refId].lastClicks = refClicks;
+                    s.referralData[refId].totalBonus += bonus;
                     
                     if (s.pr) {
                         s.pr.update({ 
@@ -1864,13 +2097,14 @@
                         });
                     }
                     
-                    if (!s.referralData[refId]) s.referralData[refId] = {};
-                    s.referralData[refId].lastClicks = refClicks;
-                    
                     el.au.textContent = `🎁 За активность реферала +${bonus} кликов!`;
                     el.au.style.display = 'block';
                     setTimeout(() => { el.au.style.display = 'none'; }, 5000);
+                    
+                    return true;
                 }
+                
+                return false;
             }
 
             // ===== ПОКАЗ ВСЕХ ПРИГЛАШАЮЩИХ =====
@@ -1911,7 +2145,6 @@
                 const newAchievements = [];
                 const now = Date.now();
                 
-                // Проверяем каждое достижение только один раз
                 if (s.myScore >= 100 && !s.achievements.click100 && !s.achievementNotified.click100) {
                     newAchievements.push('click100');
                     s.achievementNotified.click100 = true;
@@ -1975,7 +2208,6 @@
                             s.globalScore += C.ACHIEVEMENTS[ach].reward;
                             updates.sc = s.myScore;
                             
-                            // Показываем уведомление
                             el.au.textContent = `🏆 Достижение "${C.ACHIEVEMENTS[ach].name}"! +${C.ACHIEVEMENTS[ach].reward} кликов`;
                             el.au.style.display = 'block';
                             setTimeout(() => { el.au.style.display = 'none'; }, 5000);
@@ -2084,7 +2316,6 @@
                 
                 localStorage.setItem('dailyQuests', JSON.stringify(quests));
                 
-                // Отображаем задания
                 let questsHtml = '';
                 quests.forEach(quest => {
                     const percent = Math.min((quest.progress / quest.target) * 100, 100);
@@ -2109,7 +2340,6 @@
                 
                 el.questsList.innerHTML = questsHtml;
                 
-                // Время до обновления
                 const now = Date.now();
                 const tomorrow = new Date().setHours(24, 0, 0, 0);
                 const hoursLeft = Math.floor((tomorrow - now) / 3600000);
@@ -2182,14 +2412,13 @@
                 
                 console.log('Применяем реферала:', ref, 'к игроку:', s.pid);
                 
-                // Проверяем, не был ли уже этот реферал применен
                 const appliedRefs = JSON.parse(localStorage.getItem('appliedRefs') || '[]');
                 if (appliedRefs.includes(ref)) {
                     console.log('Реферал уже был применен');
                     return;
                 }
                 
-                // Обновляем список приглашенных у реферера
+                // Добавляем реферала в список приглашенных
                 db.ref('players/' + ref + '/referrals').transaction(list => {
                     if (!list) list = [];
                     if (!list.includes(s.pid)) {
@@ -2197,7 +2426,7 @@
                     }
                     return list;
                 }).then(() => {
-                    // Начисляем бонус пригласившему
+                    // Начисляем бонус за регистрацию
                     return db.ref('players/' + ref).transaction(p => {
                         if (!p) p = { sc: 0 };
                         p.sc = (p.sc || 0) + 50;
@@ -2206,13 +2435,11 @@
                         return p;
                     });
                 }).then(() => {
-                    // Сохраняем, что этот реферал был применен
                     appliedRefs.push(ref);
                     localStorage.setItem('appliedRefs', JSON.stringify(appliedRefs));
                     
                     console.log('Реферал успешно применен!');
                     
-                    // Показываем уведомление пригласившему (если это он сейчас в игре)
                     if (s.pid === ref) {
                         el.au.textContent = '✅ За приглашенного друга +50 кликов!';
                         el.au.style.display = 'block';
@@ -2240,8 +2467,6 @@
                 el.profileSpent.textContent = (playerData.spent || 0) + '₽';
                 el.profileStreak.textContent = (playerData.streak || 1);
                 el.profileReferrals.textContent = referrals;
-                el.profileReferralBonus.textContent = referralBonus;
-                el.profileReferralClicks.textContent = referralClicks.toLocaleString();
                 
                 let achievementsHtml = '';
                 const playerAchievements = playerData.achievements || {};
@@ -2267,6 +2492,7 @@
                     el.profileReferralSection.style.display = 'block';
                     el.profileReferralStat.textContent = referrals;
                     el.profileReferralBonusStat.textContent = referralBonus;
+                    el.profileReferralClicksStat.textContent = referralClicks.toLocaleString();
                 } else {
                     el.profileReferralSection.style.display = 'none';
                 }
@@ -2343,6 +2569,7 @@
                     el.referralBonus.textContent = s.referralBonus;
                     el.referralClicks.textContent = s.referralClicksTotal.toLocaleString();
                     updateReferralLink();
+                    updateReferralsList();
                 }
                 
                 if (s.admin) {
@@ -2483,10 +2710,10 @@
                 s.streak = 0;
                 s.achievements = {};
                 s.referrals = [];
+                s.referralData = {};
                 s.referralBonus = 0;
                 s.referralClicksTotal = 0;
                 s.achievementNotified = {};
-                s.referralData = {};
                 
                 localStorage.clear();
                 
@@ -2707,7 +2934,21 @@
                     s.moneySpent = d.spent || 0;
                     s.streak = d.streak || 1;
                     s.achievements = d.achievements || {};
+                    
+                    // Обновляем список рефералов
+                    const oldReferrals = s.referrals;
                     s.referrals = d.referrals || [];
+                    
+                    // Проверяем активность рефералов
+                    if (s.referrals.length > 0) {
+                        s.referrals.forEach(refId => {
+                            const ref = s.players[refId];
+                            if (ref) {
+                                checkReferralActivity(refId, ref.sc || 0);
+                            }
+                        });
+                    }
+                    
                     s.referralBonus = d.referralBonus || 0;
                     s.referralClicksTotal = d.referralClicks || 0;
                     
