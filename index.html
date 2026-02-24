@@ -18,11 +18,11 @@
         .earth:active{transform:scale(.98)}
         .earth-fill{position:absolute;bottom:0;left:0;width:100%;height:0%;background:#2B3B4B;transition:height .3s ease-out;z-index:1}
         .earth-image{position:absolute;inset:0;background:url('https://yt3.googleusercontent.com/jxNzA1STZW8BLqnCWh0-0_N2HIp9YW3gBzH7enj7wk5bGjp9U3wbvCkvAOPT8ZUBFFtHlnui2Q=s900-c-k-c0x00ffffff-no-rj')center/cover;background-size:cover;z-index:2;clip-path:inset(100% 0 0 0);transition:clip-path .3s ease-out}
-        .progress-section{margin:16px 0}
-        .progress-bar{height:20px;background:rgba(255,255,255,0.2);border-radius:10px;overflow:hidden;margin:8px 0}
+        .progress-section{margin:16px 0;text-align:center}
+        .progress-bar{width:100%;height:20px;background:rgba(255,255,255,0.2);border-radius:10px;overflow:hidden;margin:8px 0}
         .progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#4CAF50,#8BC34A);transition:width .3s}
-        .counter{font-size:clamp(2.5rem,10vw,4rem);font-weight:700;background:rgba(0,0,0,0.3);border-radius:20px;padding:16px;margin:16px 0;border:2px solid rgba(255,215,0,0.3);text-shadow:0 0 20px rgba(255,215,0,0.5)}
-        .name-section{margin:20px 0;min-height:80px}
+        .counter{text-align:center;font-size:clamp(2.5rem,10vw,4rem);font-weight:700;background:rgba(0,0,0,0.3);border-radius:20px;padding:16px;margin:16px 0;border:2px solid rgba(255,215,0,0.3);text-shadow:0 0 20px rgba(255,215,0,0.5)}
+        .name-section{margin:20px 0;min-height:80px;text-align:center}
         .name-input-group{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
         .name-input{padding:12px 20px;border-radius:30px;border:none;width:250px;font-size:1.1em;background:rgba(255,255,255,0.95)}
         .name-button{padding:12px 30px;border-radius:30px;border:none;background:#ffd700;cursor:pointer;font-weight:700;font-size:1.1em;transition:.2s}
@@ -32,7 +32,7 @@
         .greeting-name{color:#ffd700;font-weight:700}
         .level-badge{display:inline-block;background:linear-gradient(135deg,#ffd700,#ffaa00);color:#333;padding:2px 8px;border-radius:20px;font-size:.8rem;font-weight:700;margin-left:8px}
         .hidden{display:none!important}
-        .click-button{background:#ffd700;color:#333;border:none;font-size:clamp(1.5rem,5vw,2.5rem);padding:20px 40px;border-radius:60px;cursor:pointer;font-weight:700;margin:16px 0;transition:.2s;box-shadow:0 0 30px rgba(255,215,0,0.5);width:100%;max-width:400px}
+        .click-button{display:block;margin:16px auto;background:#ffd700;color:#333;border:none;font-size:clamp(1.5rem,5vw,2.5rem);padding:20px 40px;border-radius:60px;cursor:pointer;font-weight:700;transition:.2s;box-shadow:0 0 30px rgba(255,215,0,0.5);width:100%;max-width:400px}
         .click-button:not(:disabled):hover{transform:scale(1.05);background:#ffed4a;box-shadow:0 0 50px rgba(255,215,0,0.8)}
         .click-button:not(:disabled):active{transform:scale(.95)}
         .click-button:disabled{opacity:.5;cursor:not-allowed}
@@ -109,7 +109,7 @@
         .top-name{flex:1;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
         .top-score{font-weight:700;color:#ffd700;margin-left:8px}
         .top-badge{margin-left:8px;font-size:1.1rem}
-        .last-clicker{background:rgba(255,255,255,0.2);padding:12px;border-radius:10px;margin-top:16px}
+        .last-clicker{background:rgba(255,255,255,0.2);padding:12px;border-radius:10px;margin-top:16px;text-align:center}
         #lastClickerName{color:#ffd700;font-weight:700;cursor:pointer}
         #lastClickerName:hover{text-decoration:underline}
         .profile-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#1a1a3a,#2a2a4a);border:3px solid #ffd700;border-radius:30px;padding:30px;z-index:3000;width:90%;max-width:700px;max-height:80vh;overflow-y:auto;box-shadow:0 0 50px rgba(255,215,0,0.3);display:none}
@@ -138,7 +138,7 @@
         .info-block li{margin-bottom:8px;padding-left:20px;position:relative}
         .info-block li:before{content:"✅";position:absolute;left:0;color:#4CAF50}
         .contacts-block{background:rgba(0,0,0,0.3);border-radius:10px;padding:15px;margin:20px 0;font-size:.9rem}
-        .footer-links{margin-top:30px;font-size:.8rem;color:#aaa}
+        .footer-links{margin-top:30px;font-size:.8rem;color:#aaa;text-align:center}
         .footer-links a{color:#ffd700;text-decoration:none;margin:0 5px}
         .footer-links a:hover{text-decoration:underline}
         .cheater-alert{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#ff4444;color:#fff;padding:16px 24px;border-radius:50px;font-weight:700;box-shadow:0 4px 20px rgba(255,0,0,0.5);z-index:1000;animation:slideDown .3s;display:none}
@@ -236,19 +236,76 @@
         </div>
     </div>
     <div class="container">
-        <h1>🌍 Заселение Земли</h1><p>Цель: <span id="td">8 млрд</span></p>
+        <h1 style="text-align:center;">🌍 Заселение Земли</h1><p style="text-align:center;">Цель: <span id="td">8 млрд</span></p>
         <div class="earth" id="e"><div class="earth-fill" id="ef"></div><div class="earth-image" id="ei"></div></div>
-        <div class="progress-section"><div class="progress-bar"><div class="progress-fill" id="pf"></div></div><div class="earth-target"><span id="cp">0</span> / <span id="tp">8 000 000 000</span></div></div>
+        <div class="progress-section"><div class="progress-bar"><div class="progress-fill" id="pf"></div></div><div class="earth-target" style="text-align:center;"><span id="cp">0</span> / <span id="tp">8 000 000 000</span></div></div>
         <div class="counter" id="c">0</div>
         <div class="name-section"><div id="nig" class="name-input-group"><input type="text" id="un" class="name-input" placeholder="Ваше имя" maxlength="20" autocomplete="off"><button id="snb" class="name-button">Начать</button></div><div id="g" class="greeting hidden"><span>Игрок: <span id="dn" class="greeting-name"></span></span><span class="level-badge" id="lb">Ур. 1</span></div></div>
         <button id="cb" class="click-button" disabled>👆 ЗАСЕЛИТЬ</button>
-        <div class="tabs"><div class="tab active" onclick="switchTab('game')">🎮 Игра</div><div class="tab" onclick="switchTab('shop')">💰 Магазин</div><div class="tab" onclick="switchTab('quests')">📋 Задания</div><div class="tab" onclick="switchTab('ref')">👥 Рефералы</div><div class="tab" onclick="switchTab('top')">🏆 Топ</div></div>
-        <div id="game-tab" class="tab-content active"><div class="stats-grid"><div class="stat-card"><div>Онлайн</div><div class="stat-value" id="oc">0</div></div><div class="stat-card"><div>Твой вклад</div><div class="stat-value" id="us">0</div></div><div class="stat-card"><div>Уровень</div><div class="stat-value" id="ul">1</div></div><div class="stat-card"><div>Осталось</div><div class="stat-value" id="r">8 млрд</div></div></div><div class="last-clicker">Последний: <span id="lcn">никто</span></div><div class="info-block"><h3>📦 Как получить клики</h3><ul><li>Клики зачисляются автоматически после оплаты</li><li>Зачисление в реальном времени</li><li>Клики добавляются в общий прогресс</li><li>Все покупки в личном кабинете</li></ul></div><div class="contacts-block"><h3 style="color:#ffd700;margin-bottom:10px;">📞 Контакты</h3><p><strong>Email:</strong> kavarnukaevoleg@gmail.com</p><p><strong>Телефон:</strong> +7 (981) 958-68-47</p><p><strong>ИП:</strong> Каварнукаев Олег Вячеславович</p><p><strong>ИНН:</strong> 471702602370</p></div><div class="footer-links"><a href="agreement.html" target="_blank">Соглашение</a> | <a href="privacy.html" target="_blank">Конфиденциальность</a> | <a href="#">Возврат</a></div></div>
-        <div id="shop-tab" class="tab-content"><div class="shop-section"><div class="shop-title"><span>💰</span> МАГАЗИН КЛИКОВ <span>💰</span></div><p style="color:#ffd700;margin-bottom:15px;">1 клик = 1 рубль</p><div class="shop-items"><div class="shop-item" onclick="openPay(10,10)"><div class="item-emoji">👆</div><div class="item-name">Стартовый</div><div class="item-price">10₽</div><div class="item-description">10 кликов</div><button class="buy-button">Купить</button></div><div class="shop-item popular" onclick="openPay(50,50)"><div class="item-emoji">🔥</div><div class="item-name">Популярный</div><div class="item-price">50₽</div><div class="item-description">50 кликов</div><button class="buy-button">Купить</button></div><div class="shop-item" onclick="openPay(100,100)"><div class="item-emoji">💎</div><div class="item-name">VIP</div><div class="item-price">100₽</div><div class="item-description">100 кликов</div><button class="buy-button">Купить</button></div><div class="shop-item" onclick="openPay(1000,1000)"><div class="item-emoji">🚀</div><div class="item-name">Легендарный</div><div class="item-price">1000₽</div><div class="item-description">1000 кликов</div><button class="buy-button">Купить</button></div></div><div id="pcnt" class="payment-container"><div class="payment-title" id="pt"></div><div class="cc-payment-form" id="pfm"></div></div></div></div>
-        <div id="quests-tab" class="tab-content"><div class="quests-section"><div class="quests-title">📋 Ежедневные задания</div><div class="quests-grid" id="ql"></div><div class="refresh-time" id="qrt">Обновление через: 24:00</div></div></div>
-        <div id="ref-tab" class="tab-content"><div class="referral-section"><div class="referral-header"><h2>👥 Реферальная программа</h2></div><div class="referral-link-box"><div class="referral-link-label">Твоя ссылка:</div><div class="referral-link-input-group"><input type="text" id="rl" class="referral-link-input" readonly><button class="referral-copy-btn" onclick="copyRefLink()">Копировать</button></div></div><div class="referral-stats-grid"><div class="referral-stat-card"><div class="referral-stat-value" id="rc">0</div><div class="referral-stat-label">приглашено</div></div><div class="referral-stat-card"><div class="referral-stat-value" id="rb">0</div><div class="referral-stat-label">бонусов</div></div><div class="referral-stat-card"><div class="referral-stat-value" id="rbc">0</div><div class="referral-stat-label">кликов</div></div></div><div class="referral-bonus-info"><div class="bonus-title">🎁 Бонусы:</div><ul class="bonus-list"><li>За регистрацию: +50</li><li>За 1000 кликов: +10</li><li>За 5000 кликов: +50</li><li>За 10000 кликов: +100</li></ul></div><div class="referral-table"><div class="referral-table-title">👥 Твои рефералы</div><div id="rlst"></div></div></div></div>
-        <div id="top-tab" class="tab-content"><div class="top-players"><div class="top-title"><span>🏆 Топ по кликам</span><span class="view-all" onclick="showAll()">Все →</span></div><div id="tl" class="top-list"><div class="top-item">Загрузка...</div></div></div><div class="top-players" style="margin-top:20px;"><div class="top-title"><span>👥 Топ по рефералам</span><span class="view-all" onclick="showAllRef()">Все →</span></div><div id="rt" class="top-list"><div class="top-item">Загрузка...</div></div></div></div>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('game')">🎮 Игра</div>
+            <div class="tab" onclick="switchTab('shop')">💰 Магазин</div>
+            <div class="tab" onclick="switchTab('quests')">📋 Задания</div>
+            <div class="tab" onclick="switchTab('ref')">👥 Рефералы</div>
+            <div class="tab" onclick="switchTab('top')">🏆 Топ</div>
+        </div>
+        
+        <div id="game-tab" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card"><div>Онлайн</div><div class="stat-value" id="oc">0</div></div>
+                <div class="stat-card"><div>Твой вклад</div><div class="stat-value" id="us">0</div></div>
+                <div class="stat-card"><div>Уровень</div><div class="stat-value" id="ul">1</div></div>
+                <div class="stat-card"><div>Осталось</div><div class="stat-value" id="r">8 млрд</div></div>
+            </div>
+            <div class="last-clicker">Последний: <span id="lcn">никто</span></div>
+            <div class="info-block"><h3>📦 Как получить клики</h3><ul><li>Клики зачисляются автоматически после оплаты</li><li>Зачисление в реальном времени</li><li>Клики добавляются в общий прогресс</li><li>Все покупки в личном кабинете</li></ul></div>
+            <div class="contacts-block"><h3 style="color:#ffd700;margin-bottom:10px;">📞 Контакты</h3><p><strong>Email:</strong> kavarnukaevoleg@gmail.com</p><p><strong>Телефон:</strong> +7 (981) 958-68-47</p><p><strong>ИП:</strong> Каварнукаев Олег Вячеславович</p><p><strong>ИНН:</strong> 471702602370</p></div>
+            <div class="footer-links"><a href="agreement.html" target="_blank">Соглашение</a> | <a href="privacy.html" target="_blank">Конфиденциальность</a> | <a href="#">Возврат</a></div>
+        </div>
+        
+        <div id="shop-tab" class="tab-content">
+            <div class="shop-section">
+                <div class="shop-title"><span>💰</span> МАГАЗИН КЛИКОВ <span>💰</span></div>
+                <p style="color:#ffd700;margin-bottom:15px;text-align:center;">1 клик = 1 рубль</p>
+                <div class="shop-items">
+                    <div class="shop-item" onclick="openPay(10,10)"><div class="item-emoji">👆</div><div class="item-name">Стартовый</div><div class="item-price">10₽</div><div class="item-description">10 кликов</div><button class="buy-button">Купить</button></div>
+                    <div class="shop-item popular" onclick="openPay(50,50)"><div class="item-emoji">🔥</div><div class="item-name">Популярный</div><div class="item-price">50₽</div><div class="item-description">50 кликов</div><button class="buy-button">Купить</button></div>
+                    <div class="shop-item" onclick="openPay(100,100)"><div class="item-emoji">💎</div><div class="item-name">VIP</div><div class="item-price">100₽</div><div class="item-description">100 кликов</div><button class="buy-button">Купить</button></div>
+                    <div class="shop-item" onclick="openPay(1000,1000)"><div class="item-emoji">🚀</div><div class="item-name">Легендарный</div><div class="item-price">1000₽</div><div class="item-description">1000 кликов</div><button class="buy-button">Купить</button></div>
+                </div>
+                <div id="pcnt" class="payment-container"><div class="payment-title" id="pt"></div><div class="cc-payment-form" id="pfm"></div></div>
+            </div>
+        </div>
+        
+        <div id="quests-tab" class="tab-content">
+            <div class="quests-section">
+                <div class="quests-title">📋 Ежедневные задания</div>
+                <div class="quests-grid" id="ql"></div>
+                <div class="refresh-time" id="qrt">Обновление через: 24:00</div>
+            </div>
+        </div>
+        
+        <div id="ref-tab" class="tab-content">
+            <div class="referral-section">
+                <div class="referral-header"><h2>👥 Реферальная программа</h2></div>
+                <div class="referral-link-box"><div class="referral-link-label">Твоя ссылка:</div><div class="referral-link-input-group"><input type="text" id="rl" class="referral-link-input" readonly><button class="referral-copy-btn" onclick="copyRefLink()">Копировать</button></div></div>
+                <div class="referral-stats-grid">
+                    <div class="referral-stat-card"><div class="referral-stat-value" id="rc">0</div><div class="referral-stat-label">приглашено</div></div>
+                    <div class="referral-stat-card"><div class="referral-stat-value" id="rb">0</div><div class="referral-stat-label">бонусов</div></div>
+                    <div class="referral-stat-card"><div class="referral-stat-value" id="rbc">0</div><div class="referral-stat-label">кликов</div></div>
+                </div>
+                <div class="referral-bonus-info"><div class="bonus-title">🎁 Бонусы:</div><ul class="bonus-list"><li>За регистрацию: +50</li><li>За 1000 кликов: +10</li><li>За 5000 кликов: +50</li><li>За 10000 кликов: +100</li></ul></div>
+                <div class="referral-table"><div class="referral-table-title">👥 Твои рефералы</div><div id="rlst"></div></div>
+            </div>
+        </div>
+        
+        <div id="top-tab" class="tab-content">
+            <div class="top-players"><div class="top-title"><span>🏆 Топ по кликам</span><span class="view-all" onclick="showAll()">Все →</span></div><div id="tl" class="top-list"><div class="top-item">Загрузка...</div></div></div>
+            <div class="top-players" style="margin-top:20px;"><div class="top-title"><span>👥 Топ по рефералам</span><span class="view-all" onclick="showAllRef()">Все →</span></div><div id="rt" class="top-list"><div class="top-item">Загрузка...</div></div></div>
+        </div>
     </div>
+    
     <script defer src="https://cdn.cryptocloud.plus/widget/v1/widget.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
