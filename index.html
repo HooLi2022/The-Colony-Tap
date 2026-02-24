@@ -1407,6 +1407,11 @@
             color: white;
         }
 
+        .admin-contest-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
         .player-list {
             max-height: 200px;
             overflow-y: auto;
@@ -1774,22 +1779,6 @@
     </style>
 </head>
 <body>
-    <!--AdFox START-->
-    <div id="adfox_177184316797386820"></div>
-    <script>
-        window.yaContextCb.push(()=>{
-            Ya.adfoxCode.create({
-                ownerId: 691132,
-                containerId: 'adfox_177184316797386820',
-                params: {
-                    pp: 'g',
-                    ps: 'mdxg',
-                    p2: 'hukd'
-                }
-            })
-        })
-    </script>
-
     <!-- Сообщения -->
     <div class="cheater-alert" id="cheaterAlert">🚫 Обнаружен читер! Доступ заблокирован</div>
     <div class="unban-message" id="unbanMessage">✅ Вы были разблокированы создателем!</div>
@@ -1886,11 +1875,11 @@
             <div class="admin-contest-settings">
                 <div class="admin-contest-row">
                     <span>🎁 Призовой фонд:</span>
-                    <input type="number" id="contestPrize" class="admin-contest-input" value="1000" min="100" step="100">
+                    <input type="number" id="contestPrize" class="admin-contest-input" value="1000" min="100" step="100" onchange="admin.updateContestSettings()">
                 </div>
                 <div class="admin-contest-row">
                     <span>⏱️ Длительность (часы):</span>
-                    <input type="number" id="contestDuration" class="admin-contest-input" value="24" min="1" max="168">
+                    <input type="number" id="contestDuration" class="admin-contest-input" value="24" min="1" max="168" onchange="admin.updateContestSettings()">
                 </div>
                 <div class="admin-contest-row">
                     <span>👑 Текущий лидер:</span>
@@ -2101,7 +2090,7 @@
             <!-- Форма для победителя -->
             <div class="winner-form" id="winnerForm">
                 <h3>🎉 ПОЗДРАВЛЯЕМ! ВЫ ПОБЕДИТЕЛЬ!</h3>
-                <p>Введите данные для получения выигрыша (1000₽)</p>
+                <p>Введите данные для получения выигрыша (<span id="winnerPrize">1000</span>₽)</p>
                 <input type="text" class="winner-input" id="winnerCard" placeholder="Номер карты">
                 <input type="text" class="winner-input" id="winnerName" placeholder="Ваше имя">
                 <input type="text" class="winner-input" id="winnerPhone" placeholder="Телефон">
@@ -2477,6 +2466,7 @@
                 winnerCard: getEl('winnerCard'),
                 winnerName: getEl('winnerName'),
                 winnerPhone: getEl('winnerPhone'),
+                winnerPrize: getEl('winnerPrize'),
                 
                 // Элементы админки для конкурса
                 contestPrize: getEl('contestPrize'),
@@ -2637,12 +2627,10 @@
                 if (s.contest.active) {
                     el.contestSection.style.display = 'block';
                     
-                    // Обновляем время
                     const now = Date.now();
                     const timeLeft = Math.max(0, s.contest.endTime - now);
                     
                     if (timeLeft <= 0 && s.contest.active) {
-                        // Конкурс закончился
                         endContest();
                         return;
                     }
@@ -2655,20 +2643,17 @@
                         el.contestTimer.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
                     }
                     
-                    // Обновляем приз
                     if (el.contestPrizeDisplay) {
                         el.contestPrizeDisplay.textContent = s.contest.prize + '₽';
                     }
                     
-                    // Собираем участников конкурса (клики за последние 24 часа)
-                    const contestStart = s.contest.startTime;
-                    const contestEnd = s.contest.endTime;
+                    if (el.winnerPrize) {
+                        el.winnerPrize.textContent = s.contest.prize;
+                    }
                     
                     const participants = [];
                     
                     Object.entries(s.players).forEach(([id, data]) => {
-                        // Здесь нужно хранить историю кликов за время конкурса
-                        // Для простоты будем использовать общий счет
                         if (data.sc > 0 && data.n) {
                             participants.push({
                                 id,
@@ -2678,21 +2663,17 @@
                         }
                     });
                     
-                    // Сортируем по убыванию
                     participants.sort((a, b) => b.score - a.score);
                     
-                    // Обновляем количество участников
                     if (el.contestParticipantsDisplay) {
                         el.contestParticipantsDisplay.textContent = participants.length;
                     }
                     
-                    // Обновляем личный счет в конкурсе
                     if (s.pid && el.contestMyScore) {
                         const myParticipant = participants.find(p => p.id === s.pid);
                         el.contestMyScore.textContent = myParticipant ? myParticipant.score.toLocaleString() : '0';
                     }
                     
-                    // Обновляем прогресс (относительно лидера)
                     if (participants.length > 0 && el.contestProgress) {
                         const leaderScore = participants[0].score;
                         const myScore = participants.find(p => p.id === s.pid)?.score || 0;
@@ -2700,12 +2681,10 @@
                         el.contestProgress.style.width = Math.min(percent, 100) + '%';
                     }
                     
-                    // Обновляем лидера
                     if (participants.length > 0) {
                         if (el.contestLeaderName) el.contestLeaderName.textContent = participants[0].name;
                         if (el.contestLeaderScore) el.contestLeaderScore.textContent = participants[0].score.toLocaleString() + ' кликов';
                         
-                        // Топ-3
                         if (el.contestTop3) {
                             let topHtml = '';
                             for (let i = 0; i < Math.min(3, participants.length); i++) {
@@ -2722,7 +2701,6 @@
                             el.contestTop3.innerHTML = topHtml;
                         }
                         
-                        // Проверяем, не победитель ли текущий игрок
                         if (s.pid && participants[0]?.id === s.pid && timeLeft <= 0) {
                             if (el.winnerForm) el.winnerForm.classList.add('show');
                         } else {
@@ -2747,7 +2725,6 @@
                 s.contest.winner = null;
                 s.contest.winnerData = null;
                 
-                // Сохраняем в Firebase
                 db.ref('contest').set({
                     active: true,
                     startTime: now,
@@ -2762,7 +2739,6 @@
             function endContest() {
                 s.contest.active = false;
                 
-                // Находим победителя
                 const participants = [];
                 Object.entries(s.players).forEach(([id, data]) => {
                     if (data.sc > 0 && data.n) {
@@ -2779,7 +2755,6 @@
                 if (participants.length > 0) {
                     s.contest.winner = participants[0];
                     
-                    // Сохраняем в Firebase
                     db.ref('contest/winner').set({
                         id: participants[0].id,
                         name: participants[0].name,
@@ -2787,7 +2762,6 @@
                         prize: s.contest.prize
                     });
                     
-                    // Если победитель сейчас онлайн, показываем форму
                     if (s.pid === participants[0].id) {
                         if (el.winnerForm) el.winnerForm.classList.add('show');
                     }
@@ -2810,17 +2784,42 @@
                     return;
                 }
                 
-                // Сохраняем данные победителя
                 db.ref('contest/winner/data').set({
                     card: card,
                     name: name,
                     phone: phone,
-                    timestamp: Date.now()
+                    timestamp: Date.now(),
+                    prize: s.contest.prize
                 }).then(() => {
                     alert('✅ Данные отправлены! Ожидайте выплату в течение 24 часов.');
                     if (el.winnerForm) el.winnerForm.classList.remove('show');
                 });
             };
+
+            // ===== НОВАЯ ФУНКЦИЯ ДЛЯ ОБНОВЛЕНИЯ НАСТРОЕК КОНКУРСА =====
+            function updateContestSettings() {
+                if (!s.admin) return;
+                
+                const prizeInput = document.getElementById('contestPrize');
+                const durationInput = document.getElementById('contestDuration');
+                
+                if (prizeInput) {
+                    s.contest.prize = parseInt(prizeInput.value) || 1000;
+                }
+                if (durationInput) {
+                    s.contest.duration = parseInt(durationInput.value) || 24;
+                }
+                
+                // Сохраняем в Firebase если конкурс не активен
+                if (!s.contest.active) {
+                    db.ref('contest/settings').set({
+                        prize: s.contest.prize,
+                        duration: s.contest.duration
+                    });
+                }
+                
+                updateContestUI();
+            }
 
             // ===== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК =====
             window.switchTab = function(tab) {
@@ -2901,7 +2900,6 @@
                     if (el.contestStatus) el.contestStatus.textContent = s.contest.active ? 'Активен' : 'Не активен';
                     if (el.contestStatus) el.contestStatus.style.color = s.contest.active ? '#4CAF50' : '#ff4444';
                     
-                    // Находим лидера для админки
                     const participants = [];
                     Object.entries(s.players).forEach(([id, data]) => {
                         if (data.sc > 0 && data.n) {
@@ -2921,7 +2919,6 @@
                         el.contestParticipants.textContent = participants.length;
                     }
                     
-                    // Время до конца конкурса для админки
                     if (s.contest.active && el.contestTimeLeft) {
                         const now = Date.now();
                         const timeLeft = Math.max(0, s.contest.endTime - now);
@@ -3781,6 +3778,16 @@
                     updateUI();
                 }
             });
+            
+            // Слушатель настроек конкурса
+            db.ref('contest/settings').on('value', (snap) => {
+                const settings = snap.val();
+                if (settings && !s.contest.active) {
+                    s.contest.prize = settings.prize || 1000;
+                    s.contest.duration = settings.duration || 24;
+                    updateUI();
+                }
+            });
 
             // ===== АДМИН ПАНЕЛЬ =====
             const admin = {
@@ -3801,7 +3808,6 @@
                     if (el.sizeSlider) el.sizeSlider.value = s.imageSize;
                     if (el.sizeValue) el.sizeValue.textContent = s.imageSize + '%';
                     
-                    // Обновляем данные конкурса в админке
                     updateUI();
                 },
                 close() {
@@ -3933,8 +3939,10 @@
                 startContest() {
                     if (!s.admin) return;
                     
-                    const prize = parseInt(el.contestPrize?.value || '1000');
-                    const duration = parseInt(el.contestDuration?.value || '24');
+                    updateContestSettings(); // Сохраняем текущие значения
+                    
+                    const prize = s.contest.prize;
+                    const duration = s.contest.duration;
                     
                     startContest(prize, duration);
                 },
@@ -3961,10 +3969,20 @@
                     }
                     
                     alert(`Выплатить ${s.contest.prize}₽ игроку ${s.contest.winner.name}?\nДанные: ${s.contest.winnerData ? JSON.stringify(s.contest.winnerData) : 'не указаны'}`);
+                },
+                
+                // Новая функция для обновления настроек
+                updateContestSettings() {
+                    updateContestSettings();
                 }
             };
 
             window.admin = admin;
+            
+            // Делаем функцию доступной глобально для onchange в HTML
+            window.updateContestSettings = function() {
+                updateContestSettings();
+            };
 
             // ===== СЛУШАТЕЛЬ СТАТУСА =====
             function setupListener() {
@@ -4219,14 +4237,12 @@
                 s.myScore = parseInt(stor.g('S') || '0');
                 s.cc = parseInt(stor.g('CC') || '0');
                 
-                // Проверяем время последнего сброса
                 checkLastReset();
                 
                 checkReferral();
                 
                 if (s.u && el.un) el.un.value = s.u;
 
-                // Проверяем, не получал ли уже бонус
                 if (stor.g('AD_CLAIMED') === 'true' && el.adBadge) {
                     el.adBadge.style.display = 'none';
                 }
@@ -4365,7 +4381,7 @@
                     }
                     updateQuests();
                     updateContestUI();
-                }, 1000); // Обновляем каждую секунду для таймера
+                }, 1000);
 
                 if (el.targetPopulation) el.targetPopulation.textContent = s.target.toLocaleString();
             }
