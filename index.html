@@ -1994,9 +1994,9 @@
                 KEY: 'Lm9rMjAyNQ==',
                 RESET_FLAG: 'reset_trigger',
                 RESET_TIME: 'reset_time',
-                IMAGE_URL: 'https://sun9-82.userapi.com/impf/j48A1EfLNRkgMVnUUo5x8zKb9L_cixltOPzoNg/Nd0gTPkT_JQ.jpg?size=604x326&quality=96&sign=c904a974341f4bf2554d522efa0e3602&type=album',
+                IMAGE_URL: 'https://i.imgur.com/W6H3wKX.jpg',
                 CRYPTO_SHOP_ID: 'At3cptqTbYR9y1Hs',
-                AD_LINK: 'https://www.reg.ru/?rlink=reflink-31329889',
+                AD_LINK: '?rlink=reflink-31329889',
                 AD_BONUS: 100,
                 
                 ACHIEVEMENTS: {
@@ -2218,33 +2218,40 @@
                 // Открываем ссылку в новом окне
                 window.open(C.AD_LINK, '_blank');
                 
-                // Начисляем бонус
+                // Начисляем бонус (и в личный, и в глобальный счет)
                 if (s.pr) {
-                    s.pr.transaction(p => {
-                        if (!p) p = { sc: 0 };
-                        p.sc = (p.sc || 0) + C.AD_BONUS;
-                        return p;
-                    }).then(() => {
-                        s.myScore += C.AD_BONUS;
-                        s.globalScore += C.AD_BONUS;
-                        
-                        // Отмечаем, что бонус получен
-                        stor.s('AD_CLAIMED', 'true');
-                        
-                        if (el.au) {
-                            el.au.textContent = `🎁 Бонус +${C.AD_BONUS} кликов получен!`;
-                            el.au.style.display = 'block';
-                            setTimeout(() => { el.au.style.display = 'none'; }, 5000);
-                        }
-                        
-                        closeAdModal();
-                        updateUI();
-                        
-                        // Скрываем бейдж
-                        if (el.adBadge) {
-                            el.adBadge.style.display = 'none';
-                        }
-                    });
+                    // Обновляем глобальный счет
+                    db.ref('globalCounter').transaction(v => (v || 0) + C.AD_BONUS)
+                        .then(() => {
+                            // Обновляем личный счет
+                            return s.pr.transaction(p => {
+                                if (!p) p = { sc: 0 };
+                                p.sc = (p.sc || 0) + C.AD_BONUS;
+                                return p;
+                            });
+                        })
+                        .then(() => {
+                            // Обновляем локальные данные
+                            s.myScore += C.AD_BONUS;
+                            s.globalScore += C.AD_BONUS;
+                            
+                            // Отмечаем, что бонус получен
+                            stor.s('AD_CLAIMED', 'true');
+                            
+                            if (el.au) {
+                                el.au.textContent = `🎁 Бонус +${C.AD_BONUS} кликов получен!`;
+                                el.au.style.display = 'block';
+                                setTimeout(() => { el.au.style.display = 'none'; }, 5000);
+                            }
+                            
+                            closeAdModal();
+                            updateUI();
+                            
+                            // Скрываем бейдж
+                            if (el.adBadge) {
+                                el.adBadge.style.display = 'none';
+                            }
+                        });
                 }
             };
 
@@ -2772,23 +2779,30 @@
                     localStorage.setItem('dailyQuests', JSON.stringify(quests));
                     
                     if (s.pr) {
-                        s.pr.transaction(p => {
-                            if (!p) p = { sc: 0 };
-                            p.sc = (p.sc || 0) + quest.reward;
-                            return p;
-                        }).then(() => {
-                            s.myScore += quest.reward;
-                            s.globalScore += quest.reward;
-                            
-                            if (el.au) {
-                                el.au.textContent = `✅ Задание выполнено! +${quest.reward} кликов`;
-                                el.au.style.display = 'block';
-                                setTimeout(() => { el.au.style.display = 'none'; }, 5000);
-                            }
-                            
-                            updateQuests();
-                            updateUI();
-                        });
+                        // Обновляем глобальный счет
+                        db.ref('globalCounter').transaction(v => (v || 0) + quest.reward)
+                            .then(() => {
+                                // Обновляем личный счет
+                                return s.pr.transaction(p => {
+                                    if (!p) p = { sc: 0 };
+                                    p.sc = (p.sc || 0) + quest.reward;
+                                    return p;
+                                });
+                            })
+                            .then(() => {
+                                // Обновляем локальные данные
+                                s.myScore += quest.reward;
+                                s.globalScore += quest.reward;
+                                
+                                if (el.au) {
+                                    el.au.textContent = `✅ Задание выполнено! +${quest.reward} кликов`;
+                                    el.au.style.display = 'block';
+                                    setTimeout(() => { el.au.style.display = 'none'; }, 5000);
+                                }
+                                
+                                updateQuests();
+                                updateUI();
+                            });
                     }
                 }
             };
@@ -3731,4 +3745,3 @@
     </script>
 </body>
 </html>
-
