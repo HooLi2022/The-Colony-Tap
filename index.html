@@ -2975,7 +2975,9 @@
                     durationSeconds: 0,
                     winner: null,
                     winnerData: null,
-                    participants: {}
+                    participants: {},
+                    // Флаг для отслеживания, был ли уже завершен этот конкурс
+                    ended: false
                 },
                 
                 // Данные для формы победителя
@@ -3284,10 +3286,18 @@
             
             function startContest(prize, durationMs) {
                 const now = Date.now();
+                
+                // Сбрасываем все данные конкурса перед запуском нового
                 s.contest.active = true;
                 s.contest.startTime = now;
                 s.contest.endTime = now + durationMs;
                 s.contest.prize = prize;
+                s.contest.winner = null;
+                s.contest.winnerData = null;
+                s.contest.ended = false;
+                
+                // Сбрасываем участников конкурса (они будут собираться заново)
+                s.contest.participants = {};
                 
                 const totalSeconds = Math.floor(durationMs / 1000);
                 const hours = Math.floor(totalSeconds / 3600);
@@ -3298,24 +3308,38 @@
                 s.contest.durationMinutes = minutes;
                 s.contest.durationSeconds = seconds;
                 
-                s.contest.winner = null;
-                s.contest.winnerData = null;
-                
-                db.ref('contest').set({
-                    active: true,
-                    startTime: now,
-                    endTime: now + durationMs,
-                    prize: prize,
-                    durationHours: hours,
-                    durationMinutes: minutes,
-                    durationSeconds: seconds
-                });
-                
-                updateContestUI();
+                // Полностью очищаем данные конкурса в Firebase
+                db.ref('contest').remove()
+                    .then(() => {
+                        // Создаем новый конкурс с нуля
+                        return db.ref('contest').set({
+                            active: true,
+                            startTime: now,
+                            endTime: now + durationMs,
+                            prize: prize,
+                            durationHours: hours,
+                            durationMinutes: minutes,
+                            durationSeconds: seconds,
+                            // Явно удаляем победителя и его данные
+                            winner: null,
+                            winnerData: null
+                        });
+                    })
+                    .then(() => {
+                        console.log('Новый конкурс запущен');
+                        updateContestUI();
+                    })
+                    .catch(error => {
+                        console.error('Ошибка при запуске конкурса:', error);
+                    });
             }
 
             function endContest() {
+                // Проверяем, не был ли уже завершен этот конкурс
+                if (s.contest.ended) return;
+                
                 s.contest.active = false;
+                s.contest.ended = true;
                 
                 const participants = [];
                 Object.entries(s.players).forEach(([id, data]) => {
@@ -3365,7 +3389,7 @@
                     const now = Date.now();
                     const timeLeft = Math.max(0, s.contest.endTime - now);
                     
-                    if (timeLeft <= 0 && s.contest.active) {
+                    if (timeLeft <= 0 && s.contest.active && !s.contest.ended) {
                         endContest();
                         return;
                     }
@@ -3382,6 +3406,7 @@
                         el.contestPrizeDisplay.textContent = s.contest.prize + '₽';
                     }
                     
+                    // Собираем участников конкурса (только для этого конкурса)
                     const participants = [];
                     
                     Object.entries(s.players).forEach(([id, data]) => {
@@ -4403,6 +4428,9 @@
                     s.contest.durationMinutes = contest.durationMinutes || 0;
                     s.contest.durationSeconds = contest.durationSeconds || 0;
                     
+                    // Сбрасываем флаг завершения при новом конкурсе
+                    s.contest.ended = !contest.active;
+                    
                     if (contest.winner) {
                         s.contest.winner = contest.winner;
                     }
@@ -4627,6 +4655,7 @@
                 startContest() {
                     if (!s.admin) return;
                     
+                    // Обновляем настройки перед запуском
                     updateContestSettings();
                     
                     const prize = s.contest.prize;
@@ -4644,6 +4673,7 @@
                         return;
                     }
                     
+                    // Сбрасываем все данные и запускаем новый конкурс
                     startContest(prize, durationMs);
                 },
                 
@@ -4655,17 +4685,27 @@
                 resetContest() {
                     if (!s.admin || !confirm('Сбросить данные конкурса?')) return;
                     
-                    db.ref('contest').remove();
-                    s.contest.active = false;
-                    s.contest.winner = null;
-                    s.contest.winnerData = null;
-                    
-                    if (el.contestHours) el.contestHours.value = 0;
-                    if (el.contestMinutes) el.contestMinutes.value = 1;
-                    if (el.contestSeconds) el.contestSeconds.value = 0;
-                    updateTotalContestTime();
-                    
-                    updateUI();
+                    // Полностью очищаем все данные конкурса
+                    db.ref('contest').remove()
+                        .then(() => {
+                            s.contest.active = false;
+                            s.contest.winner = null;
+                            s.contest.winnerData = null;
+                            s.contest.ended = false;
+                            
+                            // Сбрасываем на стандартные значения
+                            if (el.contestHours) el.contestHours.value = 0;
+                            if (el.contestMinutes) el.contestMinutes.value = 1;
+                            if (el.contestSeconds) el.contestSeconds.value = 0;
+                            updateTotalContestTime();
+                            
+                            // Скрываем форму победителя, если она была открыта
+                            if (el.winnerForm) {
+                                el.winnerForm.classList.remove('show');
+                            }
+                            
+                            updateUI();
+                        });
                 },
                 
                 payWinner() {
