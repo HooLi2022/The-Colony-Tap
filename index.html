@@ -589,6 +589,12 @@
             100% { transform: translateX(100%); }
         }
 
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
         .contest-leader {
             background: rgba(255,215,0,0.1);
             border: 2px solid #ffd700;
@@ -1385,6 +1391,104 @@
             background: rgba(76,175,80,0.4);
         }
 
+        /* Новые стили для управления временем конкурса */
+        .contest-time-settings {
+            background: rgba(255,215,0,0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .time-input-group {
+            margin-bottom: 15px;
+        }
+
+        .time-input-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #ffd700;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .time-input-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .time-input-field {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(0,0,0,0.3);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #ffd700;
+        }
+
+        .time-input-field input {
+            width: 60px;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .time-input-field input:focus {
+            outline: none;
+            border: 1px solid #4CAF50;
+        }
+
+        .time-input-field span {
+            color: #ffd700;
+            font-size: 1rem;
+        }
+
+        .time-presets {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .time-preset-btn {
+            background: rgba(255,215,0,0.2);
+            border: 1px solid #ffd700;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.2s;
+        }
+
+        .time-preset-btn:hover {
+            background: rgba(255,215,0,0.4);
+            transform: scale(1.05);
+        }
+
+        .total-time-display {
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(255,215,0,0.2);
+            border-radius: 8px;
+            font-size: 1.2rem;
+        }
+
+        .total-time-value {
+            color: #ffd700;
+            font-weight: bold;
+            font-family: monospace;
+            font-size: 1.5rem;
+        }
+
         .admin-contest-settings {
             background: rgba(255,215,0,0.1);
             border-radius: 12px;
@@ -1532,12 +1636,6 @@
             animation: pulse 1s infinite;
             display: none;
             text-align: center;
-        }
-
-        @keyframes pulse {
-            0% { transform: translate(-50%, -50%) scale(1); }
-            50% { transform: translate(-50%, -50%) scale(1.1); }
-            100% { transform: translate(-50%, -50%) scale(1); }
         }
 
         .achievement-unlock {
@@ -1911,9 +2009,50 @@
             </p>
         </div>
         
-        <!-- Управление конкурсом -->
+        <!-- Управление конкурсом с точной настройкой времени -->
         <div class="admin-section">
             <h3>🏆 Управление конкурсом</h3>
+            
+            <!-- Новый блок для настройки времени с точностью до минут и секунд -->
+            <div class="contest-time-settings">
+                <div class="time-input-label">
+                    <span>⏱️ Настройка времени конкурса</span>
+                </div>
+                
+                <div class="time-input-row">
+                    <div class="time-input-field">
+                        <input type="number" id="contestHours" min="0" max="168" value="24" step="1" onchange="updateTotalContestTime()">
+                        <span>ч</span>
+                    </div>
+                    <div class="time-input-field">
+                        <input type="number" id="contestMinutes" min="0" max="59" value="0" step="1" onchange="updateTotalContestTime()">
+                        <span>м</span>
+                    </div>
+                    <div class="time-input-field">
+                        <input type="number" id="contestSeconds" min="0" max="59" value="0" step="1" onchange="updateTotalContestTime()">
+                        <span>с</span>
+                    </div>
+                </div>
+                
+                <div class="time-presets">
+                    <button class="time-preset-btn" onclick="setContestTimePreset(0, 1, 0)">1 минута</button>
+                    <button class="time-preset-btn" onclick="setContestTimePreset(0, 5, 0)">5 минут</button>
+                    <button class="time-preset-btn" onclick="setContestTimePreset(0, 15, 0)">15 минут</button>
+                    <button class="time-preset-btn" onclick="setContestTimePreset(0, 30, 0)">30 минут</button>
+                    <button class="time-preset-btn" onclick="setContestTimePreset(1, 0, 0)">1 час</button>
+                    <button class="time-preset-btn" onclick="setContestTimePreset(3, 0, 0)">3 часа</button>
+                    <button class="time-preset-btn" onclick="setContestTimePreset(6, 0, 0)">6 часов</button>
+                    <button class="time-preset-btn" onclick="setContestTimePreset(12, 0, 0)">12 часов</button>
+                    <button class="time-preset-btn" onclick="setContestTimePreset(24, 0, 0)">24 часа</button>
+                    <button class="time-preset-btn" onclick="setContestTimePreset(48, 0, 0)">48 часов</button>
+                </div>
+                
+                <div class="total-time-display">
+                    <span>Всего времени: </span>
+                    <span class="total-time-value" id="totalTimeDisplay">24ч 0м 0с</span>
+                </div>
+            </div>
+            
             <div class="admin-actions">
                 <button class="admin-action-btn success" onclick="admin.startContest()">▶️ Запустить конкурс</button>
                 <button class="admin-action-btn danger" onclick="admin.endContest()">⏹️ Завершить конкурс</button>
@@ -1925,10 +2064,6 @@
                 <div class="admin-contest-row">
                     <span>🎁 Призовой фонд:</span>
                     <input type="number" id="contestPrize" class="admin-contest-input" value="1000" min="100" step="100" onchange="updateContestSettings()">
-                </div>
-                <div class="admin-contest-row">
-                    <span>⏱️ Длительность (часы):</span>
-                    <input type="number" id="contestDuration" class="admin-contest-input" value="24" min="1" max="168" onchange="updateContestSettings()">
                 </div>
                 <div class="admin-contest-row">
                     <span>👑 Текущий лидер:</span>
@@ -2510,6 +2645,12 @@
                 adBadge: getEl('adBadge'),
                 adCountdown: getEl('adCountdown'),
                 
+                // Новые элементы для настройки времени
+                contestHours: getEl('contestHours'),
+                contestMinutes: getEl('contestMinutes'),
+                contestSeconds: getEl('contestSeconds'),
+                totalTimeDisplay: getEl('totalTimeDisplay'),
+                
                 // Элементы конкурса
                 contestSection: getEl('contestSection'),
                 contestTimer: getEl('contestTimer'),
@@ -2528,7 +2669,6 @@
                 
                 // Элементы админки для конкурса
                 contestPrize: getEl('contestPrize'),
-                contestDuration: getEl('contestDuration'),
                 contestLeader: getEl('contestLeader'),
                 contestParticipants: getEl('contestParticipants'),
                 contestTimeLeft: getEl('contestTimeLeft'),
@@ -2576,13 +2716,16 @@
                 adTimer: null,
                 adTimeLeft: 0,
                 
-                // Данные конкурса
+                // Данные конкурса с настраиваемым временем
                 contest: {
                     active: false,
                     startTime: 0,
                     endTime: 0,
                     prize: 1000,
-                    duration: 24,
+                    duration: 24, // в часах для обратной совместимости
+                    durationHours: 24,
+                    durationMinutes: 0,
+                    durationSeconds: 0,
                     winner: null,
                     winnerData: null,
                     participants: {}
@@ -2595,6 +2738,53 @@
                 s: (k, v) => { try { localStorage.setItem(C.STORAGE[k], v); } catch {} },
                 r: (k) => { try { localStorage.removeItem(C.STORAGE[k]); } catch {} }
             };
+
+            // ===== НОВЫЕ ФУНКЦИИ ДЛЯ УПРАВЛЕНИЯ ВРЕМЕНЕМ КОНКУРСА =====
+            
+            // Обновление отображения общего времени
+            window.updateTotalContestTime = function() {
+                if (!el.contestHours || !el.contestMinutes || !el.contestSeconds) return;
+                
+                const hours = parseInt(el.contestHours.value) || 0;
+                const minutes = parseInt(el.contestMinutes.value) || 0;
+                const seconds = parseInt(el.contestSeconds.value) || 0;
+                
+                // Проверка на максимальные значения
+                if (minutes > 59) el.contestMinutes.value = 59;
+                if (seconds > 59) el.contestSeconds.value = 59;
+                
+                if (el.totalTimeDisplay) {
+                    el.totalTimeDisplay.textContent = `${hours}ч ${minutes}м ${seconds}с`;
+                }
+                
+                // Сохраняем в состояние
+                s.contest.durationHours = hours;
+                s.contest.durationMinutes = minutes;
+                s.contest.durationSeconds = seconds;
+                
+                // Обновляем общую длительность в часах (для обратной совместимости)
+                s.contest.duration = hours + minutes / 60 + seconds / 3600;
+            };
+
+            // Установка предустановленного времени
+            window.setContestTimePreset = function(hours, minutes, seconds) {
+                if (!el.contestHours || !el.contestMinutes || !el.contestSeconds) return;
+                
+                el.contestHours.value = hours;
+                el.contestMinutes.value = minutes;
+                el.contestSeconds.value = seconds;
+                
+                updateTotalContestTime();
+            };
+
+            // Получение длительности в миллисекундах
+            function getContestDurationMs() {
+                const hours = parseInt(el.contestHours?.value) || 0;
+                const minutes = parseInt(el.contestMinutes?.value) || 0;
+                const seconds = parseInt(el.contestSeconds?.value) || 0;
+                
+                return (hours * 3600000) + (minutes * 60000) + (seconds * 1000);
+            }
 
             // ===== ФУНКЦИИ ДЛЯ РЕКЛАМНОГО ОКНА =====
             window.showAdModal = function() {
@@ -2773,22 +2963,31 @@
                 }
             }
 
-            function startContest(prize, duration) {
+            function startContest(prize, durationMs) {
                 const now = Date.now();
                 s.contest.active = true;
                 s.contest.startTime = now;
-                s.contest.endTime = now + (duration * 3600000);
+                s.contest.endTime = now + durationMs;
                 s.contest.prize = prize;
-                s.contest.duration = duration;
+                
+                // Обновляем длительность в разных форматах
+                const totalSeconds = Math.floor(durationMs / 1000);
+                s.contest.durationHours = Math.floor(totalSeconds / 3600);
+                s.contest.durationMinutes = Math.floor((totalSeconds % 3600) / 60);
+                s.contest.durationSeconds = totalSeconds % 60;
+                s.contest.duration = s.contest.durationHours + s.contest.durationMinutes / 60 + s.contest.durationSeconds / 3600;
+                
                 s.contest.winner = null;
                 s.contest.winnerData = null;
                 
                 db.ref('contest').set({
                     active: true,
                     startTime: now,
-                    endTime: now + (duration * 3600000),
+                    endTime: now + durationMs,
                     prize: prize,
-                    duration: duration
+                    durationHours: s.contest.durationHours,
+                    durationMinutes: s.contest.durationMinutes,
+                    durationSeconds: s.contest.durationSeconds
                 });
                 
                 updateContestUI();
@@ -2859,19 +3058,20 @@
                 if (!s.admin) return;
                 
                 const prizeInput = document.getElementById('contestPrize');
-                const durationInput = document.getElementById('contestDuration');
                 
                 if (prizeInput) {
                     s.contest.prize = parseInt(prizeInput.value) || 1000;
                 }
-                if (durationInput) {
-                    s.contest.duration = parseInt(durationInput.value) || 24;
-                }
+                
+                // Обновляем время из полей ввода
+                updateTotalContestTime();
                 
                 if (!s.contest.active) {
                     db.ref('contest/settings').set({
                         prize: s.contest.prize,
-                        duration: s.contest.duration
+                        durationHours: s.contest.durationHours,
+                        durationMinutes: s.contest.durationMinutes,
+                        durationSeconds: s.contest.durationSeconds
                     });
                 }
                 
@@ -2955,7 +3155,20 @@
                     
                     // Обновляем админские данные конкурса
                     if (el.contestPrize) el.contestPrize.value = s.contest.prize;
-                    if (el.contestDuration) el.contestDuration.value = s.contest.duration;
+                    
+                    // Обновляем поля времени, если конкурс активен
+                    if (s.contest.active && el.contestHours && el.contestMinutes && el.contestSeconds) {
+                        const timeLeft = Math.max(0, s.contest.endTime - Date.now());
+                        const hoursLeft = Math.floor(timeLeft / 3600000);
+                        const minutesLeft = Math.floor((timeLeft % 3600000) / 60000);
+                        const secondsLeft = Math.floor((timeLeft % 60000) / 1000);
+                        
+                        el.contestHours.value = hoursLeft;
+                        el.contestMinutes.value = minutesLeft;
+                        el.contestSeconds.value = secondsLeft;
+                        updateTotalContestTime();
+                    }
+                    
                     if (el.contestStatus) el.contestStatus.textContent = s.contest.active ? 'Активен' : 'Не активен';
                     if (el.contestStatus) el.contestStatus.style.color = s.contest.active ? '#4CAF50' : '#ff4444';
                     
@@ -3827,13 +4040,38 @@
                     s.contest.startTime = contest.startTime || 0;
                     s.contest.endTime = contest.endTime || 0;
                     s.contest.prize = contest.prize || 1000;
-                    s.contest.duration = contest.duration || 24;
+                    
+                    // Загружаем данные о длительности в разных форматах
+                    s.contest.durationHours = contest.durationHours || 24;
+                    s.contest.durationMinutes = contest.durationMinutes || 0;
+                    s.contest.durationSeconds = contest.durationSeconds || 0;
+                    
                     if (contest.winner) {
                         s.contest.winner = contest.winner;
                     }
                     if (contest.winner?.data) {
                         s.contest.winnerData = contest.winner.data;
                     }
+                    
+                    // Обновляем поля в админке, если они есть
+                    if (s.admin && el.contestHours && el.contestMinutes && el.contestSeconds) {
+                        if (s.contest.active) {
+                            const timeLeft = Math.max(0, s.contest.endTime - Date.now());
+                            const hoursLeft = Math.floor(timeLeft / 3600000);
+                            const minutesLeft = Math.floor((timeLeft % 3600000) / 60000);
+                            const secondsLeft = Math.floor((timeLeft % 60000) / 1000);
+                            
+                            el.contestHours.value = hoursLeft;
+                            el.contestMinutes.value = minutesLeft;
+                            el.contestSeconds.value = secondsLeft;
+                        } else {
+                            el.contestHours.value = s.contest.durationHours;
+                            el.contestMinutes.value = s.contest.durationMinutes;
+                            el.contestSeconds.value = s.contest.durationSeconds;
+                        }
+                        updateTotalContestTime();
+                    }
+                    
                     updateUI();
                 }
             });
@@ -3843,7 +4081,18 @@
                 const settings = snap.val();
                 if (settings && !s.contest.active) {
                     s.contest.prize = settings.prize || 1000;
-                    s.contest.duration = settings.duration || 24;
+                    s.contest.durationHours = settings.durationHours || 24;
+                    s.contest.durationMinutes = settings.durationMinutes || 0;
+                    s.contest.durationSeconds = settings.durationSeconds || 0;
+                    
+                    // Обновляем поля в админке
+                    if (s.admin && el.contestHours && el.contestMinutes && el.contestSeconds) {
+                        el.contestHours.value = s.contest.durationHours;
+                        el.contestMinutes.value = s.contest.durationMinutes;
+                        el.contestSeconds.value = s.contest.durationSeconds;
+                        updateTotalContestTime();
+                    }
+                    
                     updateUI();
                 }
             });
@@ -3861,6 +4110,25 @@
                     if (el.adminPanel && el.bd) {
                         el.adminPanel.classList.add('show');
                         el.bd.classList.add('show');
+                        
+                        // Обновляем поля времени при открытии
+                        if (el.contestHours && el.contestMinutes && el.contestSeconds) {
+                            if (s.contest.active) {
+                                const timeLeft = Math.max(0, s.contest.endTime - Date.now());
+                                const hoursLeft = Math.floor(timeLeft / 3600000);
+                                const minutesLeft = Math.floor((timeLeft % 3600000) / 60000);
+                                const secondsLeft = Math.floor((timeLeft % 60000) / 1000);
+                                
+                                el.contestHours.value = hoursLeft;
+                                el.contestMinutes.value = minutesLeft;
+                                el.contestSeconds.value = secondsLeft;
+                            } else {
+                                el.contestHours.value = s.contest.durationHours;
+                                el.contestMinutes.value = s.contest.durationMinutes;
+                                el.contestSeconds.value = s.contest.durationSeconds;
+                            }
+                            updateTotalContestTime();
+                        }
                     }
                     this.updatePlayerList();
                     
@@ -3994,16 +4262,23 @@
                     alert('💰 В текущей версии цены фиксированные: 1 клик = 1 рубль');
                 },
                 
-                // Функции для конкурса
+                // Функции для конкурса с поддержкой минут и секунд
                 startContest() {
                     if (!s.admin) return;
                     
+                    // Обновляем настройки перед запуском
                     updateContestSettings();
                     
                     const prize = s.contest.prize;
-                    const duration = s.contest.duration;
+                    const durationMs = getContestDurationMs();
                     
-                    startContest(prize, duration);
+                    if (durationMs < 60000) { // Меньше минуты
+                        if (!confirm('Внимание! Длительность конкурса меньше минуты. Продолжить?')) {
+                            return;
+                        }
+                    }
+                    
+                    startContest(prize, durationMs);
                 },
                 
                 endContest() {
@@ -4018,6 +4293,13 @@
                     s.contest.active = false;
                     s.contest.winner = null;
                     s.contest.winnerData = null;
+                    
+                    // Сбрасываем на стандартные значения
+                    if (el.contestHours) el.contestHours.value = 24;
+                    if (el.contestMinutes) el.contestMinutes.value = 0;
+                    if (el.contestSeconds) el.contestSeconds.value = 0;
+                    updateTotalContestTime();
+                    
                     updateUI();
                 },
                 
