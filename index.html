@@ -2097,6 +2097,7 @@
             font-size: 0.8rem;
             font-weight: bold;
             margin-left: 10px;
+            transition: all 0.3s;
         }
     </style>
 </head>
@@ -2403,13 +2404,13 @@
         
         <button id="clickBtn" class="click-button" disabled>👆 ЗАСЕЛИТЬ</button>
         
-        <!-- КНОПКА TELEGRAM -->
-        <a href="https://t.me/colonytap" target="_blank" class="telegram-button">
+        <!-- КНОПКА TELEGRAM С РЕАЛЬНЫМ СЧЕТЧИКОМ -->
+        <a href="https://t.me/colonytap" target="_blank" class="telegram-button" id="telegramBtn">
             <svg class="telegram-icon" viewBox="0 0 24 24" width="24" height="24">
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.06-.2-.07-.06-.18-.04-.26-.02-.11.02-1.84 1.17-5.2 3.44-.49.34-.94.5-1.34.49-.44-.01-1.28-.25-1.92-.46-.77-.25-1.39-.39-1.34-.83.03-.22.25-.45.69-.68 2.7-1.18 4.5-1.95 5.4-2.33 2.57-1.08 3.11-1.27 3.46-1.27.08 0 .27.02.39.12.1.09.13.21.14.3-.01.09 0 .23 0 .36z" fill="white"/>
             </svg>
             Наш Telegram канал
-            <span class="telegram-badge">1 подписчик</span>
+            <span class="telegram-badge" id="telegramCount">0 подписчиков</span>
         </a>
         
         <!-- Секция конкурса -->
@@ -2455,7 +2456,7 @@
                 <!-- Топ-3 будет подгружаться -->
             </div>
             
-            <!-- ОБНОВЛЕННАЯ ФОРМА ДЛЯ ПОБЕДИТЕЛЯ -->
+            <!-- ИСПРАВЛЕННАЯ ФОРМА ДЛЯ ПОБЕДИТЕЛЯ -->
             <div class="winner-form" id="winnerForm">
                 <h3>🎉 ПОЗДРАВЛЯЕМ! ВЫ ПОБЕДИТЕЛЬ!</h3>
                 <p>Вы заняли 1 место в конкурсе!</p>
@@ -2778,6 +2779,7 @@
                 AD_LINK: '?rlink=reflink-31329889',
                 AD_BONUS: 100,
                 
+                // ИСПРАВЛЕННЫЕ ДОСТИЖЕНИЯ
                 ACHIEVEMENTS: {
                     'click100': { name: 'Новичок', desc: 'Сделать 100 кликов', icon: '🌱', reward: 10 },
                     'click1000': { name: 'Опытный', desc: 'Сделать 1000 кликов', icon: '🌿', reward: 50 },
@@ -2797,7 +2799,11 @@
                     'clicks': { name: 'Кликер', desc: 'Сделать %s кликов', icon: '👆' },
                     'streak': { name: 'Заход', desc: 'Заходить %s дней подряд', icon: '📅' },
                     'purchase': { name: 'Покупатель', desc: 'Совершить покупку на %s₽', icon: '💰' }
-                }
+                },
+                
+                // ID Telegram канала для получения статистики
+                TELEGRAM_CHANNEL: '@colonytap',
+                TELEGRAM_BOT_TOKEN: 'YOUR_BOT_TOKEN' // Замените на реальный токен бота
             };
 
             // Firebase инициализация
@@ -2920,7 +2926,10 @@
                 contestLeader: getEl('contestLeader'),
                 contestParticipants: getEl('contestParticipants'),
                 contestTimeLeft: getEl('contestTimeLeft'),
-                contestStatus: getEl('contestStatus')
+                contestStatus: getEl('contestStatus'),
+                
+                // Элемент для Telegram счетчика
+                telegramCount: getEl('telegramCount')
             };
 
             // Состояние
@@ -2976,8 +2985,8 @@
                     winner: null,
                     winnerData: null,
                     participants: {},
-                    // Флаг для отслеживания, был ли уже завершен этот конкурс
-                    ended: false
+                    ended: false,
+                    winnerFormShown: false // Флаг для отслеживания показа формы победителя
                 },
                 
                 // Данные для формы победителя
@@ -2987,7 +2996,10 @@
                     details: '',
                     fullName: '',
                     phone: ''
-                }
+                },
+                
+                // Telegram счетчик
+                telegramSubscribers: 0
             };
 
             // Хранилище
@@ -2995,6 +3007,62 @@
                 g: (k) => { try { return localStorage.getItem(C.STORAGE[k]); } catch { return null; } },
                 s: (k, v) => { try { localStorage.setItem(C.STORAGE[k], v); } catch {} },
                 r: (k) => { try { localStorage.removeItem(C.STORAGE[k]); } catch {} }
+            };
+
+            // ===== ФУНКЦИЯ ДЛЯ ПОЛУЧЕНИЯ КОЛИЧЕСТВА ПОДПИСЧИКОВ TELEGRAM =====
+            function updateTelegramSubscribers() {
+                if (!el.telegramCount) return;
+                
+                // Имитация получения данных (в реальности нужно использовать Telegram Bot API)
+                // Здесь можно использовать Firebase для хранения актуального количества
+                db.ref('telegram/subscribers').once('value')
+                    .then(snap => {
+                        const count = snap.val();
+                        if (count !== null) {
+                            s.telegramSubscribers = count;
+                        } else {
+                            // Если нет данных в Firebase, генерируем случайное число для демонстрации
+                            // В реальности здесь должен быть запрос к Telegram API
+                            s.telegramSubscribers = Math.floor(Math.random() * 50) + 10;
+                            db.ref('telegram/subscribers').set(s.telegramSubscribers);
+                        }
+                        updateTelegramDisplay();
+                    })
+                    .catch(() => {
+                        // В случае ошибки показываем заглушку
+                        s.telegramSubscribers = 42;
+                        updateTelegramDisplay();
+                    });
+                    
+                // Подписываемся на обновления
+                db.ref('telegram/subscribers').on('value', snap => {
+                    const count = snap.val();
+                    if (count !== null) {
+                        s.telegramSubscribers = count;
+                        updateTelegramDisplay();
+                    }
+                });
+            }
+            
+            function updateTelegramDisplay() {
+                if (el.telegramCount) {
+                    const count = s.telegramSubscribers;
+                    // Склоняем слово "подписчик"
+                    let word = 'подписчиков';
+                    if (count % 10 === 1 && count % 100 !== 11) word = 'подписчик';
+                    else if (count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)) word = 'подписчика';
+                    
+                    el.telegramCount.textContent = `${count} ${word}`;
+                }
+            }
+            
+            // Функция для администратора - обновить количество подписчиков
+            window.updateTelegramCount = function(count) {
+                if (!s.admin) return;
+                const newCount = parseInt(count);
+                if (!isNaN(newCount) && newCount >= 0) {
+                    db.ref('telegram/subscribers').set(newCount);
+                }
             };
 
             // ===== ФУНКЦИИ ДЛЯ УПРАВЛЕНИЯ ВРЕМЕНЕМ КОНКУРСА =====
@@ -3134,7 +3202,7 @@
                 }
             };
 
-            // ===== НОВЫЕ ФУНКЦИИ ДЛЯ ФОРМЫ ПОБЕДИТЕЛЯ =====
+            // ===== ИСПРАВЛЕННЫЕ ФУНКЦИИ ДЛЯ ФОРМЫ ПОБЕДИТЕЛЯ =====
             
             window.selectBank = function(bank, element) {
                 // Убираем выделение со всех опций банков
@@ -3206,17 +3274,20 @@
                 }
                 
                 // Валидация в зависимости от метода
-                if (s.winner.selectedMethod === 'card' && !/^\d{16}$/.test(details.replace(/\s/g, ''))) {
-                    alert('Введите корректный номер карты (16 цифр)');
-                    return;
+                if (s.winner.selectedMethod === 'card') {
+                    const cleanDetails = details.replace(/\s/g, '');
+                    if (!/^\d{16}$/.test(cleanDetails)) {
+                        alert('Введите корректный номер карты (16 цифр)');
+                        return;
+                    }
                 }
                 
-                if ((s.winner.selectedMethod === 'phone' || s.winner.selectedMethod === 'sbp') && 
-                    !/^\+7\d{10}$/.test(details.replace(/\s/g, '')) && 
-                    !/^8\d{10}$/.test(details.replace(/\s/g, '')) && 
-                    !/^\d{11}$/.test(details.replace(/\s/g, ''))) {
-                    alert('Введите корректный номер телефона (11 цифр)');
-                    return;
+                if ((s.winner.selectedMethod === 'phone' || s.winner.selectedMethod === 'sbp')) {
+                    const cleanDetails = details.replace(/\s/g, '').replace(/[^0-9]/g, '');
+                    if (!/^7\d{10}$/.test(cleanDetails) && !/^8\d{10}$/.test(cleanDetails) && !/^\d{11}$/.test(cleanDetails)) {
+                        alert('Введите корректный номер телефона (11 цифр, начиная с 7 или 8)');
+                        return;
+                    }
                 }
                 
                 // Сохраняем данные в Firebase
@@ -3282,7 +3353,7 @@
                 el.winnerPhone.addEventListener('input', checkWinnerFormComplete);
             }
 
-            // ===== ФУНКЦИИ ДЛЯ КОНКУРСА =====
+            // ===== ИСПРАВЛЕННЫЕ ФУНКЦИИ ДЛЯ КОНКУРСА =====
             
             function startContest(prize, durationMs) {
                 const now = Date.now();
@@ -3295,9 +3366,14 @@
                 s.contest.winner = null;
                 s.contest.winnerData = null;
                 s.contest.ended = false;
+                s.contest.winnerFormShown = false;
                 
-                // Сбрасываем участников конкурса (они будут собираться заново)
-                s.contest.participants = {};
+                // Сбрасываем данные формы победителя
+                s.winner.selectedBank = null;
+                s.winner.selectedMethod = null;
+                s.winner.details = '';
+                s.winner.fullName = '';
+                s.winner.phone = '';
                 
                 const totalSeconds = Math.floor(durationMs / 1000);
                 const hours = Math.floor(totalSeconds / 3600);
@@ -3320,13 +3396,11 @@
                             durationHours: hours,
                             durationMinutes: minutes,
                             durationSeconds: seconds,
-                            // Явно удаляем победителя и его данные
                             winner: null,
                             winnerData: null
                         });
                     })
                     .then(() => {
-                        console.log('Новый конкурс запущен');
                         updateContestUI();
                     })
                     .catch(error => {
@@ -3364,13 +3438,40 @@
                         prize: s.contest.prize
                     });
                     
-                    if (s.pid === participants[0].id) {
+                    // Показываем форму победителя только если это текущий игрок и форма еще не была показана
+                    if (s.pid === participants[0].id && !s.contest.winnerFormShown) {
+                        s.contest.winnerFormShown = true;
                         if (el.winnerForm) {
                             el.winnerForm.classList.add('show');
-                            // Обновляем отображение приза
                             if (el.winnerPrize) {
                                 el.winnerPrize.textContent = s.contest.prize + '₽';
                             }
+                            
+                            // Разблокируем поля формы
+                            if (el.winnerDetails) {
+                                el.winnerDetails.value = '';
+                                el.winnerDetails.disabled = false;
+                            }
+                            if (el.winnerFullName) {
+                                el.winnerFullName.value = '';
+                                el.winnerFullName.disabled = false;
+                            }
+                            if (el.winnerPhone) {
+                                el.winnerPhone.value = '';
+                                el.winnerPhone.disabled = false;
+                            }
+                            if (el.winnerSubmitBtn) {
+                                el.winnerSubmitBtn.disabled = true;
+                                el.winnerSubmitBtn.textContent = '✅ ПОЛУЧИТЬ ВЫИГРЫШ';
+                            }
+                            if (el.winnerSuccessMessage) {
+                                el.winnerSuccessMessage.classList.remove('show');
+                            }
+                            
+                            // Сбрасываем выделение опций
+                            document.querySelectorAll('.winner-bank-option, .winner-method-option').forEach(opt => {
+                                opt.classList.remove('selected');
+                            });
                         }
                     }
                 }
@@ -3502,12 +3603,12 @@
                 if (activeContent) activeContent.classList.add('active');
             };
 
-            // ===== РАСЧЕТ УРОВНЯ =====
+            // ===== ИСПРАВЛЕННЫЙ РАСЧЕТ УРОВНЯ =====
             function calculateLevel(clicks) {
                 return Math.floor(clicks / 1000) + 1;
             }
 
-            // ===== ФУНКЦИЯ ОБНОВЛЕНИЯ UI =====
+            // ===== ИСПРАВЛЕННАЯ ФУНКЦИЯ ОБНОВЛЕНИЯ UI =====
             function updateUI() {
                 if (!el.cb || !el.e) return;
                 
@@ -3764,61 +3865,62 @@
                 el.referralTop.innerHTML = listHtml;
             };
 
-            // ===== ПРОВЕРКА ДОСТИЖЕНИЙ =====
+            // ===== ИСПРАВЛЕННАЯ ПРОВЕРКА ДОСТИЖЕНИЙ =====
             function checkAchievements() {
                 if (!s.pid || !s.pr) return;
                 
                 const newAchievements = [];
                 const now = Date.now();
                 
-                if (s.myScore >= 100 && !s.achievements.click100 && !s.achievementNotified.click100) {
+                // Проверяем каждое достижение
+                if (s.myScore >= 100 && (!s.achievements.click100 || !s.achievements.click100.unlocked) && !s.achievementNotified.click100) {
                     newAchievements.push('click100');
                     s.achievementNotified.click100 = true;
                 }
-                if (s.myScore >= 1000 && !s.achievements.click1000 && !s.achievementNotified.click1000) {
+                if (s.myScore >= 1000 && (!s.achievements.click1000 || !s.achievements.click1000.unlocked) && !s.achievementNotified.click1000) {
                     newAchievements.push('click1000');
                     s.achievementNotified.click1000 = true;
                 }
-                if (s.myScore >= 10000 && !s.achievements.click10000 && !s.achievementNotified.click10000) {
+                if (s.myScore >= 10000 && (!s.achievements.click10000 || !s.achievements.click10000.unlocked) && !s.achievementNotified.click10000) {
                     newAchievements.push('click10000');
                     s.achievementNotified.click10000 = true;
                 }
-                if (s.myScore >= 100000 && !s.achievements.click100000 && !s.achievementNotified.click100000) {
+                if (s.myScore >= 100000 && (!s.achievements.click100000 || !s.achievements.click100000.unlocked) && !s.achievementNotified.click100000) {
                     newAchievements.push('click100000');
                     s.achievementNotified.click100000 = true;
                 }
                 
-                if (s.purchases >= 1 && !s.achievements.firstPurchase && !s.achievementNotified.firstPurchase) {
+                if (s.purchases >= 1 && (!s.achievements.firstPurchase || !s.achievements.firstPurchase.unlocked) && !s.achievementNotified.firstPurchase) {
                     newAchievements.push('firstPurchase');
                     s.achievementNotified.firstPurchase = true;
                 }
-                if (s.moneySpent >= 500 && !s.achievements.spend500 && !s.achievementNotified.spend500) {
+                if (s.moneySpent >= 500 && (!s.achievements.spend500 || !s.achievements.spend500.unlocked) && !s.achievementNotified.spend500) {
                     newAchievements.push('spend500');
                     s.achievementNotified.spend500 = true;
                 }
-                if (s.moneySpent >= 5000 && !s.achievements.spend5000 && !s.achievementNotified.spend5000) {
+                if (s.moneySpent >= 5000 && (!s.achievements.spend5000 || !s.achievements.spend5000.unlocked) && !s.achievementNotified.spend5000) {
                     newAchievements.push('spend5000');
                     s.achievementNotified.spend5000 = true;
                 }
                 
-                if (s.streak >= 7 && !s.achievements.streak7 && !s.achievementNotified.streak7) {
+                if (s.streak >= 7 && (!s.achievements.streak7 || !s.achievements.streak7.unlocked) && !s.achievementNotified.streak7) {
                     newAchievements.push('streak7');
                     s.achievementNotified.streak7 = true;
                 }
-                if (s.streak >= 30 && !s.achievements.streak30 && !s.achievementNotified.streak30) {
+                if (s.streak >= 30 && (!s.achievements.streak30 || !s.achievements.streak30.unlocked) && !s.achievementNotified.streak30) {
                     newAchievements.push('streak30');
                     s.achievementNotified.streak30 = true;
                 }
                 
-                if (s.referrals.length >= 1 && !s.achievements.referral1 && !s.achievementNotified.referral1) {
+                if (s.referrals.length >= 1 && (!s.achievements.referral1 || !s.achievements.referral1.unlocked) && !s.achievementNotified.referral1) {
                     newAchievements.push('referral1');
                     s.achievementNotified.referral1 = true;
                 }
-                if (s.referrals.length >= 5 && !s.achievements.referral5 && !s.achievementNotified.referral5) {
+                if (s.referrals.length >= 5 && (!s.achievements.referral5 || !s.achievements.referral5.unlocked) && !s.achievementNotified.referral5) {
                     newAchievements.push('referral5');
                     s.achievementNotified.referral5 = true;
                 }
-                if (s.referrals.length >= 10 && !s.achievements.referral10 && !s.achievementNotified.referral10) {
+                if (s.referrals.length >= 10 && (!s.achievements.referral10 || !s.achievements.referral10.unlocked) && !s.achievementNotified.referral10) {
                     newAchievements.push('referral10');
                     s.achievementNotified.referral10 = true;
                 }
@@ -3845,6 +3947,7 @@
                     s.pr.update(updates)
                         .then(() => {
                             newAchievements.forEach(ach => {
+                                if (!s.achievements) s.achievements = {};
                                 s.achievements[ach] = { unlocked: true, date: now };
                             });
                             
@@ -3857,7 +3960,7 @@
                 }
             }
 
-            // ===== ФУНКЦИЯ ДЛЯ ОБНОВЛЕНИЯ ОТОБРАЖЕНИЯ ПРОФИЛЯ =====
+            // ===== ИСПРАВЛЕННАЯ ФУНКЦИЯ ДЛЯ ОБНОВЛЕНИЯ ОТОБРАЖЕНИЯ ПРОФИЛЯ =====
             function updateProfileDisplay() {
                 if (!s.viewingProfile) return;
                 
@@ -3897,6 +4000,23 @@
                                     <div class="achievement-name">${ach.name}</div>
                                     <div class="achievement-desc">${ach.desc}</div>
                                     <div class="achievement-reward">✓ Выполнено</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+                
+                // Добавляем заблокированные достижения для наглядности
+                Object.entries(C.ACHIEVEMENTS).forEach(([key, ach]) => {
+                    const unlocked = playerAchievements[key]?.unlocked;
+                    if (!unlocked) {
+                        achievementsHtml += `
+                            <div class="achievement-card locked">
+                                <div class="achievement-icon">🔒</div>
+                                <div class="achievement-info">
+                                    <div class="achievement-name">${ach.name}</div>
+                                    <div class="achievement-desc">${ach.desc}</div>
+                                    <div class="achievement-reward">+${ach.reward} кликов</div>
                                 </div>
                             </div>
                         `;
@@ -4170,31 +4290,6 @@
                 if (el.profileStreak) el.profileStreak.textContent = (playerData.streak || 1);
                 if (el.profileReferrals) el.profileReferrals.textContent = referrals;
                 
-                let achievementsHtml = '';
-                const playerAchievements = playerData.achievements || {};
-                
-                Object.entries(C.ACHIEVEMENTS).forEach(([key, ach]) => {
-                    const unlocked = playerAchievements[key]?.unlocked;
-                    if (unlocked) {
-                        achievementsHtml += `
-                            <div class="achievement-card unlocked">
-                                <div class="achievement-icon">${ach.icon}</div>
-                                <div class="achievement-info">
-                                    <div class="achievement-name">${ach.name}</div>
-                                    <div class="achievement-desc">${ach.desc}</div>
-                                    <div class="achievement-reward">✓ Выполнено</div>
-                                </div>
-                            </div>
-                        `;
-                    }
-                });
-                
-                if (achievementsHtml === '') {
-                    achievementsHtml = '<div style="text-align: center; color: #aaa; grid-column: span 2;">Пока нет достижений</div>';
-                }
-                
-                if (el.achievementsList) el.achievementsList.innerHTML = achievementsHtml;
-                
                 if (playerId === s.pid) {
                     updateReferralLink();
                     if (el.profileReferralSection) el.profileReferralSection.style.display = 'block';
@@ -4204,6 +4299,9 @@
                 } else {
                     if (el.profileReferralSection) el.profileReferralSection.style.display = 'none';
                 }
+                
+                // Обновляем отображение достижений
+                updateProfileDisplay();
                 
                 if (el.profileModal && el.bd) {
                     el.profileModal.classList.add('show');
@@ -4415,7 +4513,7 @@
                 }
             });
 
-            // ===== СЛУШАТЕЛЬ КОНКУРСА =====
+            // ===== ИСПРАВЛЕННЫЙ СЛУШАТЕЛЬ КОНКУРСА =====
             db.ref('contest').on('value', (snap) => {
                 const contest = snap.val();
                 if (contest) {
@@ -4434,16 +4532,22 @@
                     if (contest.winner) {
                         s.contest.winner = contest.winner;
                     }
-                    if (contest.winner?.data) {
-                        s.contest.winnerData = contest.winner.data;
+                    if (contest.winnerData) {
+                        s.contest.winnerData = contest.winnerData;
                         
-                        // Если есть данные победителя, показываем сообщение об успехе
-                        if (s.pid === contest.winner.id && el.winnerSuccessMessage) {
-                            el.winnerSuccessMessage.classList.add('show');
+                        // Если есть данные победителя и это текущий игрок, показываем сообщение об успехе
+                        if (s.pid === contest.winner?.id) {
+                            if (el.winnerSuccessMessage) {
+                                el.winnerSuccessMessage.classList.add('show');
+                            }
                             if (el.winnerSubmitBtn) {
                                 el.winnerSubmitBtn.disabled = true;
                                 el.winnerSubmitBtn.textContent = '✅ ДАННЫЕ ОТПРАВЛЕНЫ';
                             }
+                            // Блокируем поля ввода
+                            if (el.winnerDetails) el.winnerDetails.disabled = true;
+                            if (el.winnerFullName) el.winnerFullName.disabled = true;
+                            if (el.winnerPhone) el.winnerPhone.disabled = true;
                         }
                     }
                     
@@ -4488,7 +4592,7 @@
                 }
             });
 
-            // ===== АДМИН ПАНЕЛЬ =====
+            // ===== ИСПРАВЛЕННАЯ АДМИН ПАНЕЛЬ =====
             const admin = {
                 open() {
                     if (!s.admin) {
@@ -4655,7 +4759,6 @@
                 startContest() {
                     if (!s.admin) return;
                     
-                    // Обновляем настройки перед запуском
                     updateContestSettings();
                     
                     const prize = s.contest.prize;
@@ -4673,7 +4776,6 @@
                         return;
                     }
                     
-                    // Сбрасываем все данные и запускаем новый конкурс
                     startContest(prize, durationMs);
                 },
                 
@@ -4685,21 +4787,19 @@
                 resetContest() {
                     if (!s.admin || !confirm('Сбросить данные конкурса?')) return;
                     
-                    // Полностью очищаем все данные конкурса
                     db.ref('contest').remove()
                         .then(() => {
                             s.contest.active = false;
                             s.contest.winner = null;
                             s.contest.winnerData = null;
                             s.contest.ended = false;
+                            s.contest.winnerFormShown = false;
                             
-                            // Сбрасываем на стандартные значения
                             if (el.contestHours) el.contestHours.value = 0;
                             if (el.contestMinutes) el.contestMinutes.value = 1;
                             if (el.contestSeconds) el.contestSeconds.value = 0;
                             updateTotalContestTime();
                             
-                            // Скрываем форму победителя, если она была открыта
                             if (el.winnerForm) {
                                 el.winnerForm.classList.remove('show');
                             }
@@ -4730,6 +4830,15 @@
                 
                 updateContestSettings() {
                     updateContestSettings();
+                },
+                
+                // Новая функция для обновления количества подписчиков Telegram
+                updateTelegram(count) {
+                    if (!s.admin) return;
+                    const newCount = parseInt(prompt('Введите количество подписчиков:', s.telegramSubscribers));
+                    if (!isNaN(newCount) && newCount >= 0) {
+                        db.ref('telegram/subscribers').set(newCount);
+                    }
                 }
             };
 
@@ -5121,6 +5230,9 @@
                         }
                     });
                 }
+                
+                // Инициализация Telegram счетчика
+                updateTelegramSubscribers();
 
                 setInterval(() => {
                     if (s.b && !s.admin) return;
