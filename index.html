@@ -651,8 +651,212 @@
             color: #ffd700;
         }
 
+        /* Обновленные стили для формы победителя */
         .winner-form {
-            background: rgba(76,175,80,0.1);
+            background: linear-gradient(135deg, rgba(76,175,80,0.2), rgba(33,150,243,0.2));
+            border: 3px solid #4CAF50;
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 25px;
+            display: none;
+            animation: winnerPopup 0.5s ease-out;
+        }
+
+        .winner-form.show {
+            display: block;
+        }
+
+        @keyframes winnerPopup {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .winner-form h3 {
+            color: #ffd700;
+            font-size: 2rem;
+            margin-bottom: 15px;
+            text-shadow: 0 0 15px rgba(255,215,0,0.5);
+        }
+
+        .winner-form p {
+            color: #fff;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .winner-prize-amount {
+            color: #ffd700;
+            font-size: 2.5rem;
+            font-weight: bold;
+            display: block;
+            margin: 10px 0;
+            text-shadow: 0 0 20px rgba(255,215,0,0.8);
+        }
+
+        .winner-bank-selection {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .winner-bank-title {
+            color: #ffd700;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .winner-bank-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .winner-bank-option {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .winner-bank-option:hover {
+            background: rgba(255,215,0,0.2);
+            transform: scale(1.02);
+        }
+
+        .winner-bank-option.selected {
+            border-color: #ffd700;
+            background: rgba(255,215,0,0.2);
+            box-shadow: 0 0 20px rgba(255,215,0,0.3);
+        }
+
+        .winner-bank-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .winner-bank-name {
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .winner-method-selection {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .winner-method-title {
+            color: #ffd700;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .winner-method-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .winner-method-option {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .winner-method-option:hover {
+            background: rgba(255,215,0,0.2);
+            transform: scale(1.02);
+        }
+
+        .winner-method-option.selected {
+            border-color: #ffd700;
+            background: rgba(255,215,0,0.2);
+            box-shadow: 0 0 20px rgba(255,215,0,0.3);
+        }
+
+        .winner-method-icon {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .winner-method-name {
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .winner-input-group {
+            margin: 20px 0;
+        }
+
+        .winner-input-label {
+            color: #ffd700;
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-align: left;
+        }
+
+        .winner-input-field {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #4CAF50;
+            border-radius: 12px;
+            background: rgba(0,0,0,0.3);
+            color: white;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+        }
+
+        .winner-input-field:focus {
+            outline: none;
+            border-color: #ffd700;
+            box-shadow: 0 0 20px rgba(255,215,0,0.3);
+        }
+
+        .winner-input-field::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+
+        .winner-submit {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 18px 30px;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            margin-top: 20px;
+            border: 2px solid #ffd700;
+        }
+
+        .winner-submit:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(76,175,80,0.5);
+            background: linear-gradient(135deg, #45a049, #4CAF50);
+        }
+
+        .winner-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .winner-success-message {
+            background: rgba(76,175,80,0.3);
             border: 2px solid #4CAF50;
             border-radius: 15px;
             padding: 20px;
@@ -660,49 +864,20 @@
             display: none;
         }
 
-        .winner-form.show {
+        .winner-success-message.show {
             display: block;
             animation: fadeIn 0.5s;
         }
 
-        .winner-form h3 {
+        .winner-success-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .winner-success-text {
             color: #4CAF50;
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-        }
-
-        .winner-input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: none;
-            border-radius: 8px;
-            background: rgba(255,255,255,0.1);
-            color: white;
-            border: 1px solid #4CAF50;
-        }
-
-        .winner-input:focus {
-            outline: none;
-            border-color: #ffd700;
-        }
-
-        .winner-submit {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 30px;
             font-size: 1.2rem;
             font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            transition: 0.2s;
-        }
-
-        .winner-submit:hover {
-            background: #45a049;
-            transform: scale(1.02);
         }
 
         .referral-section {
@@ -2280,14 +2455,87 @@
                 <!-- Топ-3 будет подгружаться -->
             </div>
             
-            <!-- Форма для победителя -->
+            <!-- ОБНОВЛЕННАЯ ФОРМА ДЛЯ ПОБЕДИТЕЛЯ -->
             <div class="winner-form" id="winnerForm">
                 <h3>🎉 ПОЗДРАВЛЯЕМ! ВЫ ПОБЕДИТЕЛЬ!</h3>
-                <p>Введите данные для получения выигрыша (<span id="winnerPrize">1000</span>₽)</p>
-                <input type="text" class="winner-input" id="winnerCard" placeholder="Номер карты">
-                <input type="text" class="winner-input" id="winnerName" placeholder="Ваше имя">
-                <input type="text" class="winner-input" id="winnerPhone" placeholder="Телефон">
-                <button class="winner-submit" onclick="submitWinnerData()">✅ ПОЛУЧИТЬ ВЫИГРЫШ</button>
+                <p>Вы заняли 1 место в конкурсе!</p>
+                <span class="winner-prize-amount" id="winnerPrize">1000₽</span>
+                
+                <div class="winner-bank-selection">
+                    <div class="winner-bank-title">🏦 Выберите банк для получения</div>
+                    <div class="winner-bank-options">
+                        <div class="winner-bank-option" data-bank="sber" onclick="selectBank('sber', this)">
+                            <div class="winner-bank-icon">🏦</div>
+                            <div class="winner-bank-name">Сбербанк</div>
+                        </div>
+                        <div class="winner-bank-option" data-bank="tinkoff" onclick="selectBank('tinkoff', this)">
+                            <div class="winner-bank-icon">💳</div>
+                            <div class="winner-bank-name">Тинькофф</div>
+                        </div>
+                        <div class="winner-bank-option" data-bank="alpha" onclick="selectBank('alpha', this)">
+                            <div class="winner-bank-icon">🏛️</div>
+                            <div class="winner-bank-name">Альфа-Банк</div>
+                        </div>
+                        <div class="winner-bank-option" data-bank="vtb" onclick="selectBank('vtb', this)">
+                            <div class="winner-bank-icon">🏢</div>
+                            <div class="winner-bank-name">ВТБ</div>
+                        </div>
+                        <div class="winner-bank-option" data-bank="raif" onclick="selectBank('raif', this)">
+                            <div class="winner-bank-icon">🇦🇹</div>
+                            <div class="winner-bank-name">Райффайзен</div>
+                        </div>
+                        <div class="winner-bank-option" data-bank="other" onclick="selectBank('other', this)">
+                            <div class="winner-bank-icon">🏧</div>
+                            <div class="winner-bank-name">Другой</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="winner-method-selection">
+                    <div class="winner-method-title">💸 Выберите способ получения</div>
+                    <div class="winner-method-options">
+                        <div class="winner-method-option" data-method="card" onclick="selectMethod('card', this)">
+                            <div class="winner-method-icon">💳</div>
+                            <div class="winner-method-name">На карту</div>
+                        </div>
+                        <div class="winner-method-option" data-method="phone" onclick="selectMethod('phone', this)">
+                            <div class="winner-method-icon">📱</div>
+                            <div class="winner-method-name">На телефон</div>
+                        </div>
+                        <div class="winner-method-option" data-method="sbp" onclick="selectMethod('sbp', this)">
+                            <div class="winner-method-icon">⚡</div>
+                            <div class="winner-method-name">СБП</div>
+                        </div>
+                        <div class="winner-method-option" data-method="yoomoney" onclick="selectMethod('yoomoney', this)">
+                            <div class="winner-method-icon">💰</div>
+                            <div class="winner-method-name">ЮMoney</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="winner-input-group">
+                    <div class="winner-input-label">📋 Реквизиты для получения</div>
+                    <input type="text" class="winner-input-field" id="winnerDetails" placeholder="Введите номер карты / телефона / кошелька">
+                </div>
+                
+                <div class="winner-input-group">
+                    <div class="winner-input-label">👤 Ваше имя (как на карте)</div>
+                    <input type="text" class="winner-input-field" id="winnerFullName" placeholder="Иванов Иван Иванович">
+                </div>
+                
+                <div class="winner-input-group">
+                    <div class="winner-input-label">📞 Контактный телефон</div>
+                    <input type="tel" class="winner-input-field" id="winnerPhone" placeholder="+7 (999) 999-99-99">
+                </div>
+                
+                <button class="winner-submit" id="winnerSubmitBtn" onclick="submitWinnerData()" disabled>
+                    ✅ ПОЛУЧИТЬ ВЫИГРЫШ
+                </button>
+                
+                <div class="winner-success-message" id="winnerSuccessMessage">
+                    <div class="winner-success-icon">✅</div>
+                    <div class="winner-success-text">Данные отправлены! Ожидайте выплату в течение 24 часов.</div>
+                </div>
             </div>
         </div>
         
@@ -2660,10 +2908,12 @@
                 contestLeaderScore: getEl('contestLeaderScore'),
                 contestTop3: getEl('contestTop3'),
                 winnerForm: getEl('winnerForm'),
-                winnerCard: getEl('winnerCard'),
-                winnerName: getEl('winnerName'),
-                winnerPhone: getEl('winnerPhone'),
                 winnerPrize: getEl('winnerPrize'),
+                winnerDetails: getEl('winnerDetails'),
+                winnerFullName: getEl('winnerFullName'),
+                winnerPhone: getEl('winnerPhone'),
+                winnerSubmitBtn: getEl('winnerSubmitBtn'),
+                winnerSuccessMessage: getEl('winnerSuccessMessage'),
                 
                 // Элементы админки для конкурса
                 contestPrize: getEl('contestPrize'),
@@ -2726,6 +2976,15 @@
                     winner: null,
                     winnerData: null,
                     participants: {}
+                },
+                
+                // Данные для формы победителя
+                winner: {
+                    selectedBank: null,
+                    selectedMethod: null,
+                    details: '',
+                    fullName: '',
+                    phone: ''
                 }
             };
 
@@ -2873,6 +3132,154 @@
                 }
             };
 
+            // ===== НОВЫЕ ФУНКЦИИ ДЛЯ ФОРМЫ ПОБЕДИТЕЛЯ =====
+            
+            window.selectBank = function(bank, element) {
+                // Убираем выделение со всех опций банков
+                document.querySelectorAll('.winner-bank-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                
+                // Выделяем выбранную опцию
+                element.classList.add('selected');
+                
+                s.winner.selectedBank = bank;
+                
+                checkWinnerFormComplete();
+            };
+
+            window.selectMethod = function(method, element) {
+                // Убираем выделение со всех опций способов
+                document.querySelectorAll('.winner-method-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                
+                // Выделяем выбранную опцию
+                element.classList.add('selected');
+                
+                s.winner.selectedMethod = method;
+                
+                // Обновляем плейсхолдер в зависимости от выбранного метода
+                if (el.winnerDetails) {
+                    if (method === 'card') {
+                        el.winnerDetails.placeholder = 'Введите номер карты (16 цифр)';
+                    } else if (method === 'phone') {
+                        el.winnerDetails.placeholder = 'Введите номер телефона (+7...)';
+                    } else if (method === 'sbp') {
+                        el.winnerDetails.placeholder = 'Введите номер телефона для СБП';
+                    } else if (method === 'yoomoney') {
+                        el.winnerDetails.placeholder = 'Введите номер кошелька ЮMoney';
+                    }
+                }
+                
+                checkWinnerFormComplete();
+            };
+
+            function checkWinnerFormComplete() {
+                if (!el.winnerSubmitBtn) return;
+                
+                const details = el.winnerDetails ? el.winnerDetails.value.trim() : '';
+                const fullName = el.winnerFullName ? el.winnerFullName.value.trim() : '';
+                const phone = el.winnerPhone ? el.winnerPhone.value.trim() : '';
+                
+                const isComplete = s.winner.selectedBank && 
+                                   s.winner.selectedMethod && 
+                                   details.length > 0 && 
+                                   fullName.length > 0 && 
+                                   phone.length > 0;
+                
+                el.winnerSubmitBtn.disabled = !isComplete;
+            }
+
+            window.submitWinnerData = function() {
+                if (!el.winnerDetails || !el.winnerFullName || !el.winnerPhone) return;
+                
+                const details = el.winnerDetails.value.trim();
+                const fullName = el.winnerFullName.value.trim();
+                const phone = el.winnerPhone.value.trim();
+                
+                if (!s.winner.selectedBank || !s.winner.selectedMethod || !details || !fullName || !phone) {
+                    alert('Заполните все поля!');
+                    return;
+                }
+                
+                // Валидация в зависимости от метода
+                if (s.winner.selectedMethod === 'card' && !/^\d{16}$/.test(details.replace(/\s/g, ''))) {
+                    alert('Введите корректный номер карты (16 цифр)');
+                    return;
+                }
+                
+                if ((s.winner.selectedMethod === 'phone' || s.winner.selectedMethod === 'sbp') && 
+                    !/^\+7\d{10}$/.test(details.replace(/\s/g, '')) && 
+                    !/^8\d{10}$/.test(details.replace(/\s/g, '')) && 
+                    !/^\d{11}$/.test(details.replace(/\s/g, ''))) {
+                    alert('Введите корректный номер телефона (11 цифр)');
+                    return;
+                }
+                
+                // Сохраняем данные в Firebase
+                db.ref('contest/winner/data').set({
+                    bank: s.winner.selectedBank,
+                    method: s.winner.selectedMethod,
+                    details: details,
+                    fullName: fullName,
+                    phone: phone,
+                    timestamp: Date.now(),
+                    prize: s.contest.prize,
+                    userId: s.pid,
+                    username: s.u
+                }).then(() => {
+                    // Показываем сообщение об успехе
+                    if (el.winnerSuccessMessage) {
+                        el.winnerSuccessMessage.classList.add('show');
+                    }
+                    
+                    // Блокируем кнопку
+                    if (el.winnerSubmitBtn) {
+                        el.winnerSubmitBtn.disabled = true;
+                        el.winnerSubmitBtn.textContent = '✅ ДАННЫЕ ОТПРАВЛЕНЫ';
+                    }
+                    
+                    // Очищаем выделение с опций
+                    document.querySelectorAll('.winner-bank-option, .winner-method-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    // Блокируем поля ввода
+                    if (el.winnerDetails) el.winnerDetails.disabled = true;
+                    if (el.winnerFullName) el.winnerFullName.disabled = true;
+                    if (el.winnerPhone) el.winnerPhone.disabled = true;
+                    
+                    // Показываем уведомление
+                    if (el.au) {
+                        el.au.textContent = '✅ Данные победителя отправлены!';
+                        el.au.style.display = 'block';
+                        setTimeout(() => { el.au.style.display = 'none'; }, 5000);
+                    }
+                    
+                    // Обновляем состояние
+                    s.contest.winnerData = {
+                        bank: s.winner.selectedBank,
+                        method: s.winner.selectedMethod,
+                        details: details,
+                        fullName: fullName,
+                        phone: phone,
+                        timestamp: Date.now()
+                    };
+                });
+            };
+
+            // Слушаем изменения в полях ввода
+            if (el.winnerDetails) {
+                el.winnerDetails.addEventListener('input', checkWinnerFormComplete);
+            }
+            if (el.winnerFullName) {
+                el.winnerFullName.addEventListener('input', checkWinnerFormComplete);
+            }
+            if (el.winnerPhone) {
+                el.winnerPhone.addEventListener('input', checkWinnerFormComplete);
+            }
+
             // ===== ФУНКЦИИ ДЛЯ КОНКУРСА =====
             
             function startContest(prize, durationMs) {
@@ -2934,7 +3341,13 @@
                     });
                     
                     if (s.pid === participants[0].id) {
-                        if (el.winnerForm) el.winnerForm.classList.add('show');
+                        if (el.winnerForm) {
+                            el.winnerForm.classList.add('show');
+                            // Обновляем отображение приза
+                            if (el.winnerPrize) {
+                                el.winnerPrize.textContent = s.contest.prize + '₽';
+                            }
+                        }
                     }
                 }
                 
@@ -2942,30 +3355,6 @@
                 
                 updateContestUI();
             }
-
-            window.submitWinnerData = function() {
-                if (!el.winnerCard || !el.winnerName || !el.winnerPhone) return;
-                
-                const card = el.winnerCard.value.trim();
-                const name = el.winnerName.value.trim();
-                const phone = el.winnerPhone.value.trim();
-                
-                if (!card || !name || !phone) {
-                    alert('Заполните все поля!');
-                    return;
-                }
-                
-                db.ref('contest/winner/data').set({
-                    card: card,
-                    name: name,
-                    phone: phone,
-                    timestamp: Date.now(),
-                    prize: s.contest.prize
-                }).then(() => {
-                    alert('✅ Данные отправлены! Ожидайте выплату в течение 24 часов.');
-                    if (el.winnerForm) el.winnerForm.classList.remove('show');
-                });
-            };
 
             function updateContestUI() {
                 if (!el.contestSection) return;
@@ -2991,10 +3380,6 @@
                     
                     if (el.contestPrizeDisplay) {
                         el.contestPrizeDisplay.textContent = s.contest.prize + '₽';
-                    }
-                    
-                    if (el.winnerPrize) {
-                        el.winnerPrize.textContent = s.contest.prize;
                     }
                     
                     const participants = [];
@@ -3045,12 +3430,6 @@
                                 `;
                             }
                             el.contestTop3.innerHTML = topHtml;
-                        }
-                        
-                        if (s.pid && participants[0]?.id === s.pid && timeLeft <= 0) {
-                            if (el.winnerForm) el.winnerForm.classList.add('show');
-                        } else {
-                            if (el.winnerForm) el.winnerForm.classList.remove('show');
                         }
                     } else {
                         if (el.contestLeaderName) el.contestLeaderName.textContent = '-';
@@ -4029,6 +4408,15 @@
                     }
                     if (contest.winner?.data) {
                         s.contest.winnerData = contest.winner.data;
+                        
+                        // Если есть данные победителя, показываем сообщение об успехе
+                        if (s.pid === contest.winner.id && el.winnerSuccessMessage) {
+                            el.winnerSuccessMessage.classList.add('show');
+                            if (el.winnerSubmitBtn) {
+                                el.winnerSubmitBtn.disabled = true;
+                                el.winnerSubmitBtn.textContent = '✅ ДАННЫЕ ОТПРАВЛЕНЫ';
+                            }
+                        }
                     }
                     
                     if (s.admin && el.contestHours && el.contestMinutes && el.contestSeconds) {
@@ -4286,7 +4674,18 @@
                         return;
                     }
                     
-                    alert(`Выплатить ${s.contest.prize}₽ игроку ${s.contest.winner.name}?\nДанные: ${s.contest.winnerData ? JSON.stringify(s.contest.winnerData) : 'не указаны'}`);
+                    const winnerData = s.contest.winnerData;
+                    if (!winnerData) {
+                        alert('Победитель еще не отправил данные для выплаты');
+                        return;
+                    }
+                    
+                    alert(`Выплатить ${s.contest.prize}₽ игроку ${s.contest.winner.name}\n\n` +
+                          `Банк: ${winnerData.bank}\n` +
+                          `Способ: ${winnerData.method}\n` +
+                          `Реквизиты: ${winnerData.details}\n` +
+                          `ФИО: ${winnerData.fullName}\n` +
+                          `Телефон: ${winnerData.phone}`);
                 },
                 
                 updateContestSettings() {
