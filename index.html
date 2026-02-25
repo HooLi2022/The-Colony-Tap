@@ -3045,9 +3045,10 @@
                     durationSeconds: 0,
                     winner: null,
                     winnerData: null,
-                    participants: {},
+                    participants: {}, // Отдельные участники конкурса
+                    participantScores: {}, // Отдельные счета для конкурса
                     ended: false,
-                    winnerModalShown: false // Флаг для отслеживания показа модального окна
+                    winnerModalShown: false
                 },
                 
                 // Данные для формы победителя
@@ -3416,8 +3417,9 @@
                 s.contest.ended = false;
                 s.contest.winnerModalShown = false;
                 
-                // Сбрасываем участников конкурса - они будут собираться заново
+                // Полностью очищаем участников и их счета
                 s.contest.participants = {};
+                s.contest.participantScores = {};
                 
                 const totalSeconds = Math.floor(durationMs / 1000);
                 const hours = Math.floor(totalSeconds / 3600);
@@ -3439,11 +3441,11 @@
                             durationMinutes: minutes,
                             durationSeconds: seconds,
                             winner: null,
-                            winnerData: null
+                            winnerData: null,
+                            participantScores: {} // Пустые счета для конкурса
                         });
                     })
                     .then(() => {
-                        // Принудительно обновляем UI, чтобы сбросить таблицу лидеров
                         updateContestUI();
                     })
                     .catch(error => {
@@ -3457,13 +3459,15 @@
                 s.contest.active = false;
                 s.contest.ended = true;
                 
+                // Собираем участников из сохраненных счетов
                 const participants = [];
-                Object.entries(s.players).forEach(([id, data]) => {
-                    if (data.sc > 0 && data.n) {
+                Object.entries(s.contest.participantScores).forEach(([id, score]) => {
+                    const player = s.players[id];
+                    if (player && player.n) {
                         participants.push({
                             id,
-                            name: data.n,
-                            score: data.sc || 0
+                            name: player.n,
+                            score: score
                         });
                     }
                 });
@@ -3487,6 +3491,9 @@
                     }
                 }
                 
+                // Обнуляем счета конкурса для всех
+                s.contest.participantScores = {};
+                db.ref('contest/participantScores').remove();
                 db.ref('contest/active').set(false);
                 
                 updateContestUI();
@@ -3535,6 +3542,23 @@
                 if (el.bd) el.bd.classList.add('show');
             }
 
+            // ===== ФУНКЦИЯ ОБРАБОТКИ КЛИКА ДЛЯ КОНКУРСА =====
+            function handleContestClick() {
+                if (!s.contest.active || !s.pid) return;
+                
+                // Увеличиваем счет участника в конкурсе
+                if (!s.contest.participantScores[s.pid]) {
+                    s.contest.participantScores[s.pid] = 0;
+                }
+                s.contest.participantScores[s.pid] += 1;
+                
+                // Сохраняем в Firebase
+                db.ref('contest/participantScores/' + s.pid).set(s.contest.participantScores[s.pid]);
+                
+                // Обновляем UI
+                updateContestUI();
+            }
+
             function updateContestUI() {
                 if (!el.contestSection) return;
                 
@@ -3561,15 +3585,15 @@
                         el.contestPrizeDisplay.textContent = s.contest.prize + '₽';
                     }
                     
-                    // Собираем участников конкурса (только для этого конкурса)
+                    // Собираем участников из отдельного счета конкурса
                     const participants = [];
-                    
-                    Object.entries(s.players).forEach(([id, data]) => {
-                        if (data.sc > 0 && data.n) {
+                    Object.entries(s.contest.participantScores).forEach(([id, score]) => {
+                        const player = s.players[id];
+                        if (player && player.n) {
                             participants.push({
                                 id,
-                                name: data.n,
-                                score: data.sc || 0
+                                name: player.n,
+                                score: score
                             });
                         }
                     });
@@ -3581,13 +3605,13 @@
                     }
                     
                     if (s.pid && el.contestMyScore) {
-                        const myParticipant = participants.find(p => p.id === s.pid);
-                        el.contestMyScore.textContent = myParticipant ? myParticipant.score.toLocaleString() : '0';
+                        const myScore = s.contest.participantScores[s.pid] || 0;
+                        el.contestMyScore.textContent = myScore.toLocaleString();
                     }
                     
                     if (participants.length > 0 && el.contestProgress) {
                         const leaderScore = participants[0].score;
-                        const myScore = participants.find(p => p.id === s.pid)?.score || 0;
+                        const myScore = s.contest.participantScores[s.pid] || 0;
                         const percent = leaderScore > 0 ? (myScore / leaderScore) * 100 : 0;
                         el.contestProgress.style.width = Math.min(percent, 100) + '%';
                     }
@@ -3724,12 +3748,13 @@
                     if (el.contestStatus) el.contestStatus.style.color = s.contest.active ? '#4CAF50' : '#ff4444';
                     
                     const participants = [];
-                    Object.entries(s.players).forEach(([id, data]) => {
-                        if (data.sc > 0 && data.n) {
+                    Object.entries(s.contest.participantScores).forEach(([id, score]) => {
+                        const player = s.players[id];
+                        if (player && player.n) {
                             participants.push({
                                 id,
-                                name: data.n,
-                                score: data.sc || 0
+                                name: player.n,
+                                score: score
                             });
                         }
                     });
@@ -4577,6 +4602,11 @@
                     s.contest.durationMinutes = contest.durationMinutes || 0;
                     s.contest.durationSeconds = contest.durationSeconds || 0;
                     
+                    // Загружаем счета участников
+                    if (contest.participantScores) {
+                        s.contest.participantScores = contest.participantScores;
+                    }
+                    
                     s.contest.ended = !contest.active;
                     
                     if (contest.winner) {
@@ -4618,6 +4648,14 @@
                     }
                     
                     updateUI();
+                }
+            });
+            
+            db.ref('contest/participantScores').on('value', (snap) => {
+                const scores = snap.val();
+                if (scores) {
+                    s.contest.participantScores = scores;
+                    updateContestUI();
                 }
             });
             
@@ -4842,6 +4880,7 @@
                             s.contest.winnerData = null;
                             s.contest.ended = false;
                             s.contest.winnerModalShown = false;
+                            s.contest.participantScores = {};
                             
                             if (el.contestHours) el.contestHours.value = 0;
                             if (el.contestMinutes) el.contestMinutes.value = 1;
@@ -5106,6 +5145,9 @@
                             if (pr.committed) {
                                 s.myScore = pr.snapshot.val().sc;
                                 stor.s('S', s.myScore);
+                                
+                                // Обновляем счет в конкурсе
+                                handleContestClick();
                                 
                                 checkAchievements();
                             }
