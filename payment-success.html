@@ -2,7 +2,8 @@
 <html>
 <head>
     <title>Оплата принята</title>
-    <meta http-equiv="refresh" content="3;url=/" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
             background: linear-gradient(135deg, #0B0B2B, #1B1B4B);
@@ -14,6 +15,7 @@
             height: 100vh;
             margin: 0;
             text-align: center;
+            padding: 20px;
         }
         .success {
             background: rgba(76,175,80,0.2);
@@ -21,9 +23,10 @@
             border-radius: 20px;
             padding: 40px;
             max-width: 500px;
+            width: 100%;
         }
-        h1 { color: #4CAF50; font-size: 2.5rem; }
-        p { font-size: 1.2rem; margin: 20px 0; }
+        h1 { color: #4CAF50; font-size: 2.5rem; margin: 0 0 20px; }
+        p { font-size: 1.2rem; margin: 20px 0; line-height: 1.5; }
         .loader {
             border: 3px solid rgba(255,255,255,0.3);
             border-top: 3px solid #ffd700;
@@ -34,14 +37,41 @@
             margin: 20px auto;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .button {
+            display: inline-block;
+            background: #ffd700;
+            color: #333;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-top: 20px;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        .button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255,215,0,0.5);
+        }
     </style>
 </head>
 <body>
     <div class="success">
         <h1>✅ Оплата принята!</h1>
-        <p>Клики будут зачислены в течение нескольких секунд</p>
+        <p>Спасибо за покупку!<br>Клики будут зачислены в течение нескольких секунд</p>
         <div class="loader"></div>
         <p>Вы будете перенаправлены в игру через 3 секунды...</p>
+        <button class="button" onclick="redirectToGame()">Вернуться в игру сейчас</button>
     </div>
+    
+    <script>
+        function redirectToGame() {
+            window.location.href = '/';
+        }
+        
+        setTimeout(redirectToGame, 3000);
+    </script>
 </body>
 </html>
