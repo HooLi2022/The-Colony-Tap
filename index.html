@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🌍 Заселение Земли</title>
     <style>
-        /* ===== ВСЕ СТИЛИ ПОЛНОСТЬЮ ===== */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -371,20 +370,29 @@
             margin-bottom: 15px;
         }
 
-        .payment-loading {
+        .payment-success-message {
+            background: rgba(76,175,80,0.3);
+            border: 2px solid #4CAF50;
+            border-radius: 15px;
             padding: 20px;
             text-align: center;
-            color: #ffd700;
-            background: rgba(0,0,0,0.3);
-            border-radius: 10px;
+            display: none;
         }
 
-        .payment-error {
-            padding: 20px;
-            text-align: center;
-            color: #ff4444;
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
+        .payment-success-message.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        .payment-success-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .payment-success-text {
+            color: #4CAF50;
+            font-size: 1.2rem;
+            font-weight: bold;
         }
 
         .quests-section {
@@ -2163,7 +2171,6 @@
     </style>
 </head>
 <body>
-    <!-- Сообщения -->
     <div class="cheater-alert" id="cheaterAlert">🚫 Обнаружен читер! Доступ заблокирован</div>
     <div class="unban-message" id="unbanMessage">✅ Вы были разблокированы создателем!</div>
     <div class="reset-message" id="resetMessage">🔄 Игра сброшена администратором!</div>
@@ -2171,20 +2178,17 @@
     <div class="achievement-unlock" id="achievementUnlock">🏆 Достижение разблокировано!</div>
     <div class="purchase-success" id="purchaseSuccess">💰 Покупка успешно зачислена!</div>
     
-    <!-- Кнопка админа -->
     <div class="admin-btn" id="adminBtn">
         <span>👑 Админ</span>
         <span class="notification" id="adminNotification">0</span>
     </div>
     
-    <!-- Бейдж рекламы -->
     <div class="ad-badge" id="adBadge" onclick="showAdModal()">
         🎁 БОНУС +100 КЛИКОВ
     </div>
     
     <div class="backdrop" id="backdrop"></div>
     
-    <!-- Рекламное модальное окно -->
     <div class="ad-modal" id="adModal">
         <button class="ad-close" onclick="closeAdModal()">×</button>
         <h2>🎁 ПОЛУЧИ БОНУС!</h2>
@@ -2198,7 +2202,6 @@
         <div class="ad-countdown" id="adCountdown"></div>
     </div>
     
-    <!-- Модальное окно победителя -->
     <div class="winner-modal" id="winnerModal">
         <div class="winner-modal-header">
             <h2>🏆 ПОЗДРАВЛЯЕМ!</h2>
@@ -2289,7 +2292,6 @@
         </div>
     </div>
     
-    <!-- Админ панель -->
     <div class="admin-panel" id="adminPanel">
         <div class="panel-header">
             <h2>👑 Админ панель</h2>
@@ -2337,7 +2339,6 @@
             </p>
         </div>
         
-        <!-- Управление конкурсом -->
         <div class="admin-section">
             <h3>🏆 Управление конкурсом</h3>
             
@@ -2455,7 +2456,6 @@
         </div>
     </div>
 
-    <!-- Модальное окно профиля -->
     <div class="profile-modal" id="profileModal">
         <div class="profile-header">
             <h2 id="profileName">Профиль</h2>
@@ -2522,7 +2522,6 @@
         </div>
     </div>
 
-    <!-- Основной контейнер игры -->
     <div class="container">
         <h1>🌍 Заселение Земли</h1>
         <p>Цель: <span id="targetDisplay">8 млрд</span></p>
@@ -2556,7 +2555,6 @@
         
         <button id="clickBtn" class="click-button" disabled>👆 ЗАСЕЛИТЬ</button>
         
-        <!-- Кнопка Telegram -->
         <a href="https://t.me/colonytap" target="_blank" class="telegram-button" id="telegramBtn">
             <svg class="telegram-icon" viewBox="0 0 24 24" width="24" height="24">
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.06-.2-.07-.06-.18-.04-.26-.02-.11.02-1.84 1.17-5.2 3.44-.49.34-.94.5-1.34.49-.44-.01-1.28-.25-1.92-.46-.77-.25-1.39-.39-1.34-.83.03-.22.25-.45.69-.68 2.7-1.18 4.5-1.95 5.4-2.33 2.57-1.08 3.11-1.27 3.46-1.27.08 0 .27.02.39.12.1.09.13.21.14.3-.01.09 0 .23 0 .36z" fill="white"/>
@@ -2565,7 +2563,6 @@
             <span class="telegram-badge" id="telegramCount">0 подписчиков</span>
         </a>
         
-        <!-- Секция конкурса -->
         <div class="contest-section" id="contestSection" style="display: none;">
             <div class="contest-header">
                 <h2>🏆 КОНКУРС</h2>
@@ -2609,7 +2606,6 @@
             </div>
         </div>
         
-        <!-- Навигационные вкладки -->
         <div class="tabs">
             <div class="tab active" onclick="switchTab('game')">🎮 Игра</div>
             <div class="tab" onclick="switchTab('shop')">💰 Магазин</div>
@@ -2618,7 +2614,6 @@
             <div class="tab" onclick="switchTab('top')">🏆 Топ</div>
         </div>
         
-        <!-- Вкладка Игра -->
         <div id="game-tab" class="tab-content active">
             <div class="stats-grid">
                 <div class="stat-card">
@@ -2668,7 +2663,6 @@
             </div>
         </div>
         
-        <!-- Вкладка Магазин -->
         <div id="shop-tab" class="tab-content">
             <div class="shop-section">
                 <div class="shop-title">
@@ -2708,7 +2702,6 @@
                         <button class="buy-button">Купить</button>
                     </div>
                     
-                    <!-- Кнопка для произвольной суммы -->
                     <div class="shop-item" onclick="openCustomPaymentModal()">
                         <div class="item-emoji">🎲</div>
                         <div class="item-name">Своя сумма</div>
@@ -2718,20 +2711,20 @@
                     </div>
                 </div>
                 
-                <!-- Контейнер для платежей -->
                 <div id="paymentContainer" class="payment-container">
                     <div class="payment-title" id="paymentTitle"></div>
-                    <div id="payment-form" class="payment-loading"></div>
+                    <div class="payment-success-message" id="paymentSuccessMessage">
+                        <div class="payment-success-icon">✅</div>
+                        <div class="payment-success-text" id="paymentSuccessText">Клики успешно зачислены!</div>
+                    </div>
                 </div>
             </div>
         </div>
         
-        <!-- Вкладка Задания -->
         <div id="quests-tab" class="tab-content">
             <div class="quests-section">
                 <div class="quests-title">📋 Ежедневные задания</div>
                 <div class="quests-grid" id="questsList">
-                    <!-- Сюда будут подгружаться задания -->
                     <div class="quest-item">
                         <div class="quest-icon">⏳</div>
                         <div class="quest-name">Загрузка...</div>
@@ -2741,7 +2734,6 @@
             </div>
         </div>
         
-        <!-- Вкладка Рефералы -->
         <div id="referrals-tab" class="tab-content">
             <div class="referral-section" id="referralSection">
                 <div class="referral-header">
@@ -2784,14 +2776,12 @@
                 <div class="referral-table">
                     <div class="referral-table-title">👥 Твои рефералы</div>
                     <div id="referralsList">
-                        <!-- Сюда будут подгружаться рефералы -->
                         <div class="no-referrals">У тебя пока нет приглашенных друзей</div>
                     </div>
                 </div>
             </div>
         </div>
         
-        <!-- Вкладка Топ -->
         <div id="top-tab" class="tab-content">
             <div class="top-players">
                 <div class="top-title">
@@ -2815,7 +2805,6 @@
         </div>
     </div>
 
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
@@ -2847,45 +2836,6 @@
                 try { return atob(str); } catch { return ''; }
             };
 
-            // Конфигурация игры
-            const C = {
-                TARGET: 8000000000,
-                TARGETS: {
-                    '8b': 8000000000,
-                    '1m': 1000000
-                },
-                STORAGE: { N: 'wc_n', S: 'wc_s', I: 'wc_i', NS: 'wc_ns', CC: 'wc_cc', AM: 'wc_am', AD_CLAIMED: 'ad_claimed' },
-                LIMITS: { M1: 20, M2: 300, M3: 1000, INT: 5000, BAN: 3 },
-                KEY: 'Lm9rMjAyNQ==',
-                RESET_FLAG: 'reset_trigger',
-                RESET_TIME: 'reset_time',
-                IMAGE_URL: 'https://i.imgur.com/W6H3wKX.jpg',
-                AD_LINK: '?rlink=reflink-31329889',
-                AD_BONUS: 100,
-                
-                ACHIEVEMENTS: {
-                    'click100': { name: 'Новичок', desc: 'Сделать 100 кликов', icon: '🌱', reward: 10 },
-                    'click1000': { name: 'Опытный', desc: 'Сделать 1000 кликов', icon: '🌿', reward: 50 },
-                    'click10000': { name: 'Мастер', desc: 'Сделать 10 000 кликов', icon: '🌳', reward: 200 },
-                    'click100000': { name: 'Легенда', desc: 'Сделать 100 000 кликов', icon: '🏆', reward: 1000 },
-                    'firstPurchase': { name: 'Меценат', desc: 'Совершить первую покупку', icon: '💎', reward: 20 },
-                    'spend500': { name: 'Инвестор', desc: 'Потратить 500₽', icon: '💰', reward: 100 },
-                    'spend5000': { name: 'Магнат', desc: 'Потратить 5 000₽', icon: '👑', reward: 500 },
-                    'streak7': { name: 'Завсегдатай', desc: 'Заходить 7 дней подряд', icon: '📅', reward: 50 },
-                    'streak30': { name: 'Преданный', desc: 'Заходить 30 дней подряд', icon: '⭐', reward: 300 },
-                    'referral1': { name: 'Друг', desc: 'Пригласить 1 друга', icon: '🤝', reward: 50 },
-                    'referral5': { name: 'Популярный', desc: 'Пригласить 5 друзей', icon: '👥', reward: 200 },
-                    'referral10': { name: 'Лидер', desc: 'Пригласить 10 друзей', icon: '🌟', reward: 500 }
-                },
-                
-                QUESTS: {
-                    'clicks': { name: 'Кликер', desc: 'Сделать %s кликов', icon: '👆' },
-                    'streak': { name: 'Заход', desc: 'Заходить %s дней подряд', icon: '📅' },
-                    'purchase': { name: 'Покупатель', desc: 'Совершить покупку на %s₽', icon: '💰' }
-                }
-            };
-
-            // Firebase инициализация
             firebase.initializeApp({
                 apiKey: _decode(_0x4d5e.api),
                 authDomain: _decode(_0x4d5e.auth),
@@ -2898,7 +2848,6 @@
 
             const db = firebase.database();
             
-            // Элементы DOM
             function getEl(id) {
                 return document.getElementById(id);
             }
@@ -2948,7 +2897,8 @@
                 todaySales: getEl('todaySales'),
                 paymentContainer: getEl('paymentContainer'),
                 paymentTitle: getEl('paymentTitle'),
-                paymentForm: getEl('payment-form'),
+                paymentSuccessMessage: getEl('paymentSuccessMessage'),
+                paymentSuccessText: getEl('paymentSuccessText'),
                 profileModal: getEl('profileModal'),
                 closeProfile: getEl('closeProfile'),
                 profileName: getEl('profileName'),
@@ -3003,75 +2953,56 @@
                 telegramCount: getEl('telegramCount')
             };
 
-            // Состояние игры
+            const C = {
+                TARGET: 8000000000,
+                TARGETS: { '8b': 8000000000, '1m': 1000000 },
+                STORAGE: { N: 'wc_n', S: 'wc_s', I: 'wc_i', NS: 'wc_ns', CC: 'wc_cc', AM: 'wc_am', AD_CLAIMED: 'ad_claimed' },
+                LIMITS: { M1: 20, M2: 300, M3: 1000, INT: 5000, BAN: 3 },
+                KEY: 'Lm9rMjAyNQ==',
+                AD_LINK: '?rlink=reflink-31329889',
+                AD_BONUS: 100,
+                ACHIEVEMENTS: {
+                    'click100': { name: 'Новичок', desc: 'Сделать 100 кликов', icon: '🌱', reward: 10 },
+                    'click1000': { name: 'Опытный', desc: 'Сделать 1000 кликов', icon: '🌿', reward: 50 },
+                    'click10000': { name: 'Мастер', desc: 'Сделать 10 000 кликов', icon: '🌳', reward: 200 },
+                    'click100000': { name: 'Легенда', desc: 'Сделать 100 000 кликов', icon: '🏆', reward: 1000 },
+                    'firstPurchase': { name: 'Меценат', desc: 'Совершить первую покупку', icon: '💎', reward: 20 },
+                    'spend500': { name: 'Инвестор', desc: 'Потратить 500₽', icon: '💰', reward: 100 },
+                    'spend5000': { name: 'Магнат', desc: 'Потратить 5 000₽', icon: '👑', reward: 500 },
+                    'streak7': { name: 'Завсегдатай', desc: 'Заходить 7 дней подряд', icon: '📅', reward: 50 },
+                    'streak30': { name: 'Преданный', desc: 'Заходить 30 дней подряд', icon: '⭐', reward: 300 },
+                    'referral1': { name: 'Друг', desc: 'Пригласить 1 друга', icon: '🤝', reward: 50 },
+                    'referral5': { name: 'Популярный', desc: 'Пригласить 5 друзей', icon: '👥', reward: 200 },
+                    'referral10': { name: 'Лидер', desc: 'Пригласить 10 друзей', icon: '🌟', reward: 500 }
+                },
+                QUESTS: {
+                    'clicks': { name: 'Кликер', desc: 'Сделать %s кликов', icon: '👆' },
+                    'streak': { name: 'Заход', desc: 'Заходить %s дней подряд', icon: '📅' },
+                    'purchase': { name: 'Покупатель', desc: 'Совершить покупку на %s₽', icon: '💰' }
+                }
+            };
+
             const s = {
-                u: '',
-                globalScore: 0,
-                myScore: 0,
-                pid: null,
-                ns: false,
-                or: null,
-                pr: null,
-                ct: [],
-                lsc: 0,
-                lch: Date.now(),
-                cc: 0,
-                b: false,
-                admin: false,
-                players: {},
-                online: 0,
-                clickLock: false,
-                target: C.TARGET,
-                pendingClick: false,
-                imageSize: 100,
-                currentPrices: { 10: 10, 50: 50, 100: 100, 1000: 1000 },
-                salesToday: 0,
-                totalRevenue: 0,
-                purchases: 0,
-                moneySpent: 0,
-                streak: 0,
-                level: 1,
-                achievements: {},
-                referrals: [],
-                referralData: {},
-                referralBonus: 0,
-                referralClicksTotal: 0,
-                quests: {},
-                questsCompleted: {},
-                viewingProfile: null,
-                achievementNotified: {},
-                processedReferrals: new Set(),
-                adTimer: null,
-                adTimeLeft: 0,
-                
+                u: '', globalScore: 0, myScore: 0, pid: null, ns: false, or: null, pr: null,
+                ct: [], lsc: 0, lch: Date.now(), cc: 0, b: false, admin: false,
+                players: {}, online: 0, clickLock: false, target: C.TARGET,
+                pendingClick: false, imageSize: 100,
+                salesToday: 0, totalRevenue: 0, purchases: 0, moneySpent: 0,
+                streak: 0, level: 1, achievements: {}, referrals: [],
+                referralData: {}, referralBonus: 0, referralClicksTotal: 0,
+                quests: {}, questsCompleted: {}, viewingProfile: null,
+                achievementNotified: {}, processedReferrals: new Set(),
+                adTimer: null, adTimeLeft: 0,
                 contest: {
-                    active: false,
-                    startTime: 0,
-                    endTime: 0,
-                    prize: 1000,
-                    durationHours: 0,
-                    durationMinutes: 1,
-                    durationSeconds: 0,
-                    winner: null,
-                    winnerData: null,
-                    participants: {},
-                    participantScores: {},
-                    ended: false,
-                    winnerModalShown: false
+                    active: false, startTime: 0, endTime: 0, prize: 1000,
+                    durationHours: 0, durationMinutes: 1, durationSeconds: 0,
+                    winner: null, winnerData: null, participants: {},
+                    participantScores: {}, ended: false, winnerModalShown: false
                 },
-                
-                winner: {
-                    selectedBank: null,
-                    selectedMethod: null,
-                    details: '',
-                    fullName: '',
-                    phone: ''
-                },
-                
+                winner: { selectedBank: null, selectedMethod: null, details: '', fullName: '', phone: '' },
                 telegramSubscribers: 0
             };
 
-            // Хранилище
             const stor = {
                 g: (k) => { try { return localStorage.getItem(C.STORAGE[k]); } catch { return null; } },
                 s: (k, v) => { try { localStorage.setItem(C.STORAGE[k], v); } catch {} },
@@ -3081,84 +3012,53 @@
             // ===== ФУНКЦИИ ДЛЯ TELEGRAM =====
             function updateTelegramSubscribers() {
                 if (!el.telegramCount) return;
-                
-                db.ref('telegram/subscribers').once('value')
-                    .then(snap => {
-                        const count = snap.val();
-                        if (count !== null) {
-                            s.telegramSubscribers = count;
-                        } else {
-                            s.telegramSubscribers = 42;
-                            db.ref('telegram/subscribers').set(s.telegramSubscribers);
-                        }
-                        updateTelegramDisplay();
-                    })
-                    .catch(() => {
-                        s.telegramSubscribers = 42;
-                        updateTelegramDisplay();
-                    });
-                    
+                db.ref('telegram/subscribers').once('value').then(snap => {
+                    s.telegramSubscribers = snap.val() || 42;
+                    if (!snap.val()) db.ref('telegram/subscribers').set(42);
+                    updateTelegramDisplay();
+                }).catch(() => {
+                    s.telegramSubscribers = 42;
+                    updateTelegramDisplay();
+                });
                 db.ref('telegram/subscribers').on('value', snap => {
-                    const count = snap.val();
-                    if (count !== null) {
-                        s.telegramSubscribers = count;
-                        updateTelegramDisplay();
-                    }
+                    s.telegramSubscribers = snap.val() || 42;
+                    updateTelegramDisplay();
                 });
             }
             
             function updateTelegramDisplay() {
                 if (el.telegramCount) {
-                    const count = s.telegramSubscribers;
                     let word = 'подписчиков';
-                    if (count % 10 === 1 && count % 100 !== 11) word = 'подписчик';
-                    else if (count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)) word = 'подписчика';
-                    
-                    el.telegramCount.textContent = `${count} ${word}`;
+                    if (s.telegramSubscribers % 10 === 1 && s.telegramSubscribers % 100 !== 11) word = 'подписчик';
+                    else if (s.telegramSubscribers % 10 >= 2 && s.telegramSubscribers % 10 <= 4 && (s.telegramSubscribers % 100 < 10 || s.telegramSubscribers % 100 >= 20)) word = 'подписчика';
+                    el.telegramCount.textContent = `${s.telegramSubscribers} ${word}`;
                 }
             }
             
             window.updateTelegramCount = function(count) {
                 if (!s.admin) return;
                 const newCount = parseInt(count);
-                if (!isNaN(newCount) && newCount >= 0) {
-                    db.ref('telegram/subscribers').set(newCount);
-                }
+                if (!isNaN(newCount) && newCount >= 0) db.ref('telegram/subscribers').set(newCount);
             };
 
-            // ===== ФУНКЦИИ ДЛЯ УПРАВЛЕНИЯ ВРЕМЕНЕМ КОНКУРСА =====
+            // ===== ФУНКЦИИ ДЛЯ ВРЕМЕНИ КОНКУРСА =====
             window.updateTotalContestTime = function() {
                 if (!el.contestHours || !el.contestMinutes || !el.contestSeconds) return;
-                
                 let hours = parseInt(el.contestHours.value) || 0;
                 let minutes = parseInt(el.contestMinutes.value) || 0;
                 let seconds = parseInt(el.contestSeconds.value) || 0;
-                
-                if (minutes > 59) {
-                    minutes = 59;
-                    el.contestMinutes.value = 59;
-                }
-                if (seconds > 59) {
-                    seconds = 59;
-                    el.contestSeconds.value = 59;
-                }
-                
-                if (el.totalTimeDisplay) {
-                    el.totalTimeDisplay.textContent = `${hours}ч ${minutes}м ${seconds}с`;
-                }
-                
+                if (minutes > 59) { minutes = 59; el.contestMinutes.value = 59; }
+                if (seconds > 59) { seconds = 59; el.contestSeconds.value = 59; }
+                if (el.totalTimeDisplay) el.totalTimeDisplay.textContent = `${hours}ч ${minutes}м ${seconds}с`;
                 s.contest.durationHours = hours;
                 s.contest.durationMinutes = minutes;
                 s.contest.durationSeconds = seconds;
             };
 
-            window.setContestTimePreset = function(hours, minutes, seconds) {
-                if (!el.contestHours || !el.contestMinutes || !el.contestSeconds) return;
-                
-                el.contestHours.value = hours;
-                el.contestMinutes.value = minutes;
-                el.contestSeconds.value = seconds;
-                
+            window.setContestTimePreset = function(h, m, s) {
+                if (el.contestHours) el.contestHours.value = h;
+                if (el.contestMinutes) el.contestMinutes.value = m;
+                if (el.contestSeconds) el.contestSeconds.value = s;
                 updateTotalContestTime();
             };
 
@@ -3166,43 +3066,25 @@
                 const hours = parseInt(el.contestHours?.value) || 0;
                 const minutes = parseInt(el.contestMinutes?.value) || 0;
                 const seconds = parseInt(el.contestSeconds?.value) || 0;
-                
                 const validMinutes = Math.min(minutes, 59);
                 const validSeconds = Math.min(seconds, 59);
-                
-                if (validMinutes !== minutes && el.contestMinutes) {
-                    el.contestMinutes.value = validMinutes;
-                }
-                if (validSeconds !== seconds && el.contestSeconds) {
-                    el.contestSeconds.value = validSeconds;
-                }
-                
+                if (validMinutes !== minutes && el.contestMinutes) el.contestMinutes.value = validMinutes;
+                if (validSeconds !== seconds && el.contestSeconds) el.contestSeconds.value = validSeconds;
                 return (hours * 3600000) + (validMinutes * 60000) + (validSeconds * 1000);
             }
 
-            // ===== ФУНКЦИИ ДЛЯ РЕКЛАМНОГО ОКНА =====
+            // ===== ФУНКЦИИ ДЛЯ РЕКЛАМЫ =====
             window.showAdModal = function() {
                 if (!el.adModal) return;
-                
-                if (stor.g('AD_CLAIMED') === 'true') {
-                    alert('Вы уже получали этот бонус!');
-                    return;
-                }
-                
+                if (stor.g('AD_CLAIMED') === 'true') { alert('Вы уже получали этот бонус!'); return; }
                 el.adModal.classList.add('show');
                 if (el.bd) el.bd.classList.add('show');
-                
                 s.adTimeLeft = 60;
                 updateAdCountdown();
-                
                 s.adTimer = setInterval(() => {
                     s.adTimeLeft--;
                     updateAdCountdown();
-                    
-                    if (s.adTimeLeft <= 0) {
-                        clearInterval(s.adTimer);
-                        closeAdModal();
-                    }
+                    if (s.adTimeLeft <= 0) { clearInterval(s.adTimer); closeAdModal(); }
                 }, 1000);
             };
 
@@ -3211,197 +3093,106 @@
                 if (el.bd && !el.adminPanel.classList.contains('show') && !el.profileModal.classList.contains('show') && !el.winnerModal.classList.contains('show')) {
                     el.bd.classList.remove('show');
                 }
-                if (s.adTimer) {
-                    clearInterval(s.adTimer);
-                    s.adTimer = null;
-                }
+                if (s.adTimer) { clearInterval(s.adTimer); s.adTimer = null; }
             };
 
             function updateAdCountdown() {
-                if (el.adCountdown) {
-                    el.adCountdown.textContent = `Осталось: ${s.adTimeLeft} сек`;
-                }
+                if (el.adCountdown) el.adCountdown.textContent = `Осталось: ${s.adTimeLeft} сек`;
             }
 
             window.claimAdBonus = function() {
-                if (!s.ns) {
-                    alert('⚠️ Сначала введите имя!');
-                    return;
-                }
-                
+                if (!s.ns) { alert('⚠️ Сначала введите имя!'); return; }
                 window.open(C.AD_LINK, '_blank');
-                
                 if (s.pr) {
-                    db.ref('globalCounter').transaction(v => (v || 0) + C.AD_BONUS)
-                        .then(() => {
-                            return s.pr.transaction(p => {
-                                if (!p) p = { sc: 0 };
-                                p.sc = (p.sc || 0) + C.AD_BONUS;
-                                return p;
-                            });
-                        })
-                        .then(() => {
-                            s.myScore += C.AD_BONUS;
-                            s.globalScore += C.AD_BONUS;
-                            
-                            stor.s('AD_CLAIMED', 'true');
-                            
-                            if (el.au) {
-                                el.au.textContent = `🎁 Бонус +${C.AD_BONUS} кликов получен!`;
-                                el.au.style.display = 'block';
-                                setTimeout(() => { el.au.style.display = 'none'; }, 5000);
-                            }
-                            
-                            closeAdModal();
-                            updateUI();
-                            
-                            if (el.adBadge) {
-                                el.adBadge.style.display = 'none';
-                            }
-                        });
+                    db.ref('globalCounter').transaction(v => (v || 0) + C.AD_BONUS).then(() => {
+                        return s.pr.transaction(p => { if (!p) p = { sc: 0 }; p.sc = (p.sc || 0) + C.AD_BONUS; return p; });
+                    }).then(() => {
+                        s.myScore += C.AD_BONUS; s.globalScore += C.AD_BONUS;
+                        stor.s('AD_CLAIMED', 'true');
+                        if (el.au) { el.au.textContent = `🎁 Бонус +${C.AD_BONUS} кликов получен!`; el.au.style.display = 'block'; setTimeout(() => { el.au.style.display = 'none'; }, 5000); }
+                        closeAdModal(); updateUI();
+                        if (el.adBadge) el.adBadge.style.display = 'none';
+                    });
                 }
             };
 
-            // ===== ПРОСТЕЙШАЯ ФУНКЦИЯ ОПЛАТЫ =====
+            // ===== ФУНКЦИИ ОПЛАТЫ =====
             window.openPaymentModal = function(clicks, price) {
-                if (!s.ns) {
-                    alert('⚠️ Сначала введите имя!');
-                    return;
-                }
-                
-                // Сохраняем информацию о покупке
+                if (!s.ns) { alert('⚠️ Сначала введите имя!'); return; }
                 sessionStorage.setItem('pendingPayment', JSON.stringify({
-                    clicks: clicks,
-                    price: price,
-                    userId: s.pid,
-                    username: s.u,
-                    timestamp: Date.now()
+                    clicks: clicks, price: price, userId: s.pid, username: s.u, timestamp: Date.now()
                 }));
-                
-                // Получаем ссылку на оплату
                 const paymentUrl = PAYMENT_LINKS[price];
-                
-                if (paymentUrl) {
-                    window.location.href = paymentUrl;
-                } else {
-                    alert('Ошибка: нет ссылки для этой суммы');
-                }
+                if (paymentUrl) { window.location.href = paymentUrl; } 
+                else { alert('Ошибка: нет ссылки для этой суммы'); }
             };
 
-            // ===== ФУНКЦИЯ ДЛЯ ПРОИЗВОЛЬНОЙ СУММЫ =====
             window.openCustomPaymentModal = function() {
-                if (!s.ns) {
-                    alert('⚠️ Сначала введите имя!');
-                    return;
-                }
-                
+                if (!s.ns) { alert('⚠️ Сначала введите имя!'); return; }
                 const amount = prompt('Введите сумму в рублях (минимум 10₽):', '100');
-                
                 if (!amount) return;
-                
                 const price = parseInt(amount);
-                
-                if (isNaN(price) || price < 10) {
-                    alert('Минимальная сумма 10 рублей');
-                    return;
-                }
-                
-                // Сохраняем информацию о покупке
+                if (isNaN(price) || price < 10) { alert('Минимальная сумма 10 рублей'); return; }
                 sessionStorage.setItem('pendingPayment', JSON.stringify({
-                    clicks: price,
-                    price: price,
-                    userId: s.pid,
-                    username: s.u,
-                    timestamp: Date.now()
+                    clicks: price, price: price, userId: s.pid, username: s.u, timestamp: Date.now()
                 }));
-                
-                // Используем ссылку для произвольной суммы
                 window.location.href = PAYMENT_LINKS.custom;
             };
 
-            // ===== ФУНКЦИЯ ПРОВЕРКИ ПЛАТЕЖА ПРИ ВОЗВРАТЕ =====
-            function checkPendingPayment() {
+            function checkAndCreditPayment() {
                 const paymentData = sessionStorage.getItem('pendingPayment');
-                if (!paymentData) return;
-                
+                if (!paymentData) return false;
                 try {
                     const payment = JSON.parse(paymentData);
+                    if (payment.userId !== s.pid) return false;
+                    if (Date.now() - payment.timestamp > 1800000) { sessionStorage.removeItem('pendingPayment'); return false; }
                     
-                    // Проверяем, что это тот же пользователь
-                    if (payment.userId !== s.pid) return;
+                    addPaidClicks(payment.clicks, payment.price);
+                    sessionStorage.removeItem('pendingPayment');
                     
-                    // Спрашиваем пользователя
-                    if (confirm(`✅ Оплата прошла успешно?\n\nНажмите ОК, чтобы получить ${payment.clicks} кликов`)) {
-                        // Зачисляем клики
-                        addPaidClicks(payment.clicks, payment.price);
-                        sessionStorage.removeItem('pendingPayment');
-                        
-                        if (el.ps) {
-                            el.ps.textContent = `💰 ${payment.clicks} кликов зачислены!`;
-                            el.ps.style.display = 'block';
-                            setTimeout(() => { el.ps.style.display = 'none'; }, 5000);
+                    if (el.paymentContainer) {
+                        el.paymentContainer.style.display = 'block';
+                        el.paymentTitle.textContent = '✅ Оплата успешна!';
+                        if (el.paymentSuccessMessage) {
+                            el.paymentSuccessMessage.classList.add('show');
+                            if (el.paymentSuccessText) el.paymentSuccessText.textContent = `💰 ${payment.clicks} кликов зачислены на ваш счет!`;
                         }
+                        setTimeout(() => {
+                            el.paymentContainer.style.display = 'none';
+                            if (el.paymentSuccessMessage) el.paymentSuccessMessage.classList.remove('show');
+                        }, 5000);
                     }
-                } catch (e) {
-                    console.error('Ошибка:', e);
-                }
+                    return true;
+                } catch (e) { console.error('Ошибка при проверке платежа:', e); return false; }
             }
 
-            // ===== ФУНКЦИЯ ЗАЧИСЛЕНИЯ КЛИКОВ =====
             function addPaidClicks(clicks, price) {
-                if (!s.pid) return;
-                
-                s.purchases++;
-                s.moneySpent += price;
-                
-                db.ref('globalCounter').transaction(v => (v || 0) + clicks)
-                    .then(() => {
-                        if (s.pr) {
-                            return s.pr.transaction(p => {
-                                if (!p) p = { sc: 0 };
-                                p.sc = (p.sc || 0) + clicks;
-                                p.n = s.u;
-                                p.ls = Date.now();
-                                p.purchases = (p.purchases || 0) + 1;
-                                p.spent = (p.spent || 0) + price;
-                                return p;
-                            });
-                        }
-                    })
-                    .then(() => {
-                        s.salesToday++;
-                        s.totalRevenue += price;
-                        s.myScore += clicks;
-                        s.globalScore += clicks;
-                        
-                        db.ref('admin/sales').push({
-                            amount: clicks,
-                            price: price,
-                            user: s.u,
-                            userId: s.pid,
-                            time: Date.now()
-                        });
-                        
-                        checkAchievements();
-                        
-                        if (el.ps) {
-                            el.ps.textContent = `💰 ${clicks} кликов успешно зачислены!`;
-                            el.ps.style.display = 'block';
-                            setTimeout(() => { el.ps.style.display = 'none'; }, 5000);
-                        }
-                        
-                        if (s.admin && el.todaySales) {
-                            el.todaySales.textContent = s.salesToday;
-                        }
-                        
-                        updateUI();
-                    })
-                    .catch(() => {
-                        alert('❌ Ошибка при зачислении');
+                if (!s.pid || !s.pr) return;
+                s.purchases = (s.purchases || 0) + 1;
+                s.moneySpent = (s.moneySpent || 0) + price;
+                db.ref('globalCounter').transaction(v => (v || 0) + clicks).then(() => {
+                    return s.pr.transaction(p => {
+                        if (!p) p = { sc: 0 };
+                        p.sc = (p.sc || 0) + clicks;
+                        p.n = s.u;
+                        p.ls = Date.now();
+                        p.purchases = (p.purchases || 0) + 1;
+                        p.spent = (p.spent || 0) + price;
+                        return p;
                     });
+                }).then(() => {
+                    s.salesToday = (s.salesToday || 0) + 1;
+                    s.totalRevenue = (s.totalRevenue || 0) + price;
+                    s.myScore = (s.myScore || 0) + clicks;
+                    s.globalScore = (s.globalScore || 0) + clicks;
+                    db.ref('admin/sales').push({ amount: clicks, price: price, user: s.u, userId: s.pid, time: Date.now() });
+                    checkAchievements();
+                    if (s.admin && el.todaySales) el.todaySales.textContent = s.salesToday;
+                    updateUI();
+                }).catch(error => console.error('Ошибка при зачислении кликов:', error));
             }
 
-            // ===== ФУНКЦИИ ДЛЯ МОДАЛЬНОГО ОКНА ПОБЕДИТЕЛЯ =====
+            // ===== ФУНКЦИИ ДЛЯ ПОБЕДИТЕЛЯ =====
             window.closeWinnerModal = function() {
                 if (el.winnerModal) {
                     el.winnerModal.classList.remove('show');
@@ -3412,280 +3203,126 @@
             };
             
             window.selectBank = function(bank, element) {
-                document.querySelectorAll('.winner-bank-option').forEach(opt => {
-                    opt.classList.remove('selected');
-                });
-                
+                document.querySelectorAll('.winner-bank-option').forEach(opt => opt.classList.remove('selected'));
                 element.classList.add('selected');
-                
                 s.winner.selectedBank = bank;
-                
                 checkWinnerFormComplete();
             };
 
             window.selectMethod = function(method, element) {
-                document.querySelectorAll('.winner-method-option').forEach(opt => {
-                    opt.classList.remove('selected');
-                });
-                
+                document.querySelectorAll('.winner-method-option').forEach(opt => opt.classList.remove('selected'));
                 element.classList.add('selected');
-                
                 s.winner.selectedMethod = method;
-                
                 if (el.winnerDetails) {
-                    if (method === 'card') {
-                        el.winnerDetails.placeholder = 'Введите номер карты (16 цифр)';
-                    } else if (method === 'phone') {
-                        el.winnerDetails.placeholder = 'Введите номер телефона (+7...)';
-                    } else if (method === 'sbp') {
-                        el.winnerDetails.placeholder = 'Введите номер телефона для СБП';
-                    } else if (method === 'yoomoney') {
-                        el.winnerDetails.placeholder = 'Введите номер кошелька ЮMoney';
-                    }
+                    if (method === 'card') el.winnerDetails.placeholder = 'Введите номер карты (16 цифр)';
+                    else if (method === 'phone') el.winnerDetails.placeholder = 'Введите номер телефона (+7...)';
+                    else if (method === 'sbp') el.winnerDetails.placeholder = 'Введите номер телефона для СБП';
+                    else if (method === 'yoomoney') el.winnerDetails.placeholder = 'Введите номер кошелька ЮMoney';
                 }
-                
                 checkWinnerFormComplete();
             };
 
             function checkWinnerFormComplete() {
                 if (!el.winnerSubmitBtn) return;
-                
                 const details = el.winnerDetails ? el.winnerDetails.value.trim() : '';
                 const fullName = el.winnerFullName ? el.winnerFullName.value.trim() : '';
                 const phone = el.winnerPhone ? el.winnerPhone.value.trim() : '';
-                
-                const isComplete = s.winner.selectedBank && 
-                                   s.winner.selectedMethod && 
-                                   details.length > 0 && 
-                                   fullName.length > 0 && 
-                                   phone.length > 0;
-                
+                const isComplete = s.winner.selectedBank && s.winner.selectedMethod && details.length > 0 && fullName.length > 0 && phone.length > 0;
                 el.winnerSubmitBtn.disabled = !isComplete;
             }
 
             window.submitWinnerData = function() {
                 if (!el.winnerDetails || !el.winnerFullName || !el.winnerPhone) return;
-                
                 const details = el.winnerDetails.value.trim();
                 const fullName = el.winnerFullName.value.trim();
                 const phone = el.winnerPhone.value.trim();
-                
-                if (!s.winner.selectedBank || !s.winner.selectedMethod || !details || !fullName || !phone) {
-                    alert('Заполните все поля!');
-                    return;
-                }
-                
+                if (!s.winner.selectedBank || !s.winner.selectedMethod || !details || !fullName || !phone) { alert('Заполните все поля!'); return; }
                 if (s.winner.selectedMethod === 'card') {
                     const cleanDetails = details.replace(/\s/g, '');
-                    if (!/^\d{16}$/.test(cleanDetails)) {
-                        alert('Введите корректный номер карты (16 цифр)');
-                        return;
-                    }
+                    if (!/^\d{16}$/.test(cleanDetails)) { alert('Введите корректный номер карты (16 цифр)'); return; }
                 }
-                
                 if ((s.winner.selectedMethod === 'phone' || s.winner.selectedMethod === 'sbp')) {
                     const cleanDetails = details.replace(/\s/g, '').replace(/[^0-9]/g, '');
                     if (!/^7\d{10}$/.test(cleanDetails) && !/^8\d{10}$/.test(cleanDetails) && !/^\d{11}$/.test(cleanDetails)) {
-                        alert('Введите корректный номер телефона (11 цифр, начиная с 7 или 8)');
-                        return;
+                        alert('Введите корректный номер телефона (11 цифр, начиная с 7 или 8)'); return;
                     }
                 }
-                
                 db.ref('contest/winner/data').set({
-                    bank: s.winner.selectedBank,
-                    method: s.winner.selectedMethod,
-                    details: details,
-                    fullName: fullName,
-                    phone: phone,
-                    timestamp: Date.now(),
-                    prize: s.contest.prize,
-                    userId: s.pid,
-                    username: s.u
+                    bank: s.winner.selectedBank, method: s.winner.selectedMethod,
+                    details: details, fullName: fullName, phone: phone,
+                    timestamp: Date.now(), prize: s.contest.prize,
+                    userId: s.pid, username: s.u
                 }).then(() => {
-                    if (el.winnerSuccessMessage) {
-                        el.winnerSuccessMessage.classList.add('show');
-                    }
-                    
-                    if (el.winnerSubmitBtn) {
-                        el.winnerSubmitBtn.disabled = true;
-                        el.winnerSubmitBtn.textContent = '✅ ДАННЫЕ ОТПРАВЛЕНЫ';
-                    }
-                    
-                    document.querySelectorAll('.winner-bank-option, .winner-method-option').forEach(opt => {
-                        opt.classList.remove('selected');
-                    });
-                    
+                    if (el.winnerSuccessMessage) el.winnerSuccessMessage.classList.add('show');
+                    if (el.winnerSubmitBtn) { el.winnerSubmitBtn.disabled = true; el.winnerSubmitBtn.textContent = '✅ ДАННЫЕ ОТПРАВЛЕНЫ'; }
+                    document.querySelectorAll('.winner-bank-option, .winner-method-option').forEach(opt => opt.classList.remove('selected'));
                     if (el.winnerDetails) el.winnerDetails.disabled = true;
                     if (el.winnerFullName) el.winnerFullName.disabled = true;
                     if (el.winnerPhone) el.winnerPhone.disabled = true;
-                    
-                    if (el.au) {
-                        el.au.textContent = '✅ Данные победителя отправлены!';
-                        el.au.style.display = 'block';
-                        setTimeout(() => { el.au.style.display = 'none'; }, 5000);
-                    }
-                    
-                    s.contest.winnerData = {
-                        bank: s.winner.selectedBank,
-                        method: s.winner.selectedMethod,
-                        details: details,
-                        fullName: fullName,
-                        phone: phone,
-                        timestamp: Date.now()
-                    };
-                    
+                    if (el.au) { el.au.textContent = '✅ Данные победителя отправлены!'; el.au.style.display = 'block'; setTimeout(() => { el.au.style.display = 'none'; }, 5000); }
+                    s.contest.winnerData = { bank: s.winner.selectedBank, method: s.winner.selectedMethod, details: details, fullName: fullName, phone: phone, timestamp: Date.now() };
                     localStorage.setItem('winnerPrizeClaimed_' + s.contest.prize, 'true');
                 });
             };
 
-            if (el.winnerDetails) {
-                el.winnerDetails.addEventListener('input', checkWinnerFormComplete);
-            }
-            if (el.winnerFullName) {
-                el.winnerFullName.addEventListener('input', checkWinnerFormComplete);
-            }
-            if (el.winnerPhone) {
-                el.winnerPhone.addEventListener('input', checkWinnerFormComplete);
-            }
+            if (el.winnerDetails) el.winnerDetails.addEventListener('input', checkWinnerFormComplete);
+            if (el.winnerFullName) el.winnerFullName.addEventListener('input', checkWinnerFormComplete);
+            if (el.winnerPhone) el.winnerPhone.addEventListener('input', checkWinnerFormComplete);
 
             // ===== ФУНКЦИИ ДЛЯ КОНКУРСА =====
             function startContest(prize, durationMs) {
                 const now = Date.now();
-                
-                s.contest.active = true;
-                s.contest.startTime = now;
-                s.contest.endTime = now + durationMs;
-                s.contest.prize = prize;
-                s.contest.winner = null;
-                s.contest.winnerData = null;
-                s.contest.ended = false;
-                s.contest.winnerModalShown = false;
-                
-                s.contest.participants = {};
-                s.contest.participantScores = {};
-                
+                s.contest.active = true; s.contest.startTime = now; s.contest.endTime = now + durationMs;
+                s.contest.prize = prize; s.contest.winner = null; s.contest.winnerData = null;
+                s.contest.ended = false; s.contest.winnerModalShown = false;
+                s.contest.participants = {}; s.contest.participantScores = {};
                 const totalSeconds = Math.floor(durationMs / 1000);
                 const hours = Math.floor(totalSeconds / 3600);
                 const minutes = Math.floor((totalSeconds % 3600) / 60);
                 const seconds = totalSeconds % 60;
-                
-                s.contest.durationHours = hours;
-                s.contest.durationMinutes = minutes;
-                s.contest.durationSeconds = seconds;
-                
-                db.ref('contest').remove()
-                    .then(() => {
-                        return db.ref('contest').set({
-                            active: true,
-                            startTime: now,
-                            endTime: now + durationMs,
-                            prize: prize,
-                            durationHours: hours,
-                            durationMinutes: minutes,
-                            durationSeconds: seconds,
-                            winner: null,
-                            winnerData: null,
-                            participantScores: {}
-                        });
-                    })
-                    .then(() => {
-                        updateContestUI();
-                    })
-                    .catch(error => {
-                        console.error('Ошибка при запуске конкурса:', error);
+                s.contest.durationHours = hours; s.contest.durationMinutes = minutes; s.contest.durationSeconds = seconds;
+                db.ref('contest').remove().then(() => {
+                    return db.ref('contest').set({
+                        active: true, startTime: now, endTime: now + durationMs, prize: prize,
+                        durationHours: hours, durationMinutes: minutes, durationSeconds: seconds,
+                        winner: null, winnerData: null, participantScores: {}
                     });
+                }).then(() => updateContestUI()).catch(error => console.error('Ошибка при запуске конкурса:', error));
             }
 
             function endContest() {
                 if (s.contest.ended) return;
-                
-                s.contest.active = false;
-                s.contest.ended = true;
-                
+                s.contest.active = false; s.contest.ended = true;
                 const participants = [];
                 Object.entries(s.contest.participantScores).forEach(([id, score]) => {
                     const player = s.players[id];
-                    if (player && player.n) {
-                        participants.push({
-                            id,
-                            name: player.n,
-                            score: score
-                        });
-                    }
+                    if (player && player.n) participants.push({ id, name: player.n, score: score });
                 });
-                
                 participants.sort((a, b) => b.score - a.score);
-                
                 if (participants.length > 0) {
                     s.contest.winner = participants[0];
-                    
-                    db.ref('contest/winner').set({
-                        id: participants[0].id,
-                        name: participants[0].name,
-                        score: participants[0].score,
-                        prize: s.contest.prize
-                    });
-                    
-                    localStorage.setItem('lastContestWinner', JSON.stringify({
-                        id: participants[0].id,
-                        name: participants[0].name,
-                        prize: s.contest.prize,
-                        timestamp: Date.now()
-                    }));
-                    
-                    if (s.pid === participants[0].id && !s.contest.winnerModalShown) {
-                        s.contest.winnerModalShown = true;
-                        showWinnerModal();
-                    }
+                    db.ref('contest/winner').set({ id: participants[0].id, name: participants[0].name, score: participants[0].score, prize: s.contest.prize });
+                    localStorage.setItem('lastContestWinner', JSON.stringify({ id: participants[0].id, name: participants[0].name, prize: s.contest.prize, timestamp: Date.now() }));
+                    if (s.pid === participants[0].id && !s.contest.winnerModalShown) { s.contest.winnerModalShown = true; showWinnerModal(); }
                 }
-                
                 s.contest.participantScores = {};
                 db.ref('contest/participantScores').remove();
                 db.ref('contest/active').set(false);
-                
                 updateContestUI();
             }
             
             function showWinnerModal() {
                 if (!el.winnerModal) return;
-                
                 const claimed = localStorage.getItem('winnerPrizeClaimed_' + s.contest.prize);
-                if (claimed === 'true') {
-                    return;
-                }
-                
-                s.winner.selectedBank = null;
-                s.winner.selectedMethod = null;
-                
-                if (el.winnerModalPrize) {
-                    el.winnerModalPrize.textContent = s.contest.prize + '₽';
-                }
-                
-                if (el.winnerDetails) {
-                    el.winnerDetails.value = '';
-                    el.winnerDetails.disabled = false;
-                    el.winnerDetails.placeholder = 'Введите номер карты / телефона / кошелька';
-                }
-                if (el.winnerFullName) {
-                    el.winnerFullName.value = '';
-                    el.winnerFullName.disabled = false;
-                }
-                if (el.winnerPhone) {
-                    el.winnerPhone.value = '';
-                    el.winnerPhone.disabled = false;
-                }
-                if (el.winnerSubmitBtn) {
-                    el.winnerSubmitBtn.disabled = true;
-                    el.winnerSubmitBtn.textContent = '✅ ПОЛУЧИТЬ ВЫИГРЫШ';
-                }
-                if (el.winnerSuccessMessage) {
-                    el.winnerSuccessMessage.classList.remove('show');
-                }
-                
-                document.querySelectorAll('.winner-bank-option, .winner-method-option').forEach(opt => {
-                    opt.classList.remove('selected');
-                });
-                
+                if (claimed === 'true') return;
+                s.winner.selectedBank = null; s.winner.selectedMethod = null;
+                if (el.winnerModalPrize) el.winnerModalPrize.textContent = s.contest.prize + '₽';
+                if (el.winnerDetails) { el.winnerDetails.value = ''; el.winnerDetails.disabled = false; el.winnerDetails.placeholder = 'Введите номер карты / телефона / кошелька'; }
+                if (el.winnerFullName) { el.winnerFullName.value = ''; el.winnerFullName.disabled = false; }
+                if (el.winnerPhone) { el.winnerPhone.value = ''; el.winnerPhone.disabled = false; }
+                if (el.winnerSubmitBtn) { el.winnerSubmitBtn.disabled = true; el.winnerSubmitBtn.textContent = '✅ ПОЛУЧИТЬ ВЫИГРЫШ'; }
+                if (el.winnerSuccessMessage) el.winnerSuccessMessage.classList.remove('show');
+                document.querySelectorAll('.winner-bank-option, .winner-method-option').forEach(opt => opt.classList.remove('selected'));
                 el.winnerModal.classList.add('show');
                 if (el.bd) el.bd.classList.add('show');
             }
@@ -3693,116 +3330,65 @@
             function checkIfWinner() {
                 const lastWinnerStr = localStorage.getItem('lastContestWinner');
                 if (!lastWinnerStr) return;
-                
                 try {
                     const lastWinner = JSON.parse(lastWinnerStr);
-                    
                     if (lastWinner.id === s.pid) {
                         const daysPassed = (Date.now() - lastWinner.timestamp) / (1000 * 60 * 60 * 24);
-                        if (daysPassed > 7) {
-                            localStorage.removeItem('lastContestWinner');
-                            return;
-                        }
-                        
+                        if (daysPassed > 7) { localStorage.removeItem('lastContestWinner'); return; }
                         const claimed = localStorage.getItem('winnerPrizeClaimed_' + lastWinner.prize);
-                        if (claimed === 'true') {
-                            localStorage.removeItem('lastContestWinner');
-                            return;
-                        }
-                        
+                        if (claimed === 'true') { localStorage.removeItem('lastContestWinner'); return; }
                         s.contest.prize = lastWinner.prize;
                         showWinnerModal();
                     }
-                } catch (e) {
-                    console.error('Ошибка при проверке победителя:', e);
-                }
+                } catch (e) { console.error('Ошибка при проверке победителя:', e); }
             }
 
             function handleContestClick() {
                 if (!s.contest.active || !s.pid) return;
-                
-                if (!s.contest.participantScores[s.pid]) {
-                    s.contest.participantScores[s.pid] = 0;
-                }
+                if (!s.contest.participantScores[s.pid]) s.contest.participantScores[s.pid] = 0;
                 s.contest.participantScores[s.pid] += 1;
-                
                 db.ref('contest/participantScores/' + s.pid).set(s.contest.participantScores[s.pid]);
-                
                 updateContestUI();
             }
 
             function updateContestUI() {
                 if (!el.contestSection) return;
-                
                 if (s.contest.active) {
                     el.contestSection.style.display = 'block';
-                    
                     const now = Date.now();
                     const timeLeft = Math.max(0, s.contest.endTime - now);
-                    
-                    if (timeLeft <= 0 && s.contest.active && !s.contest.ended) {
-                        endContest();
-                        return;
-                    }
-                    
+                    if (timeLeft <= 0 && s.contest.active && !s.contest.ended) { endContest(); return; }
                     const hours = Math.floor(timeLeft / 3600000);
                     const minutes = Math.floor((timeLeft % 3600000) / 60000);
                     const seconds = Math.floor((timeLeft % 60000) / 1000);
-                    
-                    if (el.contestTimer) {
-                        el.contestTimer.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                    }
-                    
-                    if (el.contestPrizeDisplay) {
-                        el.contestPrizeDisplay.textContent = s.contest.prize + '₽';
-                    }
-                    
+                    if (el.contestTimer) el.contestTimer.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    if (el.contestPrizeDisplay) el.contestPrizeDisplay.textContent = s.contest.prize + '₽';
                     const participants = [];
                     Object.entries(s.contest.participantScores).forEach(([id, score]) => {
                         const player = s.players[id];
-                        if (player && player.n) {
-                            participants.push({
-                                id,
-                                name: player.n,
-                                score: score
-                            });
-                        }
+                        if (player && player.n) participants.push({ id, name: player.n, score: score });
                     });
-                    
                     participants.sort((a, b) => b.score - a.score);
-                    
-                    if (el.contestParticipantsDisplay) {
-                        el.contestParticipantsDisplay.textContent = participants.length;
-                    }
-                    
+                    if (el.contestParticipantsDisplay) el.contestParticipantsDisplay.textContent = participants.length;
                     if (s.pid && el.contestMyScore) {
                         const myScore = s.contest.participantScores[s.pid] || 0;
                         el.contestMyScore.textContent = myScore.toLocaleString();
                     }
-                    
                     if (participants.length > 0 && el.contestProgress) {
                         const leaderScore = participants[0].score;
                         const myScore = s.contest.participantScores[s.pid] || 0;
                         const percent = leaderScore > 0 ? (myScore / leaderScore) * 100 : 0;
                         el.contestProgress.style.width = Math.min(percent, 100) + '%';
                     }
-                    
                     if (participants.length > 0) {
                         if (el.contestLeaderName) el.contestLeaderName.textContent = participants[0].name;
                         if (el.contestLeaderScore) el.contestLeaderScore.textContent = participants[0].score.toLocaleString() + ' кликов';
-                        
                         if (el.contestTop3) {
                             let topHtml = '';
                             for (let i = 0; i < Math.min(3, participants.length); i++) {
                                 const p = participants[i];
                                 const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : '🥉';
-                                topHtml += `
-                                    <div class="contest-top-item" onclick="openProfile('${p.id}', '${p.name}')">
-                                        <div class="contest-top-rank">${medal}</div>
-                                        <span class="contest-top-name">${p.name}</span>
-                                        <span class="contest-top-score">${p.score.toLocaleString()}</span>
-                                    </div>
-                                `;
+                                topHtml += `<div class="contest-top-item" onclick="openProfile('${p.id}', '${p.name}')"><div class="contest-top-rank">${medal}</div><span class="contest-top-name">${p.name}</span><span class="contest-top-score">${p.score.toLocaleString()}</span></div>`;
                             }
                             el.contestTop3.innerHTML = topHtml;
                         }
@@ -3810,134 +3396,73 @@
                         if (el.contestLeaderName) el.contestLeaderName.textContent = '-';
                         if (el.contestLeaderScore) el.contestLeaderScore.textContent = '0 кликов';
                     }
-                } else {
-                    el.contestSection.style.display = 'none';
-                }
+                } else { el.contestSection.style.display = 'none'; }
             }
 
             function updateContestSettings() {
                 if (!s.admin) return;
-                
                 const prizeInput = document.getElementById('contestPrize');
-                
-                if (prizeInput) {
-                    s.contest.prize = parseInt(prizeInput.value) || 1000;
-                }
-                
+                if (prizeInput) s.contest.prize = parseInt(prizeInput.value) || 1000;
                 updateTotalContestTime();
-                
                 if (!s.contest.active) {
-                    db.ref('contest/settings').set({
-                        prize: s.contest.prize,
-                        durationHours: s.contest.durationHours,
-                        durationMinutes: s.contest.durationMinutes,
-                        durationSeconds: s.contest.durationSeconds
-                    });
+                    db.ref('contest/settings').set({ prize: s.contest.prize, durationHours: s.contest.durationHours, durationMinutes: s.contest.durationMinutes, durationSeconds: s.contest.durationSeconds });
                 }
-                
                 updateContestUI();
             }
-
             window.updateContestSettings = updateContestSettings;
 
-            // ===== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК =====
             window.switchTab = function(tab) {
                 document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                
                 const activeTab = document.querySelector(`[onclick="switchTab('${tab}')"]`);
                 if (activeTab) activeTab.classList.add('active');
-                
                 const activeContent = document.getElementById(`${tab}-tab`);
                 if (activeContent) activeContent.classList.add('active');
             };
 
-            // ===== РАСЧЕТ УРОВНЯ =====
-            function calculateLevel(clicks) {
-                return Math.floor(clicks / 1000) + 1;
-            }
+            function calculateLevel(clicks) { return Math.floor(clicks / 1000) + 1; }
 
-            // ===== ФУНКЦИЯ ОБНОВЛЕНИЯ UI =====
             function updateUI() {
                 if (!el.cb || !el.e) return;
-                
                 const canClick = s.ns && !s.b;
-                
                 el.cb.disabled = !canClick;
-                
-                if (canClick) {
-                    el.e.classList.remove('disabled');
-                    el.e.style.pointerEvents = 'auto';
-                } else {
-                    el.e.classList.add('disabled');
-                    el.e.style.pointerEvents = 'none';
-                }
-                
+                if (canClick) { el.e.classList.remove('disabled'); el.e.style.pointerEvents = 'auto'; } 
+                else { el.e.classList.add('disabled'); el.e.style.pointerEvents = 'none'; }
                 if (s.ns && s.u && el.nig && el.g && el.dn && el.lb) {
-                    el.nig.classList.add('hidden');
-                    el.g.classList.remove('hidden');
+                    el.nig.classList.add('hidden'); el.g.classList.remove('hidden');
                     el.dn.textContent = s.u;
-                    
-                    const level = calculateLevel(s.myScore);
-                    el.lb.textContent = `Ур. ${level}`;
-                } else if (el.nig && el.g) {
-                    el.nig.classList.remove('hidden');
-                    el.g.classList.add('hidden');
-                }
-
+                    el.lb.textContent = `Ур. ${calculateLevel(s.myScore)}`;
+                } else if (el.nig && el.g) { el.nig.classList.remove('hidden'); el.g.classList.add('hidden'); }
                 const p = Math.min((s.globalScore / s.target) * 100, 100);
-                
                 if (el.ef) el.ef.style.height = p + '%';
                 if (el.ei) el.ei.style.clipPath = `inset(${100-p}% 0 0 0)`;
                 if (el.pf) el.pf.style.width = p + '%';
-
                 if (el.c) el.c.textContent = s.globalScore.toLocaleString();
                 if (el.cp) el.cp.textContent = s.globalScore.toLocaleString();
                 if (el.r) el.r.textContent = Math.max(s.target - s.globalScore, 0).toLocaleString();
                 if (el.us) el.us.textContent = s.myScore.toLocaleString();
-                
-                const level = calculateLevel(s.myScore);
-                if (el.ul) el.ul.textContent = level;
-                
+                if (el.ul) el.ul.textContent = calculateLevel(s.myScore);
                 if (s.pid) {
                     if (el.referralCount) el.referralCount.textContent = s.referrals.length;
                     if (el.referralBonus) el.referralBonus.textContent = s.referralBonus;
                     if (el.referralClicks) el.referralClicks.textContent = s.referralClicksTotal.toLocaleString();
-                    updateReferralLink();
-                    updateReferralsList();
+                    updateReferralLink(); updateReferralsList();
                 }
-                
                 if (s.admin) {
                     if (el.adminGlobalScore) el.adminGlobalScore.textContent = s.globalScore.toLocaleString();
                     if (el.adminTotalPlayers) el.adminTotalPlayers.textContent = Object.keys(s.players).length;
                     if (el.adminOnline) el.adminOnline.textContent = s.online;
                     if (el.todaySales) el.todaySales.textContent = s.salesToday;
-                    
                     if (el.contestPrize) el.contestPrize.value = s.contest.prize;
-                    
-                    if (el.contestStatus) el.contestStatus.textContent = s.contest.active ? 'Активен' : 'Не активен';
-                    if (el.contestStatus) el.contestStatus.style.color = s.contest.active ? '#4CAF50' : '#ff4444';
-                    
+                    if (el.contestStatus) { el.contestStatus.textContent = s.contest.active ? 'Активен' : 'Не активен'; el.contestStatus.style.color = s.contest.active ? '#4CAF50' : '#ff4444'; }
                     const participants = [];
                     Object.entries(s.contest.participantScores).forEach(([id, score]) => {
                         const player = s.players[id];
-                        if (player && player.n) {
-                            participants.push({
-                                id,
-                                name: player.n,
-                                score: score
-                            });
-                        }
+                        if (player && player.n) participants.push({ id, name: player.n, score: score });
                     });
                     participants.sort((a, b) => b.score - a.score);
-                    
-                    if (participants.length > 0 && el.contestLeader) {
-                        el.contestLeader.textContent = participants[0].name;
-                    }
-                    if (el.contestParticipants) {
-                        el.contestParticipants.textContent = participants.length;
-                    }
-                    
+                    if (participants.length > 0 && el.contestLeader) el.contestLeader.textContent = participants[0].name;
+                    if (el.contestParticipants) el.contestParticipants.textContent = participants.length;
                     if (s.contest.active && el.contestTimeLeft) {
                         const now = Date.now();
                         const timeLeft = Math.max(0, s.contest.endTime - now);
@@ -3945,461 +3470,176 @@
                         const minutes = Math.floor((timeLeft % 3600000) / 60000);
                         const seconds = Math.floor((timeLeft % 60000) / 1000);
                         el.contestTimeLeft.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                    } else if (el.contestTimeLeft) {
-                        el.contestTimeLeft.textContent = '00:00:00';
-                    }
+                    } else if (el.contestTimeLeft) el.contestTimeLeft.textContent = '00:00:00';
                 }
-                
-                updateQuests();
-                updateReferralTop();
-                updateContestUI();
+                updateQuests(); updateReferralTop(); updateContestUI();
             }
 
-            // ===== ОБНОВЛЕНИЕ ТОПА ПО РЕФЕРАЛАМ =====
             function updateReferralTop() {
                 if (!el.referralTop) return;
-                
-                const players = Object.entries(s.players)
-                    .map(([id, d]) => ({ 
-                        id, 
-                        name: d.n || 'Аноним', 
-                        referrals: d.referrals ? d.referrals.length : 0,
-                        referralBonus: d.referralBonus || 0,
-                        referralClicks: d.referralClicks || 0
-                    }))
-                    .filter(p => p.referrals > 0)
-                    .sort((a, b) => b.referrals - a.referrals)
-                    .slice(0, 10);
-
+                const players = Object.entries(s.players).map(([id, d]) => ({ 
+                    id, name: d.n || 'Аноним', referrals: d.referrals ? d.referrals.length : 0,
+                    referralBonus: d.referralBonus || 0, referralClicks: d.referralClicks || 0
+                })).filter(p => p.referrals > 0).sort((a, b) => b.referrals - a.referrals).slice(0, 10);
                 if (s.admin && el.adminTotalReferrals) {
-                    const totalReferrals = Object.values(s.players).reduce((sum, p) => 
-                        sum + (p.referrals ? p.referrals.length : 0), 0);
+                    const totalReferrals = Object.values(s.players).reduce((sum, p) => sum + (p.referrals ? p.referrals.length : 0), 0);
                     el.adminTotalReferrals.textContent = totalReferrals;
                 }
-
                 if (s.admin && el.referralTopList) {
-                    if (players.length === 0) {
-                        el.referralTopList.innerHTML = '<div style="text-align: center; color: #aaa;">Нет приглашений</div>';
-                    } else {
-                        el.referralTopList.innerHTML = players.map(p => `
-                            <div class="player-item" onclick="openProfile('${p.id}', '${p.name}')">
-                                <div class="player-info">
-                                    <div class="player-name">${p.name}</div>
-                                    <div class="player-score">👥 ${p.referrals} рефералов | 💰 ${p.referralBonus} бонусов</div>
-                                </div>
-                            </div>
-                        `).join('');
-                    }
+                    if (players.length === 0) el.referralTopList.innerHTML = '<div style="text-align: center; color: #aaa;">Нет приглашений</div>';
+                    else el.referralTopList.innerHTML = players.map(p => `<div class="player-item" onclick="openProfile('${p.id}', '${p.name}')"><div class="player-info"><div class="player-name">${p.name}</div><div class="player-score">👥 ${p.referrals} рефералов | 💰 ${p.referralBonus} бонусов</div></div></div>`).join('');
                 }
-
-                if (players.length === 0) {
-                    el.referralTop.innerHTML = '<div class="top-item">Нет приглашений</div>';
-                } else {
-                    el.referralTop.innerHTML = players.map((p, i) => {
-                        const rc = i === 0 ? 'top-rank-1' : i === 1 ? 'top-rank-2' : i === 2 ? 'top-rank-3' : '';
-                        return `
-                            <div class="top-item" onclick="openProfile('${p.id}', '${p.name}')">
-                                <div class="top-rank ${rc}">${i + 1}</div>
-                                <span class="top-name">${p.name}</span>
-                                <span class="top-score">👥 ${p.referrals}</span>
-                            </div>
-                        `;
-                    }).join('');
-                }
+                if (players.length === 0) el.referralTop.innerHTML = '<div class="top-item">Нет приглашений</div>';
+                else el.referralTop.innerHTML = players.map((p, i) => {
+                    const rc = i === 0 ? 'top-rank-1' : i === 1 ? 'top-rank-2' : i === 2 ? 'top-rank-3' : '';
+                    return `<div class="top-item" onclick="openProfile('${p.id}', '${p.name}')"><div class="top-rank ${rc}">${i + 1}</div><span class="top-name">${p.name}</span><span class="top-score">👥 ${p.referrals}</span></div>`;
+                }).join('');
             }
 
-            // ===== ОБНОВЛЕНИЕ СПИСКА РЕФЕРАЛОВ =====
             function updateReferralsList() {
                 if (!el.referralsList) return;
-                
-                if (!s.pid || !s.referrals || s.referrals.length === 0) {
-                    el.referralsList.innerHTML = '<div class="no-referrals">У тебя пока нет приглашенных друзей</div>';
-                    return;
-                }
-
-                let html = '';
-                let totalClicks = 0;
-                
+                if (!s.pid || !s.referrals || s.referrals.length === 0) { el.referralsList.innerHTML = '<div class="no-referrals">У тебя пока нет приглашенных друзей</div>'; return; }
+                let html = ''; let totalClicks = 0;
                 s.referrals.forEach(refId => {
                     const ref = s.players[refId];
                     if (ref) {
-                        const clicks = ref.sc || 0;
-                        totalClicks += clicks;
+                        const clicks = ref.sc || 0; totalClicks += clicks;
                         const bonus = Math.floor(clicks / 1000) * 10;
-                        
-                        html += `
-                            <div class="referral-row" onclick="openProfile('${refId}', '${ref.n}')">
-                                <span class="referral-name">${ref.n || 'Аноним'}</span>
-                                <span class="referral-clicks">${clicks.toLocaleString()} кликов</span>
-                                <span class="referral-bonus">+${bonus}</span>
-                            </div>
-                        `;
+                        html += `<div class="referral-row" onclick="openProfile('${refId}', '${ref.n}')"><span class="referral-name">${ref.n || 'Аноним'}</span><span class="referral-clicks">${clicks.toLocaleString()} кликов</span><span class="referral-bonus">+${bonus}</span></div>`;
                     }
                 });
-
                 s.referralClicksTotal = totalClicks;
-                
                 el.referralsList.innerHTML = html || '<div class="no-referrals">У тебя пока нет приглашенных друзей</div>';
             }
 
-            // ===== ПРОВЕРКА БОНУСОВ ЗА АКТИВНОСТЬ РЕФЕРАЛОВ =====
             function checkReferralActivity(refId, refClicks) {
                 if (!s.pid || !s.referrals.includes(refId)) return false;
-                
-                if (!s.referralData[refId]) {
-                    s.referralData[refId] = { lastClicks: 0, totalBonus: 0 };
-                }
-                
+                if (!s.referralData[refId]) s.referralData[refId] = { lastClicks: 0, totalBonus: 0 };
                 const lastChecked = s.referralData[refId].lastClicks;
                 const clicksGained = refClicks - lastChecked;
-                
                 if (clicksGained >= 1000) {
                     const bonus = Math.floor(clicksGained / 1000) * 10;
-                    s.referralBonus += bonus;
-                    s.myScore += bonus;
-                    s.globalScore += bonus;
-                    
+                    s.referralBonus += bonus; s.myScore += bonus; s.globalScore += bonus;
                     s.referralData[refId].lastClicks = refClicks;
                     s.referralData[refId].totalBonus += bonus;
-                    
-                    if (s.pr) {
-                        s.pr.update({ 
-                            referralBonus: s.referralBonus,
-                            sc: s.myScore,
-                            referralClicks: s.referralClicksTotal
-                        });
-                    }
-                    
-                    if (el.au) {
-                        el.au.textContent = `🎁 За активность реферала +${bonus} кликов!`;
-                        el.au.style.display = 'block';
-                        setTimeout(() => { el.au.style.display = 'none'; }, 5000);
-                    }
-                    
+                    if (s.pr) s.pr.update({ referralBonus: s.referralBonus, sc: s.myScore, referralClicks: s.referralClicksTotal });
+                    if (el.au) { el.au.textContent = `🎁 За активность реферала +${bonus} кликов!`; el.au.style.display = 'block'; setTimeout(() => { el.au.style.display = 'none'; }, 5000); }
                     return true;
                 }
-                
                 return false;
             }
 
-            // ===== ПОКАЗ ВСЕХ ПРИГЛАШАЮЩИХ =====
             window.showAllReferrers = function() {
                 if (!el.referralTop) return;
-                
-                const players = Object.entries(s.players)
-                    .map(([id, d]) => ({ 
-                        id, 
-                        name: d.n || 'Аноним', 
-                        referrals: d.referrals ? d.referrals.length : 0,
-                        level: calculateLevel(d.sc || 0)
-                    }))
-                    .filter(p => p.referrals > 0)
-                    .sort((a, b) => b.referrals - a.referrals);
-                
+                const players = Object.entries(s.players).map(([id, d]) => ({ id, name: d.n || 'Аноним', referrals: d.referrals ? d.referrals.length : 0, level: calculateLevel(d.sc || 0) })).filter(p => p.referrals > 0).sort((a, b) => b.referrals - a.referrals);
                 let listHtml = '<div class="top-title">Все приглашающие</div>';
-                
-                players.forEach((p, i) => {
-                    listHtml += `
-                        <div class="top-item" onclick="openProfile('${p.id}', '${p.name}')">
-                            <div class="top-rank">${i + 1}</div>
-                            <span class="top-name">${p.name} [Ур.${p.level}]</span>
-                            <span class="top-score">👥 ${p.referrals}</span>
-                        </div>
-                    `;
-                });
-                
-                if (players.length === 0) {
-                    listHtml += '<div class="top-item">Нет приглашений</div>';
-                }
-                
+                players.forEach((p, i) => { listHtml += `<div class="top-item" onclick="openProfile('${p.id}', '${p.name}')"><div class="top-rank">${i + 1}</div><span class="top-name">${p.name} [Ур.${p.level}]</span><span class="top-score">👥 ${p.referrals}</span></div>`; });
+                if (players.length === 0) listHtml += '<div class="top-item">Нет приглашений</div>';
                 el.referralTop.innerHTML = listHtml;
             };
 
-            // ===== ПРОВЕРКА ДОСТИЖЕНИЙ =====
             function checkAchievements() {
                 if (!s.pid || !s.pr) return;
-                
-                const newAchievements = [];
-                const now = Date.now();
-                
-                if (s.myScore >= 100 && (!s.achievements.click100 || !s.achievements.click100.unlocked) && !s.achievementNotified.click100) {
-                    newAchievements.push('click100');
-                    s.achievementNotified.click100 = true;
-                }
-                if (s.myScore >= 1000 && (!s.achievements.click1000 || !s.achievements.click1000.unlocked) && !s.achievementNotified.click1000) {
-                    newAchievements.push('click1000');
-                    s.achievementNotified.click1000 = true;
-                }
-                if (s.myScore >= 10000 && (!s.achievements.click10000 || !s.achievements.click10000.unlocked) && !s.achievementNotified.click10000) {
-                    newAchievements.push('click10000');
-                    s.achievementNotified.click10000 = true;
-                }
-                if (s.myScore >= 100000 && (!s.achievements.click100000 || !s.achievements.click100000.unlocked) && !s.achievementNotified.click100000) {
-                    newAchievements.push('click100000');
-                    s.achievementNotified.click100000 = true;
-                }
-                
-                if (s.purchases >= 1 && (!s.achievements.firstPurchase || !s.achievements.firstPurchase.unlocked) && !s.achievementNotified.firstPurchase) {
-                    newAchievements.push('firstPurchase');
-                    s.achievementNotified.firstPurchase = true;
-                }
-                if (s.moneySpent >= 500 && (!s.achievements.spend500 || !s.achievements.spend500.unlocked) && !s.achievementNotified.spend500) {
-                    newAchievements.push('spend500');
-                    s.achievementNotified.spend500 = true;
-                }
-                if (s.moneySpent >= 5000 && (!s.achievements.spend5000 || !s.achievements.spend5000.unlocked) && !s.achievementNotified.spend5000) {
-                    newAchievements.push('spend5000');
-                    s.achievementNotified.spend5000 = true;
-                }
-                
-                if (s.streak >= 7 && (!s.achievements.streak7 || !s.achievements.streak7.unlocked) && !s.achievementNotified.streak7) {
-                    newAchievements.push('streak7');
-                    s.achievementNotified.streak7 = true;
-                }
-                if (s.streak >= 30 && (!s.achievements.streak30 || !s.achievements.streak30.unlocked) && !s.achievementNotified.streak30) {
-                    newAchievements.push('streak30');
-                    s.achievementNotified.streak30 = true;
-                }
-                
-                if (s.referrals.length >= 1 && (!s.achievements.referral1 || !s.achievements.referral1.unlocked) && !s.achievementNotified.referral1) {
-                    newAchievements.push('referral1');
-                    s.achievementNotified.referral1 = true;
-                }
-                if (s.referrals.length >= 5 && (!s.achievements.referral5 || !s.achievements.referral5.unlocked) && !s.achievementNotified.referral5) {
-                    newAchievements.push('referral5');
-                    s.achievementNotified.referral5 = true;
-                }
-                if (s.referrals.length >= 10 && (!s.achievements.referral10 || !s.achievements.referral10.unlocked) && !s.achievementNotified.referral10) {
-                    newAchievements.push('referral10');
-                    s.achievementNotified.referral10 = true;
-                }
-                
+                const newAchievements = []; const now = Date.now();
+                if (s.myScore >= 100 && (!s.achievements.click100 || !s.achievements.click100.unlocked) && !s.achievementNotified.click100) { newAchievements.push('click100'); s.achievementNotified.click100 = true; }
+                if (s.myScore >= 1000 && (!s.achievements.click1000 || !s.achievements.click1000.unlocked) && !s.achievementNotified.click1000) { newAchievements.push('click1000'); s.achievementNotified.click1000 = true; }
+                if (s.myScore >= 10000 && (!s.achievements.click10000 || !s.achievements.click10000.unlocked) && !s.achievementNotified.click10000) { newAchievements.push('click10000'); s.achievementNotified.click10000 = true; }
+                if (s.myScore >= 100000 && (!s.achievements.click100000 || !s.achievements.click100000.unlocked) && !s.achievementNotified.click100000) { newAchievements.push('click100000'); s.achievementNotified.click100000 = true; }
+                if (s.purchases >= 1 && (!s.achievements.firstPurchase || !s.achievements.firstPurchase.unlocked) && !s.achievementNotified.firstPurchase) { newAchievements.push('firstPurchase'); s.achievementNotified.firstPurchase = true; }
+                if (s.moneySpent >= 500 && (!s.achievements.spend500 || !s.achievements.spend500.unlocked) && !s.achievementNotified.spend500) { newAchievements.push('spend500'); s.achievementNotified.spend500 = true; }
+                if (s.moneySpent >= 5000 && (!s.achievements.spend5000 || !s.achievements.spend5000.unlocked) && !s.achievementNotified.spend5000) { newAchievements.push('spend5000'); s.achievementNotified.spend5000 = true; }
+                if (s.streak >= 7 && (!s.achievements.streak7 || !s.achievements.streak7.unlocked) && !s.achievementNotified.streak7) { newAchievements.push('streak7'); s.achievementNotified.streak7 = true; }
+                if (s.streak >= 30 && (!s.achievements.streak30 || !s.achievements.streak30.unlocked) && !s.achievementNotified.streak30) { newAchievements.push('streak30'); s.achievementNotified.streak30 = true; }
+                if (s.referrals.length >= 1 && (!s.achievements.referral1 || !s.achievements.referral1.unlocked) && !s.achievementNotified.referral1) { newAchievements.push('referral1'); s.achievementNotified.referral1 = true; }
+                if (s.referrals.length >= 5 && (!s.achievements.referral5 || !s.achievements.referral5.unlocked) && !s.achievementNotified.referral5) { newAchievements.push('referral5'); s.achievementNotified.referral5 = true; }
+                if (s.referrals.length >= 10 && (!s.achievements.referral10 || !s.achievements.referral10.unlocked) && !s.achievementNotified.referral10) { newAchievements.push('referral10'); s.achievementNotified.referral10 = true; }
                 if (newAchievements.length > 0) {
                     const updates = {};
-                    
                     newAchievements.forEach(ach => {
                         updates[`achievements.${ach}`] = { unlocked: true, date: now };
-                        
                         if (C.ACHIEVEMENTS[ach].reward > 0) {
-                            s.myScore += C.ACHIEVEMENTS[ach].reward;
-                            s.globalScore += C.ACHIEVEMENTS[ach].reward;
+                            s.myScore += C.ACHIEVEMENTS[ach].reward; s.globalScore += C.ACHIEVEMENTS[ach].reward;
                             updates.sc = s.myScore;
-                            
-                            if (el.au) {
-                                el.au.textContent = `🏆 Достижение "${C.ACHIEVEMENTS[ach].name}"! +${C.ACHIEVEMENTS[ach].reward} кликов`;
-                                el.au.style.display = 'block';
-                                setTimeout(() => { el.au.style.display = 'none'; }, 5000);
-                            }
+                            if (el.au) { el.au.textContent = `🏆 Достижение "${C.ACHIEVEMENTS[ach].name}"! +${C.ACHIEVEMENTS[ach].reward} кликов`; el.au.style.display = 'block'; setTimeout(() => { el.au.style.display = 'none'; }, 5000); }
                         }
                     });
-                    
-                    s.pr.update(updates)
-                        .then(() => {
-                            newAchievements.forEach(ach => {
-                                if (!s.achievements) s.achievements = {};
-                                s.achievements[ach] = { unlocked: true, date: now };
-                            });
-                            
-                            if (s.viewingProfile === s.pid && el.profileModal && el.profileModal.classList.contains('show')) {
-                                updateProfileDisplay();
-                            }
-                            
-                            updateUI();
-                        });
+                    s.pr.update(updates).then(() => {
+                        newAchievements.forEach(ach => { if (!s.achievements) s.achievements = {}; s.achievements[ach] = { unlocked: true, date: now }; });
+                        if (s.viewingProfile === s.pid && el.profileModal && el.profileModal.classList.contains('show')) updateProfileDisplay();
+                        updateUI();
+                    });
                 }
             }
 
-            // ===== ФУНКЦИЯ ДЛЯ ОБНОВЛЕНИЯ ОТОБРАЖЕНИЯ ПРОФИЛЯ =====
             function updateProfileDisplay() {
                 if (!s.viewingProfile) return;
-                
                 const playerData = s.players[s.viewingProfile];
                 if (!playerData) return;
-                
                 const playerAchievements = playerData.achievements || {};
-                
-                if (el.profileLevel) {
-                    el.profileLevel.textContent = calculateLevel(playerData.sc || 0);
-                }
-                if (el.profileClicks) {
-                    el.profileClicks.textContent = (playerData.sc || 0).toLocaleString();
-                }
-                if (el.profilePurchases) {
-                    el.profilePurchases.textContent = playerData.purchases || 0;
-                }
-                if (el.profileSpent) {
-                    el.profileSpent.textContent = (playerData.spent || 0) + '₽';
-                }
-                if (el.profileStreak) {
-                    el.profileStreak.textContent = (playerData.streak || 1);
-                }
-                if (el.profileReferrals) {
-                    el.profileReferrals.textContent = playerData.referrals ? playerData.referrals.length : 0;
-                }
-                
+                if (el.profileLevel) el.profileLevel.textContent = calculateLevel(playerData.sc || 0);
+                if (el.profileClicks) el.profileClicks.textContent = (playerData.sc || 0).toLocaleString();
+                if (el.profilePurchases) el.profilePurchases.textContent = playerData.purchases || 0;
+                if (el.profileSpent) el.profileSpent.textContent = (playerData.spent || 0) + '₽';
+                if (el.profileStreak) el.profileStreak.textContent = playerData.streak || 1;
+                if (el.profileReferrals) el.profileReferrals.textContent = playerData.referrals ? playerData.referrals.length : 0;
                 let achievementsHtml = '';
-                
                 Object.entries(C.ACHIEVEMENTS).forEach(([key, ach]) => {
                     const unlocked = playerAchievements[key]?.unlocked;
-                    if (unlocked) {
-                        achievementsHtml += `
-                            <div class="achievement-card unlocked">
-                                <div class="achievement-icon">${ach.icon}</div>
-                                <div class="achievement-info">
-                                    <div class="achievement-name">${ach.name}</div>
-                                    <div class="achievement-desc">${ach.desc}</div>
-                                    <div class="achievement-reward">✓ Выполнено</div>
-                                </div>
-                            </div>
-                        `;
-                    }
+                    if (unlocked) achievementsHtml += `<div class="achievement-card unlocked"><div class="achievement-icon">${ach.icon}</div><div class="achievement-info"><div class="achievement-name">${ach.name}</div><div class="achievement-desc">${ach.desc}</div><div class="achievement-reward">✓ Выполнено</div></div></div>`;
                 });
-                
                 Object.entries(C.ACHIEVEMENTS).forEach(([key, ach]) => {
                     const unlocked = playerAchievements[key]?.unlocked;
-                    if (!unlocked) {
-                        achievementsHtml += `
-                            <div class="achievement-card locked">
-                                <div class="achievement-icon">🔒</div>
-                                <div class="achievement-info">
-                                    <div class="achievement-name">${ach.name}</div>
-                                    <div class="achievement-desc">${ach.desc}</div>
-                                    <div class="achievement-reward">+${ach.reward} кликов</div>
-                                </div>
-                            </div>
-                        `;
-                    }
+                    if (!unlocked) achievementsHtml += `<div class="achievement-card locked"><div class="achievement-icon">🔒</div><div class="achievement-info"><div class="achievement-name">${ach.name}</div><div class="achievement-desc">${ach.desc}</div><div class="achievement-reward">+${ach.reward} кликов</div></div></div>`;
                 });
-                
-                if (achievementsHtml === '') {
-                    achievementsHtml = '<div style="text-align: center; color: #aaa; grid-column: span 2;">Пока нет достижений</div>';
-                }
-                
-                if (el.achievementsList) {
-                    el.achievementsList.innerHTML = achievementsHtml;
-                }
+                if (achievementsHtml === '') achievementsHtml = '<div style="text-align: center; color: #aaa; grid-column: span 2;">Пока нет достижений</div>';
+                if (el.achievementsList) el.achievementsList.innerHTML = achievementsHtml;
             }
 
-            // ===== ПРОВЕРКА СТРИКА =====
             function checkStreak() {
                 if (!s.pr) return;
-                
                 const today = new Date().setHours(0, 0, 0, 0);
                 const lastSeen = s.pr.lastSeen || 0;
                 const lastSeenDay = new Date(lastSeen).setHours(0, 0, 0, 0);
-                
                 let newStreak = s.streak;
-                
-                if (lastSeenDay === today) {
-                    return;
-                } else if (lastSeenDay === today - 86400000) {
-                    newStreak++;
-                } else {
-                    newStreak = 1;
-                }
-                
-                if (newStreak !== s.streak) {
-                    s.streak = newStreak;
-                    s.pr.update({ streak: newStreak, lastSeen: Date.now() });
-                }
+                if (lastSeenDay === today) return;
+                else if (lastSeenDay === today - 86400000) newStreak++;
+                else newStreak = 1;
+                if (newStreak !== s.streak) { s.streak = newStreak; s.pr.update({ streak: newStreak, lastSeen: Date.now() }); }
             }
 
-            // ===== ГЕНЕРАЦИЯ ЕЖЕДНЕВНЫХ ЗАДАНИЙ =====
             function generateDailyQuests() {
                 const today = new Date().setHours(0, 0, 0, 0);
                 const savedQuests = localStorage.getItem('dailyQuests');
                 const savedDate = localStorage.getItem('questsDate');
-                
-                if (savedQuests && savedDate == today) {
-                    return JSON.parse(savedQuests);
-                }
-                
+                if (savedQuests && savedDate == today) return JSON.parse(savedQuests);
                 const quests = [
-                    {
-                        id: 'clicks_1',
-                        type: 'clicks',
-                        target: 100,
-                        reward: 20,
-                        progress: 0,
-                        completed: false,
-                        claimed: false
-                    },
-                    {
-                        id: 'clicks_2',
-                        type: 'clicks',
-                        target: 500,
-                        reward: 100,
-                        progress: 0,
-                        completed: false,
-                        claimed: false
-                    },
-                    {
-                        id: 'streak',
-                        type: 'streak',
-                        target: 3,
-                        reward: 30,
-                        progress: 0,
-                        completed: false,
-                        claimed: false
-                    }
+                    { id: 'clicks_1', type: 'clicks', target: 100, reward: 20, progress: 0, completed: false, claimed: false },
+                    { id: 'clicks_2', type: 'clicks', target: 500, reward: 100, progress: 0, completed: false, claimed: false },
+                    { id: 'streak', type: 'streak', target: 3, reward: 30, progress: 0, completed: false, claimed: false }
                 ];
-                
                 localStorage.setItem('dailyQuests', JSON.stringify(quests));
                 localStorage.setItem('questsDate', today);
-                
                 return quests;
             }
 
-            // ===== ОБНОВЛЕНИЕ ЗАДАНИЙ =====
             function updateQuests() {
                 if (!el.questsList || !el.questRefreshTime) return;
-                
                 const quests = generateDailyQuests();
-                
                 quests.forEach(quest => {
                     switch(quest.type) {
-                        case 'clicks':
-                            quest.progress = s.myScore;
-                            break;
-                        case 'streak':
-                            quest.progress = s.streak;
-                            break;
-                        case 'purchase':
-                            quest.progress = s.moneySpent;
-                            break;
+                        case 'clicks': quest.progress = s.myScore; break;
+                        case 'streak': quest.progress = s.streak; break;
+                        case 'purchase': quest.progress = s.moneySpent; break;
                     }
-                    
-                    if (quest.progress >= quest.target && !quest.completed) {
-                        quest.completed = true;
-                    }
+                    if (quest.progress >= quest.target && !quest.completed) quest.completed = true;
                 });
-                
                 localStorage.setItem('dailyQuests', JSON.stringify(quests));
-                
                 let questsHtml = '';
                 quests.forEach(quest => {
                     const percent = Math.min((quest.progress / quest.target) * 100, 100);
-                    questsHtml += `
-                        <div class="quest-item ${quest.completed ? 'completed' : ''}">
-                            <div class="quest-icon">${C.QUESTS[quest.type].icon}</div>
-                            <div class="quest-name">${C.QUESTS[quest.type].name}</div>
-                            <div class="quest-desc">${C.QUESTS[quest.type].desc.replace('%s', quest.target)}</div>
-                            <div class="quest-progress">
-                                <div class="quest-progress-fill" style="width: ${percent}%"></div>
-                            </div>
-                            <div class="quest-reward">+${quest.reward}</div>
-                            ${quest.completed && !quest.claimed ? 
-                                `<button class="quest-button" onclick="claimQuest('${quest.id}')">Забрать</button>` : 
-                                quest.claimed ?
-                                '<button class="quest-button" disabled>Получено</button>' :
-                                `<button class="quest-button" disabled>${quest.progress}/${quest.target}</button>`
-                            }
-                        </div>
-                    `;
+                    questsHtml += `<div class="quest-item ${quest.completed ? 'completed' : ''}"><div class="quest-icon">${C.QUESTS[quest.type].icon}</div><div class="quest-name">${C.QUESTS[quest.type].name}</div><div class="quest-desc">${C.QUESTS[quest.type].desc.replace('%s', quest.target)}</div><div class="quest-progress"><div class="quest-progress-fill" style="width: ${percent}%"></div></div><div class="quest-reward">+${quest.reward}</div>${quest.completed && !quest.claimed ? `<button class="quest-button" onclick="claimQuest('${quest.id}')">Забрать</button>` : quest.claimed ? '<button class="quest-button" disabled>Получено</button>' : `<button class="quest-button" disabled>${quest.progress}/${quest.target}</button>`}</div>`;
                 });
-                
                 el.questsList.innerHTML = questsHtml;
-                
                 const now = Date.now();
                 const tomorrow = new Date().setHours(24, 0, 0, 0);
                 const hoursLeft = Math.floor((tomorrow - now) / 3600000);
@@ -4407,48 +3647,28 @@
                 el.questRefreshTime.textContent = `Обновление через: ${hoursLeft}ч ${minutesLeft}м`;
             }
 
-            // ===== ПОЛУЧЕНИЕ НАГРАДЫ ЗА ЗАДАНИЕ =====
             window.claimQuest = function(questId) {
                 const quests = JSON.parse(localStorage.getItem('dailyQuests'));
                 const quest = quests.find(q => q.id === questId);
-                
                 if (quest && quest.completed && !quest.claimed) {
                     quest.claimed = true;
                     localStorage.setItem('dailyQuests', JSON.stringify(quests));
-                    
                     if (s.pr) {
-                        db.ref('globalCounter').transaction(v => (v || 0) + quest.reward)
-                            .then(() => {
-                                return s.pr.transaction(p => {
-                                    if (!p) p = { sc: 0 };
-                                    p.sc = (p.sc || 0) + quest.reward;
-                                    return p;
-                                });
-                            })
-                            .then(() => {
-                                s.myScore += quest.reward;
-                                s.globalScore += quest.reward;
-                                
-                                if (el.au) {
-                                    el.au.textContent = `✅ Задание выполнено! +${quest.reward} кликов`;
-                                    el.au.style.display = 'block';
-                                    setTimeout(() => { el.au.style.display = 'none'; }, 5000);
-                                }
-                                
-                                updateQuests();
-                                updateUI();
-                            });
+                        db.ref('globalCounter').transaction(v => (v || 0) + quest.reward).then(() => {
+                            return s.pr.transaction(p => { if (!p) p = { sc: 0 }; p.sc = (p.sc || 0) + quest.reward; return p; });
+                        }).then(() => {
+                            s.myScore += quest.reward; s.globalScore += quest.reward;
+                            if (el.au) { el.au.textContent = `✅ Задание выполнено! +${quest.reward} кликов`; el.au.style.display = 'block'; setTimeout(() => { el.au.style.display = 'none'; }, 5000); }
+                            updateQuests(); updateUI();
+                        });
                     }
                 }
             };
 
-            // ===== РЕФЕРАЛЬНАЯ ССЫЛКА =====
             function updateReferralLink() {
                 if (!s.pid) return;
-                
                 const baseUrl = window.location.origin + window.location.pathname;
                 const refLink = `${baseUrl}?ref=${s.pid}`;
-                
                 if (el.referralLink) el.referralLink.value = refLink;
                 if (el.profileReferralLink) el.profileReferralLink.value = refLink;
             }
@@ -4456,146 +3676,85 @@
             window.copyReferralLink = function() {
                 const link = el.referralLink || el.profileReferralLink;
                 if (!link) return;
-                
                 link.select();
                 document.execCommand('copy');
-                
-                if (el.au) {
-                    el.au.textContent = '✅ Ссылка скопирована!';
-                    el.au.style.display = 'block';
-                    setTimeout(() => { el.au.style.display = 'none'; }, 2000);
-                }
+                if (el.au) { el.au.textContent = '✅ Ссылка скопирована!'; el.au.style.display = 'block'; setTimeout(() => { el.au.style.display = 'none'; }, 2000); }
             };
 
-            // ===== ОБРАБОТКА РЕФЕРАЛОВ =====
             function checkReferral() {
                 const urlParams = new URLSearchParams(window.location.search);
                 const ref = urlParams.get('ref');
-                
-                if (ref && ref !== s.pid) {
-                    localStorage.setItem('referrer', ref);
-                }
+                if (ref && ref !== s.pid) localStorage.setItem('referrer', ref);
             }
 
             function applyReferral() {
                 const ref = localStorage.getItem('referrer');
                 if (!ref || !s.pid || ref === s.pid) return;
-                
                 const processedKey = `ref_${ref}_${s.pid}`;
-                if (s.processedReferrals.has(processedKey)) {
-                    return;
-                }
-                
+                if (s.processedReferrals.has(processedKey)) return;
                 s.processedReferrals.add(processedKey);
-                
                 db.ref('players/' + ref + '/referrals').once('value', (snap) => {
                     const referrals = snap.val() || [];
-                    
-                    if (referrals.includes(s.pid)) {
-                        return;
-                    }
-                    
+                    if (referrals.includes(s.pid)) return;
                     const updatedReferrals = [...referrals, s.pid];
-                    
-                    db.ref('players/' + ref + '/referrals').set(updatedReferrals)
-                        .then(() => {
-                            return db.ref('players/' + ref).transaction(p => {
-                                if (!p) p = { sc: 0, referralBonus: 0, referralClicks: 0 };
-                                p.sc = (p.sc || 0) + 50;
-                                p.referralBonus = (p.referralBonus || 0) + 50;
-                                p.referralClicks = p.referralClicks || 0;
-                                return p;
-                            });
-                        })
-                        .then(() => {
-                            if (s.pid === ref && el.au) {
-                                el.au.textContent = '✅ За приглашенного друга +50 кликов!';
-                                el.au.style.display = 'block';
-                                setTimeout(() => { el.au.style.display = 'none'; }, 5000);
-                            }
-                        })
-                        .catch(() => {});
+                    db.ref('players/' + ref + '/referrals').set(updatedReferrals).then(() => {
+                        return db.ref('players/' + ref).transaction(p => {
+                            if (!p) p = { sc: 0, referralBonus: 0, referralClicks: 0 };
+                            p.sc = (p.sc || 0) + 50;
+                            p.referralBonus = (p.referralBonus || 0) + 50;
+                            p.referralClicks = p.referralClicks || 0;
+                            return p;
+                        });
+                    }).then(() => {
+                        if (s.pid === ref && el.au) { el.au.textContent = '✅ За приглашенного друга +50 кликов!'; el.au.style.display = 'block'; setTimeout(() => { el.au.style.display = 'none'; }, 5000); }
+                    }).catch(() => {});
                 });
-                
                 localStorage.removeItem('referrer');
             }
 
-            // ===== ОТКРЫТИЕ ПРОФИЛЯ =====
             window.openProfile = function(playerId, playerName) {
                 const playerData = s.players[playerId];
                 if (!playerData) return;
-                
                 const level = calculateLevel(playerData.sc || 0);
                 const referrals = playerData.referrals ? playerData.referrals.length : 0;
                 const referralBonus = playerData.referralBonus || 0;
                 const referralClicks = playerData.referralClicks || 0;
-                
                 if (el.profileName) el.profileName.textContent = playerData.n || playerName;
                 if (el.profileLevel) el.profileLevel.textContent = level;
                 if (el.profileClicks) el.profileClicks.textContent = (playerData.sc || 0).toLocaleString();
                 if (el.profilePurchases) el.profilePurchases.textContent = playerData.purchases || 0;
                 if (el.profileSpent) el.profileSpent.textContent = (playerData.spent || 0) + '₽';
-                if (el.profileStreak) el.profileStreak.textContent = (playerData.streak || 1);
+                if (el.profileStreak) el.profileStreak.textContent = playerData.streak || 1;
                 if (el.profileReferrals) el.profileReferrals.textContent = referrals;
-                
                 if (playerId === s.pid) {
                     updateReferralLink();
                     if (el.profileReferralSection) el.profileReferralSection.style.display = 'block';
                     if (el.profileReferralStat) el.profileReferralStat.textContent = referrals;
                     if (el.profileReferralBonusStat) el.profileReferralBonusStat.textContent = referralBonus;
                     if (el.profileReferralClicksStat) el.profileReferralClicksStat.textContent = referralClicks.toLocaleString();
-                } else {
-                    if (el.profileReferralSection) el.profileReferralSection.style.display = 'none';
-                }
-                
+                } else { if (el.profileReferralSection) el.profileReferralSection.style.display = 'none'; }
                 updateProfileDisplay();
-                
-                if (el.profileModal && el.bd) {
-                    el.profileModal.classList.add('show');
-                    el.bd.classList.add('show');
-                }
-                
+                if (el.profileModal && el.bd) { el.profileModal.classList.add('show'); el.bd.classList.add('show'); }
                 s.viewingProfile = playerId;
             };
 
-            // ===== ПОКАЗ ВСЕХ ИГРОКОВ =====
             window.showAllPlayers = function() {
                 if (!el.tl) return;
-                
-                const players = Object.entries(s.players)
-                    .map(([id, d]) => ({ id, ...d }))
-                    .filter(p => p.sc > 0)
-                    .sort((a, b) => b.sc - a.sc);
-                
+                const players = Object.entries(s.players).map(([id, d]) => ({ id, ...d })).filter(p => p.sc > 0).sort((a, b) => b.sc - a.sc);
                 let listHtml = '<div class="top-title">Все игроки</div>';
-                
                 players.forEach((p, i) => {
                     const level = calculateLevel(p.sc || 0);
-                    listHtml += `
-                        <div class="top-item" onclick="openProfile('${p.id}', '${p.n}')">
-                            <div class="top-rank">${i + 1}</div>
-                            <span class="top-name">${p.n || 'Аноним'} [Ур.${level}]</span>
-                            <span class="top-score">${(p.sc || 0).toLocaleString()}</span>
-                            ${p.streak >= 7 ? '<span class="top-badge">🔥</span>' : ''}
-                        </div>
-                    `;
+                    listHtml += `<div class="top-item" onclick="openProfile('${p.id}', '${p.n}')"><div class="top-rank">${i + 1}</div><span class="top-name">${p.n || 'Аноним'} [Ур.${level}]</span><span class="top-score">${(p.sc || 0).toLocaleString()}</span>${p.streak >= 7 ? '<span class="top-badge">🔥</span>' : ''}</div>`;
                 });
-                
                 el.tl.innerHTML = listHtml;
             };
 
-            // ===== ФУНКЦИЯ ИЗМЕНЕНИЯ РАЗМЕРА КАРТИНКИ =====
             function updateImageSize(size) {
                 s.imageSize = size;
                 if (el.ei) el.ei.style.backgroundSize = size + '%';
-                
                 if (s.admin) {
                     if (el.sizeValue) el.sizeValue.textContent = size + '%';
-                    
-                    el.sizePresetBtns.forEach(btn => {
-                        btn.classList.remove('active');
-                    });
-                    
+                    el.sizePresetBtns.forEach(btn => btn.classList.remove('active'));
                     if (size === 75 && el.sizePresetBtns[0]) el.sizePresetBtns[0].classList.add('active');
                     else if (size === 100 && el.sizePresetBtns[1]) el.sizePresetBtns[1].classList.add('active');
                     else if (size === 125 && el.sizePresetBtns[2]) el.sizePresetBtns[2].classList.add('active');
@@ -4603,72 +3762,45 @@
                 }
             }
 
-            // ===== ФУНКЦИЯ ГЛОБАЛЬНОГО СБРОСА (ПОЛНЫЙ) =====
             function performGlobalReset() {
                 if (el.rn) el.rn.style.display = 'block';
-                
                 const resetTime = Date.now();
                 db.ref('admin/lastReset').set(resetTime);
-                
-                db.ref('/').remove()
-                    .then(() => {
-                        db.ref('globalCounter').set(0);
-                        db.ref('config/imageSize').set(100);
-                        db.ref('admin/lastReset').set(resetTime);
-                        
-                        setTimeout(() => {
-                            if (el.rn) el.rn.style.display = 'none';
-                        }, 3000);
-                        
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 1000);
-                    })
-                    .catch(() => {
-                        alert('❌ Ошибка при сбросе игры');
-                        if (el.rn) el.rn.style.display = 'none';
-                    });
+                db.ref('/').remove().then(() => {
+                    db.ref('globalCounter').set(0);
+                    db.ref('config/imageSize').set(100);
+                    db.ref('admin/lastReset').set(resetTime);
+                    setTimeout(() => { if (el.rn) el.rn.style.display = 'none'; }, 3000);
+                    setTimeout(() => window.location.reload(), 1000);
+                }).catch(() => { alert('❌ Ошибка при сбросе игры'); if (el.rn) el.rn.style.display = 'none'; });
             }
 
-            // ===== ПРОВЕРКА ВРЕМЕНИ ПОСЛЕДНЕГО СБРОСА =====
             function checkLastReset() {
                 db.ref('admin/lastReset').once('value', (snap) => {
                     const lastReset = snap.val();
                     const localReset = localStorage.getItem('lastReset');
-                    
                     if (lastReset && (!localReset || lastReset > localReset)) {
                         localStorage.clear();
                         localStorage.setItem('lastReset', lastReset);
                         if (el.rn) el.rn.style.display = 'block';
-                        setTimeout(() => {
-                            if (el.rn) el.rn.style.display = 'none';
-                        }, 3000);
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 1000);
+                        setTimeout(() => { if (el.rn) el.rn.style.display = 'none'; }, 3000);
+                        setTimeout(() => window.location.reload(), 1000);
                     }
                 });
             }
 
-            // ===== СЛУШАТЕЛЬ ГЛОБАЛЬНОГО СБРОСА =====
             db.ref('admin/lastReset').on('value', (snap) => {
                 const lastReset = snap.val();
                 const localReset = localStorage.getItem('lastReset');
-                
                 if (lastReset && (!localReset || lastReset > localReset)) {
                     localStorage.clear();
                     localStorage.setItem('lastReset', lastReset);
                     if (el.rn) el.rn.style.display = 'block';
-                    setTimeout(() => {
-                        if (el.rn) el.rn.style.display = 'none';
-                    }, 3000);
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1000);
+                    setTimeout(() => { if (el.rn) el.rn.style.display = 'none'; }, 3000);
+                    setTimeout(() => window.location.reload(), 1000);
                 }
             });
 
-            // ===== СЛУШАТЕЛЬ КОНКУРСА =====
             db.ref('contest').on('value', (snap) => {
                 const contest = snap.val();
                 if (contest) {
@@ -4676,44 +3808,28 @@
                     s.contest.startTime = contest.startTime || 0;
                     s.contest.endTime = contest.endTime || 0;
                     s.contest.prize = contest.prize || 1000;
-                    
                     s.contest.durationHours = contest.durationHours || 0;
                     s.contest.durationMinutes = contest.durationMinutes || 0;
                     s.contest.durationSeconds = contest.durationSeconds || 0;
-                    
-                    if (contest.participantScores) {
-                        s.contest.participantScores = contest.participantScores;
-                    }
-                    
+                    if (contest.participantScores) s.contest.participantScores = contest.participantScores;
                     s.contest.ended = !contest.active;
-                    
-                    if (contest.winner) {
-                        s.contest.winner = contest.winner;
-                    }
+                    if (contest.winner) s.contest.winner = contest.winner;
                     if (contest.winnerData) {
                         s.contest.winnerData = contest.winnerData;
-                        
                         if (s.pid === contest.winner?.id) {
-                            if (el.winnerSuccessMessage) {
-                                el.winnerSuccessMessage.classList.add('show');
-                            }
-                            if (el.winnerSubmitBtn) {
-                                el.winnerSubmitBtn.disabled = true;
-                                el.winnerSubmitBtn.textContent = '✅ ДАННЫЕ ОТПРАВЛЕНЫ';
-                            }
+                            if (el.winnerSuccessMessage) el.winnerSuccessMessage.classList.add('show');
+                            if (el.winnerSubmitBtn) { el.winnerSubmitBtn.disabled = true; el.winnerSubmitBtn.textContent = '✅ ДАННЫЕ ОТПРАВЛЕНЫ'; }
                             if (el.winnerDetails) el.winnerDetails.disabled = true;
                             if (el.winnerFullName) el.winnerFullName.disabled = true;
                             if (el.winnerPhone) el.winnerPhone.disabled = true;
                         }
                     }
-                    
                     if (s.admin && el.contestHours && el.contestMinutes && el.contestSeconds) {
                         if (s.contest.active) {
                             const timeLeft = Math.max(0, s.contest.endTime - Date.now());
                             const hoursLeft = Math.floor(timeLeft / 3600000);
                             const minutesLeft = Math.floor((timeLeft % 3600000) / 60000);
                             const secondsLeft = Math.floor((timeLeft % 60000) / 1000);
-                            
                             el.contestHours.value = hoursLeft;
                             el.contestMinutes.value = minutesLeft;
                             el.contestSeconds.value = secondsLeft;
@@ -4724,17 +3840,13 @@
                         }
                         updateTotalContestTime();
                     }
-                    
                     updateUI();
                 }
             });
             
             db.ref('contest/participantScores').on('value', (snap) => {
                 const scores = snap.val();
-                if (scores) {
-                    s.contest.participantScores = scores;
-                    updateContestUI();
-                }
+                if (scores) { s.contest.participantScores = scores; updateContestUI(); }
             });
             
             db.ref('contest/settings').on('value', (snap) => {
@@ -4744,39 +3856,31 @@
                     s.contest.durationHours = settings.durationHours || 0;
                     s.contest.durationMinutes = settings.durationMinutes || 1;
                     s.contest.durationSeconds = settings.durationSeconds || 0;
-                    
                     if (s.admin && el.contestHours && el.contestMinutes && el.contestSeconds) {
                         el.contestHours.value = s.contest.durationHours;
                         el.contestMinutes.value = s.contest.durationMinutes;
                         el.contestSeconds.value = s.contest.durationSeconds;
                         updateTotalContestTime();
                     }
-                    
                     updateUI();
                 }
             });
 
-            // ===== АДМИН ПАНЕЛЬ =====
             const admin = {
                 open() {
                     if (!s.admin) {
                         const secret = prompt('🔐 Введите пароль админа:');
-                        if (secret === atob(C.KEY)) {
-                            this.enable();
-                        }
+                        if (secret === atob(C.KEY)) this.enable();
                         return;
                     }
                     if (el.adminPanel && el.bd) {
-                        el.adminPanel.classList.add('show');
-                        el.bd.classList.add('show');
-                        
+                        el.adminPanel.classList.add('show'); el.bd.classList.add('show');
                         if (el.contestHours && el.contestMinutes && el.contestSeconds) {
                             if (s.contest.active) {
                                 const timeLeft = Math.max(0, s.contest.endTime - Date.now());
                                 const hoursLeft = Math.floor(timeLeft / 3600000);
                                 const minutesLeft = Math.floor((timeLeft % 3600000) / 60000);
                                 const secondsLeft = Math.floor((timeLeft % 60000) / 1000);
-                                
                                 el.contestHours.value = hoursLeft;
                                 el.contestMinutes.value = minutesLeft;
                                 el.contestSeconds.value = secondsLeft;
@@ -4789,332 +3893,133 @@
                         }
                     }
                     this.updatePlayerList();
-                    
                     if (el.sizeSlider) el.sizeSlider.value = s.imageSize;
                     if (el.sizeValue) el.sizeValue.textContent = s.imageSize + '%';
-                    
                     updateUI();
                 },
-                close() {
-                    if (el.adminPanel && el.bd) {
-                        el.adminPanel.classList.remove('show');
-                        el.bd.classList.remove('show');
-                    }
-                },
-                enable() {
-                    s.admin = true;
-                    stor.s('AM', 'true');
-                    this.open();
-                },
-                disable() {
-                    s.admin = false;
-                    stor.r('AM');
-                    this.close();
-                },
+                close() { if (el.adminPanel && el.bd) { el.adminPanel.classList.remove('show'); el.bd.classList.remove('show'); } },
+                enable() { s.admin = true; stor.s('AM', 'true'); this.open(); },
+                disable() { s.admin = false; stor.r('AM'); this.close(); },
                 updatePlayerList() {
                     if (!el.playerList) return;
-                    
-                    const players = Object.entries(s.players)
-                        .map(([id, data]) => ({ id, ...data }))
-                        .sort((a, b) => (b.sc || 0) - (a.sc || 0));
-
-                    if (players.length === 0) {
-                        el.playerList.innerHTML = '<div style="text-align: center; color: #aaa;">Нет игроков</div>';
-                        return;
-                    }
-
+                    const players = Object.entries(s.players).map(([id, data]) => ({ id, ...data })).sort((a, b) => (b.sc || 0) - (a.sc || 0));
+                    if (players.length === 0) { el.playerList.innerHTML = '<div style="text-align: center; color: #aaa;">Нет игроков</div>'; return; }
                     el.playerList.innerHTML = players.map(p => {
                         const level = calculateLevel(p.sc || 0);
                         const referrals = p.referrals ? p.referrals.length : 0;
-                        return `
-                        <div class="player-item ${p.b ? 'banned' : ''}" onclick="openProfile('${p.id}', '${p.n}')">
-                            <div class="player-info">
-                                <div class="player-name">${p.n || 'Аноним'} [Ур.${level}]</div>
-                                <div class="player-score">👆 ${(p.sc || 0).toLocaleString()} | 👥 ${referrals}</div>
-                            </div>
-                            <div class="player-actions">
-                                ${p.b ? 
-                                    `<button class="player-action" style="background:#4CAF50" onclick="event.stopPropagation(); admin.unbanPlayer('${p.id}')">✅</button>` :
-                                    `<button class="player-action" style="background:#ff4444" onclick="event.stopPropagation(); admin.banPlayer('${p.id}')">🚫</button>`
-                                }
-                                <button class="player-action" style="background:#ffd700" onclick="event.stopPropagation(); admin.addPlayerClicks('${p.id}', 10)">+10</button>
-                            </div>
-                        </div>
-                    `}).join('');
+                        return `<div class="player-item ${p.b ? 'banned' : ''}" onclick="openProfile('${p.id}', '${p.n}')"><div class="player-info"><div class="player-name">${p.n || 'Аноним'} [Ур.${level}]</div><div class="player-score">👆 ${(p.sc || 0).toLocaleString()} | 👥 ${referrals}</div></div><div class="player-actions">${p.b ? `<button class="player-action" style="background:#4CAF50" onclick="event.stopPropagation(); admin.unbanPlayer('${p.id}')">✅</button>` : `<button class="player-action" style="background:#ff4444" onclick="event.stopPropagation(); admin.banPlayer('${p.id}')">🚫</button>`}<button class="player-action" style="background:#ffd700" onclick="event.stopPropagation(); admin.addPlayerClicks('${p.id}', 10)">+10</button></div></div>`;
+                    }).join('');
                 },
-                resetGame() {
-                    if (!s.admin || !confirm('⚠️ ПОЛНЫЙ СБРОС ИГРЫ? Все данные всех игроков будут удалены безвозвратно!')) return;
-                    
-                    performGlobalReset();
-                    
-                    this.close();
-                },
-                addGlobalClicks(amount) {
-                    if (!s.admin) return;
-                    db.ref('globalCounter').transaction(v => (v || 0) + amount);
-                },
-                setTarget(type) {
-                    if (!s.admin) return;
-                    s.target = C.TARGETS[type] || C.TARGET;
-                    if (el.targetDisplay) el.targetDisplay.textContent = type === '8b' ? '8 млрд' : '1 млн';
-                    if (el.targetPopulation) el.targetPopulation.textContent = s.target.toLocaleString();
-                    updateUI();
-                },
-                banPlayer(id) {
-                    if (!s.admin) return;
-                    db.ref('players/' + id).update({ b: true, br: 'Админ', bt: Date.now() });
-                },
-                unbanPlayer(id) {
-                    if (!s.admin) return;
-                    db.ref('players/' + id).update({ b: false, br: null, bt: null, cc: 0 });
-                },
-                deletePlayer(id) {
-                    if (!s.admin || !confirm('Удалить игрока?')) return;
-                    db.ref('players/' + id).remove();
-                },
+                resetGame() { if (!s.admin || !confirm('⚠️ ПОЛНЫЙ СБРОС ИГРЫ? Все данные всех игроков будут удалены безвозвратно!')) return; performGlobalReset(); this.close(); },
+                addGlobalClicks(amount) { if (!s.admin) return; db.ref('globalCounter').transaction(v => (v || 0) + amount); },
+                setTarget(type) { if (!s.admin) return; s.target = C.TARGETS[type] || C.TARGET; if (el.targetDisplay) el.targetDisplay.textContent = type === '8b' ? '8 млрд' : '1 млн'; if (el.targetPopulation) el.targetPopulation.textContent = s.target.toLocaleString(); updateUI(); },
+                banPlayer(id) { if (!s.admin) return; db.ref('players/' + id).update({ b: true, br: 'Админ', bt: Date.now() }); },
+                unbanPlayer(id) { if (!s.admin) return; db.ref('players/' + id).update({ b: false, br: null, bt: null, cc: 0 }); },
+                deletePlayer(id) { if (!s.admin || !confirm('Удалить игрока?')) return; db.ref('players/' + id).remove(); },
                 addPlayerClicks(id, amount) {
                     if (!s.admin) return;
-                    
-                    db.ref('players/' + id).transaction(p => {
-                        if (!p) p = { sc: 0 };
-                        p.sc = (p.sc || 0) + amount;
-                        return p;
-                    });
-                    
+                    db.ref('players/' + id).transaction(p => { if (!p) p = { sc: 0 }; p.sc = (p.sc || 0) + amount; return p; });
                     db.ref('globalCounter').transaction(v => (v || 0) + amount);
                 },
-                clearBanned() {
-                    if (!s.admin) return;
-                    
-                    Object.keys(s.players).forEach(id => {
-                        if (s.players[id].b) {
-                            db.ref('players/' + id).update({ b: false, cc: 0 });
-                        }
-                    });
-                },
-                banAll() {
-                    if (!s.admin || !confirm('Забанить всех?')) return;
-                    
-                    Object.keys(s.players).forEach(id => {
-                        db.ref('players/' + id).update({ b: true, br: 'Массовый бан' });
-                    });
-                },
-                clearDatabase() {
-                    if (!s.admin || !confirm('⚠️ ПОЛНАЯ ОЧИСТКА БАЗЫ?!')) return;
-                    
-                    db.ref('/').remove();
-                    localStorage.clear();
-                    setTimeout(() => location.reload(), 1000);
-                },
-                setImageSize(size) {
-                    if (!s.admin) return;
-                    
-                    db.ref('config/imageSize').set(size);
-                    updateImageSize(size);
-                    
-                    if (el.sizeSlider) el.sizeSlider.value = size;
-                    if (el.sizeValue) el.sizeValue.textContent = size + '%';
-                },
-                setPrices(type) {
-                    if (!s.admin) return;
-                    alert('💰 В текущей версии цены фиксированные: 1 клик = 1 рубль');
-                },
-                
+                clearBanned() { if (!s.admin) return; Object.keys(s.players).forEach(id => { if (s.players[id].b) db.ref('players/' + id).update({ b: false, cc: 0 }); }); },
+                banAll() { if (!s.admin || !confirm('Забанить всех?')) return; Object.keys(s.players).forEach(id => { db.ref('players/' + id).update({ b: true, br: 'Массовый бан' }); }); },
+                clearDatabase() { if (!s.admin || !confirm('⚠️ ПОЛНАЯ ОЧИСТКА БАЗЫ?!')) return; db.ref('/').remove(); localStorage.clear(); setTimeout(() => location.reload(), 1000); },
+                setImageSize(size) { if (!s.admin) return; db.ref('config/imageSize').set(size); updateImageSize(size); if (el.sizeSlider) el.sizeSlider.value = size; if (el.sizeValue) el.sizeValue.textContent = size + '%'; },
+                setPrices(type) { if (!s.admin) return; alert('💰 В текущей версии цены фиксированные: 1 клик = 1 рубль'); },
                 startContest() {
                     if (!s.admin) return;
-                    
                     updateContestSettings();
-                    
                     const prize = s.contest.prize;
                     const durationMs = getContestDurationMs();
-                    
-                    if (durationMs < 60000) {
-                        if (!confirm('Внимание! Длительность конкурса меньше минуты (' + 
-                            Math.floor(durationMs / 1000) + ' сек). Продолжить?')) {
-                            return;
-                        }
-                    }
-                    
-                    if (durationMs <= 0) {
-                        alert('❌ Длительность конкурса должна быть больше 0');
-                        return;
-                    }
-                    
+                    if (durationMs < 60000) { if (!confirm('Внимание! Длительность конкурса меньше минуты (' + Math.floor(durationMs / 1000) + ' сек). Продолжить?')) return; }
+                    if (durationMs <= 0) { alert('❌ Длительность конкурса должна быть больше 0'); return; }
                     startContest(prize, durationMs);
                 },
-                
-                endContest() {
-                    if (!s.admin || !confirm('Завершить конкурс?')) return;
-                    endContest();
-                },
-                
+                endContest() { if (!s.admin || !confirm('Завершить конкурс?')) return; endContest(); },
                 resetContest() {
                     if (!s.admin || !confirm('Сбросить данные конкурса?')) return;
-                    
-                    db.ref('contest').remove()
-                        .then(() => {
-                            s.contest.active = false;
-                            s.contest.winner = null;
-                            s.contest.winnerData = null;
-                            s.contest.ended = false;
-                            s.contest.winnerModalShown = false;
-                            s.contest.participantScores = {};
-                            
-                            if (el.contestHours) el.contestHours.value = 0;
-                            if (el.contestMinutes) el.contestMinutes.value = 1;
-                            if (el.contestSeconds) el.contestSeconds.value = 0;
-                            updateTotalContestTime();
-                            
-                            if (el.winnerModal) {
-                                el.winnerModal.classList.remove('show');
-                            }
-                            
-                            updateUI();
-                        });
+                    db.ref('contest').remove().then(() => {
+                        s.contest.active = false; s.contest.winner = null; s.contest.winnerData = null;
+                        s.contest.ended = false; s.contest.winnerModalShown = false; s.contest.participantScores = {};
+                        if (el.contestHours) el.contestHours.value = 0;
+                        if (el.contestMinutes) el.contestMinutes.value = 1;
+                        if (el.contestSeconds) el.contestSeconds.value = 0;
+                        updateTotalContestTime();
+                        if (el.winnerModal) el.winnerModal.classList.remove('show');
+                        updateUI();
+                    });
                 },
-                
                 payWinner() {
-                    if (!s.admin || !s.contest.winner) {
-                        alert('Нет победителя');
-                        return;
-                    }
-                    
+                    if (!s.admin || !s.contest.winner) { alert('Нет победителя'); return; }
                     const winnerData = s.contest.winnerData;
-                    if (!winnerData) {
-                        alert('Победитель еще не отправил данные для выплаты');
-                        return;
-                    }
-                    
-                    alert(`Выплатить ${s.contest.prize}₽ игроку ${s.contest.winner.name}\n\n` +
-                          `Банк: ${winnerData.bank}\n` +
-                          `Способ: ${winnerData.method}\n` +
-                          `Реквизиты: ${winnerData.details}\n` +
-                          `ФИО: ${winnerData.fullName}\n` +
-                          `Телефон: ${winnerData.phone}`);
+                    if (!winnerData) { alert('Победитель еще не отправил данные для выплаты'); return; }
+                    alert(`Выплатить ${s.contest.prize}₽ игроку ${s.contest.winner.name}\n\nБанк: ${winnerData.bank}\nСпособ: ${winnerData.method}\nРеквизиты: ${winnerData.details}\nФИО: ${winnerData.fullName}\nТелефон: ${winnerData.phone}`);
                 },
-                
-                updateContestSettings() {
-                    updateContestSettings();
-                },
-                
-                updateTelegram(count) {
-                    if (!s.admin) return;
-                    const newCount = parseInt(prompt('Введите количество подписчиков:', s.telegramSubscribers));
-                    if (!isNaN(newCount) && newCount >= 0) {
-                        db.ref('telegram/subscribers').set(newCount);
-                    }
-                }
+                updateContestSettings() { updateContestSettings(); },
+                updateTelegram(count) { if (!s.admin) return; const newCount = parseInt(prompt('Введите количество подписчиков:', s.telegramSubscribers)); if (!isNaN(newCount) && newCount >= 0) db.ref('telegram/subscribers').set(newCount); }
             };
-
             window.admin = admin;
-            window.updateContestSettings = updateContestSettings;
 
-            // ===== СЛУШАТЕЛЬ СТАТУСА =====
             function setupListener() {
                 if (!s.pid) return;
-                
                 s.pl = db.ref('players/' + s.pid).on('value', (snap) => {
                     const d = snap.val();
                     if (!d) return;
-                    
                     if (d.b !== undefined && d.b !== s.b) {
                         s.b = d.b;
-                        if (!s.b && el.um) {
-                            el.um.style.display = 'block';
-                            setTimeout(() => { el.um.style.display = 'none'; }, 3000);
-                        }
+                        if (!s.b && el.um) { el.um.style.display = 'block'; setTimeout(() => { el.um.style.display = 'none'; }, 3000); }
                     }
-                    
-                    if (d.sc !== undefined && d.sc !== s.myScore && !s.clickLock) {
-                        s.myScore = d.sc;
-                        stor.s('S', d.sc);
-                    }
-                    
+                    if (d.sc !== undefined && d.sc !== s.myScore && !s.clickLock) { s.myScore = d.sc; stor.s('S', d.sc); }
                     s.purchases = d.purchases || 0;
                     s.moneySpent = d.spent || 0;
                     s.streak = d.streak || 1;
                     s.achievements = d.achievements || {};
-                    
                     s.referrals = d.referrals || [];
-                    
                     if (s.referrals.length > 0) {
-                        s.referrals.forEach(refId => {
-                            const ref = s.players[refId];
-                            if (ref) {
-                                checkReferralActivity(refId, ref.sc || 0);
-                            }
-                        });
+                        s.referrals.forEach(refId => { const ref = s.players[refId]; if (ref) checkReferralActivity(refId, ref.sc || 0); });
                     }
-                    
                     s.referralBonus = d.referralBonus || 0;
                     s.referralClicksTotal = d.referralClicks || 0;
-                    
                     updateUI();
-                    
-                    if (s.viewingProfile === s.pid && el.profileModal && el.profileModal.classList.contains('show')) {
-                        updateProfileDisplay();
-                    }
+                    if (s.viewingProfile === s.pid && el.profileModal && el.profileModal.classList.contains('show')) updateProfileDisplay();
                 });
             }
 
-            // ===== АНТИЧИТ =====
             const ac = {
                 check() {
                     if (s.admin) return true;
                     if (s.b) return false;
-                    
                     const now = Date.now();
                     const sec = s.ct.filter(t => t > now - 1000).length;
                     const min = s.ct.filter(t => t > now - 60000).length;
-                    
                     if (sec > C.LIMITS.M1) { this.record('Часто'); return false; }
                     if (min > C.LIMITS.M2) { this.record('Много'); return false; }
-                    
                     if (now - s.lch > C.LIMITS.INT) {
                         if (s.myScore - s.lsc > C.LIMITS.M3) { this.record('Рост'); return false; }
-                        s.lsc = s.myScore;
-                        s.lch = now;
+                        s.lsc = s.myScore; s.lch = now;
                     }
                     return true;
                 },
                 record(r) {
                     if (s.admin) return;
-                    s.cc++;
-                    stor.s('CC', s.cc);
-                    
-                    if (el.ca) {
-                        el.ca.style.display = 'block';
-                        setTimeout(() => { el.ca.style.display = 'none'; }, 3000);
-                    }
-                    
+                    s.cc++; stor.s('CC', s.cc);
+                    if (el.ca) { el.ca.style.display = 'block'; setTimeout(() => { el.ca.style.display = 'none'; }, 3000); }
                     if (s.cc >= C.LIMITS.BAN) {
                         s.b = true;
                         if (el.cb) el.cb.disabled = true;
-                        if (el.e) {
-                            el.e.classList.add('disabled');
-                            el.e.style.pointerEvents = 'none';
-                        }
+                        if (el.e) { el.e.classList.add('disabled'); el.e.style.pointerEvents = 'none'; }
                         if (s.pr) s.pr.update({ b: true, cc: s.cc, br: r, bt: Date.now() });
                         if (s.or) s.or.remove();
                     }
                 },
-                clean() {
-                    const now = Date.now();
-                    s.ct = s.ct.filter(t => t > now - 120000);
-                }
+                clean() { const now = Date.now(); s.ct = s.ct.filter(t => t > now - 120000); }
             };
 
-            // ===== FIREBASE СЛУШАТЕЛИ =====
             db.ref('globalCounter').on('value', snap => {
                 if (!s.b || s.admin) {
                     const newVal = snap.val() || 0;
-                    
-                    if (Math.abs(newVal - s.globalScore) < 100) {
-                        s.globalScore = newVal;
-                    } else if (!s.clickLock) {
-                        s.globalScore = newVal;
-                    }
-                    
+                    if (Math.abs(newVal - s.globalScore) < 100) s.globalScore = newVal;
+                    else if (!s.clickLock) s.globalScore = newVal;
                     updateUI();
                 }
             });
@@ -5123,10 +4028,7 @@
                 if (!s.b || s.admin) {
                     const d = snap.val();
                     if (el.lc) el.lc.textContent = d?.n || 'никто';
-                    
-                    if (d?.pid) {
-                        el.lc.onclick = () => openProfile(d.pid, d.n);
-                    }
+                    if (d?.pid) el.lc.onclick = () => openProfile(d.pid, d.n);
                 }
             });
 
@@ -5135,7 +4037,6 @@
                     s.online = snap.val() ? Object.keys(snap.val()).length : 0;
                     if (el.oc) el.oc.textContent = s.online;
                     if (s.admin && el.adminOnline) el.adminOnline.textContent = s.online;
-                    
                     if (s.admin) {
                         const bannedCount = Object.values(s.players).filter(p => p.b).length;
                         if (el.adminNotification) el.adminNotification.textContent = bannedCount;
@@ -5146,144 +4047,65 @@
             db.ref('players').on('value', snap => {
                 const players = snap.val() || {};
                 s.players = players;
-                
                 if (!s.b || s.admin) {
-                    const list = Object.entries(players)
-                        .map(([id, d]) => ({ id, ...d }))
-                        .filter(p => p.sc > 0 && !p.b)
-                        .sort((a, b) => b.sc - a.sc)
-                        .slice(0, 10);
-
+                    const list = Object.entries(players).map(([id, d]) => ({ id, ...d })).filter(p => p.sc > 0 && !p.b).sort((a, b) => b.sc - a.sc).slice(0, 10);
                     if (list.length) {
                         if (el.tl) {
                             el.tl.innerHTML = list.map((p, i) => {
                                 const rc = i === 0 ? 'top-rank-1' : i === 1 ? 'top-rank-2' : i === 2 ? 'top-rank-3' : '';
                                 const cur = p.id === s.pid;
                                 const level = calculateLevel(p.sc || 0);
-                                return `
-                                    <div class="top-item ${cur ? 'current' : ''}" onclick="openProfile('${p.id}', '${p.n}')">
-                                        <div class="top-rank ${rc}">${i + 1}</div>
-                                        <span class="top-name">${p.n || 'Аноним'} [Ур.${level}]</span>
-                                        <span class="top-score">${(p.sc || 0).toLocaleString()}</span>
-                                        ${p.streak >= 7 ? '<span class="top-badge">🔥</span>' : ''}
-                                    </div>
-                                `;
+                                return `<div class="top-item ${cur ? 'current' : ''}" onclick="openProfile('${p.id}', '${p.n}')"><div class="top-rank ${rc}">${i + 1}</div><span class="top-name">${p.n || 'Аноним'} [Ур.${level}]</span><span class="top-score">${(p.sc || 0).toLocaleString()}</span>${p.streak >= 7 ? '<span class="top-badge">🔥</span>' : ''}</div>`;
                             }).join('');
                         }
-                    } else if (el.tl) {
-                        el.tl.innerHTML = '<div class="top-item">Нет кликов</div>';
-                    }
+                    } else if (el.tl) el.tl.innerHTML = '<div class="top-item">Нет кликов</div>';
                 }
-                
-                if (s.admin && el.adminPanel && el.adminPanel.classList.contains('show')) {
-                    admin.updatePlayerList();
-                }
-                
+                if (s.admin && el.adminPanel && el.adminPanel.classList.contains('show')) admin.updatePlayerList();
                 if (s.admin) {
                     const bannedCount = Object.values(players).filter(p => p.b).length;
                     if (el.adminNotification) el.adminNotification.textContent = bannedCount;
                 }
-                
                 updateReferralTop();
-                
-                if (s.viewingProfile && el.profileModal && el.profileModal.classList.contains('show')) {
-                    updateProfileDisplay();
-                }
+                if (s.viewingProfile && el.profileModal && el.profileModal.classList.contains('show')) updateProfileDisplay();
             });
 
-            // ===== КЛИК =====
             async function clickHandler() {
-                if (!s.ns) {
-                    alert('⚠️ Сначала введите имя!');
-                    return;
-                }
-                
+                if (!s.ns) { alert('⚠️ Сначала введите имя!'); return; }
                 if (s.clickLock) return;
                 if (!ac.check()) return;
-                
-                s.clickLock = true;
-                s.pendingClick = true;
-                s.ct.push(Date.now());
-                ac.clean();
-
-                const oldGlobal = s.globalScore;
-                const oldMy = s.myScore;
-
+                s.clickLock = true; s.pendingClick = true; s.ct.push(Date.now()); ac.clean();
+                const oldGlobal = s.globalScore; const oldMy = s.myScore;
                 try {
                     const r = await db.ref('globalCounter').transaction(v => (v || 0) + 1);
                     if (r.committed) {
                         if (s.pr && (!s.b || s.admin)) {
-                            const pr = await s.pr.transaction(p => {
-                                if (!p) p = { sc: 0 };
-                                p.sc = (p.sc || 0) + 1;
-                                p.n = s.u;
-                                p.ls = Date.now();
-                                return p;
-                            });
-                            if (pr.committed) {
-                                s.myScore = pr.snapshot.val().sc;
-                                stor.s('S', s.myScore);
-                                
-                                handleContestClick();
-                                
-                                checkAchievements();
-                            }
+                            const pr = await s.pr.transaction(p => { if (!p) p = { sc: 0 }; p.sc = (p.sc || 0) + 1; p.n = s.u; p.ls = Date.now(); return p; });
+                            if (pr.committed) { s.myScore = pr.snapshot.val().sc; stor.s('S', s.myScore); handleContestClick(); checkAchievements(); }
                         }
-                        
                         s.globalScore = r.snapshot.val();
-                        
                         await db.ref('lastClick').set({ n: s.u, t: Date.now(), pid: s.pid });
-                        
                         updateUI();
-
-                        if (s.globalScore >= s.target) {
-                            setTimeout(() => alert('🎉 ПОБЕДА! ЗЕМЛЯ ЗАСЕЛЕНА! 🎉'), 100);
-                        }
-                    } else {
-                        s.globalScore = oldGlobal;
-                        s.myScore = oldMy;
-                    }
-                } catch (e) {
-                    s.globalScore = oldGlobal;
-                    s.myScore = oldMy;
-                }
-                
+                        if (s.globalScore >= s.target) setTimeout(() => alert('🎉 ПОБЕДА! ЗЕМЛЯ ЗАСЕЛЕНА! 🎉'), 100);
+                    } else { s.globalScore = oldGlobal; s.myScore = oldMy; }
+                } catch (e) { s.globalScore = oldGlobal; s.myScore = oldMy; }
                 s.pendingClick = false;
-                setTimeout(() => {
-                    s.clickLock = false;
-                }, 300);
+                setTimeout(() => { s.clickLock = false; }, 300);
             }
 
-            // ===== ИНИЦИАЛИЗАЦИЯ =====
             function init() {
                 s.admin = stor.g('AM') === 'true';
-                
                 s.ns = stor.g('NS') === 'true';
                 s.u = stor.g('N') || '';
                 s.pid = stor.g('I') || null;
                 s.myScore = parseInt(stor.g('S') || '0');
                 s.cc = parseInt(stor.g('CC') || '0');
-                
                 checkLastReset();
-                
                 checkReferral();
-                
                 if (s.u && el.un) el.un.value = s.u;
-
-                if (stor.g('AD_CLAIMED') === 'true' && el.adBadge) {
-                    el.adBadge.style.display = 'none';
-                }
-
-                db.ref('config/imageSize').once('value').then(snap => {
-                    const size = snap.val();
-                    if (size && typeof size === 'number') {
-                        updateImageSize(size);
-                    }
-                });
-
+                if (stor.g('AD_CLAIMED') === 'true' && el.adBadge) el.adBadge.style.display = 'none';
+                db.ref('config/imageSize').once('value').then(snap => { const size = snap.val(); if (size && typeof size === 'number') updateImageSize(size); });
                 db.ref('globalCounter').once('value').then(snap => {
                     s.globalScore = snap.val() || 0;
-                    
                     if (s.ns && s.pid) {
                         db.ref('players/' + s.pid).once('value').then(snap => {
                             if (snap.exists()) {
@@ -5297,162 +4119,79 @@
                                 s.referrals = d.referrals || [];
                                 s.referralBonus = d.referralBonus || 0;
                                 s.referralClicksTotal = d.referralClicks || 0;
-                                
                                 if (d.sc !== s.myScore && !s.clickLock) {
-                                    if (d.sc < s.myScore) {
-                                        s.pr.update({ sc: s.myScore });
-                                    } else {
-                                        s.myScore = d.sc;
-                                        stor.s('S', d.sc);
-                                    }
+                                    if (d.sc < s.myScore) s.pr.update({ sc: s.myScore });
+                                    else { s.myScore = d.sc; stor.s('S', d.sc); }
                                 }
-                                
                                 setupListener();
                                 checkStreak();
-                                
-                                setTimeout(() => {
-                                    applyReferral();
-                                }, 500);
-                                
-                            } else if (!s.b || s.admin) {
-                                createPlayer();
-                            }
-                            
+                                setTimeout(() => applyReferral(), 500);
+                            } else if (!s.b || s.admin) createPlayer();
                             updateUI();
                         });
-                    } else if (s.ns && (!s.b || s.admin)) {
-                        createPlayer();
-                    } else {
-                        updateUI();
-                    }
+                    } else if (s.ns && (!s.b || s.admin)) createPlayer();
+                    else updateUI();
                 });
-                
                 if (!s.b || s.admin) {
                     s.or = db.ref('onlineUsers').push();
                     s.or.set({ n: s.u || 'Аноним', on: true, ls: Date.now(), pid: s.pid });
-                    
                     window.addEventListener('beforeunload', () => {
                         if (s.or) s.or.remove();
-                        if (s.pr && (!s.b || s.admin)) {
-                            s.pr.update({ ls: Date.now(), on: false, cc: s.cc });
-                            stor.s('S', s.myScore);
-                        }
+                        if (s.pr && (!s.b || s.admin)) { s.pr.update({ ls: Date.now(), on: false, cc: s.cc }); stor.s('S', s.myScore); }
                     });
                 }
-
                 if (el.snb) {
                     el.snb.addEventListener('click', () => {
                         const name = el.un ? el.un.value.trim() : '';
                         if (!name) return;
-                        s.u = name;
-                        s.ns = true;
-                        stor.s('N', name);
-                        stor.s('NS', 'true');
-                        
+                        s.u = name; s.ns = true;
+                        stor.s('N', name); stor.s('NS', 'true');
                         createPlayer();
-                        
-                        setTimeout(() => {
-                            applyReferral();
-                        }, 1000);
-                        
+                        setTimeout(() => applyReferral(), 1000);
                         updateUI();
                     });
                 }
-
-                if (el.un) {
-                    el.un.addEventListener('keypress', e => e.key === 'Enter' && el.snb && el.snb.click());
-                }
-                
+                if (el.un) el.un.addEventListener('keypress', e => e.key === 'Enter' && el.snb && el.snb.click());
                 if (el.cb) el.cb.addEventListener('click', clickHandler);
                 if (el.e) el.e.addEventListener('click', clickHandler);
                 if (el.g) el.g.addEventListener('click', () => openProfile(s.pid, s.u));
-                
                 if (el.adminBtn) el.adminBtn.addEventListener('click', () => admin.open());
                 if (el.close) el.close.addEventListener('click', () => admin.close());
                 if (el.closeProfile) el.closeProfile.addEventListener('click', () => {
-                    if (el.profileModal && el.bd) {
-                        el.profileModal.classList.remove('show');
-                        el.bd.classList.remove('show');
-                    }
+                    if (el.profileModal && el.bd) { el.profileModal.classList.remove('show'); el.bd.classList.remove('show'); }
                     s.viewingProfile = null;
                 });
-                
                 document.querySelector('.winner-modal-close')?.addEventListener('click', closeWinnerModal);
-                
                 if (el.bd) {
                     el.bd.addEventListener('click', () => {
                         if (el.adminPanel) el.adminPanel.classList.remove('show');
-                        if (el.profileModal) {
-                            el.profileModal.classList.remove('show');
-                            s.viewingProfile = null;
-                        }
-                        if (el.winnerModal) {
-                            el.winnerModal.classList.remove('show');
-                        }
+                        if (el.profileModal) { el.profileModal.classList.remove('show'); s.viewingProfile = null; }
+                        if (el.winnerModal) el.winnerModal.classList.remove('show');
                         if (el.bd) el.bd.classList.remove('show');
                         closeAdModal();
                     });
                 }
-
                 if (el.sizeSlider) {
-                    el.sizeSlider.addEventListener('input', (e) => {
-                        if (s.admin) {
-                            const newSize = parseInt(e.target.value);
-                            admin.setImageSize(newSize);
-                        }
-                    });
+                    el.sizeSlider.addEventListener('input', (e) => { if (s.admin) { const newSize = parseInt(e.target.value); admin.setImageSize(newSize); } });
                 }
-                
                 updateTelegramSubscribers();
-                
-                // Проверяем, не было ли оплаты
-                checkPendingPayment();
-
+                checkAndCreditPayment();
                 setInterval(() => {
                     if (s.b && !s.admin) return;
-                    ac.check();
-                    ac.clean();
+                    ac.check(); ac.clean();
                     if (s.or) s.or.update({ ls: Date.now(), n: s.u || 'Аноним', cc: s.cc });
-                    if (s.pr && s.ns && (!s.b || s.admin)) {
-                        s.pr.update({ ls: Date.now(), n: s.u, cc: s.cc });
-                        stor.s('S', s.myScore);
-                    }
-                    updateQuests();
-                    updateContestUI();
+                    if (s.pr && s.ns && (!s.b || s.admin)) { s.pr.update({ ls: Date.now(), n: s.u, cc: s.cc }); stor.s('S', s.myScore); }
+                    updateQuests(); updateContestUI();
                 }, 1000);
-
                 if (el.targetPopulation) el.targetPopulation.textContent = s.target.toLocaleString();
-                
-                setTimeout(() => {
-                    checkIfWinner();
-                }, 2000);
+                setTimeout(() => checkIfWinner(), 2000);
             }
 
             function createPlayer() {
                 if (s.b && !s.admin) return;
-                
                 const nr = db.ref('players').push();
-                nr.set({
-                    n: s.u,
-                    sc: s.myScore,
-                    j: Date.now(),
-                    ls: Date.now(),
-                    cc: s.cc,
-                    purchases: 0,
-                    spent: 0,
-                    streak: 1,
-                    achievements: {},
-                    referrals: [],
-                    referralBonus: 0,
-                    referralClicks: 0,
-                    b: false
-                }).then(() => {
-                    s.pr = nr;
-                    s.pid = nr.key;
-                    stor.s('I', s.pid);
-                    s.b = false;
-                    setupListener();
-                });
+                nr.set({ n: s.u, sc: s.myScore, j: Date.now(), ls: Date.now(), cc: s.cc, purchases: 0, spent: 0, streak: 1, achievements: {}, referrals: [], referralBonus: 0, referralClicks: 0, b: false })
+                .then(() => { s.pr = nr; s.pid = nr.key; stor.s('I', s.pid); s.b = false; setupListener(); });
             }
 
             init();
