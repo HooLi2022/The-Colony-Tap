@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🌍 Заселение Земли</title>
     <style>
-        /* ===== ВСЕ СТИЛИ ОСТАЮТСЯ БЕЗ ИЗМЕНЕНИЙ ===== */
+        /* ===== ВСЕ СТИЛИ ПОЛНОСТЬЮ ===== */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -2171,7 +2171,7 @@
     <div class="achievement-unlock" id="achievementUnlock">🏆 Достижение разблокировано!</div>
     <div class="purchase-success" id="purchaseSuccess">💰 Покупка успешно зачислена!</div>
     
-    <!-- Кнопка админа слева -->
+    <!-- Кнопка админа -->
     <div class="admin-btn" id="adminBtn">
         <span>👑 Админ</span>
         <span class="notification" id="adminNotification">0</span>
@@ -2198,7 +2198,7 @@
         <div class="ad-countdown" id="adCountdown"></div>
     </div>
     
-    <!-- Модальное окно для победителя конкурса -->
+    <!-- Модальное окно победителя -->
     <div class="winner-modal" id="winnerModal">
         <div class="winner-modal-header">
             <h2>🏆 ПОЗДРАВЛЯЕМ!</h2>
@@ -2522,6 +2522,7 @@
         </div>
     </div>
 
+    <!-- Основной контейнер игры -->
     <div class="container">
         <h1>🌍 Заселение Земли</h1>
         <p>Цель: <span id="targetDisplay">8 млрд</span></p>
@@ -2706,6 +2707,15 @@
                         <div class="item-description">1000 кликов</div>
                         <button class="buy-button">Купить</button>
                     </div>
+                    
+                    <!-- Кнопка для произвольной суммы -->
+                    <div class="shop-item" onclick="openCustomPaymentModal()">
+                        <div class="item-emoji">🎲</div>
+                        <div class="item-name">Своя сумма</div>
+                        <div class="item-price">Любая</div>
+                        <div class="item-description">Введите свою сумму</div>
+                        <button class="buy-button">Купить</button>
+                    </div>
                 </div>
                 
                 <!-- Контейнер для платежей -->
@@ -2813,10 +2823,14 @@
         (function() {
             'use strict';
             
-            // ===== ВАШИ ДАННЫЕ ЮKASSA =====
-            const YOOKASSA_SHOP_ID = '1282823';
-            // ВАЖНО: Получите секретный ключ в разделе "Ключи API" и вставьте его сюда
-            const YOOKASSA_SECRET_KEY = 'live_JFVFdxHTbIUyU27Ho0glos6uREZI5lqFVIXjkRZqhfQ'; // ЗАМЕНИТЕ НА СВОЙ КЛЮЧ!
+            // ===== ВАШИ ССЫЛКИ НА ОПЛАТУ =====
+            const PAYMENT_LINKS = {
+                10: 'https://yookassa.ru/my/i/aaH8Dl38sBcQ/l',
+                50: 'https://yookassa.ru/my/i/aaH8L10qaEBa/l',
+                100: 'https://yookassa.ru/my/i/aaH8Tu8p0Ara/l',
+                1000: 'https://yookassa.ru/my/i/aaH8X_IkhOw0/l',
+                custom: 'https://yookassa.ru/my/i/aaH7-LfcS5Va/l'
+            };
             
             // ===== ЗАМАСКИРОВАННЫЕ ДАННЫЕ FIREBASE =====
             const _0x4d5e = {
@@ -2833,7 +2847,7 @@
                 try { return atob(str); } catch { return ''; }
             };
 
-            // Конфигурация
+            // Конфигурация игры
             const C = {
                 TARGET: 8000000000,
                 TARGETS: {
@@ -2989,7 +3003,7 @@
                 telegramCount: getEl('telegramCount')
             };
 
-            // Состояние
+            // Состояние игры
             const s = {
                 u: '',
                 globalScore: 0,
@@ -3054,13 +3068,7 @@
                     phone: ''
                 },
                 
-                telegramSubscribers: 0,
-                
-                currentPayment: {
-                    id: null,
-                    clicks: null,
-                    price: null
-                }
+                telegramSubscribers: 0
             };
 
             // Хранилище
@@ -3070,174 +3078,7 @@
                 r: (k) => { try { localStorage.removeItem(C.STORAGE[k]); } catch {} }
             };
 
-            // ===== ПРОСТАЯ ФУНКЦИЯ ОПЛАТЫ ЧЕРЕЗ ЮKASSA =====
-            window.openPaymentModal = async function(clicks, price) {
-                if (!s.ns) {
-                    alert('⚠️ Сначала введите имя!');
-                    return;
-                }
-                
-                if (!s.pid) {
-                    alert('⚠️ Сначала создайте игрока!');
-                    return;
-                }
-                
-                // Показываем загрузку
-                if (el.paymentContainer) {
-                    el.paymentContainer.style.display = 'block';
-                    el.paymentTitle.textContent = `Покупка ${clicks} кликов (${price}₽)`;
-                    el.paymentForm.innerHTML = '<div class="payment-loading">⏳ Создание платежа...</div>';
-                }
-                
-                try {
-                    // Создаем Basic Auth
-                    const auth = btoa(YOOKASSA_SHOP_ID + ':' + YOOKASSA_SECRET_KEY);
-                    
-                    // Генерируем ключ идемпотентности
-                    const idempotenceKey = Date.now().toString() + '-' + Math.random().toString(36).substring(7);
-                    
-                    // Создаем платеж через API ЮKassa
-                    const response = await fetch('https://api.yookassa.ru/v3/payments', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Idempotence-Key': idempotenceKey,
-                            'Authorization': 'Basic ' + auth
-                        },
-                        body: JSON.stringify({
-                            amount: {
-                                value: price.toFixed(2),
-                                currency: 'RUB'
-                            },
-                            capture: true,
-                            confirmation: {
-                                type: 'redirect',
-                                return_url: window.location.origin + '/payment-success.html'
-                            },
-                            description: `Покупка ${clicks} кликов`,
-                            metadata: {
-                                user_id: s.pid,
-                                clicks: clicks,
-                                username: s.u
-                            }
-                        })
-                    });
-                    
-                    if (!response.ok) {
-                        const error = await response.json();
-                        throw new Error(error.description || 'Ошибка создания платежа');
-                    }
-                    
-                    const payment = await response.json();
-                    
-                    if (payment.confirmation && payment.confirmation.confirmation_url) {
-                        // Сохраняем информацию о платеже
-                        sessionStorage.setItem('currentPayment', JSON.stringify({
-                            id: payment.id,
-                            clicks: clicks,
-                            price: price,
-                            userId: s.pid,
-                            timestamp: Date.now()
-                        }));
-                        
-                        // Перенаправляем пользователя на страницу оплаты ЮKassa
-                        window.location.href = payment.confirmation.confirmation_url;
-                    } else {
-                        throw new Error('Не удалось получить ссылку на оплату');
-                    }
-                    
-                } catch (error) {
-                    console.error('Ошибка:', error);
-                    if (el.paymentForm) {
-                        el.paymentForm.innerHTML = `<div class="payment-error">❌ Ошибка: ${error.message}</div>`;
-                    }
-                    alert('❌ Ошибка при создании платежа: ' + error.message);
-                }
-            };
-
-            // ===== ФУНКЦИЯ ПРОВЕРКИ СТАТУСА ПЛАТЕЖА ПРИ ВОЗВРАТЕ =====
-            async function checkPaymentStatus() {
-                const paymentData = sessionStorage.getItem('currentPayment');
-                if (!paymentData) return;
-                
-                try {
-                    const payment = JSON.parse(paymentData);
-                    
-                    // Проверяем, не прошло ли слишком много времени (1 час)
-                    if (Date.now() - payment.timestamp > 3600000) {
-                        sessionStorage.removeItem('currentPayment');
-                        return;
-                    }
-                    
-                    // Создаем Basic Auth
-                    const auth = btoa(YOOKASSA_SHOP_ID + ':' + YOOKASSA_SECRET_KEY);
-                    
-                    // Запрашиваем статус платежа
-                    const response = await fetch(`https://api.yookassa.ru/v3/payments/${payment.id}`, {
-                        headers: {
-                            'Authorization': 'Basic ' + auth
-                        }
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error('Ошибка проверки платежа');
-                    }
-                    
-                    const result = await response.json();
-                    
-                    if (result.status === 'succeeded') {
-                        // Платеж успешен - зачисляем клики
-                        if (s.pr && payment.userId === s.pid) {
-                            // Обновляем глобальный счет
-                            await db.ref('globalCounter').transaction(v => (v || 0) + payment.clicks);
-                            
-                            // Обновляем счет игрока
-                            await s.pr.transaction(p => {
-                                if (!p) p = { sc: 0 };
-                                p.sc = (p.sc || 0) + payment.clicks;
-                                p.n = s.u;
-                                p.ls = Date.now();
-                                p.purchases = (p.purchases || 0) + 1;
-                                p.spent = (p.spent || 0) + payment.price;
-                                return p;
-                            });
-                            
-                            // Обновляем локальные счетчики
-                            s.myScore += payment.clicks;
-                            s.globalScore += payment.clicks;
-                            s.purchases++;
-                            s.moneySpent += payment.price;
-                            s.salesToday++;
-                            
-                            // Показываем сообщение об успехе
-                            if (el.ps) {
-                                el.ps.textContent = `💰 ${payment.clicks} кликов успешно зачислены!`;
-                                el.ps.style.display = 'block';
-                                setTimeout(() => { el.ps.style.display = 'none'; }, 5000);
-                            }
-                            
-                            // Обновляем интерфейс
-                            updateUI();
-                            
-                            // Очищаем данные платежа
-                            sessionStorage.removeItem('currentPayment');
-                            
-                            // Показываем уведомление
-                            alert(`✅ Оплата прошла успешно!\n${payment.clicks} кликов зачислены на ваш счет.`);
-                        }
-                    } else if (result.status === 'canceled') {
-                        // Платеж отменен
-                        sessionStorage.removeItem('currentPayment');
-                        alert('❌ Платеж был отменен');
-                    }
-                    
-                } catch (error) {
-                    console.error('Ошибка проверки платежа:', error);
-                }
-            }
-
-            // ===== ВСЕ ОСТАЛЬНЫЕ ФУНКЦИИ ИГРЫ (БЕЗ ИЗМЕНЕНИЙ) =====
-            
+            // ===== ФУНКЦИИ ДЛЯ TELEGRAM =====
             function updateTelegramSubscribers() {
                 if (!el.telegramCount) return;
                 
@@ -3285,6 +3126,7 @@
                 }
             };
 
+            // ===== ФУНКЦИИ ДЛЯ УПРАВЛЕНИЯ ВРЕМЕНЕМ КОНКУРСА =====
             window.updateTotalContestTime = function() {
                 if (!el.contestHours || !el.contestMinutes || !el.contestSeconds) return;
                 
@@ -3338,6 +3180,7 @@
                 return (hours * 3600000) + (validMinutes * 60000) + (validSeconds * 1000);
             }
 
+            // ===== ФУНКЦИИ ДЛЯ РЕКЛАМНОГО ОКНА =====
             window.showAdModal = function() {
                 if (!el.adModal) return;
                 
@@ -3419,6 +3262,146 @@
                 }
             };
 
+            // ===== ПРОСТЕЙШАЯ ФУНКЦИЯ ОПЛАТЫ =====
+            window.openPaymentModal = function(clicks, price) {
+                if (!s.ns) {
+                    alert('⚠️ Сначала введите имя!');
+                    return;
+                }
+                
+                // Сохраняем информацию о покупке
+                sessionStorage.setItem('pendingPayment', JSON.stringify({
+                    clicks: clicks,
+                    price: price,
+                    userId: s.pid,
+                    username: s.u,
+                    timestamp: Date.now()
+                }));
+                
+                // Получаем ссылку на оплату
+                const paymentUrl = PAYMENT_LINKS[price];
+                
+                if (paymentUrl) {
+                    window.location.href = paymentUrl;
+                } else {
+                    alert('Ошибка: нет ссылки для этой суммы');
+                }
+            };
+
+            // ===== ФУНКЦИЯ ДЛЯ ПРОИЗВОЛЬНОЙ СУММЫ =====
+            window.openCustomPaymentModal = function() {
+                if (!s.ns) {
+                    alert('⚠️ Сначала введите имя!');
+                    return;
+                }
+                
+                const amount = prompt('Введите сумму в рублях (минимум 10₽):', '100');
+                
+                if (!amount) return;
+                
+                const price = parseInt(amount);
+                
+                if (isNaN(price) || price < 10) {
+                    alert('Минимальная сумма 10 рублей');
+                    return;
+                }
+                
+                // Сохраняем информацию о покупке
+                sessionStorage.setItem('pendingPayment', JSON.stringify({
+                    clicks: price,
+                    price: price,
+                    userId: s.pid,
+                    username: s.u,
+                    timestamp: Date.now()
+                }));
+                
+                // Используем ссылку для произвольной суммы
+                window.location.href = PAYMENT_LINKS.custom;
+            };
+
+            // ===== ФУНКЦИЯ ПРОВЕРКИ ПЛАТЕЖА ПРИ ВОЗВРАТЕ =====
+            function checkPendingPayment() {
+                const paymentData = sessionStorage.getItem('pendingPayment');
+                if (!paymentData) return;
+                
+                try {
+                    const payment = JSON.parse(paymentData);
+                    
+                    // Проверяем, что это тот же пользователь
+                    if (payment.userId !== s.pid) return;
+                    
+                    // Спрашиваем пользователя
+                    if (confirm(`✅ Оплата прошла успешно?\n\nНажмите ОК, чтобы получить ${payment.clicks} кликов`)) {
+                        // Зачисляем клики
+                        addPaidClicks(payment.clicks, payment.price);
+                        sessionStorage.removeItem('pendingPayment');
+                        
+                        if (el.ps) {
+                            el.ps.textContent = `💰 ${payment.clicks} кликов зачислены!`;
+                            el.ps.style.display = 'block';
+                            setTimeout(() => { el.ps.style.display = 'none'; }, 5000);
+                        }
+                    }
+                } catch (e) {
+                    console.error('Ошибка:', e);
+                }
+            }
+
+            // ===== ФУНКЦИЯ ЗАЧИСЛЕНИЯ КЛИКОВ =====
+            function addPaidClicks(clicks, price) {
+                if (!s.pid) return;
+                
+                s.purchases++;
+                s.moneySpent += price;
+                
+                db.ref('globalCounter').transaction(v => (v || 0) + clicks)
+                    .then(() => {
+                        if (s.pr) {
+                            return s.pr.transaction(p => {
+                                if (!p) p = { sc: 0 };
+                                p.sc = (p.sc || 0) + clicks;
+                                p.n = s.u;
+                                p.ls = Date.now();
+                                p.purchases = (p.purchases || 0) + 1;
+                                p.spent = (p.spent || 0) + price;
+                                return p;
+                            });
+                        }
+                    })
+                    .then(() => {
+                        s.salesToday++;
+                        s.totalRevenue += price;
+                        s.myScore += clicks;
+                        s.globalScore += clicks;
+                        
+                        db.ref('admin/sales').push({
+                            amount: clicks,
+                            price: price,
+                            user: s.u,
+                            userId: s.pid,
+                            time: Date.now()
+                        });
+                        
+                        checkAchievements();
+                        
+                        if (el.ps) {
+                            el.ps.textContent = `💰 ${clicks} кликов успешно зачислены!`;
+                            el.ps.style.display = 'block';
+                            setTimeout(() => { el.ps.style.display = 'none'; }, 5000);
+                        }
+                        
+                        if (s.admin && el.todaySales) {
+                            el.todaySales.textContent = s.salesToday;
+                        }
+                        
+                        updateUI();
+                    })
+                    .catch(() => {
+                        alert('❌ Ошибка при зачислении');
+                    });
+            }
+
+            // ===== ФУНКЦИИ ДЛЯ МОДАЛЬНОГО ОКНА ПОБЕДИТЕЛЯ =====
             window.closeWinnerModal = function() {
                 if (el.winnerModal) {
                     el.winnerModal.classList.remove('show');
@@ -3565,6 +3548,7 @@
                 el.winnerPhone.addEventListener('input', checkWinnerFormComplete);
             }
 
+            // ===== ФУНКЦИИ ДЛЯ КОНКУРСА =====
             function startContest(prize, durationMs) {
                 const now = Date.now();
                 
@@ -3856,6 +3840,7 @@
 
             window.updateContestSettings = updateContestSettings;
 
+            // ===== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК =====
             window.switchTab = function(tab) {
                 document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -3867,10 +3852,12 @@
                 if (activeContent) activeContent.classList.add('active');
             };
 
+            // ===== РАСЧЕТ УРОВНЯ =====
             function calculateLevel(clicks) {
                 return Math.floor(clicks / 1000) + 1;
             }
 
+            // ===== ФУНКЦИЯ ОБНОВЛЕНИЯ UI =====
             function updateUI() {
                 if (!el.cb || !el.e) return;
                 
@@ -3968,6 +3955,7 @@
                 updateContestUI();
             }
 
+            // ===== ОБНОВЛЕНИЕ ТОПА ПО РЕФЕРАЛАМ =====
             function updateReferralTop() {
                 if (!el.referralTop) return;
                 
@@ -4020,6 +4008,7 @@
                 }
             }
 
+            // ===== ОБНОВЛЕНИЕ СПИСКА РЕФЕРАЛОВ =====
             function updateReferralsList() {
                 if (!el.referralsList) return;
                 
@@ -4053,6 +4042,7 @@
                 el.referralsList.innerHTML = html || '<div class="no-referrals">У тебя пока нет приглашенных друзей</div>';
             }
 
+            // ===== ПРОВЕРКА БОНУСОВ ЗА АКТИВНОСТЬ РЕФЕРАЛОВ =====
             function checkReferralActivity(refId, refClicks) {
                 if (!s.pid || !s.referrals.includes(refId)) return false;
                 
@@ -4092,6 +4082,7 @@
                 return false;
             }
 
+            // ===== ПОКАЗ ВСЕХ ПРИГЛАШАЮЩИХ =====
             window.showAllReferrers = function() {
                 if (!el.referralTop) return;
                 
@@ -4124,6 +4115,7 @@
                 el.referralTop.innerHTML = listHtml;
             };
 
+            // ===== ПРОВЕРКА ДОСТИЖЕНИЙ =====
             function checkAchievements() {
                 if (!s.pid || !s.pr) return;
                 
@@ -4217,6 +4209,7 @@
                 }
             }
 
+            // ===== ФУНКЦИЯ ДЛЯ ОБНОВЛЕНИЯ ОТОБРАЖЕНИЯ ПРОФИЛЯ =====
             function updateProfileDisplay() {
                 if (!s.viewingProfile) return;
                 
@@ -4287,6 +4280,7 @@
                 }
             }
 
+            // ===== ПРОВЕРКА СТРИКА =====
             function checkStreak() {
                 if (!s.pr) return;
                 
@@ -4310,6 +4304,7 @@
                 }
             }
 
+            // ===== ГЕНЕРАЦИЯ ЕЖЕДНЕВНЫХ ЗАДАНИЙ =====
             function generateDailyQuests() {
                 const today = new Date().setHours(0, 0, 0, 0);
                 const savedQuests = localStorage.getItem('dailyQuests');
@@ -4355,6 +4350,7 @@
                 return quests;
             }
 
+            // ===== ОБНОВЛЕНИЕ ЗАДАНИЙ =====
             function updateQuests() {
                 if (!el.questsList || !el.questRefreshTime) return;
                 
@@ -4411,6 +4407,7 @@
                 el.questRefreshTime.textContent = `Обновление через: ${hoursLeft}ч ${minutesLeft}м`;
             }
 
+            // ===== ПОЛУЧЕНИЕ НАГРАДЫ ЗА ЗАДАНИЕ =====
             window.claimQuest = function(questId) {
                 const quests = JSON.parse(localStorage.getItem('dailyQuests'));
                 const quest = quests.find(q => q.id === questId);
@@ -4445,6 +4442,7 @@
                 }
             };
 
+            // ===== РЕФЕРАЛЬНАЯ ССЫЛКА =====
             function updateReferralLink() {
                 if (!s.pid) return;
                 
@@ -4469,6 +4467,7 @@
                 }
             };
 
+            // ===== ОБРАБОТКА РЕФЕРАЛОВ =====
             function checkReferral() {
                 const urlParams = new URLSearchParams(window.location.search);
                 const ref = urlParams.get('ref');
@@ -4521,6 +4520,7 @@
                 localStorage.removeItem('referrer');
             }
 
+            // ===== ОТКРЫТИЕ ПРОФИЛЯ =====
             window.openProfile = function(playerId, playerName) {
                 const playerData = s.players[playerId];
                 if (!playerData) return;
@@ -4558,6 +4558,7 @@
                 s.viewingProfile = playerId;
             };
 
+            // ===== ПОКАЗ ВСЕХ ИГРОКОВ =====
             window.showAllPlayers = function() {
                 if (!el.tl) return;
                 
@@ -4583,57 +4584,7 @@
                 el.tl.innerHTML = listHtml;
             };
 
-            function addPaidClicks(clicks, price) {
-                if (!s.pid) return;
-                
-                s.purchases++;
-                s.moneySpent += price;
-                
-                db.ref('globalCounter').transaction(v => (v || 0) + clicks)
-                    .then(() => {
-                        if (s.pr) {
-                            return s.pr.transaction(p => {
-                                if (!p) p = { sc: 0 };
-                                p.sc = (p.sc || 0) + clicks;
-                                p.n = s.u;
-                                p.ls = Date.now();
-                                p.purchases = (p.purchases || 0) + 1;
-                                p.spent = (p.spent || 0) + price;
-                                return p;
-                            });
-                        }
-                    })
-                    .then(() => {
-                        s.salesToday++;
-                        s.totalRevenue += price;
-                        
-                        db.ref('admin/sales').push({
-                            amount: clicks,
-                            price: price,
-                            user: s.u,
-                            userId: s.pid,
-                            time: Date.now()
-                        });
-                        
-                        checkAchievements();
-                        
-                        if (el.ps) {
-                            el.ps.textContent = `💰 ${clicks} кликов успешно зачислены!`;
-                            el.ps.style.display = 'block';
-                            setTimeout(() => { el.ps.style.display = 'none'; }, 5000);
-                        }
-                        
-                        if (s.admin && el.todaySales) {
-                            el.todaySales.textContent = s.salesToday;
-                        }
-                        
-                        updateUI();
-                    })
-                    .catch(() => {
-                        alert('❌ Ошибка при зачислении');
-                    });
-            }
-
+            // ===== ФУНКЦИЯ ИЗМЕНЕНИЯ РАЗМЕРА КАРТИНКИ =====
             function updateImageSize(size) {
                 s.imageSize = size;
                 if (el.ei) el.ei.style.backgroundSize = size + '%';
@@ -4652,6 +4603,7 @@
                 }
             }
 
+            // ===== ФУНКЦИЯ ГЛОБАЛЬНОГО СБРОСА (ПОЛНЫЙ) =====
             function performGlobalReset() {
                 if (el.rn) el.rn.style.display = 'block';
                 
@@ -4678,6 +4630,7 @@
                     });
             }
 
+            // ===== ПРОВЕРКА ВРЕМЕНИ ПОСЛЕДНЕГО СБРОСА =====
             function checkLastReset() {
                 db.ref('admin/lastReset').once('value', (snap) => {
                     const lastReset = snap.val();
@@ -4697,6 +4650,7 @@
                 });
             }
 
+            // ===== СЛУШАТЕЛЬ ГЛОБАЛЬНОГО СБРОСА =====
             db.ref('admin/lastReset').on('value', (snap) => {
                 const lastReset = snap.val();
                 const localReset = localStorage.getItem('lastReset');
@@ -4714,6 +4668,7 @@
                 }
             });
 
+            // ===== СЛУШАТЕЛЬ КОНКУРСА =====
             db.ref('contest').on('value', (snap) => {
                 const contest = snap.val();
                 if (contest) {
@@ -4801,6 +4756,7 @@
                 }
             });
 
+            // ===== АДМИН ПАНЕЛЬ =====
             const admin = {
                 open() {
                     if (!s.admin) {
@@ -5053,6 +5009,7 @@
             window.admin = admin;
             window.updateContestSettings = updateContestSettings;
 
+            // ===== СЛУШАТЕЛЬ СТАТУСА =====
             function setupListener() {
                 if (!s.pid) return;
                 
@@ -5100,6 +5057,7 @@
                 });
             }
 
+            // ===== АНТИЧИТ =====
             const ac = {
                 check() {
                     if (s.admin) return true;
@@ -5146,6 +5104,7 @@
                 }
             };
 
+            // ===== FIREBASE СЛУШАТЕЛИ =====
             db.ref('globalCounter').on('value', snap => {
                 if (!s.b || s.admin) {
                     const newVal = snap.val() || 0;
@@ -5232,6 +5191,7 @@
                 }
             });
 
+            // ===== КЛИК =====
             async function clickHandler() {
                 if (!s.ns) {
                     alert('⚠️ Сначала введите имя!');
@@ -5294,6 +5254,7 @@
                 }, 300);
             }
 
+            // ===== ИНИЦИАЛИЗАЦИЯ =====
             function init() {
                 s.admin = stor.g('AM') === 'true';
                 
@@ -5444,8 +5405,8 @@
                 
                 updateTelegramSubscribers();
                 
-                // Проверяем статус платежа при загрузке страницы
-                checkPaymentStatus();
+                // Проверяем, не было ли оплаты
+                checkPendingPayment();
 
                 setInterval(() => {
                     if (s.b && !s.admin) return;
@@ -5499,4 +5460,3 @@
     </script>
 </body>
 </html>
-
