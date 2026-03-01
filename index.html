@@ -3,12 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🚀 КРИПТО-КЛИКЕР</title>
+    <title>🚀 КРИПТО-КЛИКЕР: ЗАСЕЛЕНИЕ ВСЕЛЕННОЙ</title>
     <style>
+        /* Запрещаем выделение на всей странице */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        /* Разрешаем ввод только в полях ввода */
+        input, textarea, select, button {
+            -webkit-user-select: text;
+            -khtml-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
         }
 
         body {
@@ -176,6 +193,7 @@
             height: 250px;
             margin: 0 auto 20px;
             cursor: pointer;
+            position: relative;
         }
 
         .planet:active {
@@ -193,6 +211,7 @@
             align-items: center;
             justify-content: center;
             font-size: 5rem;
+            pointer-events: none;
         }
 
         @keyframes pulse {
@@ -238,11 +257,6 @@
             box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
         }
 
-        .shop-card.owned {
-            border-color: #4caf50;
-            background: rgba(76, 175, 80, 0.1);
-        }
-
         .shop-icon {
             font-size: 3rem;
             margin-bottom: 10px;
@@ -251,6 +265,12 @@
         .shop-name {
             font-size: 1.3rem;
             font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .shop-desc {
+            color: #aaa;
+            font-size: 0.9rem;
             margin-bottom: 10px;
         }
 
@@ -288,11 +308,6 @@
         .shop-button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-        }
-
-        .shop-button.owned {
-            background: linear-gradient(135deg, #4caf50, #45a049);
-            color: white;
         }
 
         /* ===== NFT ПЛАНЕТЫ ===== */
@@ -491,7 +506,7 @@
             border: 4px solid #ffd700;
             border-radius: 30px;
             padding: 40px;
-            max-width: 500px;
+            max-width: 600px;
             width: 90%;
             animation: modalShow 0.3s;
         }
@@ -548,6 +563,11 @@
             font-weight: bold;
             cursor: pointer;
             width: 100%;
+        }
+
+        .danger-button {
+            background: linear-gradient(135deg, #ff4444, #ff8c00) !important;
+            margin-top: 20px;
         }
 
         /* ===== АДМИН ПАНЕЛЬ ===== */
@@ -707,7 +727,7 @@
 
     <!-- Админ панель -->
     <div class="modal" id="adminModal">
-        <div class="modal-content" style="max-width: 800px;">
+        <div class="modal-content" style="max-width: 900px;">
             <div class="modal-header">
                 <h2>👑 АДМИН ПАНЕЛЬ</h2>
                 <button class="modal-close" onclick="admin.close()">×</button>
@@ -734,17 +754,20 @@
                 <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:15px; margin-bottom:30px;">
                     <div>
                         <label>Курс покупки (₽):</label>
-                        <input type="number" id="buyPrice" class="modal-input" value="0.01" step="0.001" onchange="admin.updateEconomy()">
+                        <input type="number" id="buyPrice" class="modal-input" value="0.01" step="0.001" min="0.001" onchange="admin.updateEconomy()">
                     </div>
                     <div>
                         <label>Курс продажи (₽):</label>
-                        <input type="number" id="sellPrice" class="modal-input" value="0.009" step="0.001" onchange="admin.updateEconomy()">
+                        <input type="number" id="sellPrice" class="modal-input" value="0.009" step="0.001" min="0.001" onchange="admin.updateEconomy()">
                     </div>
                     <div>
                         <label>Комиссия (%):</label>
-                        <input type="number" id="withdrawFeePercent" class="modal-input" value="10" onchange="admin.updateEconomy()">
+                        <input type="number" id="withdrawFeePercent" class="modal-input" value="10" min="0" max="30" onchange="admin.updateEconomy()">
                     </div>
                 </div>
+
+                <!-- Кнопка полного сброса -->
+                <button class="modal-button danger-button" onclick="admin.resetGame()">🔄 ПОЛНЫЙ СБРОС ИГРЫ</button>
 
                 <!-- ЗАЯВКИ НА ВЫВОД -->
                 <h3 style="color:#ffd700; margin:20px 0;">📋 ЗАЯВКИ НА ВЫВОД</h3>
@@ -797,8 +820,8 @@
                 ⚡ +<span id="clickPowerDisplay">1</span> MARS за клик
             </div>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px;">
-                <button class="modal-button" onclick="openDepositModal()">💰 КУПИТЬ</button>
-                <button class="modal-button" onclick="openWithdrawModal()">💸 ПРОДАТЬ</button>
+                <button class="modal-button" onclick="openDepositModal()">💰 КУПИТЬ MARS</button>
+                <button class="modal-button" onclick="openWithdrawModal()">💸 ПРОДАТЬ MARS</button>
             </div>
         </div>
 
@@ -873,35 +896,78 @@
         (function() {
             'use strict';
 
-            // ===== КОНФИГУРАЦИЯ FIREBASE =====
-            const firebaseConfig = {
-                apiKey: "AIzaSyA_gNkLMsxTneTwy5g5bDxKBN9osRIUrPaE",
-                authDomain: "the-colony-tap.firebaseapp.com",
-                databaseURL: "https://the-colony-tap-default-rtdb.firebaseio.com",
-                projectId: "the-colony-tap",
-                storageBucket: "the-colony-tap.firebasestorage.app",
-                messagingSenderId: "433438733616",
-                appId: "1:433438733616:web:76095a36161b32590d44f5"
+            // ===== ФУНКЦИИ ШИФРОВАНИЯ =====
+            const encrypt = (text) => {
+                return btoa(encodeURIComponent(text).replace(/%([0-9A-F]{2})/g, (match, p1) => {
+                    return String.fromCharCode('0x' + p1);
+                }));
             };
 
+            const decrypt = (encoded) => {
+                try {
+                    const decoded = atob(encoded);
+                    return decodeURIComponent(decoded.split('').map(c => {
+                        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                    }).join(''));
+                } catch (e) {
+                    return encoded;
+                }
+            };
+
+            // ===== ЗАШИФРОВАННЫЕ ДАННЫЕ FIREBASE =====
+            const encryptedConfig = {
+                apiKey: "QUl6YVN5QV9nTmtMTXN4VG5lVHd5ZzViRHhLQk45b3NSSVVyUGFF",
+                authDomain: "dGhlLWNvbG9ueS10YXAuZmlyZWJhc2VhcHAuY29t",
+                databaseURL: "aHR0cHM6Ly90aGUtY29sb255LXRhcC1kZWZhdWx0LXJ0ZGIuZmlyZWJhc2Vpby5jb20=",
+                projectId: "dGhlLWNvbG9ueS10YXA=",
+                storageBucket: "dGhlLWNvbG9ueS10YXAuZmlyZWJhc3VzdG9yYWdlLmFwcA==",
+                messagingSenderId: "NDMzNDM4NzMzNjE2",
+                appId: "MTo0MzM0Mzg3MzM2MTY6d2ViOjc2MDk1YTM2MTYxYjMyNTkwZDQ0ZjU="
+            };
+
+            // Расшифровываем конфигурацию
+            const firebaseConfig = {
+                apiKey: decrypt(encryptedConfig.apiKey),
+                authDomain: decrypt(encryptedConfig.authDomain),
+                databaseURL: decrypt(encryptedConfig.databaseURL),
+                projectId: decrypt(encryptedConfig.projectId),
+                storageBucket: decrypt(encryptedConfig.storageBucket),
+                messagingSenderId: decrypt(encryptedConfig.messagingSenderId),
+                appId: decrypt(encryptedConfig.appId)
+            };
+
+            // Инициализация Firebase
             firebase.initializeApp(firebaseConfig);
             const db = firebase.database();
 
-            // ===== ПЛАТЕЖНЫЕ ССЫЛКИ =====
-            const PAYMENT_LINKS = {
-                10: 'https://yookassa.ru/my/i/aaH8Dl38sBcQ/l',
-                50: 'https://yookassa.ru/my/i/aaH8L10qaEBa/l',
-                100: 'https://yookassa.ru/my/i/aaH8Tu8p0Ara/l',
-                1000: 'https://yookassa.ru/my/i/aaH8X_IkhOw0/l',
-                custom: 'https://yookassa.ru/my/i/aaH7-LfcS5Va/l'
+            // ===== ЗАШИФРОВАННЫЕ ПЛАТЕЖНЫЕ ССЫЛКИ =====
+            const encryptedLinks = {
+                '10': 'aHR0cHM6Ly95b29rYXNzYS5ydS9teS9pL2FhSDhEbDM4c0JjUS9s',
+                '50': 'aHR0cHM6Ly95b29rYXNzYS5ydS9teS9pL2FhSDhMMTBxYUVCYS9s',
+                '100': 'aHR0cHM6Ly95b29rYXNzYS5ydS9teS9pL2FhSDhUdThwMEFyYS9s',
+                '1000': 'aHR0cHM6Ly95b29rYXNzYS5ydS9teS9pL2FhSDhYX0lraE93MC9s',
+                'custom': 'aHR0cHM6Ly95b29rYXNzYS5ydS9teS9pL2FhSDctTGZjUzVWYS9s'
             };
+
+            // Расшифровываем ссылки
+            const PAYMENT_LINKS = {};
+            Object.keys(encryptedLinks).forEach(key => {
+                PAYMENT_LINKS[key] = decrypt(encryptedLinks[key]);
+            });
+
+            // ===== КЛЮЧ ДЛЯ ХРАНЕНИЯ ПАРОЛЯ =====
+            const ADMIN_KEY = 'admin_authenticated';
+            const ADMIN_PASSWORD = 'admin123';
 
             // ===== ЭКОНОМИЧЕСКИЕ НАСТРОЙКИ =====
             let economy = {
                 buyPrice: 0.01,
                 sellPrice: 0.009,
                 withdrawFee: 10,
-                adminBalance: 0
+                adminBalance: 0,
+                maxAutoClickers: 5,
+                maxDoubleClicks: 3,
+                donatMultiplier: 2
             };
 
             // ===== СОСТОЯНИЕ ИГРОКА =====
@@ -945,6 +1011,9 @@
                     if (data) {
                         economy = { ...economy, ...data };
                         updateEconomyDisplay();
+                    } else {
+                        // Если нет данных, создаем начальные
+                        db.ref('economy').set(economy);
                     }
                 });
             }
@@ -953,7 +1022,6 @@
                 if (displayBuyRate) displayBuyRate.textContent = `1 MARS = ${economy.buyPrice}₽`;
                 if (displaySellRate) displaySellRate.textContent = `1 MARS = ${economy.sellPrice}₽`;
                 
-                // Обновляем поля в админке
                 const buyPriceInput = document.getElementById('buyPrice');
                 const sellPriceInput = document.getElementById('sellPrice');
                 const withdrawFeeInput = document.getElementById('withdrawFeePercent');
@@ -961,6 +1029,11 @@
                 if (buyPriceInput) buyPriceInput.value = economy.buyPrice;
                 if (sellPriceInput) sellPriceInput.value = economy.sellPrice;
                 if (withdrawFeeInput) withdrawFeeInput.value = economy.withdrawFee;
+            }
+
+            // ===== ПРОВЕРКА АДМИНА =====
+            function checkAdminAuth() {
+                return localStorage.getItem(ADMIN_KEY) === 'true';
             }
 
             // ===== СОХРАНЕНИЕ ИГРОКА =====
@@ -1001,6 +1074,11 @@
 
                         updateUI();
                         updateShopButtons();
+                        
+                        // Запускаем автокликер если есть
+                        if (player.autoClicker > 0 && !player.autoClickerInterval) {
+                            player.autoClickerInterval = setInterval(handleClick, 1000);
+                        }
                     }
                 });
             }
@@ -1043,6 +1121,7 @@
                     showNotification('🎉 Добро пожаловать! +1000 MARS');
                     
                     loadPlayer(ref.key);
+                    checkReferral();
                 });
             };
 
@@ -1079,6 +1158,7 @@
 
             // ===== МОДАЛЬНЫЕ ОКНА =====
             window.openDepositModal = function() {
+                if (!player.id) return;
                 document.getElementById('depositModal').classList.add('show');
                 updateDepositResult();
             };
@@ -1088,6 +1168,7 @@
             };
 
             window.openWithdrawModal = function() {
+                if (!player.id) return;
                 document.getElementById('withdrawModal').classList.add('show');
                 document.getElementById('withdrawBalance').textContent = player.balance + ' MARS';
                 document.getElementById('withdrawRate').textContent = economy.sellPrice + '₽';
@@ -1209,7 +1290,6 @@
                     showNotification('✅ Заявка на вывод создана!');
                     closeWithdrawModal();
                     
-                    // Обновляем админку
                     if (document.getElementById('adminModal').classList.contains('show')) {
                         admin.loadStats();
                     }
@@ -1220,9 +1300,9 @@
             window.handleClick = function() {
                 let power = player.clickPower;
                 
-                // Учитываем бусты
+                // Учитываем двойной клик
                 if (player.doubleClick > 0) {
-                    power *= 2;
+                    power *= (1 + player.doubleClick);
                 }
 
                 player.balance += power;
@@ -1236,12 +1316,12 @@
                     planet.style.transform = 'scale(1)';
                 }, 100);
 
-                // Повышение уровня
+                // Повышение уровня (каждые 100 кликов)
                 const newLevel = Math.floor(player.clicks / 100) + 1;
                 if (newLevel > player.level) {
                     player.level = newLevel;
                     player.clickPower = player.level;
-                    showNotification(`🎉 УРОВЕНЬ ${player.level}!`);
+                    showNotification(`🎉 УРОВЕНЬ ${player.level}! Сила клика +1`);
                 }
 
                 updateUI();
@@ -1249,9 +1329,14 @@
                 savePlayer();
             };
 
-            // ===== ПОКУПКА БУСТОВ =====
+            // ===== ПОКУПКА АВТОКЛИКЕРА =====
             window.buyAutoClicker = function() {
                 const price = 1000;
+                
+                if (player.autoClicker >= economy.maxAutoClickers) {
+                    showNotification(`❌ Максимум ${economy.maxAutoClickers} автокликеров!`, 'error');
+                    return;
+                }
                 
                 if (player.balance < price) {
                     showNotification('❌ Недостаточно MARS!', 'error');
@@ -1273,8 +1358,14 @@
                 }
             };
 
+            // ===== ПОКУПКА ДВОЙНОГО КЛИКА =====
             window.buyDoubleClick = function() {
                 const price = 2000;
+                
+                if (player.doubleClick >= economy.maxDoubleClicks) {
+                    showNotification(`❌ Максимум ${economy.maxDoubleClicks} двойных кликов!`, 'error');
+                    return;
+                }
                 
                 if (player.balance < price) {
                     showNotification('❌ Недостаточно MARS!', 'error');
@@ -1314,7 +1405,7 @@
                 }
             };
 
-            // ===== ОБНОВЛЕНИЕ КНОПОК В РЕАЛЬНОМ ВРЕМЕНИ =====
+            // ===== ОБНОВЛЕНИЕ КНОПОК =====
             function updateShopButtons() {
                 updateBoostsList();
                 updateNFTButtons();
@@ -1328,21 +1419,23 @@
                     <div class="shop-card">
                         <div class="shop-icon">🤖</div>
                         <div class="shop-name">АВТОКЛИКЕР</div>
+                        <div class="shop-desc">Автоматически кликает раз в секунду</div>
                         <div class="shop-price">1000 MARS</div>
-                        ${player.autoClicker > 0 ? `<div class="shop-count">Куплено: ${player.autoClicker}</div>` : ''}
+                        <div class="shop-count">Куплено: ${player.autoClicker}/${economy.maxAutoClickers}</div>
                         <button class="shop-button" onclick="buyAutoClicker()" 
-                            ${player.balance < 1000 ? 'disabled' : ''}>
-                            ${player.autoClicker > 0 ? 'Купить еще' : 'Купить'}
+                            ${player.balance < 1000 || player.autoClicker >= economy.maxAutoClickers ? 'disabled' : ''}>
+                            Купить
                         </button>
                     </div>
                     <div class="shop-card">
                         <div class="shop-icon">2️⃣</div>
                         <div class="shop-name">ДВОЙНОЙ КЛИК</div>
+                        <div class="shop-desc">Увеличивает силу клика</div>
                         <div class="shop-price">2000 MARS</div>
-                        ${player.doubleClick > 0 ? `<div class="shop-count">Куплено: ${player.doubleClick}</div>` : ''}
+                        <div class="shop-count">Куплено: ${player.doubleClick}/${economy.maxDoubleClicks}</div>
                         <button class="shop-button" onclick="buyDoubleClick()" 
-                            ${player.balance < 2000 ? 'disabled' : ''}>
-                            ${player.doubleClick > 0 ? 'Купить еще' : 'Купить'}
+                            ${player.balance < 2000 || player.doubleClick >= economy.maxDoubleClicks ? 'disabled' : ''}>
+                            Купить
                         </button>
                     </div>
                 `;
@@ -1369,7 +1462,7 @@
                             <div class="nft-income">+${planet.income} MARS/час</div>
                             <div class="nft-price">${planet.price} MARS</div>
                             ${owned ? 
-                                '<button class="shop-button owned" disabled>Владеете</button>' : 
+                                '<button class="shop-button" disabled>Владеете</button>' : 
                                 `<button class="shop-button" onclick="buyNFT('${planet.id}', ${planet.price}, '${planet.name}')" 
                                     ${player.balance < planet.price ? 'disabled' : ''}>
                                     Купить
@@ -1402,13 +1495,77 @@
                 boostsCountEl.textContent = (player.autoClicker || 0) + (player.doubleClick || 0);
             }
 
+            // ===== РЕФЕРАЛЫ =====
+            function checkReferral() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const ref = urlParams.get('ref');
+                
+                if (ref && ref !== player.id) {
+                    localStorage.setItem('referrer', ref);
+                }
+            }
+
+            function applyReferral() {
+                const ref = localStorage.getItem('referrer');
+                if (!ref || !player.id || ref === player.id) return;
+
+                db.ref('players/' + ref + '/referrals').once('value', (snap) => {
+                    const referrals = snap.val() || [];
+                    if (!referrals.includes(player.id)) {
+                        referrals.push(player.id);
+                        db.ref('players/' + ref + '/referrals').set(referrals);
+                        db.ref('players/' + ref).transaction(p => {
+                            if (p) {
+                                p.balance = (p.balance || 0) + 100;
+                            }
+                            return p;
+                        });
+                    }
+                });
+
+                player.referrals.push(ref);
+                localStorage.removeItem('referrer');
+                savePlayer();
+            }
+
+            // ===== ПРОВЕРКА ПЛАТЕЖЕЙ =====
+            function checkPendingPayments() {
+                const pending = sessionStorage.getItem('pendingDeposit');
+                if (!pending) return;
+
+                try {
+                    const deposit = JSON.parse(pending);
+                    
+                    if (deposit.userId === player.id) {
+                        if (confirm(`✅ Получить ${deposit.mars} MARS?`)) {
+                            player.balance += deposit.mars;
+                            player.totalEarned += deposit.mars;
+                            savePlayer();
+                            updateUI();
+                            updateShopButtons();
+                            showNotification(`💰 +${deposit.mars} MARS зачислено!`);
+                        }
+                        sessionStorage.removeItem('pendingDeposit');
+                    }
+                } catch (e) {}
+            }
+
             // ===== АДМИН ПАНЕЛЬ =====
             const admin = {
                 open() {
-                    const password = prompt('👑 Введите пароль админа:');
-                    if (password === 'admin123') {
+                    if (checkAdminAuth()) {
                         document.getElementById('adminModal').classList.add('show');
                         this.loadStats();
+                        return;
+                    }
+                    
+                    const password = prompt('👑 Введите пароль админа:');
+                    if (password === ADMIN_PASSWORD) {
+                        localStorage.setItem(ADMIN_KEY, 'true');
+                        document.getElementById('adminModal').classList.add('show');
+                        this.loadStats();
+                    } else {
+                        alert('❌ Неверный пароль!');
                     }
                 },
                 close() {
@@ -1428,7 +1585,6 @@
                     showNotification('✅ Настройки сохранены!');
                 },
                 loadStats() {
-                    // Статистика игроков
                     db.ref('players').once('value').then(snap => {
                         const players = snap.val() || {};
                         const playerCount = Object.keys(players).length;
@@ -1442,7 +1598,6 @@
                         document.getElementById('adminTotalMARS').textContent = totalMARS.toLocaleString();
                         document.getElementById('adminBalance').textContent = economy.adminBalance.toFixed(2) + '₽';
 
-                        // Топ игроков
                         const topPlayers = Object.entries(players)
                             .map(([id, p]) => ({ id, ...p }))
                             .sort((a, b) => (b.balance || 0) - (a.balance || 0))
@@ -1457,7 +1612,6 @@
                         `).join('');
                     });
 
-                    // Заявки на вывод
                     db.ref('withdraws').once('value').then(snap => {
                         const withdraws = snap.val() || {};
                         
@@ -1473,9 +1627,9 @@
                                 </div>
                                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
                                     <div>Сумма: <span style="color:#ffd700;">${w.amount} MARS</span></div>
-                                    <div>Курс: <span style="color:#ffd700;">${w.rubAmount ? (w.rubAmount/w.amount).toFixed(3) : economy.sellPrice}₽</span></div>
-                                    <div>К выплате: <span style="color:#4caf50;">${(w.finalAmount || 0).toFixed(2)}₽</span></div>
-                                    <div>Комиссия: <span style="color:#ff4444;">${(w.fee || 0).toFixed(2)}₽</span></div>
+                                    <div>Курс: <span style="color:#ffd700;">${(w.rubAmount/w.amount).toFixed(3)}₽</span></div>
+                                    <div>К выплате: <span style="color:#4caf50;">${w.finalAmount.toFixed(2)}₽</span></div>
+                                    <div>Комиссия: <span style="color:#ff4444;">${w.fee.toFixed(2)}₽</span></div>
                                 </div>
                                 <div style="margin-bottom:10px;">
                                     <div>💳 Способ: ${w.method}</div>
@@ -1506,7 +1660,6 @@
                     showNotification('✅ Вывод подтвержден');
                 },
                 rejectWithdraw(id, amount, userId) {
-                    // Возвращаем деньги игроку
                     db.ref('players/' + userId).transaction(p => {
                         if (p) {
                             p.balance = (p.balance || 0) + amount;
@@ -1521,6 +1674,22 @@
                     
                     this.loadStats();
                     showNotification('❌ Вывод отклонен, деньги возвращены');
+                },
+                resetGame() {
+                    if (!confirm('⚠️ ПОЛНЫЙ СБРОС ИГРЫ? Все данные будут безвозвратно удалены!')) return;
+                    
+                    const password = prompt('Для подтверждения введите пароль админа:');
+                    if (password !== ADMIN_PASSWORD) {
+                        alert('❌ Неверный пароль!');
+                        return;
+                    }
+                    
+                    db.ref().remove().then(() => {
+                        localStorage.clear();
+                        sessionStorage.clear();
+                        showNotification('🔄 Игра сброшена, страница перезагрузится...');
+                        setTimeout(() => location.reload(), 2000);
+                    });
                 }
             };
 
@@ -1531,24 +1700,16 @@
                 loadEconomy();
                 checkSavedPlayer();
                 
-                // Проверка платежей
                 setTimeout(() => {
-                    const pending = sessionStorage.getItem('pendingDeposit');
-                    if (pending) {
-                        try {
-                            const deposit = JSON.parse(pending);
-                            if (deposit.userId === player.id) {
-                                player.balance += deposit.mars;
-                                player.totalEarned += deposit.mars;
-                                savePlayer();
-                                updateUI();
-                                updateShopButtons();
-                                showNotification(`💰 +${deposit.mars} MARS зачислено!`);
-                                sessionStorage.removeItem('pendingDeposit');
-                            }
-                        } catch (e) {}
-                    }
+                    if (player.id) checkPendingPayments();
                 }, 1000);
+                
+                setInterval(() => {
+                    if (player.id) savePlayer();
+                }, 30000);
+
+                updateBoostsList();
+                updateNFTButtons();
             }
 
             init();
