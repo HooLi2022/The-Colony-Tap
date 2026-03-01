@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌍 Крипто-Кликер: Заселение Вселенной</title>
+    <title>🚀 КРИПТО-КЛИКЕР: ЗАСЕЛЕНИЕ ВСЕЛЕННОЙ</title>
     <style>
         * {
             margin: 0;
@@ -12,68 +12,88 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0a0f2a, #1a1f3a);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0a0f1a, #1a1f2a);
             color: #fff;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+            padding: 16px;
         }
 
         .game-container {
-            max-width: 1200px;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
-        /* Шапка */
+        /* ===== ШАПКА ===== */
         .header {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .balance-section {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
             flex-wrap: wrap;
             gap: 20px;
         }
 
         .balance-card {
             background: linear-gradient(135deg, #ffd700, #ffaa00);
-            color: #333;
-            padding: 20px 30px;
-            border-radius: 15px;
+            color: #1a1f2a;
+            padding: 20px 40px;
+            border-radius: 20px;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+            position: relative;
+            overflow: hidden;
         }
 
-        .balance-amount {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin: 10px 0;
+        .balance-card::after {
+            content: "💰";
+            position: absolute;
+            right: -10px;
+            bottom: -10px;
+            font-size: 80px;
+            opacity: 0.1;
+            transform: rotate(-15deg);
         }
 
         .balance-label {
             font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
             opacity: 0.8;
         }
 
-        .stats {
+        .balance-amount {
+            font-size: 3.5rem;
+            font-weight: bold;
+            line-height: 1.2;
+        }
+
+        .balance-rub {
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+
+        .stats-grid {
             display: flex;
-            gap: 20px;
+            gap: 15px;
             flex-wrap: wrap;
         }
 
-        .stat-item {
+        .stat-card {
             background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
             padding: 15px 25px;
-            border-radius: 10px;
             text-align: center;
             border: 1px solid rgba(255, 215, 0, 0.3);
+            min-width: 120px;
         }
 
         .stat-value {
@@ -83,163 +103,323 @@
         }
 
         .stat-label {
-            font-size: 0.9rem;
-            opacity: 0.8;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-top: 5px;
         }
 
-        /* Основной контент */
-        .main-content {
+        /* ===== ОСНОВНАЯ СЕТКА ===== */
+        .main-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
+            grid-template-columns: 1.2fr 2fr;
+            gap: 20px;
+            margin-bottom: 20px;
         }
 
-        @media (max-width: 768px) {
-            .main-content {
+        @media (max-width: 1000px) {
+            .main-grid {
                 grid-template-columns: 1fr;
             }
         }
 
-        /* Кликер */
+        /* ===== КЛИКЕР ===== */
         .clicker-section {
             background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 30px;
+            border: 2px solid rgba(255, 215, 0, 0.2);
             text-align: center;
-            border: 2px solid rgba(255, 215, 0, 0.3);
         }
 
-        .click-button {
-            width: 250px;
-            height: 250px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #ffd700, #ff8c00);
-            border: 5px solid #fff;
+        .planet {
+            width: 300px;
+            height: 300px;
+            margin: 0 auto 30px;
+            position: relative;
             cursor: pointer;
-            margin: 20px auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            font-weight: bold;
-            color: #333;
-            box-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
             transition: all 0.1s;
-            animation: pulse 2s infinite;
         }
 
-        .click-button:active {
+        .planet:active {
             transform: scale(0.95);
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        .planet-core {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #ffd700, #ff8c00);
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
+            animation: pulse 2s infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            position: relative;
+            overflow: hidden;
         }
 
-        .click-power {
-            font-size: 1.2rem;
+        .planet-core::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 50px rgba(255, 215, 0, 0.5); }
+            50% { transform: scale(1.05); box-shadow: 0 0 100px rgba(255, 215, 0, 0.8); }
+            100% { transform: scale(1); box-shadow: 0 0 50px rgba(255, 215, 0, 0.5); }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .click-info {
+            font-size: 1.3rem;
             margin: 20px 0;
             color: #ffd700;
         }
 
-        /* Инвестиции */
-        .invest-section {
+        .click-power-bar {
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .click-power-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd700, #ffaa00);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* ===== МАГАЗИН ===== */
+        .shop-section {
             background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 30px;
-            border: 2px solid rgba(76, 175, 80, 0.3);
+            border: 2px solid rgba(76, 175, 80, 0.2);
         }
 
-        .section-title {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            color: #ffd700;
+        .shop-tabs {
             display: flex;
-            align-items: center;
             gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
-        .invest-grid {
+        .shop-tab {
+            padding: 12px 24px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            border: 1px solid transparent;
+        }
+
+        .shop-tab:hover {
+            background: rgba(255, 215, 0, 0.2);
+        }
+
+        .shop-tab.active {
+            background: #ffd700;
+            color: #1a1f2a;
+            border-color: white;
+        }
+
+        .shop-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 10px;
         }
 
-        .invest-card {
+        .shop-card {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 15px;
             padding: 20px;
             text-align: center;
-            border: 1px solid rgba(76, 175, 80, 0.5);
+            border: 1px solid rgba(255, 215, 0, 0.3);
             transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
         }
 
-        .invest-card:hover {
+        .shop-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(76, 175, 80, 0.3);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
         }
 
-        .invest-icon {
+        .shop-card.owned {
+            border-color: #4caf50;
+            background: rgba(76, 175, 80, 0.1);
+        }
+
+        .shop-icon {
             font-size: 3rem;
             margin-bottom: 10px;
         }
 
-        .invest-name {
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .invest-profit {
-            color: #4caf50;
+        .shop-name {
             font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .shop-desc {
+            font-size: 0.9rem;
+            color: #aaa;
             margin-bottom: 10px;
         }
 
-        .invest-price {
-            font-size: 1.1rem;
+        .shop-price {
+            font-size: 1.3rem;
             color: #ffd700;
-            margin-bottom: 15px;
+            font-weight: bold;
+            margin: 10px 0;
         }
 
-        .invest-button {
-            background: linear-gradient(135deg, #4caf50, #45a049);
+        .shop-income {
+            color: #4caf50;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .shop-owned {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #4caf50;
             color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .shop-button {
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            color: #1a1f2a;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 20px;
             border-radius: 10px;
             cursor: pointer;
             width: 100%;
             font-size: 1rem;
+            font-weight: bold;
             transition: all 0.3s;
         }
 
-        .invest-button:hover {
+        .shop-button:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
         }
 
-        .invest-button:disabled {
+        .shop-button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
 
-        /* NFT Планеты */
-        .nft-section {
-            margin-bottom: 30px;
+        .shop-button.owned {
+            background: linear-gradient(135deg, #4caf50, #45a049);
+            color: white;
+        }
+
+        /* ===== ИНВЕСТИЦИИ ===== */
+        .investments-section {
             background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 30px;
-            border: 2px solid rgba(255, 105, 180, 0.3);
+            margin-bottom: 20px;
+            border: 2px solid rgba(33, 150, 243, 0.2);
+        }
+
+        .investments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .investment-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(33, 150, 243, 0.3);
+        }
+
+        .investment-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .investment-icon {
+            font-size: 2rem;
+        }
+
+        .investment-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .investment-profit {
+            color: #4caf50;
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
+
+        .investment-progress {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .investment-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2196f3, #4caf50);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .investment-count {
+            color: #ffd700;
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
+
+        /* ===== NFT ПЛАНЕТЫ ===== */
+        .nft-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            border: 2px solid rgba(255, 105, 180, 0.2);
         }
 
         .nft-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
+            margin-top: 20px;
         }
 
         .nft-card {
@@ -247,7 +427,7 @@
             border-radius: 15px;
             padding: 20px;
             text-align: center;
-            border: 1px solid rgba(255, 105, 180, 0.5);
+            border: 1px solid rgba(255, 105, 180, 0.3);
             transition: all 0.3s;
         }
 
@@ -259,6 +439,13 @@
         .nft-icon {
             font-size: 4rem;
             margin-bottom: 10px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
         }
 
         .nft-name {
@@ -269,8 +456,8 @@
 
         .nft-rarity {
             display: inline-block;
-            padding: 3px 10px;
-            border-radius: 15px;
+            padding: 4px 12px;
+            border-radius: 20px;
             font-size: 0.8rem;
             margin-bottom: 10px;
         }
@@ -278,7 +465,7 @@
         .rarity-common { background: #808080; }
         .rarity-rare { background: #4169e1; }
         .rarity-epic { background: #9400d3; }
-        .rarity-legendary { background: #ffd700; color: #333; }
+        .rarity-legendary { background: #ffd700; color: #1a1f2a; }
 
         .nft-income {
             font-size: 1.2rem;
@@ -292,61 +479,56 @@
             margin: 10px 0;
         }
 
-        .nft-button {
-            background: linear-gradient(135deg, #ffd700, #ffaa00);
-            color: #333;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            width: 100%;
-            font-size: 1rem;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-
-        .nft-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-        }
-
-        .nft-button.owned {
-            background: linear-gradient(135deg, #4caf50, #45a049);
-            color: white;
-        }
-
-        /* Турниры */
-        .tournament-section {
+        /* ===== ТУРНИРЫ ===== */
+        .tournaments-section {
             background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 30px;
-            margin-bottom: 30px;
-            border: 2px solid rgba(255, 68, 68, 0.3);
+            margin-bottom: 20px;
+            border: 2px solid rgba(255, 68, 68, 0.2);
         }
 
-        .tournament-grid {
+        .tournaments-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
+            margin-top: 20px;
         }
 
         .tournament-card {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 15px;
             padding: 20px;
-            text-align: center;
-            border: 1px solid rgba(255, 68, 68, 0.5);
+            border: 1px solid rgba(255, 68, 68, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tournament-card.active::before {
+            content: "🏆";
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            font-size: 100px;
+            opacity: 0.1;
+            transform: rotate(15deg);
+        }
+
+        .tournament-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
         }
 
         .tournament-icon {
-            font-size: 3rem;
-            margin-bottom: 10px;
+            font-size: 2.5rem;
         }
 
         .tournament-name {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: bold;
-            margin-bottom: 10px;
         }
 
         .tournament-prize {
@@ -356,26 +538,38 @@
         }
 
         .tournament-entry {
-            font-size: 1.1rem;
-            color: #ff4444;
-            margin-bottom: 10px;
+            background: rgba(255, 68, 68, 0.2);
+            padding: 5px 10px;
+            border-radius: 10px;
+            display: inline-block;
+            margin: 10px 0;
         }
 
         .tournament-players {
-            margin: 10px 0;
+            margin: 15px 0;
+        }
+
+        .player-avatar {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            margin-right: 5px;
+            border: 2px solid white;
         }
 
         .tournament-progress {
             height: 10px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 5px;
-            margin: 10px 0;
+            margin: 15px 0;
             overflow: hidden;
         }
 
         .tournament-progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, #ff4444, #ff8c00);
+            background: linear-gradient(90deg, #ff4444, #ffd700);
             width: 0%;
             transition: width 0.3s;
         }
@@ -384,19 +578,18 @@
             background: linear-gradient(135deg, #ff4444, #ff8c00);
             color: white;
             border: none;
-            padding: 15px 30px;
+            padding: 15px;
             border-radius: 10px;
             cursor: pointer;
             width: 100%;
             font-size: 1.1rem;
             font-weight: bold;
-            margin-top: 15px;
             transition: all 0.3s;
         }
 
         .tournament-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(255, 68, 68, 0.5);
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(255, 68, 68, 0.5);
         }
 
         .tournament-button:disabled {
@@ -404,65 +597,106 @@
             cursor: not-allowed;
         }
 
-        /* Вывод средств */
-        .withdraw-section {
+        /* ===== БИРЖА ===== */
+        .exchange-section {
             background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 30px;
-            margin-bottom: 30px;
-            border: 2px solid rgba(33, 150, 243, 0.3);
+            margin-bottom: 20px;
+            border: 2px solid rgba(0, 255, 0, 0.2);
         }
 
-        .withdraw-grid {
+        .exchange-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 20px;
+            margin-top: 20px;
         }
 
-        .withdraw-card {
+        .exchange-card {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 15px;
-            padding: 20px;
+            padding: 30px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
             border: 2px solid transparent;
         }
 
-        .withdraw-card:hover {
-            transform: translateY(-5px);
+        .exchange-card:hover {
             border-color: #ffd700;
+            transform: scale(1.02);
         }
 
-        .withdraw-icon {
-            font-size: 3rem;
+        .exchange-icon {
+            font-size: 4rem;
             margin-bottom: 10px;
         }
 
-        .withdraw-name {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 5px;
+        .exchange-rate {
+            font-size: 1.5rem;
+            color: #ffd700;
+            margin: 10px 0;
         }
 
-        .withdraw-min {
-            font-size: 0.9rem;
+        .exchange-min {
             color: #aaa;
+            font-size: 0.9rem;
         }
 
-        /* Профиль */
+        /* ===== ПРОФИЛЬ ===== */
         .profile-section {
             background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 30px;
-            border: 2px solid rgba(255, 215, 0, 0.3);
+            border: 2px solid rgba(255, 215, 0, 0.2);
         }
 
-        .profile-stats {
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            border: 4px solid white;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .profile-rank {
+            display: inline-block;
+            padding: 8px 20px;
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            color: #1a1f2a;
+            border-radius: 30px;
+            font-weight: bold;
+        }
+
+        .profile-stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 20px;
-            margin-bottom: 30px;
         }
 
         .profile-stat {
@@ -470,17 +704,17 @@
         }
 
         .profile-stat-value {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             color: #ffd700;
             font-weight: bold;
         }
 
         .profile-stat-label {
             font-size: 0.9rem;
-            opacity: 0.8;
+            opacity: 0.7;
         }
 
-        /* Модальное окно */
+        /* ===== МОДАЛЬНЫЕ ОКНА ===== */
         .modal {
             display: none;
             position: fixed;
@@ -488,10 +722,11 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.9);
             z-index: 1000;
             align-items: center;
             justify-content: center;
+            backdrop-filter: blur(10px);
         }
 
         .modal.show {
@@ -499,9 +734,9 @@
         }
 
         .modal-content {
-            background: linear-gradient(135deg, #1a1f3a, #2a2f4a);
-            border-radius: 20px;
-            padding: 30px;
+            background: linear-gradient(135deg, #1a1f2a, #2a2f3a);
+            border-radius: 30px;
+            padding: 40px;
             max-width: 500px;
             width: 90%;
             border: 3px solid #ffd700;
@@ -517,11 +752,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
         .modal-header h2 {
             color: #ffd700;
+            font-size: 2rem;
         }
 
         .modal-close {
@@ -530,21 +766,28 @@
             color: white;
             font-size: 2rem;
             cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
         }
 
-        .modal-body {
-            margin-bottom: 20px;
+        .modal-close:hover {
+            background: rgba(255, 0, 0, 0.3);
         }
 
         .modal-input {
             width: 100%;
             padding: 15px;
             border: 2px solid #ffd700;
-            border-radius: 10px;
+            border-radius: 15px;
             background: rgba(255, 255, 255, 0.1);
             color: white;
             font-size: 1.1rem;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .modal-input:focus {
@@ -552,12 +795,28 @@
             border-color: #4caf50;
         }
 
+        .modal-select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ffd700;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        .modal-select option {
+            background: #1a1f2a;
+        }
+
         .modal-button {
             background: linear-gradient(135deg, #ffd700, #ffaa00);
-            color: #333;
+            color: #1a1f2a;
             border: none;
             padding: 15px 30px;
-            border-radius: 10px;
+            border-radius: 15px;
             font-size: 1.2rem;
             font-weight: bold;
             cursor: pointer;
@@ -575,18 +834,7 @@
             cursor: not-allowed;
         }
 
-        /* Анимации */
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-
-        .float {
-            animation: float 3s ease-in-out infinite;
-        }
-
-        /* Уведомления */
+        /* ===== УВЕДОМЛЕНИЯ ===== */
         .notification {
             position: fixed;
             top: 20px;
@@ -595,7 +843,7 @@
             color: white;
             padding: 15px 25px;
             border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+            box-shadow: 0 5px 20px rgba(76, 175, 80, 0.3);
             z-index: 2000;
             animation: slideIn 0.3s;
             display: none;
@@ -614,19 +862,46 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
-        /* Кнопка админа */
+        /* ===== АДМИН КНОПКА ===== */
         .admin-btn {
             position: fixed;
             bottom: 20px;
             left: 20px;
             background: #ffd700;
-            color: #333;
-            padding: 12px 20px;
+            color: #1a1f2a;
+            padding: 12px 24px;
             border-radius: 40px;
             cursor: pointer;
             font-weight: bold;
             border: 2px solid white;
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3);
             z-index: 100;
+            transition: 0.3s;
+        }
+
+        .admin-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        }
+
+        /* ===== СКРОЛЛБАР ===== */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #ffd700;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ffaa00;
         }
     </style>
 </head>
@@ -634,103 +909,165 @@
     <!-- Уведомления -->
     <div class="notification" id="notification"></div>
 
-    <!-- Модальное окно вывода -->
-    <div class="modal" id="withdrawModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>💸 Вывод средств</h2>
-                <button class="modal-close" onclick="closeWithdrawModal()">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="balance-amount" style="font-size: 2rem; margin-bottom: 20px;" id="withdrawBalance">0 MARS</div>
-                <input type="number" class="modal-input" id="withdrawAmount" placeholder="Сумма в MARS" min="500">
-                <select class="modal-input" id="withdrawMethod">
-                    <option value="card">💳 Банковская карта</option>
-                    <option value="yoomoney">💰 ЮMoney</option>
-                    <option value="usdt">₿ USDT (крипта)</option>
-                    <option value="btc">₿ Bitcoin</option>
-                </select>
-                <input type="text" class="modal-input" id="withdrawDetails" placeholder="Реквизиты">
-                <div style="color: #ffd700; margin: 10px 0;">Комиссия: 10%</div>
-                <div style="color: #aaa; margin-bottom: 20px;">Минимальная сумма: 500 MARS (≈5₽)</div>
-                <button class="modal-button" onclick="processWithdraw()" id="withdrawBtn">✅ ВЫВЕСТИ</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Модальное окно пополнения -->
     <div class="modal" id="depositModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>💰 Пополнение баланса</h2>
+                <h2>💰 ПОПОЛНЕНИЕ</h2>
                 <button class="modal-close" onclick="closeDepositModal()">×</button>
             </div>
             <div class="modal-body">
-                <input type="number" class="modal-input" id="depositAmount" placeholder="Сумма в рублях" min="10">
-                <select class="modal-input" id="depositMethod">
-                    <option value="card">💳 Банковская карта</option>
-                    <option value="crypto">₿ Криптовалюта (USDT)</option>
+                <input type="number" class="modal-input" id="depositAmount" placeholder="Сумма в рублях" min="10" value="100">
+                <select class="modal-select" id="depositMethod">
+                    <option value="card">💳 Банковская карта (ЮKassa)</option>
+                    <option value="usdt">₿ USDT (крипта)</option>
+                    <option value="btc">₿ Bitcoin</option>
+                    <option value="eth">Ξ Ethereum</option>
                 </select>
-                <div style="color: #ffd700; margin: 10px 0;">Курс: 1 MARS = 0.01₽</div>
-                <div style="color: #aaa; margin-bottom: 20px;">Вы получите: <span id="depositResult">0</span> MARS</div>
-                <button class="modal-button" onclick="processDeposit()">💎 КУПИТЬ</button>
+                <div style="background: rgba(255,215,0,0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span>Курс:</span>
+                        <span style="color:#ffd700;">1 MARS = 0.01₽</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 1.2rem;">
+                        <span>Вы получите:</span>
+                        <span style="color:#ffd700; font-weight: bold;" id="depositResult">10000 MARS</span>
+                    </div>
+                </div>
+                <button class="modal-button" onclick="processDeposit()" id="depositBtn">
+                    💎 КУПИТЬ MARS
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно вывода -->
+    <div class="modal" id="withdrawModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>💸 ВЫВОД</h2>
+                <button class="modal-close" onclick="closeWithdrawModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <span style="font-size: 2rem; color:#ffd700;" id="withdrawBalance">0</span>
+                    <span style="color:#aaa;"> MARS</span>
+                </div>
+                <input type="number" class="modal-input" id="withdrawAmount" placeholder="Сумма в MARS" min="500" value="500">
+                <select class="modal-select" id="withdrawMethod">
+                    <option value="card">💳 Банковская карта</option>
+                    <option value="yoomoney">💰 ЮMoney</option>
+                    <option value="usdt">₿ USDT</option>
+                    <option value="btc">₿ Bitcoin</option>
+                </select>
+                <input type="text" class="modal-input" id="withdrawDetails" placeholder="Номер карты / кошелька">
+                <div style="background: rgba(255,68,68,0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span>Комиссия:</span>
+                        <span style="color:#ff4444;">10%</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span>Курс:</span>
+                        <span style="color:#ffd700;">1 MARS = 0.01₽</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 1.2rem;">
+                        <span>К получению:</span>
+                        <span style="color:#4caf50; font-weight: bold;" id="withdrawResult">4.50₽</span>
+                    </div>
+                </div>
+                <button class="modal-button" onclick="processWithdraw()" id="withdrawBtn">
+                    ✅ ВЫВЕСТИ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно подтверждения -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="confirmTitle">✅ ПОДТВЕРЖДЕНИЕ</h2>
+                <button class="modal-close" onclick="closeConfirmModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div style="text-align: center; font-size: 1.2rem; margin-bottom: 30px;" id="confirmMessage"></div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <button class="modal-button" style="background: #4caf50;" onclick="confirmAction()">✅ ДА</button>
+                    <button class="modal-button" style="background: #ff4444;" onclick="closeConfirmModal()">❌ НЕТ</button>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Кнопка админа -->
-    <div class="admin-btn" onclick="admin.open()">👑 Админ панель</div>
+    <div class="admin-btn" onclick="admin.open()">
+        👑 АДМИН ПАНЕЛЬ
+    </div>
 
     <!-- Админ панель -->
     <div class="modal" id="adminModal">
-        <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-content" style="max-width: 800px;">
             <div class="modal-header">
-                <h2>👑 Админ панель</h2>
+                <h2>👑 АДМИН ПАНЕЛЬ</h2>
                 <button class="modal-close" onclick="admin.close()">×</button>
             </div>
             <div class="modal-body">
-                <div class="profile-stats" style="margin-bottom: 20px;">
-                    <div class="profile-stat">
-                        <div class="profile-stat-value" id="adminTotalPlayers">0</div>
-                        <div class="profile-stat-label">Игроков</div>
+                <!-- Статистика -->
+                <div style="display: grid; grid-template-columns: repeat(4,1fr); gap: 15px; margin-bottom: 30px;">
+                    <div class="stat-card">
+                        <div class="stat-value" id="adminPlayers">0</div>
+                        <div class="stat-label">Игроков</div>
                     </div>
-                    <div class="profile-stat">
-                        <div class="profile-stat-value" id="adminTotalMARS">0</div>
-                        <div class="profile-stat-label">MARS</div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="adminTotalMARS">0</div>
+                        <div class="stat-label">Всего MARS</div>
                     </div>
-                    <div class="profile-stat">
-                        <div class="profile-stat-value" id="adminTotalRevenue">0₽</div>
-                        <div class="profile-stat-label">Доход</div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="adminRevenue">0₽</div>
+                        <div class="stat-label">Доход</div>
                     </div>
-                    <div class="profile-stat">
-                        <div class="profile-stat-value" id="adminWithdraws">0</div>
-                        <div class="profile-stat-label">Выводов</div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="adminWithdraws">0</div>
+                        <div class="stat-label">Выводов</div>
                     </div>
                 </div>
 
-                <h3 style="color: #ffd700; margin: 20px 0;">⚡ Управление</h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <!-- Управление -->
+                <h3 style="color:#ffd700; margin:20px 0;">⚡ УПРАВЛЕНИЕ</h3>
+                <div style="display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; margin-bottom: 30px;">
                     <button class="modal-button" onclick="admin.addMARS(1000)">➕ +1000 MARS всем</button>
-                    <button class="modal-button" onclick="admin.startTournament()">🏆 Запустить турнир</button>
-                    <button class="modal-button" onclick="admin.endTournament()">⏹️ Завершить турнир</button>
-                    <button class="modal-button" style="background: #ff4444;" onclick="admin.resetGame()">🔄 Сброс игры</button>
+                    <button class="modal-button" onclick="admin.startTournament()">🏆 СТАРТ ТУРНИРА</button>
+                    <button class="modal-button" onclick="admin.endTournament()">⏹️ СТОП ТУРНИРА</button>
+                    <button class="modal-button" style="background:#ff4444;" onclick="admin.resetGame()">🔄 СБРОС ИГРЫ</button>
                 </div>
 
-                <h3 style="color: #ffd700; margin: 20px 0;">💰 Настройка цен</h3>
-                <div style="display: grid; gap: 10px;">
-                    <div style="display: flex; justify-content: space-between;">
+                <!-- Настройки экономики -->
+                <h3 style="color:#ffd700; margin:20px 0;">💰 ЭКОНОМИКА</h3>
+                <div style="display: grid; gap: 15px; margin-bottom: 30px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span>Курс MARS/RUB:</span>
-                        <input type="number" id="adminExchangeRate" value="0.01" step="0.001" style="width: 100px;">
+                        <input type="number" id="adminExchangeRate" value="0.01" step="0.001" style="width:100px; padding:8px; border-radius:5px; border:1px solid #ffd700; background:rgba(0,0,0,0.3); color:white;">
                     </div>
-                    <div style="display: flex; justify-content: space-between;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span>Комиссия на вывод:</span>
-                        <input type="number" id="adminWithdrawFee" value="10" min="0" max="30" style="width: 100px;"> %
+                        <input type="number" id="adminWithdrawFee" value="10" min="0" max="30" style="width:100px; padding:8px; border-radius:5px; border:1px solid #ffd700; background:rgba(0,0,0,0.3); color:white;"> %
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>Мин. вывод:</span>
+                        <input type="number" id="adminMinWithdraw" value="500" style="width:100px; padding:8px; border-radius:5px; border:1px solid #ffd700; background:rgba(0,0,0,0.3); color:white;"> MARS
                     </div>
                 </div>
 
-                <h3 style="color: #ffd700; margin: 20px 0;">👥 Все игроки</h3>
-                <div id="adminPlayersList" style="max-height: 200px; overflow-y: auto;">
-                    <!-- Список игроков -->
+                <!-- Заявки на вывод -->
+                <h3 style="color:#ffd700; margin:20px 0;">📋 ЗАЯВКИ НА ВЫВОД</h3>
+                <div id="withdrawRequests" style="max-height: 200px; overflow-y: auto;">
+                    <!-- Заявки подгружаются сюда -->
+                </div>
+
+                <!-- Топ игроков -->
+                <h3 style="color:#ffd700; margin:20px 0;">🏆 ТОП ИГРОКОВ</h3>
+                <div id="adminTopPlayers" style="max-height: 200px; overflow-y: auto;">
+                    <!-- Топ подгружается сюда -->
                 </div>
             </div>
         </div>
@@ -738,120 +1075,157 @@
 
     <!-- ОСНОВНАЯ ИГРА -->
     <div class="game-container">
-        <!-- Шапка -->
+        <!-- ШАПКА -->
         <div class="header">
-            <div class="balance-card">
-                <div class="balance-label">💰 Баланс MARS</div>
-                <div class="balance-amount" id="balance">0</div>
-                <div style="font-size: 1rem;">≈ <span id="balanceRub">0</span> ₽</div>
-            </div>
-            <div class="stats">
-                <div class="stat-item">
-                    <div class="stat-value" id="level">1</div>
-                    <div class="stat-label">Уровень</div>
+            <div class="balance-section">
+                <div class="balance-card">
+                    <div class="balance-label">💰 БАЛАНС MARS</div>
+                    <div class="balance-amount" id="balance">0</div>
+                    <div class="balance-rub">≈ <span id="balanceRub">0</span> ₽</div>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="clickPower">1</div>
-                    <div class="stat-label">Сила клика</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="passiveIncome">0</div>
-                    <div class="stat-label">Доход/час</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="rank">Новичок</div>
-                    <div class="stat-label">Ранг</div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="level">1</div>
+                        <div class="stat-label">УРОВЕНЬ</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="clickPower">1</div>
+                        <div class="stat-label">СИЛА КЛИКА</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="passiveIncome">0</div>
+                        <div class="stat-label">ДОХОД/ЧАС</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="rank">НОВИЧОК</div>
+                        <div class="stat-label">РАНГ</div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Основной контент -->
-        <div class="main-content">
-            <!-- Кликер -->
+        <!-- ОСНОВНАЯ СЕТКА -->
+        <div class="main-grid">
+            <!-- КЛИКЕР -->
             <div class="clicker-section">
-                <h2 class="section-title">👆 КЛИКАЙ!</h2>
-                <div class="click-button" id="clickBtn" onclick="handleClick()">
-                    🪐
+                <h2 style="color:#ffd700; margin-bottom:20px;">👆 КЛИКАЙ НА ПЛАНЕТУ</h2>
+                <div class="planet" id="clickBtn" onclick="handleClick()">
+                    <div class="planet-core">🚀</div>
                 </div>
-                <div class="click-power">
+                <div class="click-info">
                     ⚡ +<span id="clickPowerDisplay">1</span> MARS за клик
                 </div>
-                <button class="tournament-button" style="background: linear-gradient(135deg, #ffd700, #ffaa00); color: #333;" onclick="openDepositModal()">
-                    💎 КУПИТЬ MARS
-                </button>
+                <div class="click-power-bar">
+                    <div class="click-power-fill" id="clickPowerBar" style="width: 1%"></div>
+                </div>
+                <div style="margin-top: 20px;">
+                    <button class="tournament-button" style="background: linear-gradient(135deg, #ffd700, #ffaa00); color:#1a1f2a; margin-bottom:10px;" onclick="openDepositModal()">
+                        💎 КУПИТЬ MARS
+                    </button>
+                    <button class="tournament-button" style="background: linear-gradient(135deg, #4caf50, #45a049);" onclick="openWithdrawModal()">
+                        💸 ВЫВЕСТИ MARS
+                    </button>
+                </div>
             </div>
 
-            <!-- Инвестиции -->
-            <div class="invest-section">
-                <h2 class="section-title">📈 ИНВЕСТИЦИИ</h2>
-                <div class="invest-grid" id="investmentsList">
-                    <!-- Сюда подгружаются инвестиции -->
+            <!-- МАГАЗИН -->
+            <div class="shop-section">
+                <h2 style="color:#ffd700; margin-bottom:20px;">🏪 МАГАЗИН</h2>
+                <div class="shop-tabs">
+                    <div class="shop-tab active" onclick="switchShopTab('boost')">🚀 БУСТЫ</div>
+                    <div class="shop-tab" onclick="switchShopTab('skin')">🎨 СКИНЫ</div>
+                    <div class="shop-tab" onclick="switchShopTab('special')">✨ СПЕЦИАЛЬНОЕ</div>
+                </div>
+                <div class="shop-grid" id="shopItems">
+                    <!-- Товары подгружаются сюда -->
                 </div>
             </div>
         </div>
 
-        <!-- NFT Планеты -->
+        <!-- ИНВЕСТИЦИИ -->
+        <div class="investments-section">
+            <h2 style="color:#2196f3; margin-bottom:20px;">📈 ИНВЕСТИЦИИ</h2>
+            <div class="investments-grid" id="investmentsList">
+                <!-- Инвестиции подгружаются сюда -->
+            </div>
+        </div>
+
+        <!-- NFT ПЛАНЕТЫ -->
         <div class="nft-section">
-            <h2 class="section-title">🪐 NFT ПЛАНЕТЫ</h2>
+            <h2 style="color:#ff69b4; margin-bottom:20px;">🪐 NFT ПЛАНЕТЫ</h2>
             <div class="nft-grid" id="nftList">
-                <!-- Сюда подгружаются NFT -->
+                <!-- NFT подгружаются сюда -->
             </div>
         </div>
 
-        <!-- Турниры -->
-        <div class="tournament-section">
-            <h2 class="section-title">🏆 ТУРНИРЫ</h2>
-            <div class="tournament-grid" id="tournamentList">
-                <!-- Сюда подгружаются турниры -->
+        <!-- ТУРНИРЫ -->
+        <div class="tournaments-section">
+            <h2 style="color:#ff4444; margin-bottom:20px;">🏆 ТУРНИРЫ</h2>
+            <div class="tournaments-grid" id="tournamentList">
+                <!-- Турниры подгружаются сюда -->
             </div>
         </div>
 
-        <!-- Вывод средств -->
-        <div class="withdraw-section">
-            <h2 class="section-title">💸 ВЫВОД СРЕДСТВ</h2>
-            <div class="withdraw-grid">
-                <div class="withdraw-card" onclick="openWithdrawModal('card')">
-                    <div class="withdraw-icon">💳</div>
-                    <div class="withdraw-name">Банковская карта</div>
-                    <div class="withdraw-min">от 500 MARS</div>
+        <!-- БИРЖА -->
+        <div class="exchange-section">
+            <h2 style="color:#00ff00; margin-bottom:20px;">💱 БИРЖА MARS</h2>
+            <div class="exchange-grid">
+                <div class="exchange-card" onclick="buyMARS()">
+                    <div class="exchange-icon">💰</div>
+                    <div style="font-size:1.5rem; font-weight:bold; margin:10px 0;">КУПИТЬ MARS</div>
+                    <div class="exchange-rate">1 MARS = 0.01₽</div>
+                    <div class="exchange-min">мин. 10₽</div>
                 </div>
-                <div class="withdraw-card" onclick="openWithdrawModal('yoomoney')">
-                    <div class="withdraw-icon">💰</div>
-                    <div class="withdraw-name">ЮMoney</div>
-                    <div class="withdraw-min">от 500 MARS</div>
-                </div>
-                <div class="withdraw-card" onclick="openWithdrawModal('usdt')">
-                    <div class="withdraw-icon">₿</div>
-                    <div class="withdraw-name">USDT (крипта)</div>
-                    <div class="withdraw-min">от 1000 MARS</div>
-                </div>
-                <div class="withdraw-card" onclick="openWithdrawModal('btc')">
-                    <div class="withdraw-icon">₿</div>
-                    <div class="withdraw-name">Bitcoin</div>
-                    <div class="withdraw-min">от 5000 MARS</div>
+                <div class="exchange-card" onclick="sellMARS()">
+                    <div class="exchange-icon">💸</div>
+                    <div style="font-size:1.5rem; font-weight:bold; margin:10px 0;">ПРОДАТЬ MARS</div>
+                    <div class="exchange-rate">1 MARS = 0.009₽</div>
+                    <div class="exchange-min">мин. 500 MARS</div>
                 </div>
             </div>
         </div>
 
-        <!-- Профиль -->
+        <!-- ПРОФИЛЬ -->
         <div class="profile-section">
-            <h2 class="section-title">👤 ПРОФИЛЬ</h2>
-            <div class="profile-stats">
+            <div class="profile-header">
+                <div class="profile-avatar" id="profileAvatar">👤</div>
+                <div class="profile-info">
+                    <div class="profile-name" id="profileName">ИГРОК</div>
+                    <div class="profile-rank" id="profileRank">НОВИЧОК</div>
+                </div>
+            </div>
+            <div class="profile-stats-grid">
                 <div class="profile-stat">
                     <div class="profile-stat-value" id="totalClicks">0</div>
-                    <div class="profile-stat-label">Всего кликов</div>
+                    <div class="profile-stat-label">ВСЕГО КЛИКОВ</div>
                 </div>
                 <div class="profile-stat">
                     <div class="profile-stat-value" id="totalEarned">0</div>
-                    <div class="profile-stat-label">Заработано MARS</div>
+                    <div class="profile-stat-label">ЗАРАБОТАНО</div>
                 </div>
                 <div class="profile-stat">
-                    <div class="profile-stat-value" id="investmentsCount">0</div>
-                    <div class="profile-stat-label">Инвестиций</div>
+                    <div class="profile-stat-value" id="investCount">0</div>
+                    <div class="profile-stat-label">ИНВЕСТИЦИЙ</div>
                 </div>
                 <div class="profile-stat">
                     <div class="profile-stat-value" id="nftCount">0</div>
-                    <div class="profile-stat-label">NFT планет</div>
+                    <div class="profile-stat-label">NFT ПЛАНЕТ</div>
+                </div>
+                <div class="profile-stat">
+                    <div class="profile-stat-value" id="referralCount">0</div>
+                    <div class="profile-stat-label">РЕФЕРАЛОВ</div>
+                </div>
+                <div class="profile-stat">
+                    <div class="profile-stat-value" id="bonusEarned">0</div>
+                    <div class="profile-stat-label">БОНУСЫ</div>
+                </div>
+                <div class="profile-stat">
+                    <div class="profile-stat-value" id="daysActive">0</div>
+                    <div class="profile-stat-label">ДНЕЙ</div>
+                </div>
+                <div class="profile-stat">
+                    <div class="profile-stat-value" id="achievements">0</div>
+                    <div class="profile-stat-label">ДОСТИЖЕНИЯ</div>
                 </div>
             </div>
         </div>
@@ -879,96 +1253,163 @@
             firebase.initializeApp(firebaseConfig);
             const db = firebase.database();
 
-            // ===== КОНСТАНТЫ =====
-            const EXCHANGE_RATE = 0.01; // 1 MARS = 0.01 рубля
-            const WITHDRAW_FEE = 10; // 10% комиссия
-            const MIN_WITHDRAW = 500; // Минимальный вывод
+            // ===== ПЛАТЕЖНЫЕ ССЫЛКИ ЮKASSA =====
+            const PAYMENT_LINKS = {
+                10: 'https://yookassa.ru/my/i/aaH8Dl38sBcQ/l',
+                50: 'https://yookassa.ru/my/i/aaH8L10qaEBa/l',
+                100: 'https://yookassa.ru/my/i/aaH8Tu8p0Ara/l',
+                1000: 'https://yookassa.ru/my/i/aaH8X_IkhOw0/l',
+                custom: 'https://yookassa.ru/my/i/aaH7-LfcS5Va/l'
+            };
+
+            // ===== КРИПТО КОШЕЛЬКИ =====
+            const CRYPTO_WALLETS = {
+                usdt: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
+                btc: 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh',
+                eth: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e'
+            };
+
+            // ===== ЭКОНОМИЧЕСКИЕ НАСТРОЙКИ =====
+            let EXCHANGE_RATE = 0.01; // 1 MARS = 0.01 рубля
+            let WITHDRAW_FEE = 10; // 10% комиссия
+            let MIN_WITHDRAW = 500; // Минимальный вывод в MARS
+
+            // ===== КОНСТАНТЫ ИГРЫ =====
+            const BOOSTS = {
+                'auto-clicker': {
+                    name: '⚡ АВТОКЛИКЕР',
+                    icon: '🤖',
+                    desc: 'Автоматически кликает раз в секунду',
+                    price: 1000,
+                    income: 10,
+                    type: 'boost'
+                },
+                'double-click': {
+                    name: '💥 ДВОЙНОЙ КЛИК',
+                    icon: '2️⃣',
+                    desc: 'Удваивает силу клика',
+                    price: 2000,
+                    income: 20,
+                    type: 'boost'
+                },
+                'quantum': {
+                    name: '⚛️ КВАНТОВЫЙ БУСТ',
+                    icon: '⚛️',
+                    desc: '+50% ко всем доходам',
+                    price: 5000,
+                    income: 50,
+                    type: 'boost'
+                }
+            };
+
+            const SKINS = {
+                'gold': {
+                    name: '🌟 ЗОЛОТАЯ ПЛАНЕТА',
+                    icon: '🌟',
+                    desc: 'Увеличивает доход на 20%',
+                    price: 10000,
+                    income: 20,
+                    type: 'skin'
+                },
+                'diamond': {
+                    name: '💎 АЛМАЗНАЯ ПЛАНЕТА',
+                    icon: '💎',
+                    desc: 'Увеличивает доход на 50%',
+                    price: 25000,
+                    income: 50,
+                    type: 'skin'
+                },
+                'rainbow': {
+                    name: '🌈 РАДУЖНАЯ ПЛАНЕТА',
+                    icon: '🌈',
+                    desc: '+100% к удаче',
+                    price: 50000,
+                    income: 100,
+                    type: 'skin'
+                }
+            };
 
             const INVESTMENTS = {
                 'mining': {
-                    name: '⚡ Майнинг ферма',
+                    name: '⛏️ МАЙНИНГ ФЕРМА',
                     icon: '⛏️',
                     profit: 10,
-                    risk: 'low',
                     price: 1000,
-                    description: '10% в день'
+                    desc: '10% дохода в день'
                 },
                 'exchange': {
-                    name: '💱 Крипто-биржа',
+                    name: '💱 КРИПТО-БИРЖА',
                     icon: '📊',
                     profit: 15,
-                    risk: 'medium',
                     price: 5000,
-                    description: '15% в день'
+                    desc: '15% дохода в день'
                 },
                 'metaverse': {
-                    name: '🌌 Метавселенная',
+                    name: '🌌 МЕТАВСЕЛЕННАЯ',
                     icon: '🚀',
                     profit: 20,
-                    risk: 'high',
                     price: 10000,
-                    description: '20% в день'
+                    desc: '20% дохода в день'
                 }
             };
 
             const NFT_PLANETS = {
                 'earth': {
-                    name: '🌍 Земля',
+                    name: '🌍 ЗЕМЛЯ',
                     icon: '🌍',
                     rarity: 'common',
                     income: 10,
-                    price: 1000,
-                    priceRub: 1000
+                    price: 1000
                 },
                 'mars': {
-                    name: '🔴 Марс',
+                    name: '🔴 МАРС',
                     icon: '🔴',
                     rarity: 'rare',
                     income: 60,
-                    price: 5000,
-                    priceRub: 5000
+                    price: 5000
                 },
                 'jupiter': {
-                    name: '🟤 Юпитер',
+                    name: '🟤 ЮПИТЕР',
                     icon: '🪐',
                     rarity: 'epic',
                     income: 150,
-                    price: 10000,
-                    priceRub: 10000
+                    price: 10000
                 },
                 'sun': {
-                    name: '☀️ Солнце',
+                    name: '☀️ СОЛНЦЕ',
                     icon: '☀️',
                     rarity: 'legendary',
                     income: 1000,
-                    price: 50000,
-                    priceRub: 50000
+                    price: 50000
                 }
             };
 
             const TOURNAMENTS = {
                 'daily': {
-                    name: 'Ежедневный',
+                    name: '📅 ЕЖЕДНЕВНЫЙ',
                     icon: '📅',
                     entryFee: 100,
                     prize: 1000,
                     duration: 24,
+                    players: 0,
                     maxPlayers: 100
                 },
                 'weekly': {
-                    name: 'Недельный',
+                    name: '📆 НЕДЕЛЬНЫЙ',
                     icon: '📆',
                     entryFee: 500,
                     prize: 5000,
                     duration: 168,
+                    players: 0,
                     maxPlayers: 200
                 },
                 'monthly': {
-                    name: 'Месячный',
+                    name: '🏆 МЕСЯЧНЫЙ',
                     icon: '🏆',
                     entryFee: 2000,
                     prize: 20000,
                     duration: 720,
+                    players: 0,
                     maxPlayers: 500
                 }
             };
@@ -982,10 +1423,21 @@
                 totalEarned: 0,
                 clickPower: 1,
                 level: 1,
+                boosts: {},
+                skins: {},
                 investments: {},
                 nft: {},
                 tournament: null,
-                lastPassiveUpdate: Date.now()
+                referrals: [],
+                referralBonus: 0,
+                lastPassiveUpdate: Date.now(),
+                lastDaily: 0,
+                streak: 0,
+                achievements: {},
+                settings: {
+                    autoClicker: false,
+                    notifications: true
+                }
             };
 
             // ===== DOM ЭЛЕМЕНТЫ =====
@@ -995,12 +1447,19 @@
             const clickPowerEl = document.getElementById('clickPower');
             const passiveIncomeEl = document.getElementById('passiveIncome');
             const rankEl = document.getElementById('rank');
-            const clickBtn = document.getElementById('clickBtn');
             const clickPowerDisplay = document.getElementById('clickPowerDisplay');
+            const clickPowerBar = document.getElementById('clickPowerBar');
             const totalClicksEl = document.getElementById('totalClicks');
             const totalEarnedEl = document.getElementById('totalEarned');
-            const investmentsCountEl = document.getElementById('investmentsCount');
+            const investCountEl = document.getElementById('investCount');
             const nftCountEl = document.getElementById('nftCount');
+            const referralCountEl = document.getElementById('referralCount');
+            const bonusEarnedEl = document.getElementById('bonusEarned');
+            const daysActiveEl = document.getElementById('daysActive');
+            const achievementsEl = document.getElementById('achievements');
+            const profileNameEl = document.getElementById('profileName');
+            const profileRankEl = document.getElementById('profileRank');
+            const profileAvatarEl = document.getElementById('profileAvatar');
 
             // ===== УВЕДОМЛЕНИЯ =====
             function showNotification(message, type = 'success') {
@@ -1013,159 +1472,101 @@
             }
 
             // ===== МОДАЛЬНЫЕ ОКНА =====
-            window.openWithdrawModal = function(method) {
-                document.getElementById('withdrawModal').classList.add('show');
-                document.getElementById('withdrawBalance').textContent = player.balance + ' MARS';
-            };
-
-            window.closeWithdrawModal = function() {
-                document.getElementById('withdrawModal').classList.remove('show');
-            };
-
             window.openDepositModal = function() {
                 document.getElementById('depositModal').classList.add('show');
+                updateDepositResult();
             };
 
             window.closeDepositModal = function() {
                 document.getElementById('depositModal').classList.remove('show');
             };
 
-            // ===== ОБНОВЛЕНИЕ БАЛАНСА =====
-            function updateBalance() {
-                balanceEl.textContent = player.balance.toLocaleString();
-                balanceRubEl.textContent = (player.balance * EXCHANGE_RATE).toFixed(2);
-                levelEl.textContent = player.level;
-                clickPowerEl.textContent = player.clickPower;
-                clickPowerDisplay.textContent = player.clickPower;
-                totalClicksEl.textContent = player.clicks.toLocaleString();
-                totalEarnedEl.textContent = player.totalEarned.toLocaleString();
+            window.openWithdrawModal = function() {
+                document.getElementById('withdrawModal').classList.add('show');
+                document.getElementById('withdrawBalance').textContent = player.balance;
+                updateWithdrawResult();
+            };
 
-                // Расчет пассивного дохода
-                let passive = 0;
-                Object.values(player.investments).forEach(inv => {
-                    passive += INVESTMENTS[inv.id].profit;
-                });
-                Object.values(player.nft).forEach(nft => {
-                    passive += NFT_PLANETS[nft.id].income;
-                });
-                passiveIncomeEl.textContent = passive;
+            window.closeWithdrawModal = function() {
+                document.getElementById('withdrawModal').classList.remove('show');
+            };
 
-                // Определение ранга
-                if (player.balance < 1000) rankEl.textContent = 'Новичок';
-                else if (player.balance < 10000) rankEl.textContent = 'Исследователь';
-                else if (player.balance < 100000) rankEl.textContent = 'Колонизатор';
-                else if (player.balance < 1000000) rankEl.textContent = 'Магнат';
-                else rankEl.textContent = 'Миллиардер';
+            // Обновление результата пополнения
+            function updateDepositResult() {
+                const amount = parseInt(document.getElementById('depositAmount').value) || 0;
+                const mars = Math.floor(amount / EXCHANGE_RATE);
+                document.getElementById('depositResult').textContent = mars.toLocaleString() + ' MARS';
             }
 
-            // ===== КЛИК =====
-            window.handleClick = function() {
-                player.balance += player.clickPower;
-                player.clicks++;
-                player.totalEarned += player.clickPower;
-                
-                // Анимация клика
-                clickBtn.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    clickBtn.style.transform = 'scale(1)';
-                }, 100);
+            // Обновление результата вывода
+            function updateWithdrawResult() {
+                const amount = parseInt(document.getElementById('withdrawAmount').value) || 0;
+                const rub = amount * EXCHANGE_RATE;
+                const fee = rub * (WITHDRAW_FEE / 100);
+                const result = rub - fee;
+                document.getElementById('withdrawResult').textContent = result.toFixed(2) + '₽';
+            }
 
-                // Повышение уровня
-                const newLevel = Math.floor(player.clicks / 100) + 1;
-                if (newLevel > player.level) {
-                    player.level = newLevel;
-                    player.clickPower = player.level;
-                    showNotification(`🎉 Уровень повышен до ${player.level}!`);
-                }
+            // Слушатели для полей ввода
+            document.getElementById('depositAmount').addEventListener('input', updateDepositResult);
+            document.getElementById('withdrawAmount').addEventListener('input', updateWithdrawResult);
+            document.getElementById('withdrawMethod').addEventListener('change', updateWithdrawResult);
 
-                updateBalance();
-                savePlayer();
-            };
+            // ===== ПОПОЛНЕНИЕ =====
+            window.processDeposit = function() {
+                const amount = parseInt(document.getElementById('depositAmount').value);
+                const method = document.getElementById('depositMethod').value;
 
-            // ===== ПОКУПКА ИНВЕСТИЦИИ =====
-            window.buyInvestment = function(investId) {
-                const invest = INVESTMENTS[investId];
-                if (!invest) return;
-
-                if (player.balance < invest.price) {
-                    showNotification('❌ Недостаточно MARS!', 'error');
+                if (!amount || amount < 10) {
+                    showNotification('❌ Минимальная сумма 10₽', 'error');
                     return;
                 }
 
-                player.balance -= invest.price;
-                if (!player.investments[investId]) {
-                    player.investments[investId] = {
-                        id: investId,
-                        count: 0,
-                        lastProfit: Date.now()
-                    };
-                }
-                player.investments[investId].count++;
+                const marsAmount = Math.floor(amount / EXCHANGE_RATE);
 
-                showNotification(`✅ Куплена инвестиция "${invest.name}"!`);
-                updateInvestmentsList();
-                updateBalance();
-                savePlayer();
+                if (method === 'card') {
+                    // ЮKassa
+                    let link = PAYMENT_LINKS.custom;
+                    if (amount === 10) link = PAYMENT_LINKS[10];
+                    else if (amount === 50) link = PAYMENT_LINKS[50];
+                    else if (amount === 100) link = PAYMENT_LINKS[100];
+                    else if (amount === 1000) link = PAYMENT_LINKS[1000];
+                    
+                    sessionStorage.setItem('pendingDeposit', JSON.stringify({
+                        rub: amount,
+                        mars: marsAmount,
+                        userId: player.id,
+                        timestamp: Date.now()
+                    }));
+                    
+                    window.location.href = link;
+                } else {
+                    // Крипта
+                    const wallet = CRYPTO_WALLETS[method];
+                    showConfirm(
+                        '💰 КРИПТО-ПЛАТЕЖ',
+                        `Отправьте ${amount} ${method.toUpperCase()} на кошелек:\n\n${wallet}\n\nПосле отправки нажмите "Я ОПЛАТИЛ"`,
+                        () => {
+                            // Здесь проверка платежа (в реальности нужно API)
+                            player.balance += marsAmount;
+                            player.totalEarned += marsAmount;
+                            savePlayer();
+                            updateUI();
+                            showNotification(`✅ +${marsAmount} MARS зачислено!`);
+                            closeConfirmModal();
+                        }
+                    );
+                }
             };
 
-            // ===== ПОКУПКА NFT =====
-            window.buyNFT = function(planetId) {
-                const planet = NFT_PLANETS[planetId];
-                if (!planet) return;
-
-                if (player.balance < planet.price) {
-                    showNotification('❌ Недостаточно MARS!', 'error');
-                    return;
-                }
-
-                player.balance -= planet.price;
-                player.nft[planetId] = {
-                    id: planetId,
-                    boughtAt: Date.now()
-                };
-
-                showNotification(`🎉 Поздравляем! Вы купили планету ${planet.name}!`);
-                updateNFTList();
-                updateBalance();
-                savePlayer();
-            };
-
-            // ===== УЧАСТИЕ В ТУРНИРЕ =====
-            window.joinTournament = function(tournamentId) {
-                const tournament = TOURNAMENTS[tournamentId];
-                if (!tournament) return;
-
-                if (player.tournament) {
-                    showNotification('❌ Вы уже участвуете в турнире!', 'error');
-                    return;
-                }
-
-                if (player.balance < tournament.entryFee) {
-                    showNotification('❌ Недостаточно MARS!', 'error');
-                    return;
-                }
-
-                player.balance -= tournament.entryFee;
-                player.tournament = {
-                    id: tournamentId,
-                    joinedAt: Date.now(),
-                    score: 0
-                };
-
-                showNotification(`✅ Вы участвуете в турнире "${tournament.name}"!`);
-                updateTournamentList();
-                updateBalance();
-                savePlayer();
-            };
-
-            // ===== ВЫВОД СРЕДСТВ =====
+            // ===== ВЫВОД =====
             window.processWithdraw = function() {
                 const amount = parseInt(document.getElementById('withdrawAmount').value);
                 const method = document.getElementById('withdrawMethod').value;
                 const details = document.getElementById('withdrawDetails').value;
 
                 if (!amount || amount < MIN_WITHDRAW) {
-                    showNotification(`❌ Минимальная сумма вывода ${MIN_WITHDRAW} MARS`, 'error');
+                    showNotification(`❌ Минимальная сумма ${MIN_WITHDRAW} MARS`, 'error');
                     return;
                 }
 
@@ -1183,79 +1584,295 @@
                 const fee = rubAmount * (WITHDRAW_FEE / 100);
                 const finalAmount = rubAmount - fee;
 
-                player.balance -= amount;
+                showConfirm(
+                    '💸 ПОДТВЕРЖДЕНИЕ ВЫВОДА',
+                    `Вывод ${amount} MARS (${finalAmount.toFixed(2)}₽)\nСпособ: ${method}\nРеквизиты: ${details}\nКомиссия: ${fee.toFixed(2)}₽`,
+                    () => {
+                        player.balance -= amount;
+                        
+                        db.ref('withdraws').push({
+                            userId: player.id,
+                            username: player.username,
+                            amount: amount,
+                            rubAmount: rubAmount,
+                            fee: fee,
+                            finalAmount: finalAmount,
+                            method: method,
+                            details: details,
+                            status: 'pending',
+                            timestamp: Date.now()
+                        });
 
-                // Сохраняем заявку на вывод в Firebase
-                db.ref('withdraws').push({
-                    userId: player.id,
-                    username: player.username,
-                    amount: amount,
-                    rubAmount: rubAmount,
-                    fee: fee,
-                    finalAmount: finalAmount,
-                    method: method,
-                    details: details,
-                    status: 'pending',
-                    timestamp: Date.now()
-                });
-
-                showNotification(`✅ Заявка на вывод ${finalAmount.toFixed(2)}₽ создана!`);
-                closeWithdrawModal();
-                updateBalance();
-                savePlayer();
+                        savePlayer();
+                        updateUI();
+                        showNotification(`✅ Заявка на вывод создана!`);
+                        closeWithdrawModal();
+                        closeConfirmModal();
+                    }
+                );
             };
 
-            // ===== ПОПОЛНЕНИЕ ЧЕРЕЗ ЮKASSA =====
-            window.processDeposit = function() {
-                const amount = parseInt(document.getElementById('depositAmount').value);
-                const method = document.getElementById('depositMethod').value;
+            // ===== ПОКУПКА/ПРОДАЖА MARS =====
+            window.buyMARS = function() {
+                openDepositModal();
+            };
 
-                if (!amount || amount < 10) {
-                    showNotification('❌ Минимальная сумма 10₽', 'error');
+            window.sellMARS = function() {
+                openWithdrawModal();
+            };
+
+            // ===== КЛИК =====
+            window.handleClick = function() {
+                let power = player.clickPower;
+                
+                // Учитываем бусты
+                if (player.boosts['double-click']) {
+                    power *= 2;
+                }
+                if (player.skins['gold']) {
+                    power = Math.floor(power * 1.2);
+                }
+                if (player.skins['diamond']) {
+                    power = Math.floor(power * 1.5);
+                }
+
+                player.balance += power;
+                player.clicks++;
+                player.totalEarned += power;
+
+                // Анимация
+                const planet = document.querySelector('.planet');
+                planet.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    planet.style.transform = 'scale(1)';
+                }, 100);
+
+                // Партиклы
+                createParticles();
+
+                // Повышение уровня
+                const newLevel = Math.floor(player.clicks / 100) + 1;
+                if (newLevel > player.level) {
+                    player.level = newLevel;
+                    player.clickPower = player.level;
+                    showNotification(`🎉 УРОВЕНЬ ${player.level}! Сила клика +1`);
+                }
+
+                // Автокликер
+                if (player.boosts['auto-clicker'] && !player.autoClickerInterval) {
+                    startAutoClicker();
+                }
+
+                updateUI();
+                savePlayer();
+                checkAchievements();
+            };
+
+            // ===== ПАРТИКЛЫ =====
+            function createParticles() {
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                        const particle = document.createElement('div');
+                        particle.style.cssText = `
+                            position: fixed;
+                            left: ${Math.random() * window.innerWidth}px;
+                            top: ${Math.random() * window.innerHeight}px;
+                            color: #ffd700;
+                            font-size: ${Math.random() * 30 + 20}px;
+                            pointer-events: none;
+                            animation: floatUp 1s ease-out forwards;
+                            z-index: 9999;
+                        `;
+                        particle.innerHTML = ['+1', '🚀', '⭐', '💫'][Math.floor(Math.random() * 4)];
+                        document.body.appendChild(particle);
+                        
+                        setTimeout(() => {
+                            particle.remove();
+                        }, 1000);
+                    }, i * 50);
+                }
+            }
+
+            // Стили для анимации
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes floatUp {
+                    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+                    100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+
+            // ===== АВТОКЛИКЕР =====
+            function startAutoClicker() {
+                if (player.autoClickerInterval) clearInterval(player.autoClickerInterval);
+                player.autoClickerInterval = setInterval(() => {
+                    handleClick();
+                }, 1000);
+            }
+
+            // ===== ПОКУПКА БУСТА =====
+            window.buyBoost = function(boostId) {
+                const boost = BOOSTS[boostId];
+                if (!boost) return;
+
+                if (player.balance < boost.price) {
+                    showNotification('❌ Недостаточно MARS!', 'error');
                     return;
                 }
 
-                const marsAmount = Math.floor(amount / EXCHANGE_RATE);
-
-                if (method === 'card') {
-                    // ЮKassa
-                    window.location.href = `https://yookassa.ru/my/i/aaH7-LfcS5Va/l?amount=${amount}`;
-                    // Сохраняем информацию о pending платеже
-                    sessionStorage.setItem('pendingDeposit', JSON.stringify({
-                        rub: amount,
-                        mars: marsAmount,
-                        userId: player.id,
-                        timestamp: Date.now()
-                    }));
-                } else {
-                    // Крипта (USDT)
-                    showNotification(`💳 Отправьте ${amount} USDT на кошелек: 0x... и нажмите "Я оплатил"`);
-                }
-
-                closeDepositModal();
+                showConfirm(
+                    '✅ ПОДТВЕРЖДЕНИЕ',
+                    `Купить ${boost.name} за ${boost.price} MARS?`,
+                    () => {
+                        player.balance -= boost.price;
+                        if (!player.boosts[boostId]) {
+                            player.boosts[boostId] = 0;
+                        }
+                        player.boosts[boostId]++;
+                        
+                        savePlayer();
+                        updateUI();
+                        showNotification(`✅ ${boost.name} куплен!`);
+                        closeConfirmModal();
+                    }
+                );
             };
 
-            // ===== ПРОВЕРКА ПЛАТЕЖЕЙ =====
-            function checkPendingDeposit() {
-                const pending = sessionStorage.getItem('pendingDeposit');
-                if (!pending) return;
+            // ===== ПОКУПКА СКИНА =====
+            window.buySkin = function(skinId) {
+                const skin = SKINS[skinId];
+                if (!skin) return;
 
-                try {
-                    const deposit = JSON.parse(pending);
-                    
-                    if (confirm(`✅ Оплата прошла успешно? Получить ${deposit.mars} MARS?`)) {
-                        player.balance += deposit.mars;
-                        player.totalEarned += deposit.mars;
-                        updateBalance();
-                        savePlayer();
-                        showNotification(`💰 +${deposit.mars} MARS зачислено!`);
-                    }
-                    
-                    sessionStorage.removeItem('pendingDeposit');
-                } catch (e) {
-                    console.error('Ошибка проверки платежа:', e);
+                if (player.balance < skin.price) {
+                    showNotification('❌ Недостаточно MARS!', 'error');
+                    return;
                 }
-            }
+
+                if (player.skins[skinId]) {
+                    showNotification('❌ Скин уже куплен!', 'error');
+                    return;
+                }
+
+                showConfirm(
+                    '✅ ПОДТВЕРЖДЕНИЕ',
+                    `Купить ${skin.name} за ${skin.price} MARS?`,
+                    () => {
+                        player.balance -= skin.price;
+                        player.skins[skinId] = true;
+                        
+                        // Меняем аватар
+                        if (skinId === 'gold') profileAvatarEl.textContent = '🌟';
+                        if (skinId === 'diamond') profileAvatarEl.textContent = '💎';
+                        if (skinId === 'rainbow') profileAvatarEl.textContent = '🌈';
+                        
+                        savePlayer();
+                        updateUI();
+                        showNotification(`✅ ${skin.name} куплен!`);
+                        closeConfirmModal();
+                    }
+                );
+            };
+
+            // ===== ИНВЕСТИЦИИ =====
+            window.buyInvestment = function(investId) {
+                const invest = INVESTMENTS[investId];
+                if (!invest) return;
+
+                if (player.balance < invest.price) {
+                    showNotification('❌ Недостаточно MARS!', 'error');
+                    return;
+                }
+
+                showConfirm(
+                    '✅ ПОДТВЕРЖДЕНИЕ',
+                    `Инвестировать в ${invest.name} за ${invest.price} MARS?`,
+                    () => {
+                        player.balance -= invest.price;
+                        if (!player.investments[investId]) {
+                            player.investments[investId] = {
+                                count: 0,
+                                lastProfit: Date.now()
+                            };
+                        }
+                        player.investments[investId].count++;
+                        
+                        savePlayer();
+                        updateUI();
+                        showNotification(`✅ Инвестиция в ${invest.name} куплена!`);
+                        closeConfirmModal();
+                    }
+                );
+            };
+
+            // ===== ПОКУПКА NFT =====
+            window.buyNFT = function(planetId) {
+                const planet = NFT_PLANETS[planetId];
+                if (!planet) return;
+
+                if (player.balance < planet.price) {
+                    showNotification('❌ Недостаточно MARS!', 'error');
+                    return;
+                }
+
+                if (player.nft[planetId]) {
+                    showNotification('❌ Планета уже куплена!', 'error');
+                    return;
+                }
+
+                showConfirm(
+                    '✅ ПОДТВЕРЖДЕНИЕ',
+                    `Купить планету ${planet.name} за ${planet.price} MARS?`,
+                    () => {
+                        player.balance -= planet.price;
+                        player.nft[planetId] = {
+                            boughtAt: Date.now()
+                        };
+                        
+                        savePlayer();
+                        updateUI();
+                        showNotification(`🎉 Поздравляем! Вы купили планету ${planet.name}!`);
+                        closeConfirmModal();
+                    }
+                );
+            };
+
+            // ===== УЧАСТИЕ В ТУРНИРЕ =====
+            window.joinTournament = function(tournamentId) {
+                const tournament = TOURNAMENTS[tournamentId];
+                if (!tournament) return;
+
+                if (player.tournament) {
+                    showNotification('❌ Вы уже участвуете в турнире!', 'error');
+                    return;
+                }
+
+                if (player.balance < tournament.entryFee) {
+                    showNotification('❌ Недостаточно MARS!', 'error');
+                    return;
+                }
+
+                showConfirm(
+                    '🏆 ПОДТВЕРЖДЕНИЕ',
+                    `Участвовать в турнире ${tournament.name} за ${tournament.entryFee} MARS?`,
+                    () => {
+                        player.balance -= tournament.entryFee;
+                        player.tournament = {
+                            id: tournamentId,
+                            joinedAt: Date.now(),
+                            score: 0
+                        };
+
+                        // Обновляем счетчик участников
+                        tournament.players++;
+                        
+                        savePlayer();
+                        updateUI();
+                        showNotification(`✅ Вы участвуете в турнире ${tournament.name}!`);
+                        closeConfirmModal();
+                    }
+                );
+            };
 
             // ===== ПАССИВНЫЙ ДОХОД =====
             function processPassiveIncome() {
@@ -1267,115 +1884,365 @@
                 let income = 0;
 
                 // Доход от инвестиций
-                Object.values(player.investments).forEach(inv => {
-                    const investData = INVESTMENTS[inv.id];
-                    income += investData.profit * inv.count * hoursPassed;
+                Object.entries(player.investments).forEach(([id, data]) => {
+                    const invest = INVESTMENTS[id];
+                    income += invest.profit * data.count * hoursPassed;
                 });
 
                 // Доход от NFT
-                Object.values(player.nft).forEach(nft => {
-                    const nftData = NFT_PLANETS[nft.id];
-                    income += nftData.income * hoursPassed;
+                Object.keys(player.nft).forEach(id => {
+                    const planet = NFT_PLANETS[id];
+                    income += planet.income * hoursPassed;
                 });
+
+                // Бонусы от бустов
+                if (player.boosts['quantum']) {
+                    income *= 1.5;
+                }
 
                 if (income > 0) {
                     player.balance += Math.floor(income);
                     player.totalEarned += Math.floor(income);
                     player.lastPassiveUpdate = now;
-                    updateBalance();
+                    updateUI();
                     savePlayer();
                     showNotification(`💫 Пассивный доход: +${Math.floor(income)} MARS!`);
                 }
             }
 
-            // ===== ОБНОВЛЕНИЕ ИНВЕСТИЦИЙ =====
-            function updateInvestmentsList() {
-                const container = document.getElementById('investmentsList');
-                let html = '';
+            // ===== ПРОВЕРКА ДОСТИЖЕНИЙ =====
+            function checkAchievements() {
+                const newAchievements = [];
+                
+                if (player.clicks >= 100 && !player.achievements.click100) {
+                    newAchievements.push({ id: 'click100', name: 'Начинающий кликер', reward: 100 });
+                }
+                if (player.clicks >= 1000 && !player.achievements.click1000) {
+                    newAchievements.push({ id: 'click1000', name: 'Опытный кликер', reward: 500 });
+                }
+                if (player.clicks >= 10000 && !player.achievements.click10000) {
+                    newAchievements.push({ id: 'click10000', name: 'Профессиональный кликер', reward: 2000 });
+                }
+                if (player.balance >= 10000 && !player.achievements.balance10000) {
+                    newAchievements.push({ id: 'balance10000', name: 'Богач', reward: 1000 });
+                }
+                if (Object.keys(player.nft).length >= 4 && !player.achievements.allPlanets) {
+                    newAchievements.push({ id: 'allPlanets', name: 'Коллекционер', reward: 5000 });
+                }
 
-                Object.entries(INVESTMENTS).forEach(([id, invest]) => {
+                newAchievements.forEach(ach => {
+                    player.achievements[ach.id] = true;
+                    player.balance += ach.reward;
+                    player.totalEarned += ach.reward;
+                    showNotification(`🏆 Достижение: ${ach.name}! +${ach.reward} MARS`);
+                });
+
+                achievementsEl.textContent = Object.keys(player.achievements).length;
+            }
+
+            // ===== ЕЖЕДНЕВНЫЙ БОНУС =====
+            function checkDailyBonus() {
+                const today = new Date().setHours(0, 0, 0, 0);
+                
+                if (player.lastDaily < today) {
+                    const yesterday = today - 86400000;
+                    if (player.lastDaily >= yesterday) {
+                        player.streak++;
+                    } else {
+                        player.streak = 1;
+                    }
+                    
+                    const bonus = 100 * player.streak;
+                    player.balance += bonus;
+                    player.referralBonus += bonus;
+                    player.lastDaily = today;
+                    
+                    showNotification(`📅 Ежедневный бонус: +${bonus} MARS! Серия: ${player.streak} дней`);
+                    daysActiveEl.textContent = player.streak;
+                }
+            }
+
+            // ===== ОБНОВЛЕНИЕ UI =====
+            function updateUI() {
+                // Баланс
+                balanceEl.textContent = player.balance.toLocaleString();
+                balanceRubEl.textContent = (player.balance * EXCHANGE_RATE).toFixed(2);
+                
+                // Уровень
+                levelEl.textContent = player.level;
+                clickPowerEl.textContent = player.clickPower;
+                clickPowerDisplay.textContent = player.clickPower;
+                
+                // Прогресс до следующего уровня
+                const nextLevel = (player.level) * 100;
+                const progress = (player.clicks % 100) / 100 * 100;
+                clickPowerBar.style.width = progress + '%';
+
+                // Пассивный доход
+                let passive = 0;
+                Object.values(player.investments).forEach(inv => {
+                    passive += INVESTMENTS[Object.keys(INVESTMENTS).find(k => player.investments[k] === inv)]?.profit * inv.count || 0;
+                });
+                Object.keys(player.nft).forEach(id => {
+                    passive += NFT_PLANETS[id].income;
+                });
+                passiveIncomeEl.textContent = passive;
+
+                // Ранг
+                let rank = 'НОВИЧОК';
+                if (player.balance >= 1000000) rank = 'МИЛЛИАРДЕР';
+                else if (player.balance >= 100000) rank = 'МАГНАТ';
+                else if (player.balance >= 10000) rank = 'КОЛОНИЗАТОР';
+                else if (player.balance >= 1000) rank = 'ИССЛЕДОВАТЕЛЬ';
+                rankEl.textContent = rank;
+                profileRankEl.textContent = rank;
+
+                // Профиль
+                totalClicksEl.textContent = player.clicks.toLocaleString();
+                totalEarnedEl.textContent = player.totalEarned.toLocaleString();
+                investCountEl.textContent = Object.values(player.investments).reduce((sum, inv) => sum + inv.count, 0);
+                nftCountEl.textContent = Object.keys(player.nft).length;
+                
+                // Рефералы
+                referralCountEl.textContent = player.referrals.length;
+                bonusEarnedEl.textContent = player.referralBonus;
+
+                // Обновление магазина
+                updateShop();
+                updateInvestments();
+                updateNFTs();
+                updateTournaments();
+            }
+
+            // ===== ОБНОВЛЕНИЕ МАГАЗИНА =====
+            let currentShopTab = 'boost';
+            
+            window.switchShopTab = function(tab) {
+                currentShopTab = tab;
+                document.querySelectorAll('.shop-tab').forEach(t => t.classList.remove('active'));
+                event.target.classList.add('active');
+                updateShop();
+            };
+
+            function updateShop() {
+                const container = document.getElementById('shopItems');
+                let items = [];
+
+                if (currentShopTab === 'boost') {
+                    items = Object.entries(BOOSTS).map(([id, item]) => ({
+                        id, ...item, button: 'buyBoost'
+                    }));
+                } else if (currentShopTab === 'skin') {
+                    items = Object.entries(SKINS).map(([id, item]) => ({
+                        id, ...item, button: 'buySkin'
+                    }));
+                }
+
+                container.innerHTML = items.map(item => {
+                    const owned = currentShopTab === 'boost' ? 
+                        (player.boosts[item.id] || 0) : 
+                        (player.skins[item.id] ? true : false);
+                    
+                    return `
+                        <div class="shop-card ${owned ? 'owned' : ''}">
+                            ${owned ? '<span class="shop-owned">✓</span>' : ''}
+                            <div class="shop-icon">${item.icon}</div>
+                            <div class="shop-name">${item.name}</div>
+                            <div class="shop-desc">${item.desc}</div>
+                            <div class="shop-price">${item.price} MARS</div>
+                            ${item.income ? `<div class="shop-income">+${item.income}%</div>` : ''}
+                            ${currentShopTab === 'boost' && owned ? 
+                                `<div style="color:#4caf50; margin:10px 0;">Куплено: ${owned}</div>` : ''}
+                            <button class="shop-button ${owned ? 'owned' : ''}" 
+                                onclick="${item.button}('${item.id}')" 
+                                ${player.balance < item.price || (currentShopTab === 'skin' && owned) ? 'disabled' : ''}>
+                                ${owned ? (currentShopTab === 'boost' ? 'Купить еще' : 'Куплено') : 'Купить'}
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // ===== ОБНОВЛЕНИЕ ИНВЕСТИЦИЙ =====
+            function updateInvestments() {
+                const container = document.getElementById('investmentsList');
+                
+                container.innerHTML = Object.entries(INVESTMENTS).map(([id, invest]) => {
                     const owned = player.investments[id]?.count || 0;
-                    html += `
-                        <div class="invest-card">
-                            <div class="invest-icon">${invest.icon}</div>
-                            <div class="invest-name">${invest.name}</div>
-                            <div class="invest-profit">+${invest.profit}% в день</div>
-                            <div class="invest-price">${invest.price} MARS</div>
-                            ${owned > 0 ? `<div style="color: #4caf50; margin-bottom: 10px;">Куплено: ${owned}</div>` : ''}
-                            <button class="invest-button" onclick="buyInvestment('${id}')" ${player.balance < invest.price ? 'disabled' : ''}>
+                    const progress = owned > 0 ? 100 : 0;
+                    
+                    return `
+                        <div class="investment-card">
+                            <div class="investment-header">
+                                <span class="investment-icon">${invest.icon}</span>
+                                <span class="investment-name">${invest.name}</span>
+                            </div>
+                            <div class="investment-profit">+${invest.profit}% в день</div>
+                            <div class="investment-progress">
+                                <div class="investment-progress-fill" style="width: ${progress}%"></div>
+                            </div>
+                            <div class="investment-count">Куплено: ${owned}</div>
+                            <div style="color:#ffd700; margin:10px 0;">Цена: ${invest.price} MARS</div>
+                            <button class="shop-button" onclick="buyInvestment('${id}')" 
+                                ${player.balance < invest.price ? 'disabled' : ''}>
                                 ${owned > 0 ? 'Купить еще' : 'Инвестировать'}
                             </button>
                         </div>
                     `;
-                });
-
-                container.innerHTML = html;
-                investmentsCountEl.textContent = Object.keys(player.investments).length;
+                }).join('');
             }
 
             // ===== ОБНОВЛЕНИЕ NFT =====
-            function updateNFTList() {
+            function updateNFTs() {
                 const container = document.getElementById('nftList');
-                let html = '';
-
-                Object.entries(NFT_PLANETS).forEach(([id, planet]) => {
+                
+                container.innerHTML = Object.entries(NFT_PLANETS).map(([id, planet]) => {
                     const owned = player.nft[id];
-                    const rarityClass = `rarity-${planet.rarity}`;
                     
-                    html += `
+                    return `
                         <div class="nft-card ${owned ? 'owned' : ''}">
                             <div class="nft-icon">${planet.icon}</div>
                             <div class="nft-name">${planet.name}</div>
-                            <div class="nft-rarity ${rarityClass}">${planet.rarity}</div>
+                            <div class="nft-rarity rarity-${planet.rarity}">${planet.rarity}</div>
                             <div class="nft-income">+${planet.income} MARS/час</div>
                             <div class="nft-price">${planet.price} MARS</div>
                             ${owned ? 
-                                '<button class="nft-button owned" disabled>✓ Владеете</button>' : 
-                                `<button class="nft-button" onclick="buyNFT('${id}')" ${player.balance < planet.price ? 'disabled' : ''}>Купить</button>`
+                                '<button class="shop-button owned" disabled>Владеете</button>' : 
+                                `<button class="shop-button" onclick="buyNFT('${id}')" 
+                                    ${player.balance < planet.price ? 'disabled' : ''}>
+                                    Купить
+                                </button>`
                             }
                         </div>
                     `;
-                });
-
-                container.innerHTML = html;
-                nftCountEl.textContent = Object.keys(player.nft).length;
+                }).join('');
             }
 
             // ===== ОБНОВЛЕНИЕ ТУРНИРОВ =====
-            function updateTournamentList() {
+            function updateTournaments() {
                 const container = document.getElementById('tournamentList');
-                let html = '';
-
-                Object.entries(TOURNAMENTS).forEach(([id, tournament]) => {
+                
+                container.innerHTML = Object.entries(TOURNAMENTS).map(([id, tournament]) => {
                     const isJoined = player.tournament?.id === id;
-                    const progress = isJoined ? Math.min(100, ((Date.now() - player.tournament.joinedAt) / (tournament.duration * 3600000)) * 100) : 0;
-
-                    html += `
-                        <div class="tournament-card">
-                            <div class="tournament-icon">${tournament.icon}</div>
-                            <div class="tournament-name">${tournament.name}</div>
+                    const progress = isJoined ? 
+                        Math.min(100, ((Date.now() - player.tournament.joinedAt) / (tournament.duration * 3600000)) * 100) : 0;
+                    
+                    // Рандомные участники для демо
+                    const players = Math.floor(Math.random() * tournament.maxPlayers);
+                    
+                    return `
+                        <div class="tournament-card ${isJoined ? 'active' : ''}">
+                            <div class="tournament-header">
+                                <span class="tournament-icon">${tournament.icon}</span>
+                                <span class="tournament-name">${tournament.name}</span>
+                            </div>
                             <div class="tournament-prize">💰 ${tournament.prize} MARS</div>
                             <div class="tournament-entry">Вход: ${tournament.entryFee} MARS</div>
-                            <div class="tournament-players">Участников: ${tournament.maxPlayers}</div>
-                            ${isJoined ? `
-                                <div class="tournament-progress">
-                                    <div class="tournament-progress-bar" style="width: ${progress}%"></div>
-                                </div>
-                            ` : ''}
+                            <div class="tournament-players">
+                                ${Array.from({length: Math.min(5, players)}).map(() => 
+                                    '<span class="player-avatar"></span>'
+                                ).join('')}
+                                ${players > 5 ? `<span>+${players-5}</span>` : ''}
+                            </div>
+                            <div class="tournament-progress">
+                                <div class="tournament-progress-bar" style="width: ${progress}%"></div>
+                            </div>
                             <button class="tournament-button" onclick="joinTournament('${id}')" 
                                 ${player.balance < tournament.entryFee || isJoined ? 'disabled' : ''}>
-                                ${isJoined ? '✓ Участвуете' : 'Участвовать'}
+                                ${isJoined ? 'УЧАСТВУЕТЕ' : 'УЧАСТВОВАТЬ'}
                             </button>
                         </div>
                     `;
+                }).join('');
+            }
+
+            // ===== ПРОВЕРКА ПЛАТЕЖЕЙ =====
+            function checkPendingPayments() {
+                const pending = sessionStorage.getItem('pendingDeposit');
+                if (!pending) return;
+
+                try {
+                    const deposit = JSON.parse(pending);
+                    
+                    if (deposit.userId === player.id) {
+                        showConfirm(
+                            '✅ ПОДТВЕРЖДЕНИЕ ОПЛАТЫ',
+                            `Получить ${deposit.mars} MARS?`,
+                            () => {
+                                player.balance += deposit.mars;
+                                player.totalEarned += deposit.mars;
+                                savePlayer();
+                                updateUI();
+                                showNotification(`💰 +${deposit.mars} MARS зачислено!`);
+                                sessionStorage.removeItem('pendingDeposit');
+                                closeConfirmModal();
+                            }
+                        );
+                    }
+                } catch (e) {
+                    console.error('Ошибка проверки платежа:', e);
+                }
+            }
+
+            // ===== МОДАЛЬНОЕ ОКНО ПОДТВЕРЖДЕНИЯ =====
+            let confirmCallback = null;
+
+            window.showConfirm = function(title, message, callback) {
+                document.getElementById('confirmTitle').textContent = title;
+                document.getElementById('confirmMessage').textContent = message;
+                document.getElementById('confirmModal').classList.add('show');
+                confirmCallback = callback;
+            };
+
+            window.closeConfirmModal = function() {
+                document.getElementById('confirmModal').classList.remove('show');
+                confirmCallback = null;
+            };
+
+            window.confirmAction = function() {
+                if (confirmCallback) {
+                    confirmCallback();
+                }
+                closeConfirmModal();
+            };
+
+            // ===== РЕФЕРАЛЬНАЯ ССЫЛКА =====
+            function checkReferral() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const ref = urlParams.get('ref');
+                
+                if (ref && ref !== player.id) {
+                    localStorage.setItem('referrer', ref);
+                }
+            }
+
+            function applyReferral() {
+                const ref = localStorage.getItem('referrer');
+                if (!ref || !player.id || ref === player.id) return;
+
+                db.ref('players/' + ref + '/referrals').once('value', (snap) => {
+                    const referrals = snap.val() || [];
+                    if (!referrals.includes(player.id)) {
+                        referrals.push(player.id);
+                        db.ref('players/' + ref + '/referrals').set(referrals);
+                        db.ref('players/' + ref).transaction(p => {
+                            if (p) {
+                                p.balance = (p.balance || 0) + 100;
+                                p.referralBonus = (p.referralBonus || 0) + 100;
+                            }
+                            return p;
+                        });
+                    }
                 });
 
-                container.innerHTML = html;
+                player.referrals.push(ref);
+                localStorage.removeItem('referrer');
             }
 
             // ===== СОХРАНЕНИЕ ИГРОКА =====
             function savePlayer() {
                 if (!player.id) return;
+                
                 db.ref('players/' + player.id).set({
                     username: player.username,
                     balance: player.balance,
@@ -1383,10 +2250,17 @@
                     totalEarned: player.totalEarned,
                     clickPower: player.clickPower,
                     level: player.level,
+                    boosts: player.boosts,
+                    skins: player.skins,
                     investments: player.investments,
                     nft: player.nft,
                     tournament: player.tournament,
+                    referrals: player.referrals,
+                    referralBonus: player.referralBonus,
                     lastPassiveUpdate: player.lastPassiveUpdate,
+                    lastDaily: player.lastDaily,
+                    streak: player.streak,
+                    achievements: player.achievements,
                     lastSeen: Date.now()
                 });
             }
@@ -1400,21 +2274,37 @@
                         if (snap.exists()) {
                             const data = snap.val();
                             player.id = savedId;
-                            player.username = data.username || 'Игрок';
+                            player.username = data.username || 'ИГРОК';
                             player.balance = data.balance || 0;
                             player.clicks = data.clicks || 0;
                             player.totalEarned = data.totalEarned || 0;
                             player.clickPower = data.clickPower || 1;
                             player.level = data.level || 1;
+                            player.boosts = data.boosts || {};
+                            player.skins = data.skins || {};
                             player.investments = data.investments || {};
                             player.nft = data.nft || {};
                             player.tournament = data.tournament || null;
+                            player.referrals = data.referrals || [];
+                            player.referralBonus = data.referralBonus || 0;
                             player.lastPassiveUpdate = data.lastPassiveUpdate || Date.now();
+                            player.lastDaily = data.lastDaily || 0;
+                            player.streak = data.streak || 0;
+                            player.achievements = data.achievements || {};
 
-                            updateBalance();
-                            updateInvestmentsList();
-                            updateNFTList();
-                            updateTournamentList();
+                            profileNameEl.textContent = player.username;
+                            updateUI();
+                            
+                            // Автокликер
+                            if (player.boosts['auto-clicker']) {
+                                startAutoClicker();
+                            }
+
+                            // Проверка бонусов
+                            checkDailyBonus();
+                            
+                            // Применение реферала
+                            applyReferral();
                         } else {
                             createPlayer();
                         }
@@ -1426,41 +2316,45 @@
 
             // ===== СОЗДАНИЕ НОВОГО ИГРОКА =====
             function createPlayer() {
-                const name = prompt('Введите ваше имя:', 'Игрок') || 'Игрок';
+                const name = prompt('Введите ваше имя:', 'ИГРОК') || 'ИГРОК';
                 
                 const newPlayer = {
                     username: name,
-                    balance: 100, // Стартовый бонус
+                    balance: 1000, // Стартовый бонус
                     clicks: 0,
                     totalEarned: 0,
                     clickPower: 1,
                     level: 1,
+                    boosts: {},
+                    skins: {},
                     investments: {},
                     nft: {},
                     tournament: null,
+                    referrals: [],
+                    referralBonus: 0,
                     lastPassiveUpdate: Date.now(),
+                    lastDaily: Date.now(),
+                    streak: 1,
+                    achievements: {},
                     createdAt: Date.now()
                 };
 
                 db.ref('players').push(newPlayer).then(ref => {
                     player.id = ref.key;
                     player.username = name;
-                    player.balance = 100;
+                    player.balance = 1000;
                     localStorage.setItem('playerId', ref.key);
                     
-                    updateBalance();
-                    updateInvestmentsList();
-                    updateNFTList();
-                    updateTournamentList();
-                    
-                    showNotification('🎉 Добро пожаловать! +100 MARS в подарок!');
+                    profileNameEl.textContent = name;
+                    updateUI();
+                    showNotification('🎉 Добро пожаловать! +1000 MARS в подарок!');
                 });
             }
 
             // ===== АДМИН ПАНЕЛЬ =====
             const admin = {
                 open() {
-                    const password = prompt('Введите пароль админа:');
+                    const password = prompt('👑 Введите пароль админа:');
                     if (password === 'admin123') {
                         document.getElementById('adminModal').classList.add('show');
                         this.loadStats();
@@ -1480,28 +2374,48 @@
                             totalMARS += p.balance || 0;
                         });
 
-                        document.getElementById('adminTotalPlayers').textContent = playerCount;
+                        document.getElementById('adminPlayers').textContent = playerCount;
                         document.getElementById('adminTotalMARS').textContent = totalMARS.toLocaleString();
-                        document.getElementById('adminTotalRevenue').textContent = '0₽';
 
-                        // Список игроков
-                        let html = '';
-                        Object.entries(players).forEach(([id, p]) => {
-                            html += `
-                                <div style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                                    <span>${p.username || 'Аноним'}</span>
-                                    <span>${p.balance || 0} MARS</span>
-                                    <span>Ур.${p.level || 1}</span>
-                                </div>
-                            `;
-                        });
-                        document.getElementById('adminPlayersList').innerHTML = html;
+                        // Топ игроков
+                        const topPlayers = Object.entries(players)
+                            .map(([id, p]) => ({ id, ...p }))
+                            .sort((a, b) => (b.balance || 0) - (a.balance || 0))
+                            .slice(0, 10);
+
+                        document.getElementById('adminTopPlayers').innerHTML = topPlayers.map((p, i) => `
+                            <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid rgba(255,255,255,0.1);">
+                                <span>${i+1}. ${p.username || 'Аноним'}</span>
+                                <span style="color:#ffd700;">${(p.balance || 0).toLocaleString()} MARS</span>
+                                <span>Ур.${p.level || 1}</span>
+                            </div>
+                        `).join('');
                     });
 
                     db.ref('withdraws').once('value').then(snap => {
                         const withdraws = snap.val() || {};
-                        document.getElementById('adminWithdraws').textContent = Object.keys(withdraws).length;
+                        const withdrawCount = Object.keys(withdraws).length;
+                        document.getElementById('adminWithdraws').textContent = withdrawCount;
+
+                        // Заявки на вывод
+                        const pendingWithdraws = Object.entries(withdraws)
+                            .filter(([_, w]) => w.status === 'pending')
+                            .slice(0, 5);
+
+                        document.getElementById('withdrawRequests').innerHTML = pendingWithdraws.map(([id, w]) => `
+                            <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid rgba(255,255,255,0.1);">
+                                <span>${w.username}</span>
+                                <span>${w.amount} MARS</span>
+                                <span>${w.finalAmount.toFixed(2)}₽</span>
+                                <button onclick="admin.approveWithdraw('${id}')" style="background:#4caf50; border:none; color:white; padding:5px 10px; border-radius:5px; cursor:pointer;">✓</button>
+                            </div>
+                        `).join('') || '<div style="text-align:center; color:#aaa;">Нет заявок</div>';
                     });
+                },
+                approveWithdraw(id) {
+                    db.ref('withdraws/' + id).update({ status: 'completed' });
+                    this.loadStats();
+                    showNotification('✅ Вывод подтвержден');
                 },
                 addMARS(amount) {
                     db.ref('players').once('value').then(snap => {
@@ -1540,8 +2454,21 @@
                 // Проверка пассивного дохода каждую минуту
                 setInterval(processPassiveIncome, 60000);
                 
-                // Проверка платежей при загрузке
-                checkPendingDeposit();
+                // Проверка платежей
+                setTimeout(checkPendingPayments, 1000);
+                
+                // Сохранение каждые 30 секунд
+                setInterval(savePlayer, 30000);
+
+                // Реферальная ссылка
+                checkReferral();
+
+                // Обновление курса из настроек
+                setInterval(() => {
+                    EXCHANGE_RATE = parseFloat(document.getElementById('adminExchangeRate')?.value) || 0.01;
+                    WITHDRAW_FEE = parseInt(document.getElementById('adminWithdrawFee')?.value) || 10;
+                    MIN_WITHDRAW = parseInt(document.getElementById('adminMinWithdraw')?.value) || 500;
+                }, 1000);
             }
 
             init();
