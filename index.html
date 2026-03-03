@@ -200,6 +200,11 @@
             transform: scale(0.95);
         }
 
+        .planet.cooldown {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
         .planet-core {
             width: 100%;
             height: 100%;
@@ -224,6 +229,13 @@
             font-size: 1.5rem;
             margin: 20px 0;
             color: #ffd700;
+        }
+
+        .cooldown-timer {
+            font-size: 1.2rem;
+            color: #ff4444;
+            margin-top: 10px;
+            min-height: 30px;
         }
 
         /* ===== МАГАЗИН ===== */
@@ -587,7 +599,7 @@
 
         .admin-stats-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 15px;
             margin-bottom: 30px;
         }
@@ -638,11 +650,6 @@
             border: 1px solid transparent;
         }
 
-        .player-row.banned {
-            border-color: #ff4444;
-            background: rgba(255, 68, 68, 0.1);
-        }
-
         .player-info {
             display: flex;
             gap: 20px;
@@ -683,50 +690,12 @@
             cursor: pointer;
         }
 
-        .warn-btn {
-            background: #ffaa00;
-            color: #1a1f2a;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 10px;
-            cursor: pointer;
-        }
-
-        .suspicious-badge {
-            background: #ff4444;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 5px;
-            font-size: 0.8rem;
-            margin-left: 10px;
-        }
-
-        .click-history {
-            max-height: 300px;
-            overflow-y: auto;
-            background: rgba(0,0,0,0.3);
+        .withdraw-request {
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 15px;
-            padding: 15px;
-        }
-
-        .click-entry {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            font-size: 0.9rem;
-        }
-
-        .click-time {
-            color: #aaa;
-        }
-
-        .click-count {
-            color: #ffd700;
-        }
-
-        .click-speed {
-            color: #ff4444;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
         }
 
         .notification {
@@ -844,12 +813,12 @@
 
     <!-- Админ панель -->
     <div class="modal" id="adminModal">
-        <div class="modal-content" style="max-width: 1200px;">
+        <div class="modal-content" style="max-width: 900px;">
             <div class="modal-header">
                 <h2>👑 АДМИН ПАНЕЛЬ</h2>
                 <button class="modal-close" onclick="admin.close()">×</button>
             </div>
-            <div class="modal-body" style="max-height: 80vh; overflow-y: auto;">
+            <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
                 <!-- Статистика -->
                 <div class="admin-stats-grid">
                     <div class="admin-stat-card">
@@ -864,20 +833,14 @@
                         <div class="admin-stat-value" id="adminBalance">0₽</div>
                         <div>Баланс</div>
                     </div>
-                    <div class="admin-stat-card">
-                        <div class="admin-stat-value" id="adminBanned">0</div>
-                        <div>Забанено</div>
-                    </div>
                 </div>
 
                 <!-- Вкладки -->
                 <div class="admin-tabs">
                     <div class="admin-tab active" onclick="admin.switchTab('economy')">💰 Экономика</div>
                     <div class="admin-tab" onclick="admin.switchTab('players')">👥 Игроки</div>
-                    <div class="admin-tab" onclick="admin.switchTab('cheaters')">🚫 Читеры</div>
                     <div class="admin-tab" onclick="admin.switchTab('withdraws')">📤 Выводы</div>
                     <div class="admin-tab" onclick="admin.switchTab('referrals')">🤝 Рефералы</div>
-                    <div class="admin-tab" onclick="admin.switchTab('logs')">📋 Логи</div>
                 </div>
 
                 <!-- Вкладка Экономика -->
@@ -901,12 +864,8 @@
                             <input type="number" id="referralPercent" class="modal-input" value="10" min="0" max="50" onchange="admin.updateEconomy()">
                         </div>
                         <div>
-                            <label>Макс. кликов/сек:</label>
-                            <input type="number" id="maxClicksPerSecond" class="modal-input" value="5" min="1" max="20" onchange="admin.updateEconomy()">
-                        </div>
-                        <div>
-                            <label>Автобан при:</label>
-                            <input type="number" id="autoBanThreshold" class="modal-input" value="10" min="1" max="100">
+                            <label>Задержка между кликами (мс):</label>
+                            <input type="number" id="clickCooldown" class="modal-input" value="500" min="200" max="5000" step="100" onchange="admin.updateEconomy()">
                         </div>
                     </div>
                     <button class="modal-button danger-button" onclick="admin.resetGame()">🔄 ПОЛНЫЙ СБРОС ИГРЫ</button>
@@ -919,12 +878,6 @@
                     <div id="playersList" style="max-height: 400px; overflow-y: auto;"></div>
                 </div>
 
-                <!-- Вкладка Читеры -->
-                <div id="tabCheaters" style="display: none;">
-                    <h3 style="color:#ffd700; margin:20px 0;">🚫 ПОДОЗРИТЕЛЬНЫЕ ИГРОКИ</h3>
-                    <div id="suspiciousList"></div>
-                </div>
-
                 <!-- Вкладка Выводы -->
                 <div id="tabWithdraws" style="display: none;">
                     <h3 style="color:#ffd700; margin:20px 0;">📤 ЗАЯВКИ НА ВЫВОД</h3>
@@ -934,23 +887,7 @@
                 <!-- Вкладка Рефералы -->
                 <div id="tabReferrals" style="display: none;">
                     <h3 style="color:#ffd700; margin:20px 0;">🤝 РЕФЕРАЛЬНАЯ СТАТИСТИКА</h3>
-                    <div class="admin-stats-grid" style="grid-template-columns:repeat(2,1fr);">
-                        <div class="admin-stat-card">
-                            <div class="admin-stat-value" id="totalReferrals">0</div>
-                            <div>Всего рефералов</div>
-                        </div>
-                        <div class="admin-stat-card">
-                            <div class="admin-stat-value" id="totalReferralBonus">0</div>
-                            <div>Выплачено бонусов</div>
-                        </div>
-                    </div>
-                    <div id="topReferrers" style="margin-top:20px;"></div>
-                </div>
-
-                <!-- Вкладка Логи -->
-                <div id="tabLogs" style="display: none;">
-                    <h3 style="color:#ffd700; margin:20px 0;">📋 ИСТОРИЯ КЛИКОВ</h3>
-                    <div id="clickLogs" class="click-history"></div>
+                    <div id="referralsStats"></div>
                 </div>
             </div>
         </div>
@@ -991,6 +928,7 @@
             <div class="click-info">
                 ⚡ +<span id="clickPowerDisplay">1</span> MARS за клик
             </div>
+            <div class="cooldown-timer" id="cooldownTimer"></div>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px;">
                 <button class="modal-button" onclick="openDepositModal()">💰 КУПИТЬ MARS</button>
                 <button class="modal-button" onclick="openWithdrawModal()">💸 ПРОДАТЬ MARS</button>
@@ -1163,8 +1101,7 @@
                 sellPrice: 0.009,
                 withdrawFee: 10,
                 referralPercent: 10,
-                maxClicksPerSecond: 5,
-                autoBanThreshold: 10,
+                clickCooldown: 500, // Задержка между кликами в миллисекундах (по умолчанию 500мс = 2 клика в секунду)
                 adminBalance: 0,
                 maxAutoClickers: 5,
                 maxDoubleClicks: 3,
@@ -1187,12 +1124,9 @@
                 referredBy: null,
                 referralEarned: 0,
                 lastLogin: Date.now(),
-                clickHistory: [],
                 lastClickTime: 0,
-                clickCountThisSecond: 0,
                 isBanned: false,
-                banReason: '',
-                warnings: 0
+                banReason: ''
             };
 
             // ===== DOM ЭЛЕМЕНТЫ =====
@@ -1216,6 +1150,8 @@
             const referralEarnedEl = document.getElementById('referralEarned');
             const referralPercentEl = document.getElementById('referralPercent');
             const referralLink = document.getElementById('referralLink');
+            const cooldownTimer = document.getElementById('cooldownTimer');
+            const clickBtn = document.getElementById('clickBtn');
 
             // ===== ЗАГРУЗКА ЭКОНОМИКИ =====
             function loadEconomy() {
@@ -1240,15 +1176,13 @@
                 const sellPriceInput = document.getElementById('sellPrice');
                 const withdrawFeeInput = document.getElementById('withdrawFeePercent');
                 const referralPercentInput = document.getElementById('referralPercent');
-                const maxClicksPerSecondInput = document.getElementById('maxClicksPerSecond');
-                const autoBanThresholdInput = document.getElementById('autoBanThreshold');
+                const clickCooldownInput = document.getElementById('clickCooldown');
                 
                 if (buyPriceInput) buyPriceInput.value = economy.buyPrice;
                 if (sellPriceInput) sellPriceInput.value = economy.sellPrice;
                 if (withdrawFeeInput) withdrawFeeInput.value = economy.withdrawFee;
                 if (referralPercentInput) referralPercentInput.value = economy.referralPercent;
-                if (maxClicksPerSecondInput) maxClicksPerSecondInput.value = economy.maxClicksPerSecond;
-                if (autoBanThresholdInput) autoBanThresholdInput.value = economy.autoBanThreshold;
+                if (clickCooldownInput) clickCooldownInput.value = economy.clickCooldown;
             }
 
             // ===== ПРОВЕРКА АДМИНА =====
@@ -1274,10 +1208,8 @@
                     referredBy: player.referredBy,
                     referralEarned: player.referralEarned,
                     lastLogin: Date.now(),
-                    clickHistory: player.clickHistory.slice(-100), // Храним последние 100 кликов
                     isBanned: player.isBanned,
-                    banReason: player.banReason,
-                    warnings: player.warnings
+                    banReason: player.banReason
                 });
             }
 
@@ -1299,16 +1231,17 @@
                         player.referrals = data.referrals || [];
                         player.referredBy = data.referredBy || null;
                         player.referralEarned = data.referralEarned || 0;
-                        player.clickHistory = data.clickHistory || [];
                         player.isBanned = data.isBanned || false;
                         player.banReason = data.banReason || '';
-                        player.warnings = data.warnings || 0;
 
                         // Проверяем, не забанен ли игрок
                         if (player.isBanned) {
                             showNotification(`⛔ ВЫ ЗАБАНЕНЫ! Причина: ${player.banReason}`, 'error');
-                            document.getElementById('clickBtn').style.pointerEvents = 'none';
-                            document.getElementById('clickBtn').style.opacity = '0.5';
+                            clickBtn.style.pointerEvents = 'none';
+                            clickBtn.style.opacity = '0.5';
+                        } else {
+                            clickBtn.style.pointerEvents = 'auto';
+                            clickBtn.style.opacity = '1';
                         }
 
                         updateUI();
@@ -1350,9 +1283,7 @@
                     referredBy: referralCode || urlRef || null,
                     referralEarned: 0,
                     createdAt: Date.now(),
-                    clickHistory: [],
-                    isBanned: false,
-                    warnings: 0
+                    isBanned: false
                 };
 
                 db.ref('players').push(newPlayer).then(ref => {
@@ -1597,7 +1528,7 @@
                 });
             };
 
-            // ===== КЛИК С ЗАЩИТОЙ ОТ ЧИТЕРОВ =====
+            // ===== КЛИК С ПРОСТЫМ ОГРАНИЧЕНИЕМ =====
             window.handleClick = function() {
                 // Проверка на бан
                 if (player.isBanned) {
@@ -1606,59 +1537,25 @@
                 }
 
                 const now = Date.now();
-                const oneSecond = 1000;
-
-                // Сброс счетчика кликов за секунду
-                if (now - player.lastClickTime > oneSecond) {
-                    player.clickCountThisSecond = 0;
+                
+                // Проверяем, прошло ли достаточно времени с последнего клика
+                if (now - player.lastClickTime < economy.clickCooldown) {
+                    const remaining = Math.ceil((economy.clickCooldown - (now - player.lastClickTime)) / 100) * 100;
+                    cooldownTimer.textContent = `⏳ Подождите ${remaining / 1000} сек`;
+                    
+                    // Добавляем класс для визуального эффекта
+                    clickBtn.classList.add('cooldown');
+                    setTimeout(() => {
+                        clickBtn.classList.remove('cooldown');
+                    }, remaining);
+                    
+                    return;
                 }
 
-                // Проверка на слишком быстрые клики
-                player.clickCountThisSecond++;
-                if (player.clickCountThisSecond > economy.maxClicksPerSecond) {
-                    player.warnings++;
-                    
-                    // Логируем подозрительное поведение
-                    logSuspiciousActivity('Слишком быстрые клики', player.clickCountThisSecond);
-                    
-                    // Автоматический бан при превышении порога
-                    if (player.warnings >= economy.autoBanThreshold) {
-                        banPlayer(player.id, 'Автоматический бан: использование кликера');
-                        showNotification('⛔ Вы забанены за использование кликера!', 'error');
-                        return;
-                    } else {
-                        showNotification(`⚠️ Предупреждение ${player.warnings}/${economy.autoBanThreshold}: слишком быстрые клики!`, 'error');
-                    }
-                }
-
-                // Защита от автокликеров - проверка на одинаковые интервалы
-                if (player.clickHistory.length > 5) {
-                    const intervals = [];
-                    for (let i = 1; i < player.clickHistory.length; i++) {
-                        intervals.push(player.clickHistory[i] - player.clickHistory[i-1]);
-                    }
-                    
-                    // Проверяем, все ли интервалы примерно одинаковые
-                    const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
-                    const allSimilar = intervals.every(interval => Math.abs(interval - avgInterval) < 10);
-                    
-                    if (allSimilar && intervals.length > 5) {
-                        player.warnings += 2;
-                        logSuspiciousActivity('Подозрительно равномерные клики', intervals);
-                        
-                        if (player.warnings >= economy.autoBanThreshold) {
-                            banPlayer(player.id, 'Автоматический бан: подозрительно равномерные клики');
-                            showNotification('⛔ Вы забанены за использование автокликера!', 'error');
-                            return;
-                        }
-                    }
-                }
+                // Убираем таймер
+                cooldownTimer.textContent = '';
 
                 // Сохраняем время клика
-                player.clickHistory.push(now);
-                if (player.clickHistory.length > 20) {
-                    player.clickHistory.shift();
-                }
                 player.lastClickTime = now;
 
                 // Расчет силы клика
@@ -1672,11 +1569,13 @@
                 player.totalEarned += power;
 
                 // Анимация
-                const planet = document.querySelector('.planet');
-                planet.style.transform = 'scale(0.95)';
+                clickBtn.style.transform = 'scale(0.95)';
                 setTimeout(() => {
-                    planet.style.transform = 'scale(1)';
+                    clickBtn.style.transform = 'scale(1)';
                 }, 100);
+
+                // Показываем +число
+                showFloatingText(`+${power}`);
 
                 // Повышение уровня (каждые 100 кликов)
                 const newLevel = Math.floor(player.clicks / 100) + 1;
@@ -1691,47 +1590,35 @@
                 savePlayer();
             };
 
-            // ===== ЛОГИРОВАНИЕ ПОДОЗРИТЕЛЬНЫХ ДЕЙСТВИЙ =====
-            function logSuspiciousActivity(reason, data) {
-                db.ref('suspicious/' + player.id).push({
-                    reason: reason,
-                    data: data,
-                    timestamp: Date.now(),
-                    username: player.username
-                });
+            // Плавающий текст
+            function showFloatingText(text) {
+                const floating = document.createElement('div');
+                floating.textContent = text;
+                floating.style.cssText = `
+                    position: absolute;
+                    color: #ffd700;
+                    font-size: 2rem;
+                    font-weight: bold;
+                    pointer-events: none;
+                    animation: floatUp 1s ease-out forwards;
+                    left: 50%;
+                    top: 50%;
+                    transform: translate(-50%, -50%);
+                `;
+                clickBtn.appendChild(floating);
+                
+                setTimeout(() => floating.remove(), 1000);
             }
 
-            // ===== БАН ИГРОКА =====
-            function banPlayer(playerId, reason) {
-                db.ref('players/' + playerId).update({
-                    isBanned: true,
-                    banReason: reason,
-                    bannedAt: Date.now()
-                });
-                
-                if (playerId === player.id) {
-                    player.isBanned = true;
-                    player.banReason = reason;
-                    document.getElementById('clickBtn').style.pointerEvents = 'none';
-                    document.getElementById('clickBtn').style.opacity = '0.5';
+            // Добавляем анимацию
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes floatUp {
+                    0% { transform: translate(-50%, -50%); opacity: 1; }
+                    100% { transform: translate(-50%, -150%); opacity: 0; }
                 }
-            }
-
-            // ===== РАЗБАН ИГРОКА =====
-            function unbanPlayer(playerId) {
-                db.ref('players/' + playerId).update({
-                    isBanned: false,
-                    banReason: '',
-                    warnings: 0
-                });
-                
-                if (playerId === player.id) {
-                    player.isBanned = false;
-                    player.banReason = '';
-                    document.getElementById('clickBtn').style.pointerEvents = 'auto';
-                    document.getElementById('clickBtn').style.opacity = '1';
-                }
-            }
+            `;
+            document.head.appendChild(style);
 
             // ===== ПОКУПКА АВТОКЛИКЕРА =====
             window.buyAutoClicker = function() {
@@ -1978,17 +1865,13 @@
                     // Показываем нужную вкладку
                     document.getElementById('tabEconomy').style.display = tab === 'economy' ? 'block' : 'none';
                     document.getElementById('tabPlayers').style.display = tab === 'players' ? 'block' : 'none';
-                    document.getElementById('tabCheaters').style.display = tab === 'cheaters' ? 'block' : 'none';
                     document.getElementById('tabWithdraws').style.display = tab === 'withdraws' ? 'block' : 'none';
                     document.getElementById('tabReferrals').style.display = tab === 'referrals' ? 'block' : 'none';
-                    document.getElementById('tabLogs').style.display = tab === 'logs' ? 'block' : 'none';
                     
                     // Загружаем данные для вкладки
                     if (tab === 'players') this.loadPlayers();
-                    if (tab === 'cheaters') this.loadSuspicious();
                     if (tab === 'withdraws') this.loadWithdraws();
                     if (tab === 'referrals') this.loadReferrals();
-                    if (tab === 'logs') this.loadClickLogs();
                 },
                 
                 loadStats() {
@@ -1996,17 +1879,14 @@
                         const players = snap.val() || {};
                         const playerCount = Object.keys(players).length;
                         let totalMARS = 0;
-                        let bannedCount = 0;
 
                         Object.values(players).forEach(p => {
                             totalMARS += p.balance || 0;
-                            if (p.isBanned) bannedCount++;
                         });
 
                         document.getElementById('adminPlayers').textContent = playerCount;
                         document.getElementById('adminTotalMARS').textContent = totalMARS.toLocaleString();
                         document.getElementById('adminBalance').textContent = economy.adminBalance.toFixed(2) + '₽';
-                        document.getElementById('adminBanned').textContent = bannedCount;
                     });
                 },
                 
@@ -2015,16 +1895,14 @@
                     const newSellPrice = parseFloat(document.getElementById('sellPrice').value) || 0.009;
                     const newWithdrawFee = parseInt(document.getElementById('withdrawFeePercent').value) || 10;
                     const newReferralPercent = parseInt(document.getElementById('referralPercent').value) || 10;
-                    const newMaxClicks = parseInt(document.getElementById('maxClicksPerSecond').value) || 5;
-                    const newAutoBan = parseInt(document.getElementById('autoBanThreshold').value) || 10;
+                    const newClickCooldown = parseInt(document.getElementById('clickCooldown').value) || 500;
                     
                     db.ref('economy').update({
                         buyPrice: newBuyPrice,
                         sellPrice: newSellPrice,
                         withdrawFee: newWithdrawFee,
                         referralPercent: newReferralPercent,
-                        maxClicksPerSecond: newMaxClicks,
-                        autoBanThreshold: newAutoBan
+                        clickCooldown: newClickCooldown
                     });
                     
                     showNotification('✅ Настройки сохранены!');
@@ -2038,49 +1916,18 @@
                         playersList.innerHTML = Object.entries(players)
                             .sort((a, b) => (b[1].balance || 0) - (a[1].balance || 0))
                             .map(([id, p]) => `
-                                <div class="player-row ${p.isBanned ? 'banned' : ''}">
+                                <div class="player-row">
                                     <div class="player-info">
                                         <span class="player-name">${p.username || 'Аноним'}</span>
                                         <span class="player-stats">Баланс: ${(p.balance || 0).toLocaleString()} MARS</span>
                                         <span class="player-stats">Клики: ${(p.clicks || 0).toLocaleString()}</span>
                                         <span class="player-stats">Уровень: ${p.level || 1}</span>
-                                        ${p.warnings > 0 ? `<span class="suspicious-badge">⚠️ ${p.warnings}</span>` : ''}
                                     </div>
                                     <div class="player-actions">
                                         ${p.isBanned ? 
                                             `<button class="unban-btn" onclick="admin.unbanPlayer('${id}')">✅ РАЗБАНИТЬ</button>` : 
                                             `<button class="ban-btn" onclick="admin.banPlayer('${id}')">⛔ ЗАБАНИТЬ</button>`
                                         }
-                                        <button class="warn-btn" onclick="admin.warnPlayer('${id}')">⚠️ ВЫНЕСТИ ПРЕД</button>
-                                        <button class="shop-button" onclick="admin.viewPlayerHistory('${id}')" style="width:auto; padding:8px 16px;">📋 ИСТОРИЯ</button>
-                                    </div>
-                                </div>
-                            `).join('');
-                    });
-                },
-                
-                loadSuspicious() {
-                    db.ref('suspicious').once('value').then(snap => {
-                        const suspicious = snap.val() || {};
-                        const list = document.getElementById('suspiciousList');
-                        
-                        // Группируем по игрокам
-                        const grouped = {};
-                        Object.entries(suspicious).forEach(([playerId, logs]) => {
-                            grouped[playerId] = Object.values(logs || {});
-                        });
-                        
-                        list.innerHTML = Object.entries(grouped)
-                            .sort((a, b) => b[1].length - a[1].length)
-                            .map(([playerId, logs]) => `
-                                <div class="player-row">
-                                    <div class="player-info">
-                                        <span class="player-name">Игрок: ${logs[0]?.username || playerId}</span>
-                                        <span class="player-stats">Нарушений: ${logs.length}</span>
-                                    </div>
-                                    <div class="player-actions">
-                                        <button class="ban-btn" onclick="admin.banPlayer('${playerId}')">⛔ ЗАБАНИТЬ</button>
-                                        <button class="shop-button" onclick="admin.viewLogs('${playerId}')">📋 ПОДРОБНО</button>
                                     </div>
                                 </div>
                             `).join('');
@@ -2127,8 +1974,6 @@
                 loadReferrals() {
                     db.ref('players').once('value').then(snap => {
                         const players = snap.val() || {};
-                        let totalReferrals = 0;
-                        let totalBonus = 0;
                         
                         const topReferrers = Object.entries(players)
                             .map(([id, p]) => ({
@@ -2141,15 +1986,7 @@
                             .sort((a, b) => b.count - a.count)
                             .slice(0, 10);
                         
-                        topReferrers.forEach(r => {
-                            totalReferrals += r.count;
-                            totalBonus += r.earned;
-                        });
-                        
-                        document.getElementById('totalReferrals').textContent = totalReferrals;
-                        document.getElementById('totalReferralBonus').textContent = totalBonus.toLocaleString();
-                        
-                        document.getElementById('topReferrers').innerHTML = `
+                        document.getElementById('referralsStats').innerHTML = `
                             <h4 style="color:#ffd700; margin:20px 0;">🏆 ТОП РЕФЕРАЛОВ</h4>
                             ${topReferrers.map((r, i) => `
                                 <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid rgba(255,255,255,0.1);">
@@ -2159,35 +1996,6 @@
                                 </div>
                             `).join('')}
                         `;
-                    });
-                },
-                
-                loadClickLogs() {
-                    db.ref('players').once('value').then(snap => {
-                        const players = snap.val() || {};
-                        const logs = [];
-                        
-                        Object.entries(players).forEach(([id, p]) => {
-                            if (p.clickHistory && p.clickHistory.length > 0) {
-                                logs.push({
-                                    id,
-                                    username: p.username,
-                                    history: p.clickHistory
-                                });
-                            }
-                        });
-                        
-                        document.getElementById('clickLogs').innerHTML = logs.map(p => `
-                            <div style="margin-bottom:20px;">
-                                <div style="color:#ffd700; margin-bottom:10px;">👤 ${p.username}</div>
-                                ${p.history.slice(-10).map((time, i) => `
-                                    <div class="click-entry">
-                                        <span class="click-time">${new Date(time).toLocaleTimeString()}</span>
-                                        <span class="click-count">Клик ${p.history.length - i}</span>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        `).join('');
                     });
                 },
                 
@@ -2202,19 +2010,17 @@
                             .sort((a, b) => (b[1].balance || 0) - (a[1].balance || 0));
                         
                         playersList.innerHTML = filtered.map(([id, p]) => `
-                            <div class="player-row ${p.isBanned ? 'banned' : ''}">
+                            <div class="player-row">
                                 <div class="player-info">
                                     <span class="player-name">${p.username || 'Аноним'}</span>
                                     <span class="player-stats">Баланс: ${(p.balance || 0).toLocaleString()} MARS</span>
                                     <span class="player-stats">Клики: ${(p.clicks || 0).toLocaleString()}</span>
-                                    ${p.warnings > 0 ? `<span class="suspicious-badge">⚠️ ${p.warnings}</span>` : ''}
                                 </div>
                                 <div class="player-actions">
                                     ${p.isBanned ? 
                                         `<button class="unban-btn" onclick="admin.unbanPlayer('${id}')">✅ РАЗБАНИТЬ</button>` : 
                                         `<button class="ban-btn" onclick="admin.banPlayer('${id}')">⛔ ЗАБАНИТЬ</button>`
                                     }
-                                    <button class="warn-btn" onclick="admin.warnPlayer('${id}')">⚠️ ВЫНЕСТИ ПРЕД</button>
                                 </div>
                             </div>
                         `).join('');
@@ -2224,26 +2030,22 @@
                 banPlayer(playerId) {
                     const reason = prompt('Введите причину бана:');
                     if (reason) {
-                        banPlayer(playerId, reason);
+                        db.ref('players/' + playerId).update({
+                            isBanned: true,
+                            banReason: reason
+                        });
                         this.loadPlayers();
                         showNotification(`✅ Игрок забанен: ${reason}`);
                     }
                 },
                 
                 unbanPlayer(playerId) {
-                    unbanPlayer(playerId);
+                    db.ref('players/' + playerId).update({
+                        isBanned: false,
+                        banReason: ''
+                    });
                     this.loadPlayers();
                     showNotification('✅ Игрок разбанен');
-                },
-                
-                warnPlayer(playerId) {
-                    db.ref('players/' + playerId).transaction(p => {
-                        if (p) {
-                            p.warnings = (p.warnings || 0) + 1;
-                        }
-                        return p;
-                    });
-                    showNotification('⚠️ Предупреждение вынесено');
                 },
                 
                 approveWithdraw(id, amount) {
@@ -2311,16 +2113,6 @@
 
                 updateBoostsList();
                 updateNFTButtons();
-                
-                // Добавляем стили для анимации
-                const style = document.createElement('style');
-                style.textContent = `
-                    @keyframes floatUp {
-                        0% { transform: translateY(0); opacity: 1; }
-                        100% { transform: translateY(-50px); opacity: 0; }
-                    }
-                `;
-                document.head.appendChild(style);
             }
 
             init();
