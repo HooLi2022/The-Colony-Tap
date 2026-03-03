@@ -231,6 +231,12 @@
             color: #ffd700;
         }
 
+        .click-value {
+            font-size: 1.2rem;
+            color: #4caf50;
+            margin-top: 10px;
+        }
+
         .cooldown-timer {
             font-size: 1.2rem;
             color: #ff4444;
@@ -986,79 +992,77 @@
 
                 <!-- Вкладки -->
                 <div class="admin-tabs">
-                    <div class="admin-tab active" onclick="admin.switchTab('economy')">💰 Экономика</div>
+                    <div class="admin-tab active" onclick="admin.switchTab('clickRate')">💵 Стоимость клика</div>
+                    <div class="admin-tab" onclick="admin.switchTab('exchange')">💱 Курсы обмена</div>
                     <div class="admin-tab" onclick="admin.switchTab('players')">👥 Игроки</div>
                     <div class="admin-tab" onclick="admin.switchTab('withdraws')">📤 Выводы</div>
                     <div class="admin-tab" onclick="admin.switchTab('referrals')">🤝 Рефералы</div>
                 </div>
 
-                <!-- Вкладка Экономика (с настройкой курса) -->
-                <div id="tabEconomy" style="display: block;">
-                    <h3 style="color:#ffd700; margin:20px 0;">💰 НАСТРОЙКИ КУРСА MARS</h3>
+                <!-- Вкладка Стоимость клика (ТО ЧТО НУЖНО) -->
+                <div id="tabClickRate" style="display: block;">
+                    <h3 style="color:#ffd700; margin:20px 0;">💵 НАСТРОЙКА СТОИМОСТИ КЛИКА</h3>
                     
-                    <div style="background: rgba(255,215,0,0.1); border-radius:15px; padding:20px; margin-bottom:30px;">
-                        <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:20px;">
-                            <div>
-                                <label style="color:#ffd700; font-size:1.1rem;">💵 Курс покупки MARS</label>
-                                <div style="display:flex; align-items:center; gap:10px; margin-top:10px;">
-                                    <span style="color:#fff;">1 MARS =</span>
-                                    <input type="number" id="buyPrice" class="modal-input" value="0.01" step="0.001" min="0.001" style="width:120px; text-align:center;">
-                                    <span style="color:#fff;">₽</span>
+                    <div style="background: rgba(76,175,80,0.2); border-radius:15px; padding:30px; margin-bottom:30px; text-align:center;">
+                        <div style="font-size:1.2rem; color:#aaa; margin-bottom:10px;">Текущая стоимость 1 MARS:</div>
+                        <div style="font-size:3rem; color:#ffd700; font-weight:bold; margin-bottom:20px;" id="previewClickValue">0.01 ₽</div>
+                        
+                        <div style="max-width:300px; margin:0 auto;">
+                            <label style="color:#ffd700; font-size:1.1rem;">Стоимость 1 MARS в рублях:</label>
+                            <input type="number" id="clickRate" class="modal-input" value="0.01" step="0.001" min="0.001" style="font-size:1.5rem; text-align:center;">
+                        </div>
+                        
+                        <div style="background: rgba(255,255,255,0.1); border-radius:15px; padding:20px; margin-top:30px;">
+                            <h4 style="color:#ffd700; margin-bottom:15px;">🔍 ПРИМЕРЫ:</h4>
+                            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:15px;">
+                                <div>
+                                    <div style="color:#fff;">Сила клика 10</div>
+                                    <div style="color:#4caf50; font-size:1.3rem;" id="example10">0.10 ₽</div>
                                 </div>
-                                <p style="color:#aaa; font-size:0.9rem; margin-top:5px;">Сколько рублей стоит 1 MARS при покупке</p>
+                                <div>
+                                    <div style="color:#fff;">Сила клика 50</div>
+                                    <div style="color:#4caf50; font-size:1.3rem;" id="example50">0.50 ₽</div>
+                                </div>
+                                <div>
+                                    <div style="color:#fff;">Сила клика 100</div>
+                                    <div style="color:#4caf50; font-size:1.3rem;" id="example100">1.00 ₽</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="modal-button" onclick="admin.updateClickRate()" style="font-size:1.3rem; padding:20px;">💾 СОХРАНИТЬ СТОИМОСТЬ КЛИКА</button>
+                </div>
+
+                <!-- Вкладка Курсы обмена -->
+                <div id="tabExchange" style="display: none;">
+                    <h3 style="color:#ffd700; margin:20px 0;">💱 НАСТРОЙКА КУРСОВ ОБМЕНА</h3>
+                    
+                    <div style="background: rgba(255,215,0,0.1); border-radius:15px; padding:30px; margin-bottom:30px;">
+                        <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:30px;">
+                            <div>
+                                <label style="color:#ffd700;">💰 Курс покупки MARS:</label>
+                                <div style="display:flex; align-items:center; gap:10px; margin-top:10px;">
+                                    <span>1 MARS =</span>
+                                    <input type="number" id="buyPrice" class="modal-input" value="0.01" step="0.001" min="0.001" style="width:120px;">
+                                    <span>₽</span>
+                                </div>
+                                <p style="color:#aaa; font-size:0.9rem;">Сколько рублей стоит 1 MARS при пополнении</p>
                             </div>
                             
                             <div>
-                                <label style="color:#ffd700; font-size:1.1rem;">💸 Курс продажи MARS</label>
+                                <label style="color:#ffd700;">💸 Курс продажи MARS:</label>
                                 <div style="display:flex; align-items:center; gap:10px; margin-top:10px;">
-                                    <span style="color:#fff;">1 MARS =</span>
-                                    <input type="number" id="sellPrice" class="modal-input" value="0.009" step="0.001" min="0.001" style="width:120px; text-align:center;">
-                                    <span style="color:#fff;">₽</span>
+                                    <span>1 MARS =</span>
+                                    <input type="number" id="sellPrice" class="modal-input" value="0.009" step="0.001" min="0.001" style="width:120px;">
+                                    <span>₽</span>
                                 </div>
-                                <p style="color:#aaa; font-size:0.9rem; margin-top:5px;">Сколько рублей дают за 1 MARS при продаже</p>
+                                <p style="color:#aaa; font-size:0.9rem;">Сколько рублей дают за 1 MARS при выводе</p>
                             </div>
                         </div>
                     </div>
 
-                    <h3 style="color:#ffd700; margin:30px 0 20px;">⚙️ ДОПОЛНИТЕЛЬНЫЕ НАСТРОЙКИ</h3>
-                    
-                    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:15px; margin-bottom:30px;">
-                        <div>
-                            <label style="color:#aaa;">Комиссия на вывод (%):</label>
-                            <input type="number" id="withdrawFeePercent" class="modal-input" value="10" min="0" max="30" step="1">
-                        </div>
-                        <div>
-                            <label style="color:#aaa;">Реферальный бонус (%):</label>
-                            <input type="number" id="referralPercent" class="modal-input" value="10" min="0" max="50" step="1">
-                        </div>
-                        <div>
-                            <label style="color:#aaa;">Задержка между кликами (мс):</label>
-                            <input type="number" id="clickCooldown" class="modal-input" value="500" min="200" max="5000" step="100">
-                        </div>
-                    </div>
-
-                    <div style="display:flex; gap:15px; margin-top:20px;">
-                        <button class="modal-button" onclick="admin.updateEconomy()" style="flex:2;">💾 СОХРАНИТЬ ВСЕ НАСТРОЙКИ</button>
-                        <button class="modal-button danger-button" onclick="admin.resetGame()" style="flex:1;">🔄 ПОЛНЫЙ СБРОС</button>
-                    </div>
-
-                    <div style="background: rgba(76,175,80,0.1); border-radius:15px; padding:20px; margin-top:30px;">
-                        <h4 style="color:#4caf50; margin-bottom:15px;">📊 ТЕКУЩИЕ ЗНАЧЕНИЯ:</h4>
-                        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:15px;">
-                            <div style="text-align:center;">
-                                <div style="color:#ffd700; font-size:1.5rem;" id="previewBuy">0.01₽</div>
-                                <div style="color:#aaa;">Курс покупки</div>
-                            </div>
-                            <div style="text-align:center;">
-                                <div style="color:#ffd700; font-size:1.5rem;" id="previewSell">0.009₽</div>
-                                <div style="color:#aaa;">Курс продажи</div>
-                            </div>
-                            <div style="text-align:center;">
-                                <div style="color:#ffd700; font-size:1.5rem;" id="previewSpread">0.001₽</div>
-                                <div style="color:#aaa;">Спред (разница)</div>
-                            </div>
-                        </div>
-                    </div>
+                    <button class="modal-button" onclick="admin.updateExchangeRates()">💾 СОХРАНИТЬ КУРСЫ ОБМЕНА</button>
                 </div>
 
                 <!-- Вкладка Игроки -->
@@ -1118,6 +1122,8 @@
             <div class="click-info">
                 ⚡ +<span id="clickPowerDisplay">1</span> MARS за клик
             </div>
+            <!-- ЭТО ЗНАЧЕНИЕ ТЕПЕРЬ МОЖНО МЕНЯТЬ -->
+            <div class="click-value" id="clickValue">≈ 0.01 ₽ за клик</div>
             <div class="cooldown-timer" id="cooldownTimer"></div>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px;">
                 <button class="modal-button" onclick="openDepositModal()">💰 КУПИТЬ MARS</button>
@@ -1285,12 +1291,13 @@
 
             // ===== ЭКОНОМИЧЕСКИЕ НАСТРОЙКИ =====
             let economy = {
-                buyPrice: 0.01,
-                sellPrice: 0.009,
-                withdrawFee: 10,
-                referralPercent: 10,
-                clickCooldown: 500,
-                adminBalance: 0,
+                clickRate: 0.01,           // Стоимость 1 MARS в рублях (то, что нам нужно)
+                buyPrice: 0.01,             // Курс покупки MARS
+                sellPrice: 0.009,            // Курс продажи MARS
+                withdrawFee: 10,              // Комиссия на вывод
+                referralPercent: 10,          // Реферальный бонус
+                clickCooldown: 500,           // Задержка между кликами
+                adminBalance: 0,               // Баланс системы
                 maxAutoClickers: 5,
                 maxDoubleClicks: 3,
                 donatMultiplier: 2
@@ -1325,6 +1332,7 @@
             const levelEl = document.getElementById('level');
             const clickPowerEl = document.getElementById('clickPower');
             const clickPowerDisplay = document.getElementById('clickPowerDisplay');
+            const clickValueEl = document.getElementById('clickValue');
             const rankEl = document.getElementById('rank');
             const profileNameEl = document.getElementById('profileName');
             const profileRankEl = document.getElementById('profileRank');
@@ -1345,9 +1353,11 @@
             const clickBtn = document.getElementById('clickBtn');
 
             // Элементы для предпросмотра в админке
-            const previewBuy = document.getElementById('previewBuy');
-            const previewSell = document.getElementById('previewSell');
-            const previewSpread = document.getElementById('previewSpread');
+            const previewClickValue = document.getElementById('previewClickValue');
+            const example10 = document.getElementById('example10');
+            const example50 = document.getElementById('example50');
+            const example100 = document.getElementById('example100');
+            const clickRateInput = document.getElementById('clickRate');
 
             // ===== ЗАГРУЗКА ЭКОНОМИКИ =====
             function loadEconomy() {
@@ -1363,7 +1373,18 @@
             }
 
             function updateEconomyDisplay() {
-                // Обновляем все элементы, отображающие курс
+                // Обновляем стоимость клика (самое важное!)
+                if (clickValueEl) {
+                    const clickRub = (player.clickPower * economy.clickRate).toFixed(2);
+                    clickValueEl.textContent = `≈ ${clickRub} ₽ за клик`;
+                }
+
+                // Обновляем баланс в рублях
+                if (balanceRubEl) {
+                    balanceRubEl.textContent = (player.balance * economy.sellPrice).toFixed(2);
+                }
+
+                // Обновляем курсы обмена
                 if (displayBuyRate) displayBuyRate.textContent = `1 MARS = ${economy.buyPrice}₽`;
                 if (displaySellRate) displaySellRate.textContent = `1 MARS = ${economy.sellPrice}₽`;
                 if (displayBuyRateModal) displayBuyRateModal.textContent = economy.buyPrice;
@@ -1371,11 +1392,6 @@
                 if (withdrawFee) withdrawFee.textContent = economy.withdrawFee + '%';
                 if (referralPercentEl) referralPercentEl.textContent = economy.referralPercent + '%';
                 
-                // Обновляем баланс в рублях
-                if (balanceRubEl) {
-                    balanceRubEl.textContent = (player.balance * economy.sellPrice).toFixed(2);
-                }
-
                 // Обновляем поля в админке
                 const buyPriceInput = document.getElementById('buyPrice');
                 const sellPriceInput = document.getElementById('sellPrice');
@@ -1389,13 +1405,12 @@
                 if (referralPercentInput) referralPercentInput.value = economy.referralPercent;
                 if (clickCooldownInput) clickCooldownInput.value = economy.clickCooldown;
 
-                // Обновляем предпросмотр в админке
-                if (previewBuy) previewBuy.textContent = economy.buyPrice + '₽';
-                if (previewSell) previewSell.textContent = economy.sellPrice + '₽';
-                if (previewSpread) {
-                    const spread = (economy.buyPrice - economy.sellPrice).toFixed(3);
-                    previewSpread.textContent = spread + '₽';
-                }
+                // Обновляем предпросмотр стоимости клика
+                if (previewClickValue) previewClickValue.textContent = economy.clickRate + ' ₽';
+                if (clickRateInput) clickRateInput.value = economy.clickRate;
+                if (example10) example10.textContent = (10 * economy.clickRate).toFixed(2) + ' ₽';
+                if (example50) example50.textContent = (50 * economy.clickRate).toFixed(2) + ' ₽';
+                if (example100) example100.textContent = (100 * economy.clickRate).toFixed(2) + ' ₽';
             }
 
             // ===== ПРОВЕРКА АДМИНА =====
@@ -1772,7 +1787,7 @@
                     clickBtn.style.transform = 'scale(1)';
                 }, 100);
 
-                showFloatingText(`+${power}`);
+                showFloatingText(`+${power} MARS`);
 
                 const newLevel = Math.floor(player.clicks / 100) + 1;
                 if (newLevel > player.level) {
@@ -1976,7 +1991,14 @@
             // ===== ОБНОВЛЕНИЕ UI =====
             function updateUI() {
                 balanceEl.textContent = player.balance.toLocaleString();
+                
+                // Обновляем стоимость клика
+                const clickRub = (player.clickPower * economy.clickRate).toFixed(2);
+                clickValueEl.textContent = `≈ ${clickRub} ₽ за клик`;
+                
+                // Обновляем баланс в рублях (по курсу продажи)
                 balanceRubEl.textContent = (player.balance * economy.sellPrice).toFixed(2);
+                
                 levelEl.textContent = player.level;
                 clickPowerEl.textContent = player.clickPower;
                 clickPowerDisplay.textContent = player.clickPower;
@@ -2026,7 +2048,7 @@
 
             // ===== АДМИН ПАНЕЛЬ =====
             const admin = {
-                currentTab: 'economy',
+                currentTab: 'clickRate',
                 
                 open() {
                     if (checkAdminAuth()) {
@@ -2055,7 +2077,8 @@
                     document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
                     event.target.classList.add('active');
                     
-                    document.getElementById('tabEconomy').style.display = tab === 'economy' ? 'block' : 'none';
+                    document.getElementById('tabClickRate').style.display = tab === 'clickRate' ? 'block' : 'none';
+                    document.getElementById('tabExchange').style.display = tab === 'exchange' ? 'block' : 'none';
                     document.getElementById('tabPlayers').style.display = tab === 'players' ? 'block' : 'none';
                     document.getElementById('tabWithdraws').style.display = tab === 'withdraws' ? 'block' : 'none';
                     document.getElementById('tabReferrals').style.display = tab === 'referrals' ? 'block' : 'none';
@@ -2081,22 +2104,28 @@
                     });
                 },
                 
-                updateEconomy() {
+                // Обновление стоимости клика (ТО ЧТО НУЖНО)
+                updateClickRate() {
+                    const newClickRate = parseFloat(document.getElementById('clickRate').value) || 0.01;
+                    
+                    db.ref('economy').update({
+                        clickRate: newClickRate
+                    });
+                    
+                    showNotification('✅ Стоимость клика обновлена!');
+                },
+                
+                // Обновление курсов обмена
+                updateExchangeRates() {
                     const newBuyPrice = parseFloat(document.getElementById('buyPrice').value) || 0.01;
                     const newSellPrice = parseFloat(document.getElementById('sellPrice').value) || 0.009;
-                    const newWithdrawFee = parseInt(document.getElementById('withdrawFeePercent').value) || 10;
-                    const newReferralPercent = parseInt(document.getElementById('referralPercent').value) || 10;
-                    const newClickCooldown = parseInt(document.getElementById('clickCooldown').value) || 500;
                     
                     db.ref('economy').update({
                         buyPrice: newBuyPrice,
-                        sellPrice: newSellPrice,
-                        withdrawFee: newWithdrawFee,
-                        referralPercent: newReferralPercent,
-                        clickCooldown: newClickCooldown
+                        sellPrice: newSellPrice
                     });
                     
-                    showNotification('✅ Настройки сохранены!');
+                    showNotification('✅ Курсы обмена обновлены!');
                 },
                 
                 loadPlayers() {
