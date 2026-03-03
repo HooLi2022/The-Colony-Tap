@@ -548,10 +548,21 @@
             padding: 15px;
             border: 2px solid #ffd700;
             border-radius: 15px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.15);
             color: white;
             font-size: 1.1rem;
             margin-bottom: 20px;
+        }
+
+        .modal-input::placeholder {
+            color: #aaa;
+            opacity: 0.7;
+        }
+
+        .modal-input:focus {
+            outline: none;
+            border-color: #ffaa00;
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .modal-select {
@@ -559,10 +570,21 @@
             padding: 15px;
             border: 2px solid #ffd700;
             border-radius: 15px;
-            background: rgba(255, 255, 255, 0.1);
+            background: #2a2f3a;
             color: white;
             font-size: 1.1rem;
             margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        .modal-select option {
+            background: #1a1f2a;
+            color: white;
+            padding: 10px;
+        }
+
+        .modal-select:hover {
+            background: #3a3f4a;
         }
 
         .modal-button {
@@ -575,11 +597,57 @@
             font-weight: bold;
             cursor: pointer;
             width: 100%;
+            transition: all 0.3s;
+        }
+
+        .modal-button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
         }
 
         .danger-button {
             background: linear-gradient(135deg, #ff4444, #ff8c00) !important;
             margin-top: 20px;
+        }
+
+        /* ===== УЛУЧШЕННЫЕ СТИЛИ ДЛЯ МОДАЛЬНЫХ ОКОН ===== */
+        .modal-label {
+            color: #ffd700;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .modal-info-block {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #ffd700;
+        }
+
+        .modal-info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .modal-info-label {
+            color: #aaa;
+        }
+
+        .modal-info-value {
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .modal-info-value.green {
+            color: #4caf50;
+        }
+
+        .modal-info-value.red {
+            color: #ff4444;
         }
 
         /* ===== АДМИН ПАНЕЛЬ ===== */
@@ -595,6 +663,12 @@
             font-weight: bold;
             border: 2px solid white;
             z-index: 100;
+            transition: all 0.3s;
+        }
+
+        .admin-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
         }
 
         .admin-stats-grid {
@@ -632,6 +706,11 @@
             cursor: pointer;
             color: #fff;
             font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .admin-tab:hover {
+            background: rgba(255, 215, 0, 0.2);
         }
 
         .admin-tab.active {
@@ -679,6 +758,12 @@
             padding: 8px 16px;
             border-radius: 10px;
             cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .ban-btn:hover {
+            background: #ff6666;
+            transform: scale(1.05);
         }
 
         .unban-btn {
@@ -688,6 +773,12 @@
             padding: 8px 16px;
             border-radius: 10px;
             cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .unban-btn:hover {
+            background: #6cbf70;
+            transform: scale(1.05);
         }
 
         .withdraw-request {
@@ -709,6 +800,7 @@
             z-index: 2000;
             animation: slideIn 0.3s;
             display: none;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
         }
 
         .notification.show {
@@ -722,6 +814,46 @@
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* ===== РЕФЕРАЛЬНАЯ ССЫЛКА ===== */
+        .referral-link-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .referral-link-input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid #ffd700;
+            border-radius: 15px;
+            padding: 15px;
+            color: #ffd700;
+            font-size: 1rem;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .referral-link-input:focus {
+            outline: none;
+            border-color: #ffaa00;
+        }
+
+        .copy-button {
+            background: #ffd700;
+            color: #1a1f2a;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .copy-button:hover {
+            background: #ffaa00;
+            transform: scale(1.05);
         }
     </style>
 </head>
@@ -750,18 +882,27 @@
                 <button class="modal-close" onclick="closeDepositModal()">×</button>
             </div>
             <div class="modal-body">
-                <input type="number" class="modal-input" id="depositAmount" placeholder="Сумма в рублях" min="10" value="100">
+                <label class="modal-label">Сумма пополнения (₽):</label>
+                <input type="number" class="modal-input" id="depositAmount" placeholder="Например: 1000" min="10" value="100">
+                
+                <label class="modal-label">Способ оплаты:</label>
                 <select class="modal-select" id="depositMethod">
                     <option value="card">💳 Банковская карта</option>
-                    <option value="usdt">₿ USDT</option>
+                    <option value="usdt">₿ USDT (криптовалюта)</option>
                 </select>
-                <div style="background: rgba(255,215,0,0.1); padding:15px; border-radius:10px; margin:20px 0;">
-                    <div style="display:flex; justify-content:space-between;">
-                        <span>Вы получите:</span>
-                        <span style="color:#ffd700; font-size:1.3rem;" id="depositResult">10000 MARS</span>
+                
+                <div class="modal-info-block">
+                    <div class="modal-info-row">
+                        <span class="modal-info-label">Курс покупки:</span>
+                        <span class="modal-info-value">1 MARS = <span id="displayBuyRateModal">0.01</span>₽</span>
+                    </div>
+                    <div class="modal-info-row">
+                        <span class="modal-info-label">Вы получите:</span>
+                        <span class="modal-info-value" id="depositResult">10000 MARS</span>
                     </div>
                 </div>
-                <button class="modal-button" onclick="processDeposit()">💎 КУПИТЬ</button>
+
+                <button class="modal-button" onclick="processDeposit()">💎 КУПИТЬ MARS</button>
             </div>
         </div>
     </div>
@@ -774,34 +915,42 @@
                 <button class="modal-close" onclick="closeWithdrawModal()">×</button>
             </div>
             <div class="modal-body">
-                <div style="text-align:center; font-size:2rem; color:#ffd700; margin-bottom:20px;" id="withdrawBalance">0 MARS</div>
+                <div class="modal-info-block" style="text-align:center;">
+                    <div class="modal-info-row">
+                        <span class="modal-info-label">Ваш баланс:</span>
+                        <span class="modal-info-value" id="withdrawBalance">0 MARS</span>
+                    </div>
+                </div>
                 
-                <input type="number" class="modal-input" id="withdrawAmount" placeholder="Сумма в MARS" min="500" value="500">
+                <label class="modal-label">Сумма в MARS:</label>
+                <input type="number" class="modal-input" id="withdrawAmount" placeholder="Например: 1000" min="500" value="500">
                 
+                <label class="modal-label">Способ вывода:</label>
                 <select class="modal-select" id="withdrawMethod">
                     <option value="card">💳 Банковская карта</option>
                     <option value="yoomoney">💰 ЮMoney</option>
                     <option value="usdt">₿ USDT</option>
                 </select>
 
+                <label class="modal-label">Реквизиты:</label>
                 <input type="text" class="modal-input" id="withdrawDetails" placeholder="Номер карты / кошелька">
 
-                <div style="background: rgba(255,68,68,0.1); padding:15px; border-radius:10px; margin:20px 0;">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                        <span>Курс продажи:</span>
-                        <span style="color:#ffd700;" id="withdrawRate">0.009₽</span>
+                <div class="modal-info-block">
+                    <div class="modal-info-row">
+                        <span class="modal-info-label">Курс продажи:</span>
+                        <span class="modal-info-value">1 MARS = <span id="withdrawRate">0.009</span>₽</span>
                     </div>
-                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                        <span>Комиссия:</span>
-                        <span style="color:#ff4444;" id="withdrawFee">10%</span>
+                    <div class="modal-info-row">
+                        <span class="modal-info-label">Комиссия:</span>
+                        <span class="modal-info-value red" id="withdrawFee">10%</span>
                     </div>
-                    <div style="display:flex; justify-content:space-between; font-size:1.3rem;">
-                        <span>К получению:</span>
-                        <span style="color:#4caf50;" id="withdrawResult">4.05₽</span>
+                    <div class="modal-info-row">
+                        <span class="modal-info-label">К получению:</span>
+                        <span class="modal-info-value green" id="withdrawResult">4.05₽</span>
                     </div>
                 </div>
 
-                <button class="modal-button" onclick="processWithdraw()">✅ ПРОДАТЬ</button>
+                <button class="modal-button" onclick="processWithdraw()">✅ ПРОДАТЬ MARS</button>
             </div>
         </div>
     </div>
@@ -848,23 +997,23 @@
                     <h3 style="color:#ffd700; margin:20px 0;">💰 НАСТРОЙКИ ЭКОНОМИКИ</h3>
                     <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:15px; margin-bottom:30px;">
                         <div>
-                            <label>Курс покупки (₽):</label>
+                            <label style="color:#aaa;">Курс покупки (₽):</label>
                             <input type="number" id="buyPrice" class="modal-input" value="0.01" step="0.001" min="0.001" onchange="admin.updateEconomy()">
                         </div>
                         <div>
-                            <label>Курс продажи (₽):</label>
+                            <label style="color:#aaa;">Курс продажи (₽):</label>
                             <input type="number" id="sellPrice" class="modal-input" value="0.009" step="0.001" min="0.001" onchange="admin.updateEconomy()">
                         </div>
                         <div>
-                            <label>Комиссия (%):</label>
+                            <label style="color:#aaa;">Комиссия (%):</label>
                             <input type="number" id="withdrawFeePercent" class="modal-input" value="10" min="0" max="30" onchange="admin.updateEconomy()">
                         </div>
                         <div>
-                            <label>Реф. бонус (%):</label>
+                            <label style="color:#aaa;">Реф. бонус (%):</label>
                             <input type="number" id="referralPercent" class="modal-input" value="10" min="0" max="50" onchange="admin.updateEconomy()">
                         </div>
                         <div>
-                            <label>Задержка между кликами (мс):</label>
+                            <label style="color:#aaa;">Задержка между кликами (мс):</label>
                             <input type="number" id="clickCooldown" class="modal-input" value="500" min="200" max="5000" step="100" onchange="admin.updateEconomy()">
                         </div>
                     </div>
@@ -985,12 +1134,10 @@
                     <div class="stat-label">Бонус</div>
                 </div>
             </div>
-            <div style="background: rgba(255,255,255,0.1); padding:20px; border-radius:15px;">
-                <p style="margin-bottom:10px;">🔗 Ваша реферальная ссылка:</p>
-                <div style="display:flex; gap:10px;">
-                    <input type="text" class="modal-input" id="referralLink" readonly style="margin-bottom:0;">
-                    <button class="shop-button" onclick="copyReferralLink()" style="width:auto; padding:15px 30px;">📋 КОПИРОВАТЬ</button>
-                </div>
+            <div class="referral-link-container">
+                <p style="margin-bottom:10px; color:#ffd700;">🔗 Ваша реферальная ссылка:</p>
+                <input type="text" class="referral-link-input" id="referralLink" readonly>
+                <button class="copy-button" onclick="copyReferralLink()">📋 КОПИРОВАТЬ ССЫЛКУ</button>
             </div>
         </div>
 
@@ -1101,7 +1248,7 @@
                 sellPrice: 0.009,
                 withdrawFee: 10,
                 referralPercent: 10,
-                clickCooldown: 500, // Задержка между кликами в миллисекундах (по умолчанию 500мс = 2 клика в секунду)
+                clickCooldown: 500,
                 adminBalance: 0,
                 maxAutoClickers: 5,
                 maxDoubleClicks: 3,
@@ -1146,6 +1293,7 @@
             const boostsCountEl = document.getElementById('boostsCount');
             const displayBuyRate = document.getElementById('displayBuyRate');
             const displaySellRate = document.getElementById('displaySellRate');
+            const displayBuyRateModal = document.getElementById('displayBuyRateModal');
             const referralCountEl = document.getElementById('referralCount');
             const referralEarnedEl = document.getElementById('referralEarned');
             const referralPercentEl = document.getElementById('referralPercent');
@@ -1161,7 +1309,6 @@
                         economy = { ...economy, ...data };
                         updateEconomyDisplay();
                     } else {
-                        // Если нет данных, создаем начальные
                         db.ref('economy').set(economy);
                     }
                 });
@@ -1170,6 +1317,7 @@
             function updateEconomyDisplay() {
                 if (displayBuyRate) displayBuyRate.textContent = `1 MARS = ${economy.buyPrice}₽`;
                 if (displaySellRate) displaySellRate.textContent = `1 MARS = ${economy.sellPrice}₽`;
+                if (displayBuyRateModal) displayBuyRateModal.textContent = economy.buyPrice;
                 if (referralPercentEl) referralPercentEl.textContent = economy.referralPercent + '%';
                 
                 const buyPriceInput = document.getElementById('buyPrice');
@@ -1234,7 +1382,6 @@
                         player.isBanned = data.isBanned || false;
                         player.banReason = data.banReason || '';
 
-                        // Проверяем, не забанен ли игрок
                         if (player.isBanned) {
                             showNotification(`⛔ ВЫ ЗАБАНЕНЫ! Причина: ${player.banReason}`, 'error');
                             clickBtn.style.pointerEvents = 'none';
@@ -1247,7 +1394,6 @@
                         updateUI();
                         updateShopButtons();
                         
-                        // Запускаем автокликер если есть
                         if (player.autoClicker > 0 && !player.autoClickerInterval) {
                             player.autoClickerInterval = setInterval(handleClick, 1000);
                         }
@@ -1265,7 +1411,6 @@
                     return;
                 }
 
-                // Проверяем реферальный код из URL
                 const urlParams = new URLSearchParams(window.location.search);
                 const urlRef = urlParams.get('ref');
 
@@ -1293,7 +1438,6 @@
                     
                     localStorage.setItem('playerId', ref.key);
                     
-                    // Если есть реферал, начисляем бонус
                     if (player.referredBy) {
                         giveReferralBonus(player.referredBy, 500);
                     }
@@ -1395,7 +1539,7 @@
                     return;
                 }
                 document.getElementById('withdrawModal').classList.add('show');
-                document.getElementById('withdrawBalance').textContent = player.balance + ' MARS';
+                document.getElementById('withdrawBalance').textContent = player.balance.toLocaleString() + ' MARS';
                 document.getElementById('withdrawRate').textContent = economy.sellPrice + '₽';
                 document.getElementById('withdrawFee').textContent = economy.withdrawFee + '%';
                 updateWithdrawResult();
@@ -1408,7 +1552,7 @@
             function updateDepositResult() {
                 const amount = parseInt(document.getElementById('depositAmount').value) || 0;
                 const mars = Math.floor(amount / economy.buyPrice);
-                document.getElementById('depositResult').textContent = mars + ' MARS';
+                document.getElementById('depositResult').textContent = mars.toLocaleString() + ' MARS';
             }
 
             function updateWithdrawResult() {
@@ -1466,7 +1610,7 @@
                         savePlayer();
                         updateUI();
                         updateShopButtons();
-                        showNotification(`✅ +${marsAmount} MARS зачислено!`);
+                        showNotification(`✅ +${marsAmount.toLocaleString()} MARS зачислено!`);
                         closeDepositModal();
                     }
                 }
@@ -1502,7 +1646,6 @@
                 const fee = rubAmount * (economy.withdrawFee / 100);
                 const finalAmount = rubAmount - fee;
 
-                // Сохраняем заявку
                 db.ref('withdraws').push({
                     userId: player.id,
                     username: player.username,
@@ -1528,9 +1671,8 @@
                 });
             };
 
-            // ===== КЛИК С ПРОСТЫМ ОГРАНИЧЕНИЕМ =====
+            // ===== КЛИК =====
             window.handleClick = function() {
-                // Проверка на бан
                 if (player.isBanned) {
                     showNotification('⛔ Вы забанены!', 'error');
                     return;
@@ -1538,12 +1680,10 @@
 
                 const now = Date.now();
                 
-                // Проверяем, прошло ли достаточно времени с последнего клика
                 if (now - player.lastClickTime < economy.clickCooldown) {
                     const remaining = Math.ceil((economy.clickCooldown - (now - player.lastClickTime)) / 100) * 100;
                     cooldownTimer.textContent = `⏳ Подождите ${remaining / 1000} сек`;
                     
-                    // Добавляем класс для визуального эффекта
                     clickBtn.classList.add('cooldown');
                     setTimeout(() => {
                         clickBtn.classList.remove('cooldown');
@@ -1552,13 +1692,9 @@
                     return;
                 }
 
-                // Убираем таймер
                 cooldownTimer.textContent = '';
-
-                // Сохраняем время клика
                 player.lastClickTime = now;
 
-                // Расчет силы клика
                 let power = player.clickPower;
                 if (player.doubleClick > 0) {
                     power *= (1 + player.doubleClick);
@@ -1568,16 +1704,13 @@
                 player.clicks++;
                 player.totalEarned += power;
 
-                // Анимация
                 clickBtn.style.transform = 'scale(0.95)';
                 setTimeout(() => {
                     clickBtn.style.transform = 'scale(1)';
                 }, 100);
 
-                // Показываем +число
                 showFloatingText(`+${power}`);
 
-                // Повышение уровня (каждые 100 кликов)
                 const newLevel = Math.floor(player.clicks / 100) + 1;
                 if (newLevel > player.level) {
                     player.level = newLevel;
@@ -1590,7 +1723,6 @@
                 savePlayer();
             };
 
-            // Плавающий текст
             function showFloatingText(text) {
                 const floating = document.createElement('div');
                 floating.textContent = text;
@@ -1610,7 +1742,6 @@
                 setTimeout(() => floating.remove(), 1000);
             }
 
-            // Добавляем анимацию
             const style = document.createElement('style');
             style.textContent = `
                 @keyframes floatUp {
@@ -1700,7 +1831,7 @@
                     return;
                 }
 
-                if (confirm(`Купить планету ${name} за ${price} MARS?`)) {
+                if (confirm(`Купить планету ${name} за ${price.toLocaleString()} MARS?`)) {
                     player.balance -= price;
                     player.nft[planetId] = { boughtAt: Date.now() };
                     savePlayer();
@@ -1766,7 +1897,7 @@
                             <div class="nft-name">${planet.name}</div>
                             <div class="nft-rarity rarity-${planet.rarity}">${planet.rarity}</div>
                             <div class="nft-income">+${planet.income} MARS/час</div>
-                            <div class="nft-price">${planet.price} MARS</div>
+                            <div class="nft-price">${planet.price.toLocaleString()} MARS</div>
                             ${owned ? 
                                 '<button class="shop-button" disabled>Владеете</button>' : 
                                 `<button class="shop-button" onclick="buyNFT('${planet.id}', ${planet.price}, '${planet.name}')" 
@@ -1817,13 +1948,13 @@
                     const deposit = JSON.parse(pending);
                     
                     if (deposit.userId === player.id && !player.isBanned) {
-                        if (confirm(`✅ Получить ${deposit.mars} MARS?`)) {
+                        if (confirm(`✅ Получить ${deposit.mars.toLocaleString()} MARS?`)) {
                             player.balance += deposit.mars;
                             player.totalEarned += deposit.mars;
                             savePlayer();
                             updateUI();
                             updateShopButtons();
-                            showNotification(`💰 +${deposit.mars} MARS зачислено!`);
+                            showNotification(`💰 +${deposit.mars.toLocaleString()} MARS зачислено!`);
                         }
                         sessionStorage.removeItem('pendingDeposit');
                     }
@@ -1858,17 +1989,14 @@
                 switchTab(tab) {
                     this.currentTab = tab;
                     
-                    // Обновляем активные вкладки
                     document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
                     event.target.classList.add('active');
                     
-                    // Показываем нужную вкладку
                     document.getElementById('tabEconomy').style.display = tab === 'economy' ? 'block' : 'none';
                     document.getElementById('tabPlayers').style.display = tab === 'players' ? 'block' : 'none';
                     document.getElementById('tabWithdraws').style.display = tab === 'withdraws' ? 'block' : 'none';
                     document.getElementById('tabReferrals').style.display = tab === 'referrals' ? 'block' : 'none';
                     
-                    // Загружаем данные для вкладки
                     if (tab === 'players') this.loadPlayers();
                     if (tab === 'withdraws') this.loadWithdraws();
                     if (tab === 'referrals') this.loadReferrals();
