@@ -1063,6 +1063,13 @@
                     </div>
 
                     <button class="modal-button" onclick="admin.updateExchangeRates()">💾 СОХРАНИТЬ КУРСЫ ОБМЕНА</button>
+                    
+                    <!-- КНОПКА СБРОСА ИГРЫ -->
+                    <div style="margin-top: 30px; padding: 20px; background: rgba(255,68,68,0.1); border-radius: 15px; border: 2px solid #ff4444;">
+                        <h3 style="color:#ff4444; margin-bottom:20px;">⚠️ ОПАСНАЯ ЗОНА</h3>
+                        <button class="modal-button danger-button" onclick="admin.resetGame()" style="font-size:1.3rem; padding:20px;">🔄 ПОЛНЫЙ СБРОС ИГРЫ</button>
+                        <p style="color:#aaa; margin-top:15px; font-size:0.9rem;">Внимание! Это действие безвозвратно удалит всех игроков и все данные!</p>
+                    </div>
                 </div>
 
                 <!-- Вкладка Игроки -->
@@ -1122,7 +1129,7 @@
             <div class="click-info">
                 ⚡ +<span id="clickPowerDisplay">1</span> MARS за клик
             </div>
-            <!-- ЭТО ЗНАЧЕНИЕ ТЕПЕРЬ МОЖНО МЕНЯТЬ -->
+            <!-- ЭТО ЗНАЧЕНИЕ ТЕПЕРЬ МЕНЯЕТСЯ -->
             <div class="click-value" id="clickValue">≈ 0.01 ₽ за клик</div>
             <div class="cooldown-timer" id="cooldownTimer"></div>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px;">
@@ -1395,15 +1402,9 @@
                 // Обновляем поля в админке
                 const buyPriceInput = document.getElementById('buyPrice');
                 const sellPriceInput = document.getElementById('sellPrice');
-                const withdrawFeeInput = document.getElementById('withdrawFeePercent');
-                const referralPercentInput = document.getElementById('referralPercent');
-                const clickCooldownInput = document.getElementById('clickCooldown');
                 
                 if (buyPriceInput) buyPriceInput.value = economy.buyPrice;
                 if (sellPriceInput) sellPriceInput.value = economy.sellPrice;
-                if (withdrawFeeInput) withdrawFeeInput.value = economy.withdrawFee;
-                if (referralPercentInput) referralPercentInput.value = economy.referralPercent;
-                if (clickCooldownInput) clickCooldownInput.value = economy.clickCooldown;
 
                 // Обновляем предпросмотр стоимости клика
                 if (previewClickValue) previewClickValue.textContent = economy.clickRate + ' ₽';
