@@ -624,6 +624,11 @@
             let spinning = false;
             let animationTimeout = null;
             
+            // Устанавливаем начальную позицию - смещаем трек влево, чтобы начало было за пределами экрана
+            // Это создаст эффект прокрутки слева направо
+            const initialOffset = -5000;
+            track.style.transform = `translateX(${initialOffset}px)`;
+            
             // Функция для получения центрального предмета
             function getCenterItem() {
                 const wrapperRect = wrapper.getBoundingClientRect();
@@ -686,21 +691,22 @@
                     
                     // Текущая позиция трека
                     const currentTransform = track.style.transform;
-                    let currentX = 0;
+                    let currentX = initialOffset;
                     if (currentTransform) {
                         const match = currentTransform.match(/translateX\(([-\d.]+)px\)/);
                         if (match) currentX = parseFloat(match[1]);
                     }
                     
                     // Нужная позиция, чтобы целевой предмет оказался в центре
-                    const targetPosition = currentX - offsetToCenter;
+                    // Движение влево (уменьшаем translateX)
+                    const targetPosition = currentX - offsetToCenter - 800;
                     
                     // Добавляем случайное смещение для вариативности
-                    const randomOffset = (Math.random() - 0.5) * 200;
+                    const randomOffset = (Math.random() - 0.5) * 300;
                     const finalPosition = targetPosition + randomOffset;
                     
-                    // Запускаем анимацию
-                    track.style.transition = 'transform 2s cubic-bezier(0.2, 0.9, 0.3, 1.1)';
+                    // Запускаем анимацию - движение ВЛЕВО
+                    track.style.transition = 'transform 2.5s cubic-bezier(0.1, 0.9, 0.2, 1)';
                     track.style.transform = `translateX(${finalPosition}px)`;
                     
                     // После завершения анимации
@@ -721,7 +727,7 @@
                         }
                         
                         spinning = false;
-                    }, 2100);
+                    }, 2600);
                 } else {
                     finishOpening(targetItem, modal, resultContainer);
                     spinning = false;
