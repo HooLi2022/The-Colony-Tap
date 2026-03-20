@@ -98,11 +98,6 @@
             gap: 10px;
         }
 
-        .section-title::before {
-            content: "🎁";
-            font-size: 2rem;
-        }
-
         .cases-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -178,7 +173,7 @@
             cursor: not-allowed;
         }
 
-        /* АНИМАЦИЯ ОТКРЫТИЯ */
+        /* АНИМАЦИЯ ОТКРЫТИЯ С ПОЛОСКОЙ ПОСЕРЕДИНЕ */
         .opening-animation {
             position: fixed;
             top: 0;
@@ -191,70 +186,154 @@
             align-items: center;
             justify-content: center;
             backdrop-filter: blur(10px);
-            animation: fadeIn 0.3s;
         }
 
         .opening-animation.hidden {
             display: none;
         }
 
-        .roulette {
-            width: 80%;
-            max-width: 800px;
+        .roulette-container {
+            width: 90%;
+            max-width: 1000px;
             background: linear-gradient(135deg, #1a1f2a, #0f1219);
             border-radius: 30px;
-            padding: 40px;
+            padding: 30px;
             text-align: center;
             border: 3px solid #ffd700;
+            position: relative;
         }
 
-        .roulette-items {
-            display: flex;
-            overflow: hidden;
-            margin: 30px 0;
+        .roulette-title {
+            color: #ffd700;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .roulette-wrapper {
             position: relative;
-            height: 200px;
+            overflow: hidden;
+            margin: 20px 0;
             border-radius: 20px;
             background: #0a0e1a;
+            padding: 20px 0;
         }
 
         .roulette-track {
             display: flex;
-            animation: spin 2s ease-out forwards;
+            gap: 10px;
+            will-change: transform;
         }
 
         .roulette-item {
-            min-width: 150px;
-            padding: 20px;
+            min-width: 140px;
+            padding: 20px 15px;
             text-align: center;
-            background: #1f242f;
-            margin: 0 5px;
+            background: linear-gradient(135deg, #2a2f3a, #1a1f2a);
             border-radius: 15px;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .roulette-item.active {
+            border-color: #ffd700;
+            box-shadow: 0 0 20px rgba(255,215,0,0.5);
+            transform: scale(1.02);
         }
 
         .roulette-item-icon {
             font-size: 3rem;
+            margin-bottom: 10px;
         }
 
         .roulette-item-name {
-            font-size: 1rem;
-            margin-top: 10px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 5px;
         }
 
         .roulette-item-price {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: #ffd700;
-            margin-top: 5px;
         }
 
-        @keyframes spin {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
+        /* ПОЛОСКА ПОСЕРЕДИНЕ */
+        .center-indicator {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, #ffd700, #ffaa00, #ffd700);
+            z-index: 10;
+            box-shadow: 0 0 15px rgba(255,215,0,0.8);
+            pointer-events: none;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .center-indicator::before,
+        .center-indicator::after {
+            content: "▼";
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ffd700;
+            font-size: 20px;
+            text-shadow: 0 0 5px rgba(255,215,0,0.5);
+        }
+
+        .center-indicator::before {
+            top: -20px;
+        }
+
+        .center-indicator::after {
+            bottom: -20px;
+            transform: translateX(-50%) rotate(180deg);
+        }
+
+        /* КНОПКИ УПРАВЛЕНИЯ */
+        .roulette-controls {
+            margin-top: 30px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .spin-btn {
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            color: #1a1f2a;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .spin-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255,215,0,0.5);
+        }
+
+        .spin-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .skip-btn {
+            background: linear-gradient(135deg, #4caf50, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .skip-btn:hover {
+            transform: scale(1.05);
         }
 
         .result-popup {
@@ -262,7 +341,7 @@
             padding: 20px;
             background: rgba(76,175,80,0.2);
             border-radius: 15px;
-            border: 1px solid #4caf50;
+            border: 2px solid #4caf50;
             animation: bounce 0.5s;
         }
 
@@ -337,7 +416,6 @@
             background: #45a049;
         }
 
-        /* КНОПКА СБРОСА */
         .reset-btn {
             position: fixed;
             bottom: 20px;
@@ -358,7 +436,6 @@
             transform: scale(1.05);
         }
 
-        /* УВЕДОМЛЕНИЯ */
         .notification {
             position: fixed;
             top: 20px;
@@ -384,11 +461,17 @@
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
+
+        .rarity-common { color: #808080; }
+        .rarity-rare { color: #4169e1; }
+        .rarity-epic { color: #9400d3; }
+        .rarity-legendary { color: #ff8c00; }
+        .rarity-mythical { color: #ff00ff; }
+        .rarity-divine { color: #00ffff; }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- ШАПКА -->
         <div class="header">
             <div class="balance-info">
                 <div class="balance-card">
@@ -408,23 +491,18 @@
             </div>
         </div>
 
-        <!-- КЕЙСЫ -->
         <div class="cases-section">
             <h2 class="section-title">Доступные кейсы</h2>
             <div class="cases-grid" id="casesList"></div>
         </div>
 
-        <!-- ИНВЕНТАРЬ -->
         <div class="inventory-section">
-            <h2 class="section-title" style="--content: '📦';">Мой инвентарь</h2>
+            <h2 class="section-title">📦 Мой инвентарь</h2>
             <div class="inventory-grid" id="inventoryList"></div>
         </div>
     </div>
 
-    <!-- Кнопка сброса -->
     <button class="reset-btn" onclick="resetGame()">🔄 СБРОС ИГРЫ</button>
-
-    <!-- Уведомления -->
     <div class="notification" id="notification"></div>
 
     <script>
@@ -477,21 +555,21 @@
             }
         ];
 
-        // ===== СОСТОЯНИЕ ИГРОКА =====
         let player = {
             balance: 1000,
             casesOpened: 0,
             inventory: []
         };
 
-        // ===== DOM ЭЛЕМЕНТЫ =====
+        let currentCase = null;
+        let animationTimeout = null;
+
         const balanceEl = document.getElementById('balance');
         const casesOpenedEl = document.getElementById('casesOpened');
         const itemsValueEl = document.getElementById('itemsValue');
         const casesList = document.getElementById('casesList');
         const inventoryList = document.getElementById('inventoryList');
 
-        // ===== ЗАГРУЗКА ДАННЫХ =====
         function loadGame() {
             const saved = localStorage.getItem('cs2_opener');
             if (saved) {
@@ -513,17 +591,13 @@
             }));
         }
 
-        // ===== ОБНОВЛЕНИЕ UI =====
         function updateUI() {
             balanceEl.textContent = player.balance.toLocaleString();
             casesOpenedEl.textContent = player.casesOpened;
-            
-            // Подсчёт общей стоимости инвентаря
             const totalValue = player.inventory.reduce((sum, item) => sum + item.price, 0);
             itemsValueEl.textContent = totalValue.toLocaleString();
         }
 
-        // ===== РЕНДЕР КЕЙСОВ =====
         function renderCases() {
             casesList.innerHTML = cases.map(caseItem => `
                 <div class="case-card">
@@ -539,14 +613,12 @@
             `).join('');
         }
 
-        // ===== РЕНДЕР ИНВЕНТАРЯ =====
         function renderInventory() {
             if (player.inventory.length === 0) {
                 inventoryList.innerHTML = '<div style="text-align:center; color:#aaa; grid-column:1/-1;">Инвентарь пуст. Откройте кейс!</div>';
                 return;
             }
             
-            // Группировка предметов
             const grouped = {};
             player.inventory.forEach(item => {
                 const key = `${item.name}|${item.icon}`;
@@ -567,7 +639,6 @@
             `).join('');
         }
 
-        // ===== ОТКРЫТИЕ КЕЙСА =====
         function openCase(caseId) {
             const caseItem = cases.find(c => c.id === caseId);
             if (!caseItem) return;
@@ -577,44 +648,26 @@
                 return;
             }
             
-            // Списываем монеты
-            player.balance -= caseItem.price;
-            player.casesOpened++;
-            
-            // Выбираем случайный предмет
-            const randomIndex = Math.floor(Math.random() * caseItem.items.length);
-            const wonItem = { ...caseItem.items[randomIndex], wonAt: Date.now() };
-            
-            // Добавляем в инвентарь
-            player.inventory.push(wonItem);
-            
-            saveGame();
-            updateUI();
-            renderInventory();
-            
-            // Показываем анимацию
-            showOpeningAnimation(wonItem, caseItem);
+            currentCase = caseItem;
+            showRouletteAnimation(caseItem);
         }
 
-        // ===== АНИМАЦИЯ ОТКРЫТИЯ =====
-        function showOpeningAnimation(wonItem, caseItem) {
-            // Создаём модальное окно с анимацией
+        function showRouletteAnimation(caseItem) {
+            // Создаём модальное окно
             const modal = document.createElement('div');
             modal.className = 'opening-animation';
+            
+            // Удваиваем предметы для бесконечной прокрутки
+            const itemsList = [...caseItem.items, ...caseItem.items, ...caseItem.items];
+            
             modal.innerHTML = `
-                <div class="roulette">
-                    <h2 style="color:#ffd700;">🎲 ОТКРЫТИЕ КЕЙСА</h2>
-                    <div class="roulette-items" id="rouletteItems">
+                <div class="roulette-container">
+                    <div class="roulette-title">🎲 ОТКРЫТИЕ КЕЙСА: ${caseItem.name}</div>
+                    <div class="roulette-wrapper">
+                        <div class="center-indicator"></div>
                         <div class="roulette-track" id="rouletteTrack">
-                            ${caseItem.items.map(item => `
-                                <div class="roulette-item">
-                                    <div class="roulette-item-icon">${item.icon}</div>
-                                    <div class="roulette-item-name">${item.name}</div>
-                                    <div class="roulette-item-price">${item.price}💰</div>
-                                </div>
-                            `).join('')}
-                            ${caseItem.items.map(item => `
-                                <div class="roulette-item">
+                            ${itemsList.map(item => `
+                                <div class="roulette-item" data-name="${item.name}">
                                     <div class="roulette-item-icon">${item.icon}</div>
                                     <div class="roulette-item-name">${item.name}</div>
                                     <div class="roulette-item-price">${item.price}💰</div>
@@ -622,45 +675,214 @@
                             `).join('')}
                         </div>
                     </div>
-                    <div class="result-popup" id="resultPopup" style="display: none;">
-                        <div style="font-size: 3rem;">${wonItem.icon}</div>
-                        <div style="font-size: 1.5rem; margin: 10px 0;">🎉 ВЫ ВЫИГРАЛИ!</div>
-                        <div style="font-size: 1.2rem; font-weight: bold;">${wonItem.name}</div>
-                        <div style="color: #ffd700; margin-top: 5px;">Стоимость: ${wonItem.price}💰</div>
-                        <button class="open-btn" onclick="this.closest('.opening-animation').remove()" style="margin-top: 20px;">ЗАБРАТЬ</button>
+                    <div class="roulette-controls">
+                        <button class="spin-btn" id="spinBtn">🎰 КРУТИТЬ</button>
+                        <button class="skip-btn" id="skipBtn" style="display: none;">⚡ ПРОПУСТИТЬ</button>
                     </div>
+                    <div id="resultContainer" style="display: none;"></div>
                 </div>
             `;
             
             document.body.appendChild(modal);
             
-            // Анимация прокрутки
             const track = modal.querySelector('#rouletteTrack');
-            const items = modal.querySelectorAll('.roulette-item');
-            const targetIndex = caseItem.items.findIndex(i => i.name === wonItem.name);
+            const spinBtn = modal.querySelector('#spinBtn');
+            const skipBtn = modal.querySelector('#skipBtn');
+            const resultContainer = modal.querySelector('#resultContainer');
             
-            // Рассчитываем позицию
-            const itemWidth = 160;
-            const targetPosition = (targetIndex + caseItem.items.length) * itemWidth;
+            let spinning = false;
+            let animationId = null;
+            let startTime = null;
+            let duration = 3000;
+            let startPosition = 0;
+            let targetIndex = null;
             
-            track.style.animation = 'none';
-            track.offsetHeight;
-            track.style.animation = 'spin 2s ease-out forwards';
-            track.style.transform = `translateX(-${targetPosition}px)`;
-            
-            // Показываем результат через 2 секунды
-            setTimeout(() => {
-                const resultPopup = modal.querySelector('#resultPopup');
-                resultPopup.style.display = 'block';
+            // Функция для определения предмета по центру
+            function getCenterItem() {
+                const container = modal.querySelector('.roulette-wrapper');
+                const containerRect = container.getBoundingClientRect();
+                const centerX = containerRect.left + containerRect.width / 2;
                 
-                // Прокручиваем к результату
-                resultPopup.scrollIntoView({ behavior: 'smooth' });
-            }, 2000);
+                const items = modal.querySelectorAll('.roulette-item');
+                for (let item of items) {
+                    const rect = item.getBoundingClientRect();
+                    if (centerX >= rect.left && centerX <= rect.right) {
+                        return item;
+                    }
+                }
+                return null;
+            }
+            
+            // Функция для подсветки центрального предмета
+            function highlightCenterItem() {
+                const centerItem = getCenterItem();
+                const allItems = modal.querySelectorAll('.roulette-item');
+                allItems.forEach(item => item.classList.remove('active'));
+                if (centerItem) {
+                    centerItem.classList.add('active');
+                }
+            }
+            
+            // Анимация прокрутки
+            function animateSpin(timestamp) {
+                if (!startTime) startTime = timestamp;
+                const elapsed = timestamp - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Easing функция для плавной остановки
+                const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+                const easedProgress = easeOut(progress);
+                
+                // Расчёт позиции
+                const totalDistance = 8000; // Общее расстояние прокрутки
+                const currentPos = startPosition - (totalDistance * easedProgress);
+                track.style.transform = `translateX(${currentPos}px)`;
+                
+                // Подсветка центрального предмета
+                highlightCenterItem();
+                
+                if (progress < 1) {
+                    animationId = requestAnimationFrame(animateSpin);
+                } else {
+                    // Анимация завершена
+                    spinning = false;
+                    cancelAnimationFrame(animationId);
+                    
+                    // Получаем выигрышный предмет
+                    const centerItem = getCenterItem();
+                    if (centerItem) {
+                        const itemName = centerItem.dataset.name;
+                        const wonItem = caseItem.items.find(i => i.name === itemName);
+                        
+                        if (wonItem) {
+                            finishOpening(wonItem, modal, resultContainer);
+                        }
+                    }
+                }
+            }
+            
+            function startSpin() {
+                if (spinning) return;
+                
+                spinning = true;
+                startTime = null;
+                
+                // Случайный выбор предмета
+                const randomIndex = Math.floor(Math.random() * caseItem.items.length);
+                const targetItem = caseItem.items[randomIndex];
+                targetIndex = randomIndex;
+                
+                // Находим позицию нужного предмета в списке
+                const items = modal.querySelectorAll('.roulette-item');
+                let targetElement = null;
+                for (let i = 0; i < items.length; i++) {
+                    if (items[i].dataset.name === targetItem.name) {
+                        targetElement = items[i];
+                        break;
+                    }
+                }
+                
+                if (targetElement) {
+                    const container = modal.querySelector('.roulette-wrapper');
+                    const containerRect = container.getBoundingClientRect();
+                    const targetRect = targetElement.getBoundingClientRect();
+                    const centerX = containerRect.left + containerRect.width / 2;
+                    const currentCenterX = targetRect.left + targetRect.width / 2;
+                    const offset = currentCenterX - centerX;
+                    
+                    // Устанавливаем начальную позицию
+                    const currentTransform = track.style.transform;
+                    const match = currentTransform.match(/translateX\(([-\d.]+)px\)/);
+                    const currentX = match ? parseFloat(match[1]) : 0;
+                    startPosition = currentX + offset;
+                    
+                    // Сбрасываем transform и запускаем анимацию
+                    track.style.transform = `translateX(${startPosition}px)`;
+                    startTime = null;
+                    animationId = requestAnimationFrame(animateSpin);
+                }
+                
+                // Показываем кнопку пропуска
+                spinBtn.disabled = true;
+                skipBtn.style.display = 'inline-block';
+            }
+            
+            function skipAnimation() {
+                if (!spinning) return;
+                
+                // Принудительное завершение анимации
+                cancelAnimationFrame(animationId);
+                spinning = false;
+                
+                // Получаем текущий центральный предмет
+                const centerItem = getCenterItem();
+                if (centerItem) {
+                    const itemName = centerItem.dataset.name;
+                    const wonItem = caseItem.items.find(i => i.name === itemName);
+                    if (wonItem) {
+                        finishOpening(wonItem, modal, resultContainer);
+                    }
+                }
+            }
+            
+            spinBtn.onclick = startSpin;
+            skipBtn.onclick = skipAnimation;
+            
+            // Инициализация позиции
+            track.style.transform = 'translateX(0px)';
+            highlightCenterItem();
+            
+            // Добавляем обработчик для обновления подсветки при скролле
+            const wrapper = modal.querySelector('.roulette-wrapper');
+            wrapper.addEventListener('scroll', highlightCenterItem);
         }
-
-        // ===== ПРОДАЖА ПРЕДМЕТА =====
+        
+        function finishOpening(wonItem, modal, resultContainer) {
+            // Списываем монеты
+            player.balance -= currentCase.price;
+            player.casesOpened++;
+            
+            // Добавляем предмет в инвентарь
+            player.inventory.push({ ...wonItem, wonAt: Date.now() });
+            
+            saveGame();
+            updateUI();
+            renderInventory();
+            renderCases();
+            
+            // Показываем результат
+            const rarityColors = {
+                common: '#808080',
+                rare: '#4169e1',
+                epic: '#9400d3',
+                legendary: '#ff8c00',
+                mythical: '#ff00ff',
+                divine: '#00ffff'
+            };
+            
+            resultContainer.innerHTML = `
+                <div class="result-popup" style="animation: bounce 0.5s;">
+                    <div style="font-size: 4rem;">${wonItem.icon}</div>
+                    <div style="font-size: 1.8rem; margin: 10px 0;">🎉 ВЫ ВЫИГРАЛИ!</div>
+                    <div style="font-size: 1.3rem; font-weight: bold; color: ${rarityColors[wonItem.rarity]}">${wonItem.name}</div>
+                    <div style="color: #ffd700; margin-top: 5px;">💰 Стоимость: ${wonItem.price} монет</div>
+                    <div style="color: #aaa; margin-top: 5px;">⭐ Редкость: ${wonItem.rarity.toUpperCase()}</div>
+                    <button class="spin-btn" onclick="this.closest('.opening-animation').remove()" style="margin-top: 20px;">✨ ЗАБРАТЬ</button>
+                </div>
+            `;
+            resultContainer.style.display = 'block';
+            
+            // Скрываем кнопки
+            const controls = modal.querySelector('.roulette-controls');
+            if (controls) controls.style.display = 'none';
+            
+            // Автоматическое закрытие через 3 секунды
+            setTimeout(() => {
+                modal.remove();
+            }, 4000);
+        }
+        
         function sellItem(itemName, itemIcon) {
-            // Находим все предметы с таким именем
             const itemsToSell = player.inventory.filter(item => item.name === itemName && item.icon === itemIcon);
             
             if (itemsToSell.length === 0) {
@@ -671,7 +893,6 @@
             const totalPrice = itemsToSell.reduce((sum, item) => sum + item.price, 0);
             
             if (confirm(`Продать ${itemsToSell.length} шт. "${itemName}" за ${totalPrice} монет?`)) {
-                // Удаляем все такие предметы
                 player.inventory = player.inventory.filter(item => !(item.name === itemName && item.icon === itemIcon));
                 player.balance += totalPrice;
                 
@@ -682,8 +903,7 @@
                 showNotification(`✅ Продано! +${totalPrice} монет`);
             }
         }
-
-        // ===== СБРОС ИГРЫ =====
+        
         function resetGame() {
             if (confirm('⚠️ ВНИМАНИЕ! Весь прогресс будет удален. Продолжить?')) {
                 player = {
@@ -698,8 +918,7 @@
                 showNotification('🔄 Игра сброшена!');
             }
         }
-
-        // ===== УВЕДОМЛЕНИЯ =====
+        
         function showNotification(message, type = 'success') {
             const notification = document.getElementById('notification');
             notification.textContent = message;
@@ -708,8 +927,7 @@
                 notification.classList.remove('show');
             }, 3000);
         }
-
-        // ===== ИНИЦИАЛИЗАЦИЯ =====
+        
         loadGame();
     </script>
 </body>
