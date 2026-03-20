@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎁 CS2 CASE OPENER | Открытие кейсов</title>
+    <title>🎁 CS2 CASE OPENER | Массовое открытие кейсов</title>
     <style>
         * {
             margin: 0;
@@ -75,7 +75,7 @@
 
         .cases-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 25px;
             margin-top: 20px;
         }
@@ -111,6 +111,44 @@
             margin: 15px 0;
         }
 
+        .case-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+        }
+
+        .case-controls button {
+            background: #2a2f3a;
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .case-controls button:hover {
+            background: #ffd700;
+            color: #1a1f2a;
+        }
+
+        .case-count {
+            font-size: 1.3rem;
+            font-weight: bold;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .total-price {
+            font-size: 0.9rem;
+            color: #ffd700;
+            margin: 10px 0;
+        }
+
         .open-btn {
             background: linear-gradient(135deg, #ffd700, #ffaa00);
             color: #1a1f2a;
@@ -134,8 +172,8 @@
             cursor: not-allowed;
         }
 
-        /* АНИМАЦИЯ ОТКРЫТИЯ */
-        .opening-animation {
+        /* МАССОВОЕ ОТКРЫТИЕ */
+        .mass-open-modal {
             position: fixed;
             top: 0;
             left: 0;
@@ -147,152 +185,161 @@
             align-items: center;
             justify-content: center;
             backdrop-filter: blur(10px);
+            overflow-y: auto;
+            padding: 20px;
         }
 
-        .roulette-container {
+        .mass-open-container {
             width: 95%;
-            max-width: 1200px;
+            max-width: 1400px;
             background: linear-gradient(135deg, #1a1f2a, #0f1219);
             border-radius: 30px;
             padding: 30px;
-            text-align: center;
             border: 3px solid #ffd700;
+        }
+
+        .mass-open-title {
+            color: #ffd700;
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .roulettes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-height: 60vh;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .roulette-card {
+            background: linear-gradient(135deg, #1f242f, #151a24);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255,215,0,0.3);
             position: relative;
         }
 
-        .roulette-title {
-            color: #ffd700;
-            font-size: 1.5rem;
-            margin-bottom: 20px;
+        .roulette-card .roulette-number {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #ffd700;
+            color: #1a1f2a;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
         }
 
         .roulette-wrapper {
             position: relative;
             overflow: hidden;
-            margin: 20px 0;
-            border-radius: 20px;
+            margin: 15px 0;
+            border-radius: 15px;
             background: #0a0e1a;
-            padding: 20px 0;
-            min-height: 220px;
+            padding: 15px 0;
+            min-height: 180px;
         }
 
         .roulette-track {
             display: flex;
-            gap: 12px;
-            transition: transform 2s cubic-bezier(0.2, 0.9, 0.3, 1.1);
+            gap: 10px;
+            transition: transform 2s cubic-bezier(0.1, 0.9, 0.2, 1);
             will-change: transform;
         }
 
         .roulette-item {
-            min-width: 140px;
-            padding: 20px 15px;
+            min-width: 100px;
+            padding: 15px 10px;
             text-align: center;
             background: linear-gradient(135deg, #2a2f3a, #1a1f2a);
-            border-radius: 15px;
-            transition: all 0.2s;
+            border-radius: 12px;
             border: 2px solid transparent;
         }
 
         .roulette-item.active {
             border-color: #ffd700;
-            box-shadow: 0 0 20px rgba(255,215,0,0.5);
+            box-shadow: 0 0 15px rgba(255,215,0,0.5);
             transform: scale(1.02);
-            background: linear-gradient(135deg, #3a3f4a, #2a2f3a);
         }
 
         .roulette-item-icon {
-            font-size: 3rem;
-            margin-bottom: 10px;
+            font-size: 2rem;
         }
 
         .roulette-item-name {
-            font-size: 0.85rem;
-            font-weight: bold;
-            margin-bottom: 5px;
+            font-size: 0.7rem;
+            margin-top: 5px;
         }
 
         .roulette-item-price {
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             color: #ffd700;
         }
 
-        /* ПОЛОСКА ПОСЕРЕДИНЕ */
         .center-indicator {
             position: absolute;
             top: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 4px;
+            width: 3px;
             height: 100%;
             background: linear-gradient(to bottom, #ffd700, #ffaa00, #ffd700);
             z-index: 20;
-            box-shadow: 0 0 15px rgba(255,215,0,0.8);
+            box-shadow: 0 0 10px rgba(255,215,0,0.8);
             pointer-events: none;
         }
 
-        .center-indicator::before,
-        .center-indicator::after {
-            content: "▼";
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #ffd700;
-            font-size: 20px;
-            text-shadow: 0 0 5px rgba(255,215,0,0.5);
+        .roulette-result {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(76,175,80,0.2);
+            border-radius: 10px;
+            font-size: 0.85rem;
         }
 
-        .center-indicator::before {
-            top: -20px;
-        }
-
-        .center-indicator::after {
-            bottom: -20px;
-            transform: translateX(-50%) rotate(180deg);
-        }
-
-        .roulette-controls {
+        .mass-open-controls {
             margin-top: 30px;
             display: flex;
             gap: 20px;
             justify-content: center;
         }
 
-        .spin-btn, .close-btn {
+        .mass-spin-btn, .mass-close-btn {
             background: linear-gradient(135deg, #ffd700, #ffaa00);
             color: #1a1f2a;
             border: none;
             padding: 15px 40px;
             border-radius: 50px;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
         }
 
-        .spin-btn:hover, .close-btn:hover {
+        .mass-spin-btn:hover, .mass-close-btn:hover {
             transform: scale(1.05);
             box-shadow: 0 0 20px rgba(255,215,0,0.5);
         }
 
-        .spin-btn:disabled {
+        .mass-spin-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-            transform: none;
         }
 
-        .result-popup {
+        .summary-results {
             margin-top: 20px;
-            padding: 20px;
-            background: rgba(76,175,80,0.2);
+            padding: 15px;
+            background: rgba(0,0,0,0.5);
             border-radius: 15px;
-            border: 2px solid #4caf50;
-            animation: bounce 0.5s;
-        }
-
-        @keyframes bounce {
-            0% { transform: scale(0.8); opacity: 0; }
-            80% { transform: scale(1.05); }
-            100% { transform: scale(1); opacity: 1; }
+            text-align: center;
         }
 
         .inventory-section {
@@ -339,7 +386,6 @@
         .inventory-item-price {
             font-size: 0.7rem;
             color: #ffd700;
-            margin-top: 5px;
         }
 
         .sell-btn {
@@ -436,7 +482,7 @@
     <div class="notification" id="notification"></div>
 
     <script>
-        // ===== ДАННЫЕ КЕЙСОВ И ПРЕДМЕТОВ =====
+        // Данные кейсов
         const cases = [
             {
                 id: 'case_1',
@@ -486,12 +532,17 @@
         ];
 
         let player = {
-            balance: 1000,
+            balance: 10000,
             casesOpened: 0,
             inventory: []
         };
 
-        let currentCase = null;
+        // Количество выбранных кейсов для каждого типа
+        let selectedCounts = {
+            case_1: 1,
+            case_2: 1,
+            case_3: 1
+        };
 
         const balanceEl = document.getElementById('balance');
         const casesOpenedEl = document.getElementById('casesOpened');
@@ -527,19 +578,37 @@
             itemsValueEl.textContent = totalValue.toLocaleString();
         }
 
+        function updateCount(caseId, delta) {
+            const newCount = selectedCounts[caseId] + delta;
+            if (newCount >= 1 && newCount <= 10) {
+                selectedCounts[caseId] = newCount;
+                renderCases();
+            }
+        }
+
         function renderCases() {
-            casesList.innerHTML = cases.map(caseItem => `
-                <div class="case-card">
-                    <div class="case-image">${caseItem.icon}</div>
-                    <div class="case-name">${caseItem.name}</div>
-                    <div class="case-price">${caseItem.price} <span>монет</span></div>
-                    <div class="case-items">${caseItem.items.length} предметов</div>
-                    <button class="open-btn" onclick="openCase('${caseItem.id}')" 
-                        ${player.balance < caseItem.price ? 'disabled' : ''}>
-                        🎁 ОТКРЫТЬ
-                    </button>
-                </div>
-            `).join('');
+            casesList.innerHTML = cases.map(caseItem => {
+                const totalPrice = caseItem.price * selectedCounts[caseItem.id];
+                const canAfford = player.balance >= totalPrice;
+                
+                return `
+                    <div class="case-card">
+                        <div class="case-image">${caseItem.icon}</div>
+                        <div class="case-name">${caseItem.name}</div>
+                        <div class="case-price">${caseItem.price} <span>монет/шт</span></div>
+                        <div class="case-controls">
+                            <button onclick="updateCount('${caseItem.id}', -1)" ${selectedCounts[caseItem.id] <= 1 ? 'disabled' : ''}>-</button>
+                            <span class="case-count">${selectedCounts[caseItem.id]}</span>
+                            <button onclick="updateCount('${caseItem.id}', 1)" ${selectedCounts[caseItem.id] >= 10 ? 'disabled' : ''}>+</button>
+                        </div>
+                        <div class="total-price">💰 Итого: ${totalPrice} монет</div>
+                        <button class="open-btn" onclick="openMultipleCases('${caseItem.id}')" 
+                            ${!canAfford ? 'disabled' : ''}>
+                            🎁 ОТКРЫТЬ ${selectedCounts[caseItem.id]} КЕЙС(ОВ)
+                        </button>
+                    </div>
+                `;
+            }).join('');
         }
 
         function renderInventory() {
@@ -568,111 +637,105 @@
             `).join('');
         }
 
-        function openCase(caseId) {
+        function openMultipleCases(caseId) {
             const caseItem = cases.find(c => c.id === caseId);
             if (!caseItem) return;
             
-            if (player.balance < caseItem.price) {
+            const count = selectedCounts[caseId];
+            const totalPrice = caseItem.price * count;
+            
+            if (player.balance < totalPrice) {
                 showNotification('❌ Недостаточно монет!', 'error');
                 return;
             }
             
-            currentCase = caseItem;
-            showRouletteAnimation(caseItem);
+            // Списываем монеты
+            player.balance -= totalPrice;
+            player.casesOpened += count;
+            
+            // Генерируем выигрыши для каждого кейса
+            const results = [];
+            for (let i = 0; i < count; i++) {
+                const randomIndex = Math.floor(Math.random() * caseItem.items.length);
+                const wonItem = { ...caseItem.items[randomIndex], wonAt: Date.now() };
+                player.inventory.push(wonItem);
+                results.push(wonItem);
+            }
+            
+            saveGame();
+            updateUI();
+            renderInventory();
+            
+            // Показываем анимацию массового открытия
+            showMassOpenAnimation(caseItem, results);
         }
-
-        function showRouletteAnimation(caseItem) {
-            // СОЗДАЁМ 100 КОПИЙ ПРЕДМЕТОВ ДЛЯ БЕСКОНЕЧНОЙ ПРОКРУТКИ
-            const ITEM_COPIES = 100;
+        
+        function showMassOpenAnimation(caseItem, results) {
+            const ITEM_COPIES = 50;
             const itemsList = [];
             for (let i = 0; i < ITEM_COPIES; i++) {
                 itemsList.push(...caseItem.items);
             }
             
             const modal = document.createElement('div');
-            modal.className = 'opening-animation';
+            modal.className = 'mass-open-modal';
             
-            modal.innerHTML = `
-                <div class="roulette-container">
-                    <div class="roulette-title">🎲 ОТКРЫТИЕ КЕЙСА: ${caseItem.name}</div>
-                    <div class="roulette-wrapper" id="rouletteWrapper">
+            // Создаём рулетки для каждого кейса
+            const roulettesHTML = results.map((result, idx) => `
+                <div class="roulette-card" id="roulette-${idx}">
+                    <div class="roulette-number">${idx + 1}</div>
+                    <div class="roulette-wrapper" style="min-height: 160px;">
                         <div class="center-indicator"></div>
-                        <div class="roulette-track" id="rouletteTrack">
-                            ${itemsList.map((item, idx) => `
+                        <div class="roulette-track" id="track-${idx}">
+                            ${itemsList.map((item, itemIdx) => `
                                 <div class="roulette-item" data-name="${item.name}" data-price="${item.price}" data-rarity="${item.rarity}" data-icon="${item.icon}">
                                     <div class="roulette-item-icon">${item.icon}</div>
-                                    <div class="roulette-item-name">${item.name}</div>
+                                    <div class="roulette-item-name">${item.name.substring(0, 15)}</div>
                                     <div class="roulette-item-price">${item.price}💰</div>
                                 </div>
                             `).join('')}
                         </div>
                     </div>
-                    <div class="roulette-controls" id="rouletteControls">
-                        <button class="spin-btn" id="spinBtn">🎰 КРУТИТЬ</button>
+                    <div class="roulette-result" id="result-${idx}" style="display: none;">
+                        <div style="font-size: 1.2rem;">✨ ${result.icon} ${result.name}</div>
+                        <div style="color: #ffd700;">+${result.price}💰</div>
                     </div>
-                    <div id="resultContainer" style="display: none;"></div>
+                </div>
+            `).join('');
+            
+            modal.innerHTML = `
+                <div class="mass-open-container">
+                    <div class="mass-open-title">🎲 ОТКРЫТИЕ ${results.length} КЕЙСОВ</div>
+                    <div class="roulettes-grid" id="roulettesGrid">
+                        ${roulettesHTML}
+                    </div>
+                    <div class="mass-open-controls">
+                        <button class="mass-spin-btn" id="massSpinBtn">🎰 КРУТИТЬ ВСЕ</button>
+                        <button class="mass-close-btn" id="massCloseBtn" style="display: none;">✨ ЗАБРАТЬ ВСЁ</button>
+                    </div>
+                    <div class="summary-results" id="summaryResults" style="display: none;"></div>
                 </div>
             `;
             
             document.body.appendChild(modal);
             
-            const track = modal.querySelector('#rouletteTrack');
-            const spinBtn = modal.querySelector('#spinBtn');
-            const resultContainer = modal.querySelector('#resultContainer');
-            const wrapper = modal.querySelector('#rouletteWrapper');
+            const spinBtn = modal.querySelector('#massSpinBtn');
+            const closeBtn = modal.querySelector('#massCloseBtn');
+            const summaryDiv = modal.querySelector('#summaryResults');
             
-            let spinning = false;
-            let animationTimeout = null;
+            let completedSpins = 0;
+            const totalSpins = results.length;
+            const allWonItems = [...results];
             
-            // Устанавливаем начальную позицию - смещаем трек влево, чтобы начало было за пределами экрана
-            // Это создаст эффект прокрутки слева направо
-            const initialOffset = -5000;
-            track.style.transform = `translateX(${initialOffset}px)`;
-            
-            // Функция для получения центрального предмета
-            function getCenterItem() {
-                const wrapperRect = wrapper.getBoundingClientRect();
-                const centerX = wrapperRect.left + wrapperRect.width / 2;
+            function startSpinForRoulette(index, targetItem) {
+                const track = modal.querySelector(`#track-${index}`);
+                const wrapper = track?.parentElement;
+                const resultDiv = modal.querySelector(`#result-${index}`);
                 
-                const items = modal.querySelectorAll('.roulette-item');
-                for (let item of items) {
-                    const rect = item.getBoundingClientRect();
-                    if (centerX >= rect.left && centerX <= rect.right) {
-                        return item;
-                    }
-                }
-                return null;
-            }
-            
-            // Функция для подсветки центрального предмета
-            function highlightCenterItem() {
-                const centerItem = getCenterItem();
-                const allItems = modal.querySelectorAll('.roulette-item');
-                allItems.forEach(item => item.classList.remove('active'));
-                if (centerItem) {
-                    centerItem.classList.add('active');
-                }
-            }
-            
-            // Запускаем подсветку
-            highlightCenterItem();
-            
-            // Добавляем обработчик для обновления подсветки при скролле
-            wrapper.addEventListener('scroll', highlightCenterItem);
-            
-            function startSpin() {
-                if (spinning) return;
+                if (!track || !wrapper) return;
                 
-                spinning = true;
-                spinBtn.disabled = true;
-                spinBtn.textContent = '🌀 ПРОКРУТКА...';
-                
-                // Случайный выбор предмета для выигрыша
-                const randomIndex = Math.floor(Math.random() * caseItem.items.length);
-                const targetItem = caseItem.items[randomIndex];
-                
-                // Находим все предметы в треке и выбираем целевой
-                const allItems = modal.querySelectorAll('.roulette-item');
+                // Находим целевой элемент
+                const allItems = track.querySelectorAll('.roulette-item');
                 let targetElement = null;
                 for (let i = 0; i < allItems.length; i++) {
                     if (allItems[i].dataset.name === targetItem.name) {
@@ -682,99 +745,93 @@
                 }
                 
                 if (targetElement) {
-                    // Получаем позицию целевого элемента
                     const wrapperRect = wrapper.getBoundingClientRect();
                     const targetRect = targetElement.getBoundingClientRect();
                     const centerX = wrapperRect.left + wrapperRect.width / 2;
                     const targetCenterX = targetRect.left + targetRect.width / 2;
                     const offsetToCenter = targetCenterX - centerX;
                     
-                    // Текущая позиция трека
                     const currentTransform = track.style.transform;
-                    let currentX = initialOffset;
+                    let currentX = 0;
                     if (currentTransform) {
                         const match = currentTransform.match(/translateX\(([-\d.]+)px\)/);
                         if (match) currentX = parseFloat(match[1]);
                     }
                     
-                    // Нужная позиция, чтобы целевой предмет оказался в центре
-                    // Движение влево (уменьшаем translateX)
-                    const targetPosition = currentX - offsetToCenter - 800;
-                    
-                    // Добавляем случайное смещение для вариативности
-                    const randomOffset = (Math.random() - 0.5) * 300;
+                    const targetPosition = currentX - offsetToCenter - 400;
+                    const randomOffset = (Math.random() - 0.5) * 200;
                     const finalPosition = targetPosition + randomOffset;
                     
-                    // Запускаем анимацию - движение ВЛЕВО
-                    track.style.transition = 'transform 2.5s cubic-bezier(0.1, 0.9, 0.2, 1)';
+                    track.style.transition = 'transform 2s cubic-bezier(0.1, 0.9, 0.2, 1)';
                     track.style.transform = `translateX(${finalPosition}px)`;
                     
-                    // После завершения анимации
                     setTimeout(() => {
-                        // Получаем предмет под полоской
-                        const centerItem = getCenterItem();
-                        if (centerItem) {
-                            const wonItem = {
-                                name: centerItem.dataset.name,
-                                icon: centerItem.dataset.icon,
-                                price: parseInt(centerItem.dataset.price),
-                                rarity: centerItem.dataset.rarity
-                            };
-                            finishOpening(wonItem, modal, resultContainer);
-                        } else {
-                            // Если не получилось определить, используем выбранный предмет
-                            finishOpening(targetItem, modal, resultContainer);
-                        }
+                        // Показываем результат
+                        const rarityColors = {
+                            common: '#808080', rare: '#4169e1', epic: '#9400d3',
+                            legendary: '#ff8c00', mythical: '#ff00ff', divine: '#00ffff'
+                        };
+                        resultDiv.style.display = 'block';
+                        resultDiv.style.border = `2px solid ${rarityColors[targetItem.rarity] || '#ffd700'}`;
                         
-                        spinning = false;
-                    }, 2600);
-                } else {
-                    finishOpening(targetItem, modal, resultContainer);
-                    spinning = false;
+                        completedSpins++;
+                        if (completedSpins === totalSpins) {
+                            showSummary();
+                        }
+                    }, 2100);
                 }
             }
             
-            function finishOpening(wonItem, modal, resultContainer) {
-                // Списываем монеты
-                player.balance -= currentCase.price;
-                player.casesOpened++;
+            function showSummary() {
+                // Группируем выигрыши
+                const grouped = {};
+                allWonItems.forEach(item => {
+                    const key = `${item.name}|${item.icon}`;
+                    if (!grouped[key]) {
+                        grouped[key] = { ...item, count: 0 };
+                    }
+                    grouped[key].count++;
+                });
                 
-                // Добавляем предмет в инвентарь
-                player.inventory.push({ ...wonItem, wonAt: Date.now() });
+                const totalValue = allWonItems.reduce((sum, item) => sum + item.price, 0);
                 
-                saveGame();
-                updateUI();
-                renderInventory();
-                renderCases();
-                
-                // Цвета редкости
-                const rarityColors = {
-                    common: '#808080',
-                    rare: '#4169e1',
-                    epic: '#9400d3',
-                    legendary: '#ff8c00',
-                    mythical: '#ff00ff',
-                    divine: '#00ffff'
-                };
-                
-                resultContainer.innerHTML = `
-                    <div class="result-popup">
-                        <div style="font-size: 4rem;">${wonItem.icon}</div>
-                        <div style="font-size: 1.8rem; margin: 10px 0;">🎉 ВЫ ВЫИГРАЛИ!</div>
-                        <div style="font-size: 1.3rem; font-weight: bold; color: ${rarityColors[wonItem.rarity]}">${wonItem.name}</div>
-                        <div style="color: #ffd700; margin-top: 5px;">💰 Стоимость: ${wonItem.price} монет</div>
-                        <div style="color: #aaa; margin-top: 5px;">⭐ Редкость: ${wonItem.rarity.toUpperCase()}</div>
-                        <button class="close-btn" onclick="this.closest('.opening-animation').remove()" style="margin-top: 20px;">✨ ЗАБРАТЬ</button>
+                summaryDiv.innerHTML = `
+                    <h3 style="color:#ffd700;">📊 ИТОГИ ОТКРЫТИЯ</h3>
+                    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin: 15px 0;">
+                        ${Object.values(grouped).map(item => `
+                            <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px; text-align: center;">
+                                <div style="font-size: 1.5rem;">${item.icon}</div>
+                                <div>${item.name}</div>
+                                <div style="color:#ffd700;">x${item.count}</div>
+                                <div>${item.price * item.count}💰</div>
+                            </div>
+                        `).join('')}
                     </div>
+                    <div style="font-size: 1.3rem;">💰 Общая стоимость: ${totalValue} монет</div>
                 `;
-                resultContainer.style.display = 'block';
+                summaryDiv.style.display = 'block';
                 
-                // Скрываем кнопки управления
-                const controls = modal.querySelector('#rouletteControls');
-                if (controls) controls.style.display = 'none';
+                spinBtn.style.display = 'none';
+                closeBtn.style.display = 'inline-block';
             }
             
-            spinBtn.onclick = startSpin;
+            spinBtn.onclick = () => {
+                spinBtn.disabled = true;
+                spinBtn.textContent = '🌀 ПРОКРУТКА...';
+                
+                // Запускаем анимацию для всех рулеток
+                results.forEach((result, idx) => {
+                    setTimeout(() => {
+                        startSpinForRoulette(idx, result);
+                    }, idx * 150);
+                });
+            };
+            
+            closeBtn.onclick = () => {
+                modal.remove();
+                renderCases();
+                showNotification(`✅ Открыто ${totalSpins} кейсов! Получено ${allWonItems.length} предметов`);
+            };
         }
         
         function sellItem(itemName, itemIcon) {
@@ -802,10 +859,11 @@
         function resetGame() {
             if (confirm('⚠️ ВНИМАНИЕ! Весь прогресс будет удален. Продолжить?')) {
                 player = {
-                    balance: 1000,
+                    balance: 10000,
                     casesOpened: 0,
                     inventory: []
                 };
+                selectedCounts = { case_1: 1, case_2: 1, case_3: 1 };
                 saveGame();
                 updateUI();
                 renderInventory();
