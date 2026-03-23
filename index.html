@@ -2,886 +2,817 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎁 CS2 CASE OPENER | Массовое открытие кейсов</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>🎮 GameStore | Магазин цифровых игр</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            user-select: none;
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background: linear-gradient(135deg, #0a0e1a, #0f1219);
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f0c1f 0%, #1a142f 100%);
             color: #fff;
             min-height: 100vh;
-            padding: 20px;
         }
 
+        /* Кастомный скроллбар */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #ff6b4a, #ff8a5c);
+            border-radius: 10px;
+        }
+
+        /* Контейнер */
         .container {
             max-width: 1400px;
             margin: 0 auto;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #1a1f2a, #0f1219);
-            border-radius: 20px;
             padding: 20px;
-            margin-bottom: 30px;
-            border-bottom: 3px solid #ffd700;
         }
 
-        .balance-info {
+        /* Шапка */
+        .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 20px;
-        }
-
-        .balance-card {
-            background: linear-gradient(135deg, #2a2f3a, #1a1f2a);
-            padding: 20px 35px;
-            border-radius: 20px;
-            text-align: center;
-            border: 1px solid #ffd700;
-        }
-
-        .balance-amount {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #ffd700;
-        }
-
-        .stats {
-            display: flex;
-            gap: 20px;
-        }
-
-        .stat {
-            background: rgba(255,255,255,0.05);
-            padding: 15px 25px;
-            border-radius: 15px;
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #ffd700;
-        }
-
-        .cases-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            margin-top: 20px;
-        }
-
-        .case-card {
-            background: linear-gradient(135deg, #1f242f, #151a24);
-            border-radius: 20px;
+            margin-bottom: 40px;
             padding: 20px;
-            text-align: center;
-            transition: all 0.3s;
-            border: 1px solid rgba(255,215,0,0.2);
-        }
-
-        .case-card:hover {
-            transform: translateY(-5px);
-            border-color: #ffd700;
-        }
-
-        .case-image {
-            font-size: 5rem;
-            margin-bottom: 15px;
-        }
-
-        .case-name {
-            font-size: 1.4rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .case-price {
-            font-size: 1.3rem;
-            color: #ffd700;
-            margin: 15px 0;
-        }
-
-        .case-controls {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            justify-content: center;
-            margin: 15px 0;
-        }
-
-        .case-controls button {
-            background: #2a2f3a;
-            color: white;
-            border: none;
-            width: 35px;
-            height: 35px;
-            border-radius: 10px;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .case-controls button:hover {
-            background: #ffd700;
-            color: #1a1f2a;
-        }
-
-        .case-count {
-            font-size: 1.3rem;
-            font-weight: bold;
-            min-width: 50px;
-            text-align: center;
-        }
-
-        .total-price {
-            font-size: 0.9rem;
-            color: #ffd700;
-            margin: 10px 0;
-        }
-
-        .open-btn {
-            background: linear-gradient(135deg, #ffd700, #ffaa00);
-            color: #1a1f2a;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 40px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            transition: all 0.3s;
-        }
-
-        .open-btn:hover:not(:disabled) {
-            transform: scale(1.02);
-            box-shadow: 0 0 20px rgba(255,215,0,0.5);
-        }
-
-        .open-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* МАССОВОЕ ОТКРЫТИЕ */
-        .mass-open-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.95);
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background: rgba(255,255,255,0.03);
             backdrop-filter: blur(10px);
-            overflow-y: auto;
-            padding: 20px;
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
-        .mass-open-container {
-            width: 95%;
-            max-width: 1400px;
-            background: linear-gradient(135deg, #1a1f2a, #0f1219);
-            border-radius: 30px;
-            padding: 30px;
-            border: 3px solid #ffd700;
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        .mass-open-title {
-            color: #ffd700;
+        .logo-icon {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #ff6b4a, #ff8a5c);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #ff8a5c);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Карточка баланса */
+        .wallet-card {
+            background: linear-gradient(135deg, rgba(255,107,74,0.15), rgba(255,138,92,0.05));
+            border-radius: 20px;
+            padding: 12px 24px;
+            border: 1px solid rgba(255,107,74,0.3);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .wallet-icon {
             font-size: 1.8rem;
-            text-align: center;
+            color: #ff8a5c;
+        }
+
+        .wallet-info h3 {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #aaa;
+        }
+
+        .wallet-info .balance {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ff8a5c;
+        }
+
+        /* Поиск и фильтры */
+        .search-section {
+            margin-bottom: 30px;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
             margin-bottom: 20px;
         }
 
-        .roulettes-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            max-height: 60vh;
-            overflow-y: auto;
-            padding: 10px;
-        }
-
-        .roulette-card {
-            background: linear-gradient(135deg, #1f242f, #151a24);
-            border-radius: 20px;
-            padding: 20px;
-            text-align: center;
-            border: 1px solid rgba(255,215,0,0.3);
+        .search-input-wrapper {
+            flex: 1;
             position: relative;
         }
 
-        .roulette-card .roulette-number {
+        .search-input-wrapper i {
             position: absolute;
-            top: 10px;
-            left: 10px;
-            background: #ffd700;
-            color: #1a1f2a;
-            width: 30px;
-            height: 30px;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 20px 14px 48px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #ff8a5c;
+            background: rgba(255,255,255,0.08);
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50px;
+            color: #aaa;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #ff6b4a, #ff8a5c);
+            color: white;
+            border-color: transparent;
+        }
+
+        .filter-btn:hover:not(.active) {
+            background: rgba(255,107,74,0.2);
+            color: #ff8a5c;
+        }
+
+        /* Сетка игр */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        /* Карточка игры */
+        .game-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+            border-radius: 24px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            border: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .game-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255,107,74,0.5);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .game-image {
+            position: relative;
+            height: 180px;
+            overflow: hidden;
+        }
+
+        .game-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .game-card:hover .game-image img {
+            transform: scale(1.05);
+        }
+
+        .game-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .game-badge.popular {
+            background: linear-gradient(135deg, #ff6b4a, #ff8a5c);
+        }
+
+        .game-badge.new {
+            background: linear-gradient(135deg, #4caf50, #45a049);
+        }
+
+        .game-badge.sale {
+            background: linear-gradient(135deg, #ff4444, #ff8c00);
+        }
+
+        .game-info {
+            padding: 20px;
+        }
+
+        .game-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .game-category {
+            font-size: 0.75rem;
+            color: #ff8a5c;
+            margin-bottom: 12px;
+            display: inline-block;
+            background: rgba(255,107,74,0.15);
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+
+        .game-description {
+            font-size: 0.85rem;
+            color: #aaa;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .game-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .game-price {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #ff8a5c;
+        }
+
+        .game-price.old-price {
+            font-size: 0.9rem;
+            color: #666;
+            text-decoration: line-through;
+            margin-right: 8px;
+        }
+
+        .buy-btn {
+            background: linear-gradient(135deg, #ff6b4a, #ff8a5c);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .buy-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(255,107,74,0.4);
+        }
+
+        .buy-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #444;
+        }
+
+        /* Корзина */
+        .cart-sidebar {
+            position: fixed;
+            right: -400px;
+            top: 0;
+            width: 380px;
+            height: 100vh;
+            background: linear-gradient(135deg, #0f0c1f, #1a142f);
+            border-left: 1px solid rgba(255,255,255,0.1);
+            z-index: 1000;
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            box-shadow: -5px 0 30px rgba(0,0,0,0.5);
+        }
+
+        .cart-sidebar.open {
+            right: 0;
+        }
+
+        .cart-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-header h2 {
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .close-cart {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .cart-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            margin-bottom: 12px;
+        }
+
+        .cart-item-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .cart-item-price {
+            color: #ff8a5c;
+            font-size: 0.85rem;
+        }
+
+        .remove-item {
+            background: none;
+            border: none;
+            color: #ff4444;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        .cart-footer {
+            padding: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #4caf50, #45a049);
+            border: none;
+            padding: 14px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .checkout-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 20px rgba(76,175,80,0.4);
+        }
+
+        /* Кнопка корзины */
+        .cart-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #ff6b4a, #ff8a5c);
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
+            cursor: pointer;
+            z-index: 99;
+            box-shadow: 0 5px 20px rgba(255,107,74,0.4);
+            transition: all 0.3s;
         }
 
-        .roulette-wrapper {
-            position: relative;
-            overflow: hidden;
-            margin: 15px 0;
-            border-radius: 15px;
-            background: #0a0e1a;
-            padding: 15px 0;
-            min-height: 180px;
+        .cart-btn:hover {
+            transform: scale(1.1);
         }
 
-        .roulette-track {
-            display: flex;
-            gap: 10px;
-            transition: transform 2s cubic-bezier(0.1, 0.9, 0.2, 1);
-            will-change: transform;
-        }
-
-        .roulette-item {
-            min-width: 100px;
-            padding: 15px 10px;
-            text-align: center;
-            background: linear-gradient(135deg, #2a2f3a, #1a1f2a);
-            border-radius: 12px;
-            border: 2px solid transparent;
-        }
-
-        .roulette-item.active {
-            border-color: #ffd700;
-            box-shadow: 0 0 15px rgba(255,215,0,0.5);
-            transform: scale(1.02);
-        }
-
-        .roulette-item-icon {
-            font-size: 2rem;
-        }
-
-        .roulette-item-name {
-            font-size: 0.7rem;
-            margin-top: 5px;
-        }
-
-        .roulette-item-price {
-            font-size: 0.65rem;
-            color: #ffd700;
-        }
-
-        .center-indicator {
+        .cart-count {
             position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 3px;
-            height: 100%;
-            background: linear-gradient(to bottom, #ffd700, #ffaa00, #ffd700);
-            z-index: 20;
-            box-shadow: 0 0 10px rgba(255,215,0,0.8);
-            pointer-events: none;
-        }
-
-        .roulette-result {
-            margin-top: 10px;
-            padding: 10px;
-            background: rgba(76,175,80,0.2);
-            border-radius: 10px;
-            font-size: 0.85rem;
-        }
-
-        .mass-open-controls {
-            margin-top: 30px;
+            top: -5px;
+            right: -5px;
+            background: #ff4444;
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            font-size: 0.7rem;
             display: flex;
-            gap: 20px;
+            align-items: center;
             justify-content: center;
-        }
-
-        .mass-spin-btn, .mass-close-btn {
-            background: linear-gradient(135deg, #ffd700, #ffaa00);
-            color: #1a1f2a;
-            border: none;
-            padding: 15px 40px;
-            border-radius: 50px;
-            font-size: 1.2rem;
             font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
         }
 
-        .mass-spin-btn:hover, .mass-close-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(255,215,0,0.5);
-        }
-
-        .mass-spin-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .summary-results {
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(0,0,0,0.5);
-            border-radius: 15px;
-            text-align: center;
-        }
-
-        .inventory-section {
-            background: linear-gradient(135deg, #1a1f2a, #0f1219);
-            border-radius: 20px;
-            padding: 30px;
-            margin-top: 30px;
-            border-top: 3px solid #ffd700;
-        }
-
-        .inventory-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-            max-height: 400px;
-            overflow-y: auto;
-            padding: 10px;
-        }
-
-        .inventory-item {
-            background: rgba(255,255,255,0.05);
-            border-radius: 15px;
-            padding: 15px;
-            text-align: center;
-            transition: all 0.3s;
-            border: 1px solid rgba(255,215,0,0.2);
-        }
-
-        .inventory-item:hover {
-            transform: translateY(-3px);
-            border-color: #ffd700;
-        }
-
-        .inventory-item-icon {
-            font-size: 2.5rem;
-        }
-
-        .inventory-item-name {
-            font-size: 0.8rem;
-            margin-top: 8px;
-        }
-
-        .inventory-item-price {
-            font-size: 0.7rem;
-            color: #ffd700;
-        }
-
-        .sell-btn {
-            background: #4caf50;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 10px;
-            font-size: 0.7rem;
-            cursor: pointer;
-            margin-top: 8px;
-            width: 100%;
-        }
-
-        .reset-btn {
+        /* Уведомления */
+        .toast {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #ff4444;
-            color: white;
+            bottom: 100px;
+            right: 30px;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(10px);
             padding: 12px 24px;
-            border-radius: 40px;
-            cursor: pointer;
-            font-weight: bold;
-            border: none;
-            z-index: 100;
+            border-radius: 50px;
+            border-left: 4px solid #4caf50;
+            z-index: 1001;
+            animation: slideInRight 0.3s ease;
+            font-size: 0.9rem;
         }
 
-        .reset-btn:hover {
-            background: #ff6666;
-            transform: scale(1.05);
+        .toast.error {
+            border-left-color: #ff4444;
         }
 
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #4caf50;
-            color: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            z-index: 2000;
-            animation: slideIn 0.3s;
-            display: none;
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
-        .notification.show {
-            display: block;
-        }
-
-        .notification.error {
-            background: #ff4444;
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        /* Адаптив */
+        @media (max-width: 768px) {
+            .cart-sidebar {
+                width: 100%;
+                right: -100%;
+            }
+            .games-grid {
+                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+                gap: 15px;
+            }
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .search-bar {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Шапка -->
         <div class="header">
-            <div class="balance-info">
-                <div class="balance-card">
-                    <div class="balance-amount" id="balance">0</div>
-                    <div class="balance-label">💰 Монеты</div>
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-gamepad"></i></div>
+                <h1>GameStore</h1>
+            </div>
+            <div class="wallet-card">
+                <div class="wallet-icon"><i class="fas fa-coins"></i></div>
+                <div class="wallet-info">
+                    <h3>Ваш баланс</h3>
+                    <div class="balance" id="balance">5000 ₽</div>
                 </div>
-                <div class="stats">
-                    <div class="stat">
-                        <div class="stat-value" id="casesOpened">0</div>
-                        <div class="stat-label">Открыто кейсов</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value" id="itemsValue">0</div>
-                        <div class="stat-label">💰 Стоимость инвентаря</div>
-                    </div>
+                <button class="filter-btn" onclick="addFunds()" style="background: rgba(255,107,74,0.2);"><i class="fas fa-plus"></i> +</button>
+            </div>
+        </div>
+
+        <!-- Поиск и фильтры -->
+        <div class="search-section">
+            <div class="search-bar">
+                <div class="search-input-wrapper">
+                    <i class="fas fa-search"></i>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Поиск игр...">
+                </div>
+                <div class="filter-group" id="filterGroup">
+                    <button class="filter-btn active" data-category="all">Все</button>
+                    <button class="filter-btn" data-category="Экшен">Экшен</button>
+                    <button class="filter-btn" data-category="RPG">RPG</button>
+                    <button class="filter-btn" data-category="Шутер">Шутер</button>
+                    <button class="filter-btn" data-category="Приключения">Приключения</button>
+                    <button class="filter-btn" data-category="Инди">Инди</button>
                 </div>
             </div>
         </div>
 
-        <div class="cases-section">
-            <h2 class="section-title" style="font-size: 1.8rem; margin-bottom: 20px;">🎁 Доступные кейсы</h2>
-            <div class="cases-grid" id="casesList"></div>
-        </div>
+        <!-- Сетка игр -->
+        <div class="games-grid" id="gamesGrid"></div>
+    </div>
 
-        <div class="inventory-section">
-            <h2 class="section-title" style="font-size: 1.8rem; margin-bottom: 20px;">📦 Мой инвентарь</h2>
-            <div class="inventory-grid" id="inventoryList"></div>
+    <!-- Корзина -->
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h2><i class="fas fa-shopping-cart"></i> Корзина</h2>
+            <button class="close-cart" onclick="toggleCart()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <div style="text-align: center; color: #666; padding: 40px;">Корзина пуста</div>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Итого:</span>
+                <span id="cartTotal">0 ₽</span>
+            </div>
+            <button class="checkout-btn" onclick="checkout()">Оформить заказ</button>
         </div>
     </div>
 
-    <button class="reset-btn" onclick="resetGame()">🔄 СБРОС ИГРЫ</button>
-    <div class="notification" id="notification"></div>
+    <!-- Кнопка корзины -->
+    <div class="cart-btn" onclick="toggleCart()">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="cart-count" id="cartCount">0</span>
+    </div>
 
     <script>
-        // Данные кейсов
-        const cases = [
-            {
-                id: 'case_1',
-                name: '⚡ ОБЫЧНЫЙ КЕЙС',
-                icon: '📦',
-                price: 100,
-                items: [
-                    { name: 'P250 | Sand Dune', icon: '🔫', price: 5, rarity: 'common' },
-                    { name: 'MAC-10 | Palm', icon: '🔫', price: 8, rarity: 'common' },
-                    { name: 'Five-SeveN | Forest', icon: '🔫', price: 12, rarity: 'common' },
-                    { name: 'M4A4 | Urban DDPAT', icon: '🔫', price: 25, rarity: 'rare' },
-                    { name: 'AK-47 | Blue Laminate', icon: '🔫', price: 40, rarity: 'rare' },
-                    { name: 'AWP | Worm God', icon: '🔫', price: 60, rarity: 'epic' },
-                    { name: '★ Knife | Forest', icon: '🔪', price: 500, rarity: 'legendary' }
-                ]
-            },
-            {
-                id: 'case_2',
-                name: '💎 ПРЕМИУМ КЕЙС',
-                icon: '💎',
-                price: 500,
-                items: [
-                    { name: 'USP-S | Guardian', icon: '🔫', price: 30, rarity: 'rare' },
-                    { name: 'Desert Eagle | Crimson Web', icon: '🔫', price: 50, rarity: 'rare' },
-                    { name: 'M4A1-S | Cyrex', icon: '🔫', price: 80, rarity: 'epic' },
-                    { name: 'AK-47 | Redline', icon: '🔫', price: 120, rarity: 'epic' },
-                    { name: 'AWP | Asiimov', icon: '🔫', price: 250, rarity: 'legendary' },
-                    { name: '★ Knife | Crimson Web', icon: '🔪', price: 1500, rarity: 'mythical' },
-                    { name: '★ Butterfly Knife | Fade', icon: '🦋', price: 5000, rarity: 'divine' }
-                ]
-            },
-            {
-                id: 'case_3',
-                name: '👑 ЛЕГЕНДАРНЫЙ КЕЙС',
-                icon: '👑',
-                price: 2500,
-                items: [
-                    { name: 'AWP | Dragon Lore', icon: '🐉', price: 5000, rarity: 'legendary' },
-                    { name: 'AK-47 | Fire Serpent', icon: '🔥', price: 3000, rarity: 'legendary' },
-                    { name: 'M4A4 | Howl', icon: '🐺', price: 4000, rarity: 'legendary' },
-                    { name: '★ Karambit | Fade', icon: '🔪', price: 15000, rarity: 'mythical' },
-                    { name: '★ M9 Bayonet | Marble Fade', icon: '🔪', price: 20000, rarity: 'mythical' },
-                    { name: '★ Butterfly Knife | Doppler', icon: '🦋', price: 35000, rarity: 'divine' },
-                    { name: '★ Karambit | Ruby', icon: '💎', price: 100000, rarity: 'divine' }
-                ]
-            }
+        // ==================== ДАННЫЕ ИГР ====================
+        const games = [
+            { id: 1, name: "Cyberpunk 2077", category: "RPG", price: 2999, oldPrice: 4999, image: "https://placehold.co/400x200/1a1f2a/ff8a5c?text=Cyberpunk", description: "Откройте для себя историю Ви — наёмницы, охотящейся за уникальным имплантом.", badge: "popular" },
+            { id: 2, name: "Elden Ring", category: "RPG", price: 3499, oldPrice: 4999, image: "https://placehold.co/400x200/1a1f2a/ff8a5c?text=Elden+Ring", description: "Новая фэнтезийная RPG от создателей Dark Souls.", badge: "new" },
+            { id: 3, name: "Call of Duty: MW3", category: "Шутер", price: 3999, oldPrice: 5999, image: "https://placehold.co/400x200/1a1f2a/ff8a5c?text=COD+MW3", description: "Культовая серия шутеров возвращается.", badge: "popular" },
+            { id: 4, name: "Baldur's Gate 3", category: "RPG", price: 2999, oldPrice: null, image: "https://placehold.co/400x200/1a1f2a/ff8a5c?text=Baldur's+Gate", description: "Эпическая RPG, основанная на правилах Dungeons & Dragons.", badge: "new" },
+            { id: 5, name: "Hollow Knight", category: "Инди", price: 499, oldPrice: 799, image: "https://placehold.co/400x200/1a1f2a/ff8a5c?text=Hollow+Knight", description: "Увлекательный платформер в мрачном мире.", badge: null },
+            { id: 6, name: "Red Dead Redemption 2", category: "Приключения", price: 2499, oldPrice: 3999, image: "https://placehold.co/400x200/1a1f2a/ff8a5c?text=RDR2", description: "Эпическая история о жизни Дикого Запада.", badge: "sale" },
+            { id: 7, name: "Counter-Strike 2", category: "Шутер", price: 0, oldPrice: null, image: "https://placehold.co/400x200/1a1f2a/ff8a5c?text=CS2", description: "Легендарный шутер абсолютно бесплатно!", badge: null },
+            { id: 8, name: "The Witcher 3", category: "RPG", price: 1299, oldPrice: 2999, image: "https://placehold.co/400x200/1a1f2a/ff8a5c?text=Witcher+3", description: "Станьте Геральтом из Ривии в эпическом приключении.", badge: "sale" },
+            { id: 9, name: "Stray", category: "Приключения", price: 899, oldPrice: 1499, image: "https://placehold.co/400x200/1a1f2a/ff8a5c?text=Stray", description: "Приключения бездомного кота в кибергороде.", badge: null },
+            { id: 10, name: "Dota 2", category: "Экшен", price: 0, oldPrice: null, image: "https://placehold.co/400x200/1a1f2a/ff8a5c?text=Dota+2", description: "Лучшая MOBA в мире. Играйте бесплатно!", badge: null },
+            { id: 11, name: "Resident Evil 4", category: "Экшен", price: 1999, oldPrice: 3499, image: "https://placehold.co/400x200/1a1f2a/ff8a5c?text=RE4", description: "Классический хоррор в новом исполнении.", badge: "new" },
+            { id: 12, name: "Stardew Valley", category: "Инди", price: 399, oldPrice: 699, image: "https://placehold.co/400x200/1a1f2a/ff8a5c?text=Stardew", description: "Расслабляющий симулятор фермы.", badge: null }
         ];
 
-        let player = {
-            balance: 10000,
-            casesOpened: 0,
-            inventory: []
-        };
+        // Состояние
+        let userBalance = 5000;
+        let cart = [];
+        let currentFilter = "all";
+        let searchQuery = "";
 
-        // Количество выбранных кейсов для каждого типа
-        let selectedCounts = {
-            case_1: 1,
-            case_2: 1,
-            case_3: 1
-        };
-
+        // DOM элементы
+        const gamesGrid = document.getElementById('gamesGrid');
         const balanceEl = document.getElementById('balance');
-        const casesOpenedEl = document.getElementById('casesOpened');
-        const itemsValueEl = document.getElementById('itemsValue');
-        const casesList = document.getElementById('casesList');
-        const inventoryList = document.getElementById('inventoryList');
+        const cartCountEl = document.getElementById('cartCount');
+        const cartTotalEl = document.getElementById('cartTotal');
+        const cartItemsEl = document.getElementById('cartItems');
+        const searchInput = document.getElementById('searchInput');
 
-        function loadGame() {
-            const saved = localStorage.getItem('cs2_opener');
-            if (saved) {
-                try {
-                    const data = JSON.parse(saved);
-                    player = { ...player, ...data };
-                } catch(e) {}
-            }
-            updateUI();
-            renderCases();
-            renderInventory();
+        // ==================== ФУНКЦИИ ====================
+        function updateBalance() {
+            balanceEl.textContent = userBalance.toLocaleString() + ' ₽';
+            saveData();
         }
 
-        function saveGame() {
-            localStorage.setItem('cs2_opener', JSON.stringify({
-                balance: player.balance,
-                casesOpened: player.casesOpened,
-                inventory: player.inventory
-            }));
+        function saveData() {
+            localStorage.setItem('gameStore_balance', userBalance);
+            localStorage.setItem('gameStore_cart', JSON.stringify(cart));
         }
 
-        function updateUI() {
-            balanceEl.textContent = player.balance.toLocaleString();
-            casesOpenedEl.textContent = player.casesOpened;
-            const totalValue = player.inventory.reduce((sum, item) => sum + item.price, 0);
-            itemsValueEl.textContent = totalValue.toLocaleString();
+        function loadData() {
+            const savedBalance = localStorage.getItem('gameStore_balance');
+            if (savedBalance) userBalance = parseInt(savedBalance);
+            
+            const savedCart = localStorage.getItem('gameStore_cart');
+            if (savedCart) cart = JSON.parse(savedCart);
+            
+            updateBalance();
+            updateCartUI();
+            renderGames();
         }
 
-        function updateCount(caseId, delta) {
-            const newCount = selectedCounts[caseId] + delta;
-            if (newCount >= 1 && newCount <= 10) {
-                selectedCounts[caseId] = newCount;
-                renderCases();
+        function addFunds() {
+            let amount = prompt('Введите сумму пополнения (₽):', '1000');
+            if (amount && !isNaN(amount) && parseInt(amount) > 0) {
+                userBalance += parseInt(amount);
+                updateBalance();
+                showToast(`💰 Баланс пополнен на ${parseInt(amount)} ₽`, 'success');
+                renderGames();
             }
         }
 
-        function renderCases() {
-            casesList.innerHTML = cases.map(caseItem => {
-                const totalPrice = caseItem.price * selectedCounts[caseItem.id];
-                const canAfford = player.balance >= totalPrice;
+        function addToCart(game) {
+            if (cart.find(item => item.id === game.id)) {
+                showToast('❌ Эта игра уже в корзине', 'error');
+                return;
+            }
+            cart.push(game);
+            updateCartUI();
+            showToast(`✅ ${game.name} добавлена в корзину`, 'success');
+            saveData();
+        }
+
+        function removeFromCart(gameId) {
+            cart = cart.filter(item => item.id !== gameId);
+            updateCartUI();
+            showToast('🗑 Товар удалён из корзины', 'success');
+            saveData();
+        }
+
+        function updateCartUI() {
+            const cartCount = cart.reduce((sum, item) => sum + 1, 0);
+            const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
+            
+            cartCountEl.textContent = cartCount;
+            cartTotalEl.textContent = cartTotal.toLocaleString() + ' ₽';
+            
+            if (cart.length === 0) {
+                cartItemsEl.innerHTML = '<div style="text-align: center; color: #666; padding: 40px;">🛒 Корзина пуста</div>';
+                return;
+            }
+            
+            cartItemsEl.innerHTML = cart.map(item => `
+                <div class="cart-item">
+                    <img class="cart-item-img" src="${item.image}" alt="${item.name}">
+                    <div class="cart-item-info">
+                        <div class="cart-item-title">${item.name}</div>
+                        <div class="cart-item-price">${item.price.toLocaleString()} ₽</div>
+                    </div>
+                    <button class="remove-item" onclick="removeFromCart(${item.id})">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                showToast('🛒 Корзина пуста!', 'error');
+                return;
+            }
+            
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            
+            if (userBalance >= total) {
+                userBalance -= total;
+                updateBalance();
+                
+                // Покупка совершена
+                showToast(`🎉 Поздравляем! Вы приобрели ${cart.length} игр на ${total} ₽`, 'success');
+                
+                // Здесь можно добавить логику для "библиотеки" игр
+                console.log('Купленные игры:', cart);
+                
+                cart = [];
+                updateCartUI();
+                renderGames();
+                saveData();
+                
+                // Закрываем корзину
+                toggleCart();
+            } else {
+                showToast(`❌ Недостаточно средств! Нужно еще ${(total - userBalance).toLocaleString()} ₽`, 'error');
+            }
+        }
+
+        function renderGames() {
+            let filtered = games.filter(game => {
+                const matchesFilter = currentFilter === "all" || game.category === currentFilter;
+                const matchesSearch = game.name.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesFilter && matchesSearch;
+            });
+            
+            gamesGrid.innerHTML = filtered.map(game => {
+                const inCart = cart.some(item => item.id === game.id);
+                const isFree = game.price === 0;
                 
                 return `
-                    <div class="case-card">
-                        <div class="case-image">${caseItem.icon}</div>
-                        <div class="case-name">${caseItem.name}</div>
-                        <div class="case-price">${caseItem.price} <span>монет/шт</span></div>
-                        <div class="case-controls">
-                            <button onclick="updateCount('${caseItem.id}', -1)" ${selectedCounts[caseItem.id] <= 1 ? 'disabled' : ''}>-</button>
-                            <span class="case-count">${selectedCounts[caseItem.id]}</span>
-                            <button onclick="updateCount('${caseItem.id}', 1)" ${selectedCounts[caseItem.id] >= 10 ? 'disabled' : ''}>+</button>
+                    <div class="game-card">
+                        <div class="game-image">
+                            <img src="${game.image}" alt="${game.name}">
+                            ${game.badge ? `<span class="game-badge ${game.badge}">${game.badge === 'popular' ? '🔥 Популярное' : game.badge === 'new' ? '🆕 Новинка' : '🔥 Скидка'}</span>` : ''}
                         </div>
-                        <div class="total-price">💰 Итого: ${totalPrice} монет</div>
-                        <button class="open-btn" onclick="openMultipleCases('${caseItem.id}')" 
-                            ${!canAfford ? 'disabled' : ''}>
-                            🎁 ОТКРЫТЬ ${selectedCounts[caseItem.id]} КЕЙС(ОВ)
-                        </button>
+                        <div class="game-info">
+                            <div class="game-title">${game.name}</div>
+                            <span class="game-category">${game.category}</span>
+                            <div class="game-description">${game.description}</div>
+                            <div class="game-footer">
+                                <div>
+                                    ${game.oldPrice ? `<span class="old-price">${game.oldPrice.toLocaleString()} ₽</span>` : ''}
+                                    <span class="game-price">${isFree ? 'Бесплатно' : game.price.toLocaleString() + ' ₽'}</span>
+                                </div>
+                                ${!inCart ? 
+                                    `<button class="buy-btn" onclick="addToCart(${JSON.stringify(game).replace(/"/g, '&quot;')})">
+                                        <i class="fas fa-shopping-cart"></i> В корзину
+                                    </button>` :
+                                    `<button class="buy-btn" style="background:#444;" disabled>
+                                        <i class="fas fa-check"></i> В корзине
+                                    </button>`
+                                }
+                            </div>
+                        </div>
                     </div>
                 `;
             }).join('');
+            
+            if (filtered.length === 0) {
+                gamesGrid.innerHTML = '<div style="text-align:center; padding:60px; color:#666;">🔍 Ничего не найдено</div>';
+            }
         }
 
-        function renderInventory() {
-            if (player.inventory.length === 0) {
-                inventoryList.innerHTML = '<div style="text-align:center; color:#aaa; grid-column:1/-1;">Инвентарь пуст. Откройте кейс!</div>';
-                return;
-            }
-            
-            const grouped = {};
-            player.inventory.forEach(item => {
-                const key = `${item.name}|${item.icon}`;
-                if (!grouped[key]) {
-                    grouped[key] = { ...item, count: 0 };
-                }
-                grouped[key].count++;
-            });
-            
-            inventoryList.innerHTML = Object.values(grouped).map(item => `
-                <div class="inventory-item">
-                    <div class="inventory-item-icon">${item.icon}</div>
-                    <div class="inventory-item-name">${item.name}</div>
-                    <div class="inventory-item-price">${item.price}💰</div>
-                    <div class="inventory-item-price">x${item.count}</div>
-                    <button class="sell-btn" onclick="sellItem('${item.name}', '${item.icon}')">💸 ПРОДАТЬ ВСЕ</button>
-                </div>
-            `).join('');
+        function toggleCart() {
+            document.getElementById('cartSidebar').classList.toggle('open');
         }
 
-        function openMultipleCases(caseId) {
-            const caseItem = cases.find(c => c.id === caseId);
-            if (!caseItem) return;
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = message;
+            document.body.appendChild(toast);
             
-            const count = selectedCounts[caseId];
-            const totalPrice = caseItem.price * count;
-            
-            if (player.balance < totalPrice) {
-                showNotification('❌ Недостаточно монет!', 'error');
-                return;
-            }
-            
-            // Списываем монеты
-            player.balance -= totalPrice;
-            player.casesOpened += count;
-            
-            // Генерируем выигрыши для каждого кейса
-            const results = [];
-            for (let i = 0; i < count; i++) {
-                const randomIndex = Math.floor(Math.random() * caseItem.items.length);
-                const wonItem = { ...caseItem.items[randomIndex], wonAt: Date.now() };
-                player.inventory.push(wonItem);
-                results.push(wonItem);
-            }
-            
-            saveGame();
-            updateUI();
-            renderInventory();
-            
-            // Показываем анимацию массового открытия
-            showMassOpenAnimation(caseItem, results);
-        }
-        
-        function showMassOpenAnimation(caseItem, results) {
-            const ITEM_COPIES = 50;
-            const itemsList = [];
-            for (let i = 0; i < ITEM_COPIES; i++) {
-                itemsList.push(...caseItem.items);
-            }
-            
-            const modal = document.createElement('div');
-            modal.className = 'mass-open-modal';
-            
-            // Создаём рулетки для каждого кейса
-            const roulettesHTML = results.map((result, idx) => `
-                <div class="roulette-card" id="roulette-${idx}">
-                    <div class="roulette-number">${idx + 1}</div>
-                    <div class="roulette-wrapper" style="min-height: 160px;">
-                        <div class="center-indicator"></div>
-                        <div class="roulette-track" id="track-${idx}">
-                            ${itemsList.map((item, itemIdx) => `
-                                <div class="roulette-item" data-name="${item.name}" data-price="${item.price}" data-rarity="${item.rarity}" data-icon="${item.icon}">
-                                    <div class="roulette-item-icon">${item.icon}</div>
-                                    <div class="roulette-item-name">${item.name.substring(0, 15)}</div>
-                                    <div class="roulette-item-price">${item.price}💰</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    <div class="roulette-result" id="result-${idx}" style="display: none;">
-                        <div style="font-size: 1.2rem;">✨ ${result.icon} ${result.name}</div>
-                        <div style="color: #ffd700;">+${result.price}💰</div>
-                    </div>
-                </div>
-            `).join('');
-            
-            modal.innerHTML = `
-                <div class="mass-open-container">
-                    <div class="mass-open-title">🎲 ОТКРЫТИЕ ${results.length} КЕЙСОВ</div>
-                    <div class="roulettes-grid" id="roulettesGrid">
-                        ${roulettesHTML}
-                    </div>
-                    <div class="mass-open-controls">
-                        <button class="mass-spin-btn" id="massSpinBtn">🎰 КРУТИТЬ ВСЕ</button>
-                        <button class="mass-close-btn" id="massCloseBtn" style="display: none;">✨ ЗАБРАТЬ ВСЁ</button>
-                    </div>
-                    <div class="summary-results" id="summaryResults" style="display: none;"></div>
-                </div>
-            `;
-            
-            document.body.appendChild(modal);
-            
-            const spinBtn = modal.querySelector('#massSpinBtn');
-            const closeBtn = modal.querySelector('#massCloseBtn');
-            const summaryDiv = modal.querySelector('#summaryResults');
-            
-            let completedSpins = 0;
-            const totalSpins = results.length;
-            const allWonItems = [...results];
-            
-            function startSpinForRoulette(index, targetItem) {
-                const track = modal.querySelector(`#track-${index}`);
-                const wrapper = track?.parentElement;
-                const resultDiv = modal.querySelector(`#result-${index}`);
-                
-                if (!track || !wrapper) return;
-                
-                // Находим целевой элемент
-                const allItems = track.querySelectorAll('.roulette-item');
-                let targetElement = null;
-                for (let i = 0; i < allItems.length; i++) {
-                    if (allItems[i].dataset.name === targetItem.name) {
-                        targetElement = allItems[i];
-                        break;
-                    }
-                }
-                
-                if (targetElement) {
-                    const wrapperRect = wrapper.getBoundingClientRect();
-                    const targetRect = targetElement.getBoundingClientRect();
-                    const centerX = wrapperRect.left + wrapperRect.width / 2;
-                    const targetCenterX = targetRect.left + targetRect.width / 2;
-                    const offsetToCenter = targetCenterX - centerX;
-                    
-                    const currentTransform = track.style.transform;
-                    let currentX = 0;
-                    if (currentTransform) {
-                        const match = currentTransform.match(/translateX\(([-\d.]+)px\)/);
-                        if (match) currentX = parseFloat(match[1]);
-                    }
-                    
-                    const targetPosition = currentX - offsetToCenter - 400;
-                    const randomOffset = (Math.random() - 0.5) * 200;
-                    const finalPosition = targetPosition + randomOffset;
-                    
-                    track.style.transition = 'transform 2s cubic-bezier(0.1, 0.9, 0.2, 1)';
-                    track.style.transform = `translateX(${finalPosition}px)`;
-                    
-                    setTimeout(() => {
-                        // Показываем результат
-                        const rarityColors = {
-                            common: '#808080', rare: '#4169e1', epic: '#9400d3',
-                            legendary: '#ff8c00', mythical: '#ff00ff', divine: '#00ffff'
-                        };
-                        resultDiv.style.display = 'block';
-                        resultDiv.style.border = `2px solid ${rarityColors[targetItem.rarity] || '#ffd700'}`;
-                        
-                        completedSpins++;
-                        if (completedSpins === totalSpins) {
-                            showSummary();
-                        }
-                    }, 2100);
-                }
-            }
-            
-            function showSummary() {
-                // Группируем выигрыши
-                const grouped = {};
-                allWonItems.forEach(item => {
-                    const key = `${item.name}|${item.icon}`;
-                    if (!grouped[key]) {
-                        grouped[key] = { ...item, count: 0 };
-                    }
-                    grouped[key].count++;
-                });
-                
-                const totalValue = allWonItems.reduce((sum, item) => sum + item.price, 0);
-                
-                summaryDiv.innerHTML = `
-                    <h3 style="color:#ffd700;">📊 ИТОГИ ОТКРЫТИЯ</h3>
-                    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin: 15px 0;">
-                        ${Object.values(grouped).map(item => `
-                            <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px; text-align: center;">
-                                <div style="font-size: 1.5rem;">${item.icon}</div>
-                                <div>${item.name}</div>
-                                <div style="color:#ffd700;">x${item.count}</div>
-                                <div>${item.price * item.count}💰</div>
-                            </div>
-                        `).join('')}
-                    </div>
-                    <div style="font-size: 1.3rem;">💰 Общая стоимость: ${totalValue} монет</div>
-                `;
-                summaryDiv.style.display = 'block';
-                
-                spinBtn.style.display = 'none';
-                closeBtn.style.display = 'inline-block';
-            }
-            
-            spinBtn.onclick = () => {
-                spinBtn.disabled = true;
-                spinBtn.textContent = '🌀 ПРОКРУТКА...';
-                
-                // Запускаем анимацию для всех рулеток
-                results.forEach((result, idx) => {
-                    setTimeout(() => {
-                        startSpinForRoulette(idx, result);
-                    }, idx * 150);
-                });
-            };
-            
-            closeBtn.onclick = () => {
-                modal.remove();
-                renderCases();
-                showNotification(`✅ Открыто ${totalSpins} кейсов! Получено ${allWonItems.length} предметов`);
-            };
-        }
-        
-        function sellItem(itemName, itemIcon) {
-            const itemsToSell = player.inventory.filter(item => item.name === itemName && item.icon === itemIcon);
-            
-            if (itemsToSell.length === 0) {
-                showNotification('❌ Предмет не найден!', 'error');
-                return;
-            }
-            
-            const totalPrice = itemsToSell.reduce((sum, item) => sum + item.price, 0);
-            
-            if (confirm(`Продать ${itemsToSell.length} шт. "${itemName}" за ${totalPrice} монет?`)) {
-                player.inventory = player.inventory.filter(item => !(item.name === itemName && item.icon === itemIcon));
-                player.balance += totalPrice;
-                
-                saveGame();
-                updateUI();
-                renderInventory();
-                
-                showNotification(`✅ Продано! +${totalPrice} монет`);
-            }
-        }
-        
-        function resetGame() {
-            if (confirm('⚠️ ВНИМАНИЕ! Весь прогресс будет удален. Продолжить?')) {
-                player = {
-                    balance: 10000,
-                    casesOpened: 0,
-                    inventory: []
-                };
-                selectedCounts = { case_1: 1, case_2: 1, case_3: 1 };
-                saveGame();
-                updateUI();
-                renderInventory();
-                renderCases();
-                showNotification('🔄 Игра сброшена!');
-            }
-        }
-        
-        function showNotification(message, type = 'success') {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.className = `notification ${type === 'error' ? 'error' : ''} show`;
             setTimeout(() => {
-                notification.classList.remove('show');
+                toast.remove();
             }, 3000);
         }
+
+        // ==================== СОБЫТИЯ ====================
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            renderGames();
+        });
         
-        loadGame();
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.category;
+                renderGames();
+            });
+        });
+        
+        // Закрытие корзины по клику вне
+        document.addEventListener('click', (e) => {
+            const sidebar = document.getElementById('cartSidebar');
+            const cartBtn = document.querySelector('.cart-btn');
+            if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && !cartBtn.contains(e.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+        
+        // ==================== ЗАПУСК ====================
+        loadData();
     </script>
 </body>
 </html>
