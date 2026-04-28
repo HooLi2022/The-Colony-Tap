@@ -3,57 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trade Tracker PRO - The Colony</title>
+    <title>Trade Tracker - Админка</title>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             min-height: 100vh;
             padding: 20px;
             color: #eee;
         }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
+        .container { max-width: 1400px; margin: 0 auto; }
         .header {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0,0,0,0.3);
             border-radius: 15px;
             padding: 20px;
             margin-bottom: 20px;
-            backdrop-filter: blur(10px);
-        }
-
-        .user-info {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             flex-wrap: wrap;
             gap: 15px;
+            align-items: center;
         }
-
-        .current-user {
+        .user-badge {
             background: #0f3460;
             padding: 10px 20px;
             border-radius: 30px;
-            font-weight: bold;
         }
-
-        .controls {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
         button {
             background: #e94560;
             color: white;
@@ -61,150 +40,67 @@
             padding: 10px 20px;
             border-radius: 25px;
             cursor: pointer;
-            transition: all 0.2s;
             font-weight: bold;
+            transition: 0.2s;
         }
-
-        button:hover {
-            transform: scale(1.02);
-            opacity: 0.9;
-        }
-
-        button.secondary {
-            background: #533483;
-        }
-
-        button.danger {
-            background: #dc3545;
-        }
-
-        button.warning {
-            background: #ffc107;
-            color: #1a1a2e;
-        }
-
-        button.success {
-            background: #28a745;
-        }
-
-        select, input {
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: none;
-            background: #1a1a2e;
-            color: white;
-        }
-
-        .add-form, .stats-card, .admin-panel {
-            background: rgba(0, 0, 0, 0.4);
+        button:hover { transform: scale(1.02); opacity: 0.9; }
+        button.danger { background: #dc3545; }
+        button.warning { background: #ffc107; color: #1a1a2e; }
+        button.success { background: #28a745; }
+        button.secondary { background: #533483; }
+        
+        .card {
+            background: rgba(0,0,0,0.4);
             border-radius: 15px;
             padding: 20px;
             margin-bottom: 20px;
         }
-
         .form-row {
             display: flex;
             flex-wrap: wrap;
             gap: 15px;
             align-items: flex-end;
         }
-
-        .form-group {
-            flex: 1;
-            min-width: 120px;
+        .form-group { flex: 1; min-width: 120px; }
+        .form-group label { font-size: 12px; color: #aaa; display: block; margin-bottom: 5px; }
+        input, select {
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            background: #1a1a2e;
+            color: white;
+            width: 100%;
         }
-
-        .form-group label {
-            display: block;
-            font-size: 12px;
-            margin-bottom: 5px;
-            color: #aaa;
-        }
-
         .stats-grid {
             display: flex;
             gap: 20px;
             flex-wrap: wrap;
-            justify-content: space-around;
+            justify-content: center;
         }
-
-        .stat-item {
+        .stat-card {
             background: #0f3460;
             padding: 15px 25px;
             border-radius: 12px;
-            min-width: 120px;
             text-align: center;
+            min-width: 130px;
         }
-
-        .stat-value {
-            font-size: 28px;
-            font-weight: bold;
-            color: #e94560;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            margin-top: 5px;
-            color: #aaa;
-        }
-
+        .stat-value { font-size: 28px; font-weight: bold; color: #e94560; }
+        .stat-label { font-size: 12px; color: #aaa; margin-top: 5px; }
+        .profit { color: #4caf50; }
+        .loss { color: #f44336; }
+        
         table {
             width: 100%;
             border-collapse: collapse;
         }
-
         th, td {
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
-
-        th {
-            background: #0f3460;
-            color: #e94560;
-        }
-
-        tr:hover {
-            background: rgba(255,255,255,0.05);
-        }
-
-        .profit {
-            color: #4caf50;
-            font-weight: bold;
-        }
-
-        .loss {
-            color: #f44336;
-            font-weight: bold;
-        }
-
-        .action-btn {
-            background: none;
-            border: none;
-            font-size: 18px;
-            cursor: pointer;
-            margin: 0 3px;
-            padding: 0 5px;
-        }
-
-        .edit-btn { color: #ffc107; }
-        .delete-btn { color: #f44336; }
-
-        .user-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            margin: 5px 0;
-            background: rgba(255,255,255,0.05);
-            border-radius: 8px;
-        }
-
-        .user-stats {
-            font-size: 12px;
-            color: #aaa;
-        }
-
+        th { background: #0f3460; color: #e94560; }
+        tr:hover { background: rgba(255,255,255,0.05); }
+        
         .modal {
             display: none;
             position: fixed;
@@ -212,544 +108,499 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.9);
             justify-content: center;
             align-items: center;
             z-index: 1000;
         }
-
         .modal-content {
             background: #1a1a2e;
             padding: 30px;
             border-radius: 15px;
-            min-width: 500px;
+            min-width: 400px;
             max-width: 90%;
             max-height: 80%;
-            overflow-y: auto;
+            overflow: auto;
         }
-
-        .user-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 15px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .user-tag {
-            background: #0f3460;
-            padding: 10px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
+        .user-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 12px;
+            margin: 8px 0;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
         }
-
-        .user-tag:hover {
-            background: #e94560;
+        .user-item:hover { background: rgba(255,255,255,0.1); }
+        .delete-icon {
+            background: #dc3545;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
         }
-
         .admin-section {
-            margin-bottom: 20px;
-            padding-bottom: 20px;
             border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding-bottom: 20px;
+            margin-bottom: 20px;
         }
-
-        @media (max-width: 768px) {
-            th, td { font-size: 11px; padding: 6px; }
-            .form-group { min-width: 100%; }
-            .modal-content { min-width: 95%; }
-        }
+        h3, h4 { margin-bottom: 15px; color: #e94560; }
+        code { background: #0f3460; padding: 2px 6px; border-radius: 5px; }
+        .small-text { font-size: 12px; color: #aaa; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="user-info">
-                <div>
-                    <span style="color:#aaa;">👤 Профиль:</span>
-                    <span class="current-user" id="currentUserDisplay">Не авторизован</span>
-                </div>
-                <div class="controls">
-                    <select id="currencySelect" onchange="changeCurrency()">
-                        <option value="RUB">₽ RUB</option>
-                        <option value="USD">$ USD</option>
-                        <option value="EUR">€ EUR</option>
-                    </select>
-                    <button onclick="showUserList()" class="secondary">👥 Все игроки</button>
-                    <button onclick="resetToMyProfile()" class="secondary">👤 Мой профиль</button>
-                    <button onclick="showAdminPanel()" class="danger">🔧 Админка</button>
-                </div>
-            </div>
+<div class="container">
+    <div class="header">
+        <div>
+            <span style="color:#aaa;">👤 Текущий:</span>
+            <span class="user-badge" id="currentUserName">Не авторизован</span>
         </div>
-
-        <div id="app"></div>
-    </div>
-
-    <!-- Модальное окно со списком пользователей -->
-    <div id="userListModal" class="modal">
-        <div class="modal-content">
-            <h3>👥 Все игроки</h3>
-            <div id="userListContainer" class="user-list"></div>
-            <button onclick="closeUserList()" style="margin-top: 20px;">Закрыть</button>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <select id="currencySelect" onchange="changeCurrency()">
+                <option value="RUB">₽ Рубль</option>
+                <option value="USD">$ Доллар</option>
+                <option value="EUR">€ Евро</option>
+            </select>
+            <button onclick="showAllUsers()" class="secondary">👥 Все игроки</button>
+            <button onclick="resetViewToMe()" class="secondary">👤 Мой профиль</button>
+            <button onclick="openAdminPanel()" class="danger">🔧 АДМИНКА</button>
         </div>
     </div>
+    <div id="mainContent"></div>
+</div>
 
-    <!-- Админ-панель -->
-    <div id="adminModal" class="modal">
-        <div class="modal-content">
-            <h3>🔧 Админ-панель</h3>
-            <div id="adminContent"></div>
-            <button onclick="closeAdminPanel()" style="margin-top: 20px;">Закрыть</button>
-        </div>
+<!-- Модалка всех пользователей -->
+<div id="usersModal" class="modal">
+    <div class="modal-content">
+        <h3>👥 Все игроки</h3>
+        <div id="usersList"></div>
+        <button onclick="closeModal('usersModal')" style="margin-top: 20px;">Закрыть</button>
     </div>
+</div>
 
-    <!-- Модальное окно редактирования -->
-    <div id="editModal" class="modal">
-        <div class="modal-content">
-            <h3>✏️ Редактировать сделку</h3>
-            <div class="form-group" style="margin: 10px 0;">
-                <label>Предмет</label>
-                <input type="text" id="editItemName">
-            </div>
-            <div class="form-group" style="margin: 10px 0;">
-                <label>Цена покупки</label>
-                <input type="number" id="editBuyPrice" step="0.01">
-            </div>
-            <div class="form-group" style="margin: 10px 0;">
-                <label>Цена продажи</label>
-                <input type="number" id="editSellPrice" step="0.01">
-            </div>
-            <button onclick="saveEdit()" class="success">Сохранить</button>
-            <button onclick="closeEditModal()" style="margin-left: 10px;">Отмена</button>
-        </div>
+<!-- Админ модалка -->
+<div id="adminModal" class="modal">
+    <div class="modal-content" style="min-width: 500px;">
+        <h3>🔧 Админ-панель</h3>
+        <div id="adminPanelContent"></div>
+        <button onclick="closeModal('adminModal')" style="margin-top: 20px;">Закрыть</button>
     </div>
+</div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<!-- Модалка редактирования -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <h3>✏️ Редактировать сделку</h3>
+        <div class="form-group"><label>Название</label><input type="text" id="editName" style="width:100%"></div>
+        <div class="form-group"><label>Покупка (₽)</label><input type="number" id="editBuy" step="0.01" style="width:100%"></div>
+        <div class="form-group"><label>Продажа (₽)</label><input type="number" id="editSell" step="0.01" style="width:100%"></div>
+        <button onclick="saveEdit()" class="success" style="margin-top:15px">Сохранить</button>
+        <button onclick="closeModal('editModal')" style="margin-top:15px">Отмена</button>
+    </div>
+</div>
 
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyA_gNkLMsTxneTwyg5bDxKBN9osRIUrPaE",
-            authDomain: "the-colony-tap.firebaseapp.com",
-            databaseURL: "https://the-colony-tap-default-rtdb.firebaseio.com",
-            projectId: "the-colony-tap",
-            storageBucket: "the-colony-tap.firebasestorage.app",
-            messagingSenderId: "433438733616",
-            appId: "1:433438733616:web:76095a36161b32590d44f5"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-
-        let currentUser = null;
-        let viewingUser = null;
-        let editTradeId = null;
-        let currencySymbol = { RUB: '₽', USD: '$', EUR: '€' };
-        let currentCurrency = 'RUB';
-        let profitChart = null;
-        let tradesListener = null;
-
-        function login() {
-            let nick = prompt("Введите ваш ник (латиница, цифры, _):", "Trader" + Math.floor(Math.random() * 1000));
-            if (!nick) return;
-            nick = nick.replace(/[^a-zA-Z0-9_]/g, '_');
-            if (nick.length < 2) nick = "User_" + Date.now();
-            
-            currentUser = nick;
-            localStorage.setItem("tradeTrackerUser", currentUser);
-            viewingUser = null;
-            setupRealtimeListener();
-            renderApp();
-        }
-
-        function logout() {
-            if (tradesListener) tradesListener.off();
-            currentUser = null;
-            viewingUser = null;
-            localStorage.removeItem("tradeTrackerUser");
+<script>
+    // ========== КОНФИГ FIREBASE (ТВОЙ) ==========
+    const firebaseConfig = {
+        apiKey: "AIzaSyA_gNkLMsTxneTwyg5bDxKBN9osRIUrPaE",
+        authDomain: "the-colony-tap.firebaseapp.com",
+        databaseURL: "https://the-colony-tap-default-rtdb.firebaseio.com",
+        projectId: "the-colony-tap",
+        storageBucket: "the-colony-tap.firebasestorage.app",
+        messagingSenderId: "433438733616",
+        appId: "1:433438733616:web:76095a36161b32590d44f5"
+    };
+    
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    
+    // Глобальные переменные
+    let currentUser = null;
+    let viewingUser = null;
+    let editTradeId = null;
+    let currentCurrency = 'RUB';
+    const symbols = { RUB: '₽', USD: '$', EUR: '€' };
+    let chart = null;
+    
+    // ========== АВТОРИЗАЦИЯ ==========
+    function login() {
+        let name = prompt("Введите ваш ник (латиница, цифры, _):", "Player" + Math.floor(Math.random()*1000));
+        if (!name) return;
+        name = name.replace(/[^a-zA-Z0-9_]/g, '_');
+        if (name.length < 2) name = "User_" + Date.now();
+        currentUser = name;
+        viewingUser = null;
+        localStorage.setItem("tradeUser", currentUser);
+        renderMain();
+    }
+    
+    function logout() {
+        currentUser = null;
+        viewingUser = null;
+        localStorage.removeItem("tradeUser");
+        renderLoginScreen();
+    }
+    
+    function changeCurrency() {
+        currentCurrency = document.getElementById("currencySelect").value;
+        renderMain();
+    }
+    
+    function resetViewToMe() {
+        viewingUser = null;
+        renderMain();
+    }
+    
+    // ========== ОСНОВНОЙ РЕНДЕР ==========
+    async function renderMain() {
+        if (!currentUser) {
             renderLoginScreen();
+            return;
         }
-
-        function changeCurrency() {
-            currentCurrency = document.getElementById("currencySelect").value;
-            renderApp();
-        }
-
-        function setupRealtimeListener() {
-            if (tradesListener) tradesListener.off();
-            const activeUser = viewingUser || currentUser;
-            if (activeUser) {
-                tradesListener = database.ref(`users/${activeUser}/trades`).on('value', () => {
-                    renderApp();
-                });
-            }
-        }
-
-        async function showUserList() {
-            const snapshot = await database.ref("users").once("value");
-            const users = snapshot.val() || {};
-            const userList = Object.keys(users);
-            const container = document.getElementById("userListContainer");
-            
-            const userStats = [];
-            for (const user of userList) {
-                const tradesSnapshot = await database.ref(`users/${user}/trades`).once("value");
-                const trades = tradesSnapshot.val() || [];
-                let totalProfit = 0;
-                trades.forEach(t => totalProfit += t.profit || 0);
-                userStats.push({ name: user, count: trades.length, profit: totalProfit });
-            }
-            
-            if (userList.length === 0) {
-                container.innerHTML = "<div>Пока нет других пользователей</div>";
-            } else {
-                container.innerHTML = userStats.map(u => 
-                    `<div class="user-tag" onclick="viewUser('${u.name}')">
-                        <span>👤 ${u.name}</span>
-                        <span style="font-size:11px;">${u.count} сделок, ${u.profit.toFixed(2)}₽</span>
-                    </div>`
-                ).join("");
-            }
-            document.getElementById("userListModal").style.display = "flex";
-        }
-
-        function closeUserList() {
-            document.getElementById("userListModal").style.display = "none";
-        }
-
-        function viewUser(nick) {
-            viewingUser = nick;
-            closeUserList();
-            setupRealtimeListener();
-            renderApp();
-        }
-
-        async function showAdminPanel() {
-            const password = prompt("Введите пароль администратора:");
-            if (password === "admin123") {
-                await loadAdminContent();
-                document.getElementById("adminModal").style.display = "flex";
-            } else if (password !== null) {
-                alert("Неверный пароль!");
-            }
-        }
-
-        async function loadAdminContent() {
-            const snapshot = await database.ref("users").once("value");
-            const users = snapshot.val() || {};
-            const userList = Object.keys(users);
-            
-            const userStats = [];
-            for (const user of userList) {
-                const tradesSnapshot = await database.ref(`users/${user}/trades`).once("value");
-                const trades = tradesSnapshot.val() || [];
-                let totalProfit = 0;
-                let totalBuy = 0;
-                trades.forEach(t => {
-                    totalProfit += t.profit || 0;
-                    totalBuy += t.buyPrice || 0;
-                });
-                userStats.push({ name: user, count: trades.length, profit: totalProfit, spent: totalBuy });
-            }
-            
-            const container = document.getElementById("adminContent");
-            container.innerHTML = `
-                <div class="admin-section">
-                    <h4 style="color:#e94560;">⚠️ ОПАСНЫЕ ДЕЙСТВИЯ</h4>
-                    <button onclick="confirmResetAll()" class="danger" style="width: 100%; margin: 5px 0;">💣 СБРОСИТЬ ВСЕ ДАННЫЕ (ВСЕХ ПОЛЬЗОВАТЕЛЕЙ)</button>
-                    <button onclick="resetMyData()" class="warning" style="width: 100%; margin: 5px 0;">🗑️ Сбросить ТОЛЬКО мои данные (${currentUser})</button>
+        
+        const targetUser = viewingUser || currentUser;
+        const isViewingOther = (viewingUser && viewingUser !== currentUser);
+        
+        // Получаем сделки
+        const snapshot = await db.ref(`users/${targetUser}/trades`).once("value");
+        let trades = snapshot.val() || [];
+        
+        // Статистика
+        let totalBuy = 0, totalSell = 0, totalCommission = 0, totalProfit = 0;
+        trades.forEach(t => {
+            totalBuy += t.buyPrice || 0;
+            totalSell += t.sellPrice || 0;
+            totalCommission += t.commission || 0;
+            totalProfit += t.profit || 0;
+        });
+        
+        // Данные для графика
+        const daily = {};
+        trades.forEach(t => {
+            const date = t.date?.split(',')[0] || 'Нет даты';
+            daily[date] = (daily[date] || 0) + (t.profit || 0);
+        });
+        const labels = Object.keys(daily).slice(-7);
+        const chartData = labels.map(l => daily[l]);
+        
+        const html = `
+            <div class="card">
+                <h3 style="margin-bottom:15px">➕ Новая сделка</h3>
+                <div class="form-row">
+                    <div class="form-group"><label>Предмет</label><input type="text" id="itemName" placeholder="Кейс, капсула..."></div>
+                    <div class="form-group"><label>Покупка (${symbols[currentCurrency]})</label><input type="number" id="buyPrice" step="0.01" placeholder="0"></div>
+                    <div class="form-group"><label>Продажа (${symbols[currentCurrency]})</label><input type="number" id="sellPrice" step="0.01" placeholder="0"></div>
+                    <div class="form-group"><button onclick="addTrade()">➕ Добавить</button></div>
                 </div>
-                
-                <div class="admin-section">
-                    <h4>📊 Все пользователи (${userList.length})</h4>
-                    <div style="max-height: 300px; overflow-y: auto;">
-                        ${userStats.map(u => `
-                            <div class="user-row">
-                                <div>
-                                    <strong>${u.name}</strong>
-                                    <div class="user-stats">${u.count} сделок, потрачено: ${u.spent.toFixed(2)}₽, прибыль: ${u.profit.toFixed(2)}₽</div>
-                                </div>
-                                <button onclick="deleteUser('${u.name}')" class="danger" style="padding: 5px 10px;">❌ Удалить</button>
-                            </div>
+            </div>
+            
+            <div class="card">
+                <h3>📊 Статистика ${isViewingOther ? `игрока ${targetUser}` : 'моя'}</h3>
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-value">${totalBuy.toFixed(2)} ${symbols[currentCurrency]}</div><div class="stat-label">💰 Потрачено</div></div>
+                    <div class="stat-card"><div class="stat-value">${totalSell.toFixed(2)} ${symbols[currentCurrency]}</div><div class="stat-label">💵 Продажи</div></div>
+                    <div class="stat-card"><div class="stat-value">${totalCommission.toFixed(2)} ${symbols[currentCurrency]}</div><div class="stat-label">📉 Комиссия 13%</div></div>
+                    <div class="stat-card"><div class="stat-value ${totalProfit >=0 ? 'profit' : 'loss'}">${totalProfit>=0 ? '+' : ''}${totalProfit.toFixed(2)} ${symbols[currentCurrency]}</div><div class="stat-label">📈 Прибыль</div></div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>📈 График прибыли</h3>
+                <canvas id="profitChart" style="max-height:300px"></canvas>
+            </div>
+            
+            <div class="card">
+                <h3>📋 История сделок</h3>
+                ${trades.length === 0 ? '<div style="text-align:center;padding:40px">Нет сделок</div>' : `
+                <div style="overflow-x:auto">
+                <table>
+                    <thead><tr><th>Дата</th><th>Предмет</th><th>Покупка</th><th>Продажа</th><th>Комиссия</th><th>Чистый доход</th><th>Прибыль</th><th></th></tr></thead>
+                    <tbody>
+                        ${trades.slice().reverse().map(t => `
+                            <tr>
+                                <td>${t.date || '-'}</td>
+                                <td>${t.itemName}</td>
+                                <td>${t.buyPrice > 0 ? t.buyPrice.toFixed(2) + ' ' + symbols[currentCurrency] : '-'}</td>
+                                <td>${t.sellPrice > 0 ? t.sellPrice.toFixed(2) + ' ' + symbols[currentCurrency] : '-'}</td>
+                                <td>${t.commission > 0 ? t.commission.toFixed(2) + ' ' + symbols[currentCurrency] : '-'}</td>
+                                <td>${t.netSell > 0 ? t.netSell.toFixed(2) + ' ' + symbols[currentCurrency] : '-'}</td>
+                                <td class="${t.profit >=0 ? 'profit' : 'loss'}">${t.profit>=0 ? '+' : ''}${t.profit.toFixed(2)} ${symbols[currentCurrency]}</td>
+                                <td>${!isViewingOther ? `<button onclick='openEdit(${t.id})' style="background:#ffc107;color:#000;padding:5px 10px;margin-right:5px">✏️</button><button onclick='deleteTradeConfirm(${t.id})' style="background:#dc3545;padding:5px 10px">🗑️</button>` : '-'}</td>
+                            </tr>
                         `).join('')}
-                    </div>
+                    </tbody>
+                </table>
                 </div>
-            `;
-        }
-
-        async function confirmResetAll() {
-            if (confirm("⚠️ ВНИМАНИЕ! Это удалит ВСЕ данные ВСЕХ пользователей! Безвозвратно!\n\nВы уверены?")) {
-                const confirmText = prompt("Введите 'УДАЛИТЬ ВСЁ' для подтверждения:");
-                if (confirmText === "УДАЛИТЬ ВСЁ") {
-                    await database.ref("users").set({});
-                    alert("✅ Все данные удалены!");
-                    closeAdminPanel();
-                    if (currentUser) {
-                        renderApp();
-                    } else {
-                        renderLoginScreen();
-                    }
-                } else {
-                    alert("Отменено");
-                }
-            }
-        }
-
-        async function resetMyData() {
-            if (!currentUser) return;
-            if (confirm(`Удалить ВСЕ ваши данные (${currentUser})?`)) {
-                await database.ref(`users/${currentUser}`).set({});
-                alert("✅ Ваши данные удалены!");
-                renderApp();
-                closeAdminPanel();
-            }
-        }
-
-        async function deleteUser(username) {
-            if (confirm(`Удалить пользователя "${username}" и ВСЕ его сделки?`)) {
-                await database.ref(`users/${username}`).set({});
-                alert(`✅ Пользователь "${username}" удалён!`);
-                if (currentUser === username) {
-                    logout();
-                } else {
-                    await loadAdminContent();
-                }
-            }
-        }
-
-        function closeAdminPanel() {
-            document.getElementById("adminModal").style.display = "none";
-        }
-
-        async function addTrade() {
-            const itemName = document.getElementById("itemName")?.value;
-            const buyPrice = parseFloat(document.getElementById("buyPrice")?.value) || 0;
-            const sellPrice = parseFloat(document.getElementById("sellPrice")?.value) || 0;
-
-            if (!itemName) { alert("Введите название предмета"); return; }
-
-            let commission = 0, netSell = sellPrice;
-            if (sellPrice > 0) {
-                commission = sellPrice * 0.13;
-                netSell = sellPrice - commission;
-            }
-            const profit = netSell - buyPrice;
-
-            const trade = {
-                id: Date.now(),
-                itemName, buyPrice, sellPrice, commission, netSell, profit,
-                date: new Date().toLocaleString(),
-                timestamp: Date.now()
-            };
-
-            const userRef = database.ref(`users/${viewingUser || currentUser}/trades`);
-            const snapshot = await userRef.once("value");
-            let trades = snapshot.val() || [];
-            trades.push(trade);
-            await userRef.set(trades);
-
-            document.getElementById("itemName").value = "";
-            document.getElementById("buyPrice").value = "";
-            document.getElementById("sellPrice").value = "";
-        }
-
-        async function deleteTrade(tradeId) {
-            if (!confirm("Удалить сделку?")) return;
-            const userRef = database.ref(`users/${currentUser}/trades`);
-            const snapshot = await userRef.once("value");
-            let trades = snapshot.val() || [];
-            trades = trades.filter(t => t.id !== tradeId);
-            await userRef.set(trades);
-        }
-
-        function openEditModal(trade) {
-            editTradeId = trade.id;
-            document.getElementById("editItemName").value = trade.itemName;
-            document.getElementById("editBuyPrice").value = trade.buyPrice;
-            document.getElementById("editSellPrice").value = trade.sellPrice;
-            document.getElementById("editModal").style.display = "flex";
-        }
-
-        function closeEditModal() {
-            document.getElementById("editModal").style.display = "none";
-            editTradeId = null;
-        }
-
-        async function saveEdit() {
-            const itemName = document.getElementById("editItemName").value;
-            const buyPrice = parseFloat(document.getElementById("editBuyPrice").value) || 0;
-            const sellPrice = parseFloat(document.getElementById("editSellPrice").value) || 0;
-
-            let commission = 0, netSell = sellPrice;
-            if (sellPrice > 0) {
-                commission = sellPrice * 0.13;
-                netSell = sellPrice - commission;
-            }
-            const profit = netSell - buyPrice;
-
-            const userRef = database.ref(`users/${currentUser}/trades`);
-            const snapshot = await userRef.once("value");
-            let trades = snapshot.val() || [];
-            const index = trades.findIndex(t => t.id === editTradeId);
-            if (index !== -1) {
-                trades[index] = { ...trades[index], itemName, buyPrice, sellPrice, commission, netSell, profit };
-                await userRef.set(trades);
-            }
-            closeEditModal();
-        }
-
-        function resetToMyProfile() {
-            viewingUser = null;
-            setupRealtimeListener();
-            renderApp();
-        }
-
-        function renderLoginScreen() {
-            const app = document.getElementById("app");
-            app.innerHTML = `
-                <div class="stats-card" style="text-align: center;">
-                    <h2>🎮 Trade Tracker PRO - The Colony</h2>
-                    <p style="margin: 20px 0;">Учёт продаж/покупок с комиссией Steam (13%)<br>Графики, валюты, просмотр других игроков</p>
-                    <p style="margin: 10px 0; color: #e94560;">🔧 Админ-пароль: admin123</p>
-                    <button onclick="login()" style="font-size: 18px; padding: 12px 30px;">🚀 Войти / Создать профиль</button>
-                </div>
-            `;
-            document.getElementById("currentUserDisplay").innerHTML = "Не авторизован";
-        }
-
-        async function renderApp() {
-            if (!currentUser) { renderLoginScreen(); return; }
-
-            const app = document.getElementById("app");
-            const isViewingOther = viewingUser && viewingUser !== currentUser;
-            const activeUser = viewingUser || currentUser;
-
-            const snapshot = await database.ref(`users/${activeUser}/trades`).once("value");
-            let trades = snapshot.val() || [];
-
-            let totalBuy = 0, totalSellGross = 0, totalCommission = 0, totalProfit = 0;
-            trades.forEach(t => {
-                totalBuy += t.buyPrice || 0;
-                totalSellGross += t.sellPrice || 0;
-                totalCommission += t.commission || 0;
-                totalProfit += t.profit || 0;
-            });
-
-            const dailyProfit = {};
-            trades.forEach(t => {
-                const date = t.date?.split(',')[0] || 'Нет даты';
-                dailyProfit[date] = (dailyProfit[date] || 0) + (t.profit || 0);
-            });
-            const chartLabels = Object.keys(dailyProfit).slice(-7);
-            const chartData = chartLabels.map(l => dailyProfit[l]);
-
-            app.innerHTML = `
-                <div class="add-form">
-                    <div class="section-title" style="font-size:20px;margin-bottom:15px;color:#e94560;">➕ Новая сделка</div>
-                    <div class="form-row">
-                        <div class="form-group"><label>Предмет</label><input type="text" id="itemName" placeholder="Кейс, капсула..."></div>
-                        <div class="form-group"><label>Покупка (${currencySymbol[currentCurrency]})</label><input type="number" id="buyPrice" step="0.01" placeholder="0"></div>
-                        <div class="form-group"><label>Продажа (${currencySymbol[currentCurrency]})</label><input type="number" id="sellPrice" step="0.01" placeholder="0"></div>
-                        <div class="form-group"><button onclick="addTrade()">➕ Добавить</button></div>
-                    </div>
-                </div>
-
-                <div class="stats-card">
-                    <div class="section-title" style="font-size:20px;margin-bottom:15px;">📊 Статистика ${isViewingOther ? `игрока ${activeUser}` : 'моя'}</div>
-                    <div class="stats-grid">
-                        <div class="stat-item"><div class="stat-value">${totalBuy.toFixed(2)} ${currencySymbol[currentCurrency]}</div><div class="stat-label">💰 Потрачено</div></div>
-                        <div class="stat-item"><div class="stat-value">${totalSellGross.toFixed(2)} ${currencySymbol[currentCurrency]}</div><div class="stat-label">💵 Продажи</div></div>
-                        <div class="stat-item"><div class="stat-value">${totalCommission.toFixed(2)} ${currencySymbol[currentCurrency]}</div><div class="stat-label">📉 Комиссия 13%</div></div>
-                        <div class="stat-item"><div class="stat-value ${totalProfit >= 0 ? 'profit' : 'loss'}">${totalProfit >= 0 ? '+' : ''}${totalProfit.toFixed(2)} ${currencySymbol[currentCurrency]}</div><div class="stat-label">📈 Чистая прибыль</div></div>
-                    </div>
-                </div>
-
-                <div class="stats-card">
-                    <div class="section-title" style="font-size:20px;margin-bottom:15px;">📈 График прибыли (последние 7 дней)</div>
-                    <div class="chart-container"><canvas id="profitChart"></canvas></div>
-                </div>
-
-                <div class="stats-card">
-                    <div class="section-title" style="font-size:20px;margin-bottom:15px;">📋 История сделок</div>
-                    ${trades.length === 0 ? '<div class="empty-state" style="text-align:center;padding:40px;">Нет сделок. Добавьте первую!</div>' : `
-                        <table>
-                            <thead><tr><th>Дата</th><th>Предмет</th><th>Покупка</th><th>Продажа</th><th>Комиссия</th><th>Чистый доход</th><th>Прибыль</th><th></th></tr></thead>
-                            <tbody>
-                                ${trades.slice().reverse().map(t => `
-                                    <tr>
-                                        <td>${t.date || '-'}</td>
-                                        <td>${t.itemName}</td>
-                                        <td>${t.buyPrice > 0 ? t.buyPrice.toFixed(2) + ' ' + currencySymbol[currentCurrency] : '-'}</td>
-                                        <td>${t.sellPrice > 0 ? t.sellPrice.toFixed(2) + ' ' + currencySymbol[currentCurrency] : '-'}</td>
-                                        <td>${t.commission > 0 ? t.commission.toFixed(2) + ' ' + currencySymbol[currentCurrency] : '-'}</td>
-                                        <td>${t.netSell > 0 ? t.netSell.toFixed(2) + ' ' + currencySymbol[currentCurrency] : '-'}</td>
-                                        <td class="${t.profit >= 0 ? 'profit' : 'loss'}">${t.profit >= 0 ? '+' : ''}${t.profit.toFixed(2)} ${currencySymbol[currentCurrency]}</td>
-                                        <td>${!isViewingOther ? `<button class="action-btn edit-btn" onclick="openEditModalById(${t.id})">✏️</button><button class="action-btn delete-btn" onclick="deleteTrade(${t.id})">🗑️</button>` : '-'}</td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    `}
-                </div>
-            `;
-
-            document.getElementById("currentUserDisplay").innerHTML = `${currentUser} ${isViewingOther ? `→ просмотр: ${activeUser}` : ''}`;
-
-            const ctx = document.getElementById("profitChart")?.getContext("2d");
-            if (ctx && profitChart) profitChart.destroy();
-            if (ctx && chartLabels.length > 0) {
-                profitChart = new Chart(ctx, {
+                `}
+            </div>
+        `;
+        
+        document.getElementById("mainContent").innerHTML = html;
+        document.getElementById("currentUserName").innerHTML = `${currentUser} ${isViewingOther ? `→ просмотр: ${targetUser}` : ''}`;
+        
+        // Рисуем график
+        const ctx = document.getElementById("profitChart")?.getContext("2d");
+        if (ctx) {
+            if (chart) chart.destroy();
+            if (labels.length > 0) {
+                chart = new Chart(ctx, {
                     type: 'line',
-                    data: { labels: chartLabels, datasets: [{ label: `Прибыль (${currencySymbol[currentCurrency]})`, data: chartData, borderColor: '#e94560', tension: 0.3, fill: false }] },
+                    data: { labels, datasets: [{ label: `Прибыль (${symbols[currentCurrency]})`, data: chartData, borderColor: '#e94560', tension: 0.3 }] },
                     options: { responsive: true, maintainAspectRatio: true }
                 });
-            } else if (ctx) {
-                profitChart = new Chart(ctx, {
-                    type: 'line',
-                    data: { labels: ['Нет данных'], datasets: [{ label: 'Прибыль', data: [0] }] },
-                    options: { responsive: true }
-                });
+            } else {
+                chart = new Chart(ctx, { type: 'line', data: { labels: ['Нет'], datasets: [{ data: [0] }] } });
             }
         }
-
-        window.openEditModalById = async (id) => {
-            const snapshot = await database.ref(`users/${currentUser}/trades`).once("value");
-            const trades = snapshot.val() || [];
-            const trade = trades.find(t => t.id === id);
-            if (trade) openEditModal(trade);
+    }
+    
+    function renderLoginScreen() {
+        document.getElementById("mainContent").innerHTML = `
+            <div class="card" style="text-align:center">
+                <h2>🎮 Trade Tracker - The Colony</h2>
+                <p style="margin:20px 0">Учёт сделок с комиссией Steam 13%<br>Админка для сброса данных</p>
+                <p style="margin:10px 0;color:#e94560">🔧 Админ пароль: admin123</p>
+                <button onclick="login()" style="font-size:18px;padding:12px 30px">🚀 Войти</button>
+            </div>
+        `;
+        document.getElementById("currentUserName").innerHTML = "Не авторизован";
+    }
+    
+    // ========== РАБОТА СО СДЕЛКАМИ ==========
+    async function addTrade() {
+        const name = document.getElementById("itemName")?.value;
+        const buy = parseFloat(document.getElementById("buyPrice")?.value) || 0;
+        const sell = parseFloat(document.getElementById("sellPrice")?.value) || 0;
+        if (!name) { alert("Введите название"); return; }
+        
+        const commission = sell * 0.13;
+        const netSell = sell - commission;
+        const profit = netSell - buy;
+        
+        const trade = {
+            id: Date.now(),
+            itemName: name,
+            buyPrice: buy,
+            sellPrice: sell,
+            commission: commission,
+            netSell: netSell,
+            profit: profit,
+            date: new Date().toLocaleString(),
+            timestamp: Date.now()
         };
-
-        window.addTrade = addTrade;
-        window.deleteTrade = deleteTrade;
-        window.login = login;
-        window.logout = logout;
-        window.changeCurrency = changeCurrency;
-        window.showUserList = showUserList;
-        window.closeUserList = closeUserList;
-        window.viewUser = viewUser;
-        window.resetToMyProfile = resetToMyProfile;
-        window.openEditModal = openEditModal;
-        window.closeEditModal = closeEditModal;
-        window.saveEdit = saveEdit;
-        window.showAdminPanel = showAdminPanel;
-        window.closeAdminPanel = closeAdminPanel;
-        window.confirmResetAll = confirmResetAll;
-        window.resetMyData = resetMyData;
-        window.deleteUser = deleteUser;
-
-        (function checkAuth() {
-            const saved = localStorage.getItem("tradeTrackerUser");
-            if (saved) { 
-                currentUser = saved; 
-                setupRealtimeListener();
-                renderApp(); 
+        
+        const user = viewingUser || currentUser;
+        const ref = db.ref(`users/${user}/trades`);
+        const snap = await ref.once("value");
+        let trades = snap.val() || [];
+        trades.push(trade);
+        await ref.set(trades);
+        
+        document.getElementById("itemName").value = "";
+        document.getElementById("buyPrice").value = "";
+        document.getElementById("sellPrice").value = "";
+        renderMain();
+    }
+    
+    async function deleteTradeConfirm(id) {
+        if (!confirm("Удалить сделку?")) return;
+        const ref = db.ref(`users/${currentUser}/trades`);
+        const snap = await ref.once("value");
+        let trades = snap.val() || [];
+        trades = trades.filter(t => t.id !== id);
+        await ref.set(trades);
+        renderMain();
+    }
+    
+    async function openEdit(id) {
+        const ref = db.ref(`users/${currentUser}/trades`);
+        const snap = await ref.once("value");
+        const trades = snap.val() || [];
+        const trade = trades.find(t => t.id === id);
+        if (trade) {
+            editTradeId = id;
+            document.getElementById("editName").value = trade.itemName;
+            document.getElementById("editBuy").value = trade.buyPrice;
+            document.getElementById("editSell").value = trade.sellPrice;
+            document.getElementById("editModal").style.display = "flex";
+        }
+    }
+    
+    async function saveEdit() {
+        const newName = document.getElementById("editName").value;
+        const newBuy = parseFloat(document.getElementById("editBuy").value) || 0;
+        const newSell = parseFloat(document.getElementById("editSell").value) || 0;
+        const commission = newSell * 0.13;
+        const netSell = newSell - commission;
+        const profit = netSell - newBuy;
+        
+        const ref = db.ref(`users/${currentUser}/trades`);
+        const snap = await ref.once("value");
+        let trades = snap.val() || [];
+        const index = trades.findIndex(t => t.id === editTradeId);
+        if (index !== -1) {
+            trades[index] = { ...trades[index], itemName: newName, buyPrice: newBuy, sellPrice: newSell, commission, netSell, profit };
+            await ref.set(trades);
+        }
+        closeModal("editModal");
+        renderMain();
+    }
+    
+    // ========== ПОКАЗАТЬ ВСЕХ ПОЛЬЗОВАТЕЛЕЙ ==========
+    async function showAllUsers() {
+        const snap = await db.ref("users").once("value");
+        const users = snap.val() || {};
+        const list = Object.keys(users);
+        const container = document.getElementById("usersList");
+        
+        if (list.length === 0) {
+            container.innerHTML = "<div>Нет пользователей</div>";
+        } else {
+            let html = "";
+            for (const user of list) {
+                const tradesSnap = await db.ref(`users/${user}/trades`).once("value");
+                const trades = tradesSnap.val() || [];
+                let profit = 0;
+                trades.forEach(t => profit += t.profit || 0);
+                html += `
+                    <div class="user-item">
+                        <div>
+                            <strong>👤 ${user}</strong>
+                            <div class="small-text">Сделок: ${trades.length} | Прибыль: ${profit.toFixed(2)} ₽</div>
+                        </div>
+                        <button onclick="viewUserProfile('${user}')" style="background:#533483;padding:5px 15px;">📊 Смотреть</button>
+                    </div>
+                `;
             }
-            else renderLoginScreen();
-        })();
-    </script>
+            container.innerHTML = html;
+        }
+        document.getElementById("usersModal").style.display = "flex";
+    }
+    
+    function viewUserProfile(username) {
+        viewingUser = username;
+        closeModal("usersModal");
+        renderMain();
+    }
+    
+    // ========== АДМИНКА (РАБОТАЕТ!) ==========
+    async function openAdminPanel() {
+        const pwd = prompt("Введите пароль администратора:");
+        if (pwd !== "admin123") {
+            if (pwd !== null) alert("Неверный пароль!");
+            return;
+        }
+        
+        // Загружаем всех пользователей
+        const snap = await db.ref("users").once("value");
+        const users = snap.val() || {};
+        const userList = Object.keys(users);
+        
+        let usersHtml = "";
+        for (const user of userList) {
+            const tradesSnap = await db.ref(`users/${user}/trades`).once("value");
+            const trades = tradesSnap.val() || [];
+            let totalProfit = 0, totalSpent = 0;
+            trades.forEach(t => {
+                totalProfit += t.profit || 0;
+                totalSpent += t.buyPrice || 0;
+            });
+            usersHtml += `
+                <div class="user-item">
+                    <div>
+                        <strong>${user}</strong>
+                        <div class="small-text">Сделок: ${trades.length} | Потрачено: ${totalSpent.toFixed(2)}₽ | Прибыль: ${totalProfit.toFixed(2)}₽</div>
+                    </div>
+                    <button onclick="adminDeleteUser('${user}')" class="danger" style="padding:5px 12px;">❌ Удалить</button>
+                </div>
+            `;
+        }
+        
+        const adminHtml = `
+            <div class="admin-section">
+                <h4 style="color:#ff4444">⚠️ ОПАСНЫЕ ДЕЙСТВИЯ</h4>
+                <button onclick="adminResetAll()" class="danger" style="width:100%;margin-bottom:10px">💣 СБРОСИТЬ ВСЕ ДАННЫЕ (ВСЕХ ПОЛЬЗОВАТЕЛЕЙ)</button>
+                <button onclick="adminResetMe()" class="warning" style="width:100%">🗑️ Сбросить только мои данные (${currentUser})</button>
+            </div>
+            <div class="admin-section">
+                <h4>👥 Все зарегистрированные игроки (${userList.length})</h4>
+                ${usersHtml || "<div>Нет пользователей</div>"}
+            </div>
+        `;
+        
+        document.getElementById("adminPanelContent").innerHTML = adminHtml;
+        document.getElementById("adminModal").style.display = "flex";
+    }
+    
+    async function adminResetAll() {
+        if (!confirm("⚠️ ЭТО УДАЛИТ ВСЕ ДАННЫЕ ВСЕХ ПОЛЬЗОВАТЕЛЕЙ! Вы уверены?")) return;
+        const confirmText = prompt("Для подтверждения введите: УДАЛИТЬ ВСЁ");
+        if (confirmText !== "УДАЛИТЬ ВСЁ") {
+            alert("Отменено");
+            return;
+        }
+        await db.ref("users").set({});
+        alert("✅ ВСЕ ДАННЫЕ УДАЛЕНЫ!");
+        closeModal("adminModal");
+        if (currentUser) renderMain();
+        else renderLoginScreen();
+    }
+    
+    async function adminResetMe() {
+        if (!currentUser) return;
+        if (!confirm(`Удалить все ваши данные (${currentUser})?`)) return;
+        await db.ref(`users/${currentUser}`).set({});
+        alert(`✅ Данные ${currentUser} удалены`);
+        closeModal("adminModal");
+        renderMain();
+    }
+    
+    async function adminDeleteUser(username) {
+        if (!confirm(`Удалить пользователя "${username}" и все его сделки?`)) return;
+        await db.ref(`users/${username}`).set({});
+        alert(`✅ ${username} удалён`);
+        if (currentUser === username) {
+            logout();
+        } else {
+            openAdminPanel(); // обновляем админку
+        }
+        closeModal("adminModal");
+        if (currentUser !== username) openAdminPanel();
+    }
+    
+    // ========== ВСПОМОГАТЕЛЬНЫЕ ==========
+    function closeModal(id) {
+        document.getElementById(id).style.display = "none";
+    }
+    
+    // Глобальные функции для доступа из HTML
+    window.login = login;
+    window.logout = logout;
+    window.changeCurrency = changeCurrency;
+    window.showAllUsers = showAllUsers;
+    window.resetViewToMe = resetViewToMe;
+    window.openAdminPanel = openAdminPanel;
+    window.addTrade = addTrade;
+    window.deleteTradeConfirm = deleteTradeConfirm;
+    window.openEdit = openEdit;
+    window.saveEdit = saveEdit;
+    window.viewUserProfile = viewUserProfile;
+    window.adminResetAll = adminResetAll;
+    window.adminResetMe = adminResetMe;
+    window.adminDeleteUser = adminDeleteUser;
+    window.closeModal = closeModal;
+    
+    // Запуск
+    (function() {
+        const saved = localStorage.getItem("tradeUser");
+        if (saved) {
+            currentUser = saved;
+            renderMain();
+        } else {
+            renderLoginScreen();
+        }
+    })();
+</script>
 </body>
 </html>
