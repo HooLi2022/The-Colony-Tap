@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trade Tracker - The Colony</title>
+    <title>Trade Tracker PRO - The Colony</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             margin: 0;
@@ -20,11 +21,10 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1300px;
             margin: 0 auto;
         }
 
-        /* Header */
         .header {
             background: rgba(0, 0, 0, 0.3);
             border-radius: 15px;
@@ -48,22 +48,10 @@
             font-weight: bold;
         }
 
-        .search-box {
+        .controls {
             display: flex;
             gap: 10px;
-        }
-
-        .search-box input {
-            padding: 10px 15px;
-            border-radius: 25px;
-            border: none;
-            background: #e94560;
-            color: white;
-            outline: none;
-        }
-
-        .search-box input::placeholder {
-            color: rgba(255,255,255,0.7);
+            flex-wrap: wrap;
         }
 
         button {
@@ -73,7 +61,7 @@
             padding: 10px 20px;
             border-radius: 25px;
             cursor: pointer;
-            transition: transform 0.2s, opacity 0.2s;
+            transition: all 0.2s;
             font-weight: bold;
         }
 
@@ -86,13 +74,19 @@
             background: #533483;
         }
 
-        button.danger {
-            background: #1a1a2e;
-            border: 1px solid #e94560;
+        button.success {
+            background: #4caf50;
         }
 
-        /* Форма добавления */
-        .add-form {
+        select, input {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: none;
+            background: #1a1a2e;
+            color: white;
+        }
+
+        .add-form, .stats-card {
             background: rgba(0, 0, 0, 0.4);
             border-radius: 15px;
             padding: 20px;
@@ -108,7 +102,7 @@
 
         .form-group {
             flex: 1;
-            min-width: 150px;
+            min-width: 120px;
         }
 
         .form-group label {
@@ -118,29 +112,11 @@
             color: #aaa;
         }
 
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: none;
-            background: #1a1a2e;
-            color: white;
-        }
-
-        /* Таблица */
-        .stats-card {
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
         .stats-grid {
             display: flex;
             gap: 20px;
             flex-wrap: wrap;
             justify-content: space-around;
-            text-align: center;
         }
 
         .stat-item {
@@ -148,6 +124,7 @@
             padding: 15px 25px;
             border-radius: 12px;
             min-width: 120px;
+            text-align: center;
         }
 
         .stat-value {
@@ -192,40 +169,69 @@
             font-weight: bold;
         }
 
-        .delete-btn {
+        .action-btn {
             background: none;
             border: none;
-            color: #f44336;
-            font-size: 20px;
+            font-size: 18px;
             cursor: pointer;
+            margin: 0 3px;
             padding: 0 5px;
         }
 
-        .view-profile {
-            background: #533483;
-            margin-top: 20px;
+        .edit-btn { color: #ffc107; }
+        .delete-btn { color: #f44336; }
+
+        .chart-container {
+            max-width: 500px;
+            margin: 0 auto;
         }
 
-        .section-title {
-            font-size: 20px;
-            margin-bottom: 15px;
-            color: #e94560;
+        canvas {
+            max-height: 300px;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 40px;
-            color: #aaa;
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #1a1a2e;
+            padding: 30px;
+            border-radius: 15px;
+            min-width: 300px;
+        }
+
+        .user-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .user-tag {
+            background: #0f3460;
+            padding: 5px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .user-tag:hover {
+            background: #e94560;
         }
 
         @media (max-width: 768px) {
-            th, td {
-                font-size: 12px;
-                padding: 8px;
-            }
-            .form-group {
-                min-width: 100%;
-            }
+            th, td { font-size: 11px; padding: 6px; }
+            .form-group { min-width: 100%; }
         }
     </style>
 </head>
@@ -234,49 +240,82 @@
         <div class="header">
             <div class="user-info">
                 <div>
-                    <span style="color:#aaa;">👤 Текущий профиль:</span>
+                    <span style="color:#aaa;">👤 Профиль:</span>
                     <span class="current-user" id="currentUserDisplay">Не авторизован</span>
                 </div>
-                <div class="search-box">
-                    <input type="text" id="searchNick" placeholder="Ник игрока для просмотра">
-                    <button onclick="viewUserProfile()">🔍 Найти</button>
+                <div class="controls">
+                    <select id="currencySelect" onchange="changeCurrency()">
+                        <option value="RUB">₽ RUB</option>
+                        <option value="USD">$ USD</option>
+                        <option value="EUR">€ EUR</option>
+                    </select>
+                    <button onclick="showUserList()" class="secondary">👥 Все игроки</button>
                     <button onclick="resetToMyProfile()" class="secondary">👤 Мой профиль</button>
                 </div>
             </div>
         </div>
 
-        <div id="app">
-            <!-- Контент будет загружаться динамически -->
+        <div id="app"></div>
+    </div>
+
+    <!-- Модальное окно со списком пользователей -->
+    <div id="userListModal" class="modal">
+        <div class="modal-content">
+            <h3>👥 Все игроки</h3>
+            <div id="userListContainer" class="user-list"></div>
+            <button onclick="closeUserList()" style="margin-top: 20px;">Закрыть</button>
         </div>
     </div>
 
-    <!-- Подключаем Firebase -->
+    <!-- Модальное окно редактирования -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h3>✏️ Редактировать сделку</h3>
+            <div class="form-group" style="margin: 10px 0;">
+                <label>Предмет</label>
+                <input type="text" id="editItemName">
+            </div>
+            <div class="form-group" style="margin: 10px 0;">
+                <label>Цена покупки</label>
+                <input type="number" id="editBuyPrice" step="0.01">
+            </div>
+            <div class="form-group" style="margin: 10px 0;">
+                <label>Цена продажи</label>
+                <input type="number" id="editSellPrice" step="0.01">
+            </div>
+            <button onclick="saveEdit()" class="success">Сохранить</button>
+            <button onclick="closeEditModal()" style="margin-left: 10px;">Отмена</button>
+        </div>
+    </div>
+
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
     <script>
-        // Конфигурация Firebase (ваша)
+        // ========== ВАШИ ДАННЫЕ ИЗ FIREBASE (уже вставлены) ==========
         const firebaseConfig = {
-            apiKey: "AIzaSyB5xxxxxxxxxxxxxxxxxxxxxxx", // Ваш реальный API Key
+            apiKey: "AIzaSyA_gNkLMsTxneTwyg5bDxKBN9osRIUrPaE",
             authDomain: "the-colony-tap.firebaseapp.com",
             databaseURL: "https://the-colony-tap-default-rtdb.firebaseio.com",
             projectId: "the-colony-tap",
             storageBucket: "the-colony-tap.firebasestorage.app",
-            messagingSenderId: "573049321250",
-            appId: "1:573049321250:web:8bd706c6bc53b7f2ceface"
+            messagingSenderId: "433438733616",
+            appId: "1:433438733616:web:76095a36161b32590d44f5"
         };
+        // =============================================================
 
-        // Инициализация
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // Текущий пользователь
         let currentUser = null;
-        let viewingUser = null; // Кого смотрим (null = себя)
+        let viewingUser = null;
+        let editTradeId = null;
+        let currencySymbol = { RUB: '₽', USD: '$', EUR: '€' };
+        let currentCurrency = 'RUB';
+        let profitChart = null;
 
-        // Функция входа
         function login() {
-            let nick = prompt("Введите ваш ник (только латиница, цифры, _):", "Trader" + Math.floor(Math.random() * 1000));
+            let nick = prompt("Введите ваш ник (латиница, цифры, _):", "Trader" + Math.floor(Math.random() * 1000));
             if (!nick) return;
             nick = nick.replace(/[^a-zA-Z0-9_]/g, '_');
             if (nick.length < 2) nick = "User_" + Date.now();
@@ -287,74 +326,60 @@
             renderApp();
         }
 
-        // Выход
         function logout() {
             currentUser = null;
             viewingUser = null;
             localStorage.removeItem("tradeTrackerUser");
+            renderLoginScreen();
+        }
+
+        function changeCurrency() {
+            currentCurrency = document.getElementById("currencySelect").value;
             renderApp();
         }
 
-        // Проверка авторизации при загрузке
-        function checkAuth() {
-            const saved = localStorage.getItem("tradeTrackerUser");
-            if (saved && saved.length > 0) {
-                currentUser = saved;
-                renderApp();
+        async function showUserList() {
+            const snapshot = await database.ref("users").once("value");
+            const users = snapshot.val() || {};
+            const userList = Object.keys(users);
+            const container = document.getElementById("userListContainer");
+            if (userList.length === 0) {
+                container.innerHTML = "<div>Пока нет других пользователей</div>";
             } else {
-                renderLoginScreen();
+                container.innerHTML = userList.map(u => `<div class="user-tag" onclick="viewUser('${u}')">👤 ${u}</div>`).join("");
             }
+            document.getElementById("userListModal").style.display = "flex";
         }
 
-        // Экран входа
-        function renderLoginScreen() {
-            const app = document.getElementById("app");
-            app.innerHTML = `
-                <div class="stats-card" style="text-align: center;">
-                    <h2>🎮 Trade Tracker - The Colony</h2>
-                    <p style="margin: 20px 0;">Учёт продаж и покупок с автоматическим расчётом комиссии Steam (13%)</p>
-                    <button onclick="login()" style="font-size: 18px; padding: 12px 30px;">🚀 Войти / Создать профиль</button>
-                </div>
-            `;
+        function closeUserList() {
+            document.getElementById("userListModal").style.display = "none";
         }
 
-        // Добавить сделку
+        function viewUser(nick) {
+            viewingUser = nick;
+            closeUserList();
+            renderApp();
+        }
+
         async function addTrade() {
-            const itemName = document.getElementById("itemName").value;
-            const buyPrice = parseFloat(document.getElementById("buyPrice").value) || 0;
-            const sellPrice = parseFloat(document.getElementById("sellPrice").value) || 0;
-            const type = document.getElementById("tradeType").value;
+            const itemName = document.getElementById("itemName")?.value;
+            const buyPrice = parseFloat(document.getElementById("buyPrice")?.value) || 0;
+            const sellPrice = parseFloat(document.getElementById("sellPrice")?.value) || 0;
 
-            if (!itemName) {
-                alert("Введите название предмета");
-                return;
-            }
+            if (!itemName) { alert("Введите название предмета"); return; }
 
-            if (buyPrice < 0 || sellPrice < 0) {
-                alert("Цены не могут быть отрицательными");
-                return;
-            }
-
-            // Комиссия при продаже
-            let commission = 0;
-            let netSell = sellPrice;
+            let commission = 0, netSell = sellPrice;
             if (sellPrice > 0) {
                 commission = sellPrice * 0.13;
                 netSell = sellPrice - commission;
             }
-
             const profit = netSell - buyPrice;
 
             const trade = {
                 id: Date.now(),
-                itemName: itemName,
-                buyPrice: buyPrice,
-                sellPrice: sellPrice,
-                commission: commission,
-                netSell: netSell,
-                profit: profit,
-                type: type,
-                date: new Date().toLocaleString()
+                itemName, buyPrice, sellPrice, commission, netSell, profit,
+                date: new Date().toLocaleString(),
+                timestamp: Date.now()
             };
 
             const userRef = database.ref(`users/${viewingUser || currentUser}/trades`);
@@ -363,17 +388,15 @@
             trades.push(trade);
             await userRef.set(trades);
 
-            // Очистить форму
             document.getElementById("itemName").value = "";
             document.getElementById("buyPrice").value = "";
             document.getElementById("sellPrice").value = "";
-            
             renderApp();
         }
 
-        // Удалить сделку
         async function deleteTrade(tradeId) {
-            const userRef = database.ref(`users/${viewingUser || currentUser}/trades`);
+            if (!confirm("Удалить сделку?")) return;
+            const userRef = database.ref(`users/${currentUser}/trades`);
             const snapshot = await userRef.once("value");
             let trades = snapshot.val() || [];
             trades = trades.filter(t => t.id !== tradeId);
@@ -381,139 +404,128 @@
             renderApp();
         }
 
-        // Просмотр профиля другого игрока
-        async function viewUserProfile() {
-            const searchNick = document.getElementById("searchNick").value.trim();
-            if (!searchNick) {
-                alert("Введите ник для поиска");
-                return;
+        function openEditModal(trade) {
+            editTradeId = trade.id;
+            document.getElementById("editItemName").value = trade.itemName;
+            document.getElementById("editBuyPrice").value = trade.buyPrice;
+            document.getElementById("editSellPrice").value = trade.sellPrice;
+            document.getElementById("editModal").style.display = "flex";
+        }
+
+        function closeEditModal() {
+            document.getElementById("editModal").style.display = "none";
+            editTradeId = null;
+        }
+
+        async function saveEdit() {
+            const itemName = document.getElementById("editItemName").value;
+            const buyPrice = parseFloat(document.getElementById("editBuyPrice").value) || 0;
+            const sellPrice = parseFloat(document.getElementById("editSellPrice").value) || 0;
+
+            let commission = 0, netSell = sellPrice;
+            if (sellPrice > 0) {
+                commission = sellPrice * 0.13;
+                netSell = sellPrice - commission;
             }
-            const cleanNick = searchNick.replace(/[^a-zA-Z0-9_]/g, '_');
-            
-            // Проверяем, существует ли пользователь
-            const ref = database.ref(`users/${cleanNick}`);
-            const snapshot = await ref.once("value");
-            if (!snapshot.exists()) {
-                alert(`Пользователь "${cleanNick}" не найден`);
-                return;
+            const profit = netSell - buyPrice;
+
+            const userRef = database.ref(`users/${currentUser}/trades`);
+            const snapshot = await userRef.once("value");
+            let trades = snapshot.val() || [];
+            const index = trades.findIndex(t => t.id === editTradeId);
+            if (index !== -1) {
+                trades[index] = { ...trades[index], itemName, buyPrice, sellPrice, commission, netSell, profit };
+                await userRef.set(trades);
             }
-            
-            viewingUser = cleanNick;
+            closeEditModal();
             renderApp();
         }
 
-        // Сброс к своему профилю
         function resetToMyProfile() {
             viewingUser = null;
-            document.getElementById("searchNick").value = "";
             renderApp();
         }
 
-        // Основной рендер
+        function renderLoginScreen() {
+            const app = document.getElementById("app");
+            app.innerHTML = `
+                <div class="stats-card" style="text-align: center;">
+                    <h2>🎮 Trade Tracker PRO - The Colony</h2>
+                    <p style="margin: 20px 0;">Учёт продаж/покупок с комиссией Steam (13%)<br>Графики, валюты, просмотр других игроков</p>
+                    <button onclick="login()" style="font-size: 18px; padding: 12px 30px;">🚀 Войти / Создать профиль</button>
+                </div>
+            `;
+        }
+
         async function renderApp() {
-            if (!currentUser) {
-                renderLoginScreen();
-                return;
-            }
+            if (!currentUser) { renderLoginScreen(); return; }
 
             const app = document.getElementById("app");
             const isViewingOther = viewingUser && viewingUser !== currentUser;
             const activeUser = viewingUser || currentUser;
 
-            // Получаем сделки
             const tradesRef = database.ref(`users/${activeUser}/trades`);
             const snapshot = await tradesRef.once("value");
             let trades = snapshot.val() || [];
 
-            // Статистика
-            let totalBuy = 0, totalSellGross = 0, totalCommission = 0, totalNet = 0, totalProfit = 0;
+            let totalBuy = 0, totalSellGross = 0, totalCommission = 0, totalProfit = 0;
             trades.forEach(t => {
                 totalBuy += t.buyPrice || 0;
                 totalSellGross += t.sellPrice || 0;
                 totalCommission += t.commission || 0;
-                totalNet += t.netSell || 0;
                 totalProfit += t.profit || 0;
             });
 
+            const dailyProfit = {};
+            trades.forEach(t => {
+                const date = t.date?.split(',')[0] || 'Нет даты';
+                dailyProfit[date] = (dailyProfit[date] || 0) + (t.profit || 0);
+            });
+            const chartLabels = Object.keys(dailyProfit).slice(-7);
+            const chartData = chartLabels.map(l => dailyProfit[l]);
+
             app.innerHTML = `
                 <div class="add-form">
-                    <div class="section-title">➕ Новая сделка</div>
+                    <div class="section-title" style="font-size:20px;margin-bottom:15px;color:#e94560;">➕ Новая сделка</div>
                     <div class="form-row">
-                        <div class="form-group">
-                            <label>Предмет</label>
-                            <input type="text" id="itemName" placeholder="Кейс, капсула, скин...">
-                        </div>
-                        <div class="form-group">
-                            <label>Цена покупки (₽)</label>
-                            <input type="number" id="buyPrice" step="0.01" placeholder="0">
-                        </div>
-                        <div class="form-group">
-                            <label>Цена продажи (₽)</label>
-                            <input type="number" id="sellPrice" step="0.01" placeholder="0">
-                        </div>
-                        <div class="form-group">
-                            <label>Тип</label>
-                            <select id="tradeType">
-                                <option value="trade">Сделка</option>
-                                <option value="buy">Только покупка</option>
-                                <option value="sell">Только продажа</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <button onclick="addTrade()">➕ Добавить</button>
-                        </div>
+                        <div class="form-group"><label>Предмет</label><input type="text" id="itemName" placeholder="Кейс, капсула..."></div>
+                        <div class="form-group"><label>Покупка (${currencySymbol[currentCurrency]})</label><input type="number" id="buyPrice" step="0.01" placeholder="0"></div>
+                        <div class="form-group"><label>Продажа (${currencySymbol[currentCurrency]})</label><input type="number" id="sellPrice" step="0.01" placeholder="0"></div>
+                        <div class="form-group"><button onclick="addTrade()">➕ Добавить</button></div>
                     </div>
                 </div>
 
                 <div class="stats-card">
-                    <div class="section-title">📊 Статистика ${isViewingOther ? `игрока ${activeUser}` : 'моя'}</div>
+                    <div class="section-title" style="font-size:20px;margin-bottom:15px;">📊 Статистика ${isViewingOther ? `игрока ${activeUser}` : 'моя'}</div>
                     <div class="stats-grid">
-                        <div class="stat-item">
-                            <div class="stat-value">${totalBuy.toFixed(2)} ₽</div>
-                            <div class="stat-label">💰 Потрачено</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value">${totalSellGross.toFixed(2)} ₽</div>
-                            <div class="stat-label">💵 Продажи (брутто)</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value">${totalCommission.toFixed(2)} ₽</div>
-                            <div class="stat-label">📉 Комиссия (13%)</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value ${totalProfit >= 0 ? 'profit' : 'loss'}">${totalProfit.toFixed(2)} ₽</div>
-                            <div class="stat-label">📈 Чистая прибыль</div>
-                        </div>
+                        <div class="stat-item"><div class="stat-value">${totalBuy.toFixed(2)} ${currencySymbol[currentCurrency]}</div><div class="stat-label">💰 Потрачено</div></div>
+                        <div class="stat-item"><div class="stat-value">${totalSellGross.toFixed(2)} ${currencySymbol[currentCurrency]}</div><div class="stat-label">💵 Продажи</div></div>
+                        <div class="stat-item"><div class="stat-value">${totalCommission.toFixed(2)} ${currencySymbol[currentCurrency]}</div><div class="stat-label">📉 Комиссия 13%</div></div>
+                        <div class="stat-item"><div class="stat-value ${totalProfit >= 0 ? 'profit' : 'loss'}">${totalProfit >= 0 ? '+' : ''}${totalProfit.toFixed(2)} ${currencySymbol[currentCurrency]}</div><div class="stat-label">📈 Чистая прибыль</div></div>
                     </div>
                 </div>
 
                 <div class="stats-card">
-                    <div class="section-title">📋 История сделок</div>
-                    ${trades.length === 0 ? '<div class="empty-state">Нет сделок. Добавьте первую!</div>' : `
+                    <div class="section-title" style="font-size:20px;margin-bottom:15px;">📈 График прибыли (последние 7 дней)</div>
+                    <div class="chart-container"><canvas id="profitChart"></canvas></div>
+                </div>
+
+                <div class="stats-card">
+                    <div class="section-title" style="font-size:20px;margin-bottom:15px;">📋 История сделок</div>
+                    ${trades.length === 0 ? '<div class="empty-state" style="text-align:center;padding:40px;">Нет сделок. Добавьте первую!</div>' : `
                         <table>
-                            <thead>
-                                <tr>
-                                    <th>Дата</th>
-                                    <th>Предмет</th>
-                                    <th>Покупка</th>
-                                    <th>Продажа</th>
-                                    <th>Комиссия</th>
-                                    <th>Чистый доход</th>
-                                    <th>Прибыль</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
+                            <thead><tr><th>Дата</th><th>Предмет</th><th>Покупка</th><th>Продажа</th><th>Комиссия</th><th>Чистый доход</th><th>Прибыль</th><th></th></tr></thead>
                             <tbody>
                                 ${trades.slice().reverse().map(t => `
                                     <tr>
                                         <td>${t.date || '-'}</td>
                                         <td>${t.itemName}</td>
-                                        <td>${t.buyPrice > 0 ? t.buyPrice.toFixed(2) + ' ₽' : '-'}</td>
-                                        <td>${t.sellPrice > 0 ? t.sellPrice.toFixed(2) + ' ₽' : '-'}</td>
-                                        <td>${t.commission > 0 ? t.commission.toFixed(2) + ' ₽' : '-'}</td>
-                                        <td>${t.netSell > 0 ? t.netSell.toFixed(2) + ' ₽' : '-'}</td>
-                                        <td class="${t.profit >= 0 ? 'profit' : 'loss'}">${t.profit > 0 ? '+' : ''}${t.profit.toFixed(2)} ₽</td>
-                                        <td>${!isViewingOther ? `<button class="delete-btn" onclick="deleteTrade(${t.id})">🗑️</button>` : '-'}</td>
+                                        <td>${t.buyPrice > 0 ? t.buyPrice.toFixed(2) + ' ' + currencySymbol[currentCurrency] : '-'}</td>
+                                        <td>${t.sellPrice > 0 ? t.sellPrice.toFixed(2) + ' ' + currencySymbol[currentCurrency] : '-'}</td>
+                                        <td>${t.commission > 0 ? t.commission.toFixed(2) + ' ' + currencySymbol[currentCurrency] : '-'}</td>
+                                        <td>${t.netSell > 0 ? t.netSell.toFixed(2) + ' ' + currencySymbol[currentCurrency] : '-'}</td>
+                                        <td class="${t.profit >= 0 ? 'profit' : 'loss'}">${t.profit >= 0 ? '+' : ''}${t.profit.toFixed(2)} ${currencySymbol[currentCurrency]}</td>
+                                        <td>${!isViewingOther ? `<button class="action-btn edit-btn" onclick="openEditModalById(${t.id})">✏️</button><button class="action-btn delete-btn" onclick="deleteTrade(${t.id})">🗑️</button>` : '-'}</td>
                                     </tr>
                                 `).join('')}
                             </tbody>
@@ -522,22 +534,50 @@
                 </div>
             `;
 
-            // Обновляем отображение текущего пользователя в хедере
             document.getElementById("currentUserDisplay").innerHTML = `${currentUser} ${isViewingOther ? `→ просмотр: ${activeUser}` : ''}`;
+
+            const ctx = document.getElementById("profitChart")?.getContext("2d");
+            if (ctx && profitChart) profitChart.destroy();
+            if (ctx && chartLabels.length > 0) {
+                profitChart = new Chart(ctx, {
+                    type: 'line',
+                    data: { labels: chartLabels, datasets: [{ label: `Прибыль (${currencySymbol[currentCurrency]})`, data: chartData, borderColor: '#e94560', tension: 0.3, fill: false }] },
+                    options: { responsive: true, maintainAspectRatio: true }
+                });
+            } else if (ctx) {
+                profitChart = new Chart(ctx, {
+                    type: 'line',
+                    data: { labels: ['Нет данных'], datasets: [{ label: 'Прибыль', data: [0] }] },
+                    options: { responsive: true }
+                });
+            }
         }
 
-        // Старт
-        window.onload = () => {
-            checkAuth();
+        window.openEditModalById = async (id) => {
+            const snapshot = await database.ref(`users/${currentUser}/trades`).once("value");
+            const trades = snapshot.val() || [];
+            const trade = trades.find(t => t.id === id);
+            if (trade) openEditModal(trade);
         };
 
-        // Глобальные функции для кнопок
-        window.login = login;
-        window.logout = logout;
         window.addTrade = addTrade;
         window.deleteTrade = deleteTrade;
-        window.viewUserProfile = viewUserProfile;
+        window.login = login;
+        window.logout = logout;
+        window.changeCurrency = changeCurrency;
+        window.showUserList = showUserList;
+        window.closeUserList = closeUserList;
+        window.viewUser = viewUser;
         window.resetToMyProfile = resetToMyProfile;
+        window.openEditModal = openEditModal;
+        window.closeEditModal = closeEditModal;
+        window.saveEdit = saveEdit;
+
+        (function checkAuth() {
+            const saved = localStorage.getItem("tradeTrackerUser");
+            if (saved) { currentUser = saved; renderApp(); }
+            else renderLoginScreen();
+        })();
     </script>
 </body>
 </html>
