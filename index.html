@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trade Tracker PRO - The Colony</title>
+    <title>Trade Tracker PRO - Админка</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
@@ -21,7 +21,7 @@
         }
 
         .container {
-            max-width: 1300px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
@@ -46,6 +46,14 @@
             padding: 10px 20px;
             border-radius: 30px;
             font-weight: bold;
+        }
+
+        .admin-badge {
+            background: #e94560;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin-left: 10px;
         }
 
         .controls {
@@ -74,8 +82,17 @@
             background: #533483;
         }
 
+        button.danger {
+            background: #dc3545;
+        }
+
+        button.warning {
+            background: #ffc107;
+            color: #1a1a2e;
+        }
+
         button.success {
-            background: #4caf50;
+            background: #28a745;
         }
 
         select, input {
@@ -86,7 +103,7 @@
             color: white;
         }
 
-        .add-form, .stats-card {
+        .add-form, .stats-card, .admin-panel {
             background: rgba(0, 0, 0, 0.4);
             border-radius: 15px;
             padding: 20px;
@@ -181,13 +198,24 @@
         .edit-btn { color: #ffc107; }
         .delete-btn { color: #f44336; }
 
-        .chart-container {
-            max-width: 500px;
-            margin: 0 auto;
+        .admin-btn {
+            margin-top: 10px;
+            width: 100%;
         }
 
-        canvas {
-            max-height: 300px;
+        .user-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin: 5px 0;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+        }
+
+        .user-stats {
+            font-size: 12px;
+            color: #aaa;
         }
 
         .modal {
@@ -207,14 +235,16 @@
             background: #1a1a2e;
             padding: 30px;
             border-radius: 15px;
-            min-width: 300px;
+            min-width: 350px;
         }
 
         .user-list {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
             gap: 10px;
             margin-top: 15px;
+            max-height: 400px;
+            overflow-y: auto;
         }
 
         .user-tag {
@@ -251,6 +281,7 @@
                     </select>
                     <button onclick="showUserList()" class="secondary">👥 Все игроки</button>
                     <button onclick="resetToMyProfile()" class="secondary">👤 Мой профиль</button>
+                    <button onclick="showAdminPanel()" class="danger">🔧 Админка</button>
                 </div>
             </div>
         </div>
@@ -264,6 +295,15 @@
             <h3>👥 Все игроки</h3>
             <div id="userListContainer" class="user-list"></div>
             <button onclick="closeUserList()" style="margin-top: 20px;">Закрыть</button>
+        </div>
+    </div>
+
+    <!-- Админ-панель -->
+    <div id="adminModal" class="modal">
+        <div class="modal-content" style="min-width: 500px;">
+            <h3>🔧 Админ-панель</h3>
+            <div id="adminContent"></div>
+            <button onclick="closeAdminPanel()" style="margin-top: 20px;">Закрыть</button>
         </div>
     </div>
 
@@ -292,7 +332,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
     <script>
-        // ========== ВАШИ ДАННЫЕ ИЗ FIREBASE (уже вставлены) ==========
+        // ========== ВАШИ ДАННЫЕ ИЗ FIREBASE ==========
         const firebaseConfig = {
             apiKey: "AIzaSyA_gNkLMsTxneTwyg5bDxKBN9osRIUrPaE",
             authDomain: "the-colony-tap.firebaseapp.com",
@@ -302,7 +342,7 @@
             messagingSenderId: "433438733616",
             appId: "1:433438733616:web:76095a36161b32590d44f5"
         };
-        // =============================================================
+        // =============================================
 
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
@@ -313,6 +353,7 @@
         let currencySymbol = { RUB: '₽', USD: '$', EUR: '€' };
         let currentCurrency = 'RUB';
         let profitChart = null;
+        let isAdmin = false;
 
         function login() {
             let nick = prompt("Введите ваш ник (латиница, цифры, _):", "Trader" + Math.floor(Math.random() * 1000));
@@ -329,6 +370,7 @@
         function logout() {
             currentUser = null;
             viewingUser = null;
+            isAdmin = false;
             localStorage.removeItem("tradeTrackerUser");
             renderLoginScreen();
         }
@@ -343,10 +385,23 @@
             const users = snapshot.val() || {};
             const userList = Object.keys(users);
             const container = document.getElementById("userListContainer");
+            
+            // Получаем количество сделок для каждого пользователя
+            const userStats = [];
+            for (const user of userList) {
+                const tradesSnapshot = await database.ref(`users/${user}/trades`).once("value");
+                const trades = tradesSnapshot.val() || [];
+                userStats.push({ name: user, count: trades.length });
+            }
+            
             if (userList.length === 0) {
                 container.innerHTML = "<div>Пока нет других пользователей</div>";
             } else {
-                container.innerHTML = userList.map(u => `<div class="user-tag" onclick="viewUser('${u}')">👤 ${u}</div>`).join("");
+                container.innerHTML = userStats.map(u => 
+                    `<div class="user-tag" onclick="viewUser('${u.name}')">
+                        👤 ${u.name} <span style="font-size:11px;color:#aaa;">(${u.count} сделок)</span>
+                    </div>`
+                ).join("");
             }
             document.getElementById("userListModal").style.display = "flex";
         }
@@ -359,6 +414,102 @@
             viewingUser = nick;
             closeUserList();
             renderApp();
+        }
+
+        // АДМИН-ФУНКЦИИ
+        function showAdminPanel() {
+            const password = prompt("Введите пароль администратора:");
+            if (password === "admin123") {
+                isAdmin = true;
+                loadAdminContent();
+                document.getElementById("adminModal").style.display = "flex";
+            } else if (password !== null) {
+                alert("Неверный пароль!");
+            }
+        }
+
+        async function loadAdminContent() {
+            const snapshot = await database.ref("users").once("value");
+            const users = snapshot.val() || {};
+            const userList = Object.keys(users);
+            
+            // Собираем статистику по каждому пользователю
+            const userStats = [];
+            for (const user of userList) {
+                const tradesSnapshot = await database.ref(`users/${user}/trades`).once("value");
+                const trades = tradesSnapshot.val() || [];
+                let totalProfit = 0;
+                trades.forEach(t => totalProfit += t.profit || 0);
+                userStats.push({ 
+                    name: user, 
+                    count: trades.length,
+                    profit: totalProfit
+                });
+            }
+            
+            const container = document.getElementById("adminContent");
+            container.innerHTML = `
+                <div style="margin-bottom: 20px;">
+                    <h4>⚠️ ОПАСНЫЕ ДЕЙСТВИЯ</h4>
+                    <button onclick="confirmResetAll()" class="danger" style="width: 100%; margin: 5px 0;">💣 СБРОСИТЬ ВСЕ ДАННЫЕ (ВСЕХ ПОЛЬЗОВАТЕЛЕЙ)</button>
+                    <button onclick="resetMyData()" class="warning" style="width: 100%; margin: 5px 0;">🗑️ Сбросить ТОЛЬКО мои данные</button>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <h4>📊 Все пользователи (${userList.length})</h4>
+                    <div style="max-height: 300px; overflow-y: auto;">
+                        ${userStats.map(u => `
+                            <div class="user-row">
+                                <div>
+                                    <strong>${u.name}</strong>
+                                    <div class="user-stats">${u.count} сделок, прибыль: ${u.profit.toFixed(2)} ₽</div>
+                                </div>
+                                <button onclick="deleteUser('${u.name}')" class="danger" style="padding: 5px 10px;">❌ Удалить</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        async function confirmResetAll() {
+            if (confirm("⚠️ ВНИМАНИЕ! Это удалит ВСЕ данные ВСЕХ пользователей! Безвозвратно!\n\nВы уверены?")) {
+                if (confirm("ПОСЛЕДНЕЕ ПРЕДУПРЕЖДЕНИЕ! Введите 'ДА' для подтверждения:")) {
+                    await database.ref("users").set({});
+                    alert("✅ Все данные удалены!");
+                    closeAdminPanel();
+                    if (currentUser) renderApp();
+                    else renderLoginScreen();
+                }
+            }
+        }
+
+        async function resetMyData() {
+            if (!currentUser) return;
+            if (confirm(`Удалить ВСЕ ваши данные (${currentUser})?`)) {
+                await database.ref(`users/${currentUser}`).set({});
+                alert("✅ Ваши данные удалены!");
+                renderApp();
+                closeAdminPanel();
+            }
+        }
+
+        async function deleteUser(username) {
+            if (confirm(`Удалить пользователя "${username}" и ВСЕ его сделки?`)) {
+                await database.ref(`users/${username}`).set({});
+                alert(`✅ Пользователь "${username}" удалён!`);
+                if (currentUser === username) {
+                    logout();
+                } else {
+                    loadAdminContent();
+                }
+                closeAdminPanel();
+            }
+        }
+
+        function closeAdminPanel() {
+            document.getElementById("adminModal").style.display = "none";
+            isAdmin = false;
         }
 
         async function addTrade() {
@@ -452,6 +603,7 @@
                 <div class="stats-card" style="text-align: center;">
                     <h2>🎮 Trade Tracker PRO - The Colony</h2>
                     <p style="margin: 20px 0;">Учёт продаж/покупок с комиссией Steam (13%)<br>Графики, валюты, просмотр других игроков</p>
+                    <p style="margin: 10px 0; color: #e94560;">🔧 Админ-пароль: admin123</p>
                     <button onclick="login()" style="font-size: 18px; padding: 12px 30px;">🚀 Войти / Создать профиль</button>
                 </div>
             `;
@@ -572,6 +724,11 @@
         window.openEditModal = openEditModal;
         window.closeEditModal = closeEditModal;
         window.saveEdit = saveEdit;
+        window.showAdminPanel = showAdminPanel;
+        window.closeAdminPanel = closeAdminPanel;
+        window.confirmResetAll = confirmResetAll;
+        window.resetMyData = resetMyData;
+        window.deleteUser = deleteUser;
 
         (function checkAuth() {
             const saved = localStorage.getItem("tradeTrackerUser");
