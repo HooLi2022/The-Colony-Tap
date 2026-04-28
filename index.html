@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trade Tracker - Админка</title>
+    <title>Trade Tracker - The Colony</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             min-height: 100vh;
             padding: 20px;
@@ -48,6 +48,7 @@
         button.warning { background: #ffc107; color: #1a1a2e; }
         button.success { background: #28a745; }
         button.secondary { background: #533483; }
+        button.info { background: #17a2b8; }
         
         .card {
             background: rgba(0,0,0,0.4);
@@ -61,7 +62,7 @@
             gap: 15px;
             align-items: flex-end;
         }
-        .form-group { flex: 1; min-width: 120px; }
+        .form-group { flex: 1; min-width: 100px; }
         .form-group label { font-size: 12px; color: #aaa; display: block; margin-bottom: 5px; }
         input, select {
             padding: 10px;
@@ -86,6 +87,7 @@
         }
         .stat-value { font-size: 28px; font-weight: bold; color: #e94560; }
         .stat-label { font-size: 12px; color: #aaa; margin-top: 5px; }
+        .stat-small { font-size: 14px; color: #4caf50; }
         .profit { color: #4caf50; }
         .loss { color: #f44336; }
         
@@ -117,7 +119,7 @@
             background: #1a1a2e;
             padding: 30px;
             border-radius: 15px;
-            min-width: 400px;
+            min-width: 450px;
             max-width: 90%;
             max-height: 80%;
             overflow: auto;
@@ -131,22 +133,29 @@
             background: rgba(255,255,255,0.05);
             border-radius: 10px;
         }
-        .user-item:hover { background: rgba(255,255,255,0.1); }
-        .delete-icon {
-            background: #dc3545;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            cursor: pointer;
-        }
         .admin-section {
             border-bottom: 1px solid rgba(255,255,255,0.2);
             padding-bottom: 20px;
             margin-bottom: 20px;
         }
         h3, h4 { margin-bottom: 15px; color: #e94560; }
-        code { background: #0f3460; padding: 2px 6px; border-radius: 5px; }
         .small-text { font-size: 12px; color: #aaa; }
+        .quantity-badge {
+            background: #e94560;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            margin-left: 8px;
+        }
+        .type-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        .type-buy { background: #28a745; }
+        .type-sell { background: #dc3545; }
     </style>
 </head>
 <body>
@@ -192,16 +201,17 @@
 <div id="editModal" class="modal">
     <div class="modal-content">
         <h3>✏️ Редактировать сделку</h3>
-        <div class="form-group"><label>Название</label><input type="text" id="editName" style="width:100%"></div>
-        <div class="form-group"><label>Покупка (₽)</label><input type="number" id="editBuy" step="0.01" style="width:100%"></div>
-        <div class="form-group"><label>Продажа (₽)</label><input type="number" id="editSell" step="0.01" style="width:100%"></div>
+        <div class="form-group"><label>Название предмета</label><input type="text" id="editName" style="width:100%"></div>
+        <div class="form-group"><label>Количество</label><input type="number" id="editQuantity" step="1" style="width:100%"></div>
+        <div class="form-group"><label>Покупка (общая сумма, ₽)</label><input type="number" id="editBuy" step="0.01" style="width:100%"></div>
+        <div class="form-group"><label>Продажа (общая сумма, ₽)</label><input type="number" id="editSell" step="0.01" style="width:100%"></div>
         <button onclick="saveEdit()" class="success" style="margin-top:15px">Сохранить</button>
         <button onclick="closeModal('editModal')" style="margin-top:15px">Отмена</button>
     </div>
 </div>
 
 <script>
-    // ========== КОНФИГ FIREBASE (ТВОЙ) ==========
+    // ========== КОНФИГ FIREBASE ==========
     const firebaseConfig = {
         apiKey: "AIzaSyA_gNkLMsTxneTwyg5bDxKBN9osRIUrPaE",
         authDomain: "the-colony-tap.firebaseapp.com",
@@ -266,13 +276,21 @@
         const snapshot = await db.ref(`users/${targetUser}/trades`).once("value");
         let trades = snapshot.val() || [];
         
-        // Статистика
-        let totalBuy = 0, totalSell = 0, totalCommission = 0, totalProfit = 0;
+        // ========== РАСЧЁТ СТАТИСТИКИ ==========
+        let totalBuySum = 0;      // общая сумма покупок
+        let totalSellSum = 0;     // общая сумма продаж (брутто)
+        let totalCommission = 0;   // общая комиссия
+        let totalProfit = 0;       // чистая прибыль
+        let totalBuyQuantity = 0;  // количество купленных предметов
+        let totalSellQuantity = 0; // количество проданных предметов
+        
         trades.forEach(t => {
-            totalBuy += t.buyPrice || 0;
-            totalSell += t.sellPrice || 0;
+            totalBuySum += t.buyPrice || 0;
+            totalSellSum += t.sellPrice || 0;
             totalCommission += t.commission || 0;
             totalProfit += t.profit || 0;
+            totalBuyQuantity += t.quantity || 1;
+            if (t.sellPrice > 0) totalSellQuantity += t.quantity || 1;
         });
         
         // Данные для графика
@@ -289,19 +307,49 @@
                 <h3 style="margin-bottom:15px">➕ Новая сделка</h3>
                 <div class="form-row">
                     <div class="form-group"><label>Предмет</label><input type="text" id="itemName" placeholder="Кейс, капсула..."></div>
-                    <div class="form-group"><label>Покупка (${symbols[currentCurrency]})</label><input type="number" id="buyPrice" step="0.01" placeholder="0"></div>
-                    <div class="form-group"><label>Продажа (${symbols[currentCurrency]})</label><input type="number" id="sellPrice" step="0.01" placeholder="0"></div>
+                    <div class="form-group"><label>Количество</label><input type="number" id="itemQuantity" value="1" step="1" min="1"></div>
+                    <div class="form-group"><label>Покупка (общая, ${symbols[currentCurrency]})</label><input type="number" id="buyPrice" step="0.01" placeholder="0"></div>
+                    <div class="form-group"><label>Продажа (общая, ${symbols[currentCurrency]})</label><input type="number" id="sellPrice" step="0.01" placeholder="0"></div>
                     <div class="form-group"><button onclick="addTrade()">➕ Добавить</button></div>
                 </div>
+                <div class="small-text" style="margin-top:10px">💡 Совет: укажите количество предметов (например, 17 капсул). Цены указывайте за ВСЕ предметы сразу.</div>
             </div>
             
             <div class="card">
                 <h3>📊 Статистика ${isViewingOther ? `игрока ${targetUser}` : 'моя'}</h3>
                 <div class="stats-grid">
-                    <div class="stat-card"><div class="stat-value">${totalBuy.toFixed(2)} ${symbols[currentCurrency]}</div><div class="stat-label">💰 Потрачено</div></div>
-                    <div class="stat-card"><div class="stat-value">${totalSell.toFixed(2)} ${symbols[currentCurrency]}</div><div class="stat-label">💵 Продажи</div></div>
-                    <div class="stat-card"><div class="stat-value">${totalCommission.toFixed(2)} ${symbols[currentCurrency]}</div><div class="stat-label">📉 Комиссия 13%</div></div>
-                    <div class="stat-card"><div class="stat-value ${totalProfit >=0 ? 'profit' : 'loss'}">${totalProfit>=0 ? '+' : ''}${totalProfit.toFixed(2)} ${symbols[currentCurrency]}</div><div class="stat-label">📈 Прибыль</div></div>
+                    <div class="stat-card">
+                        <div class="stat-value">${totalBuyQuantity}</div>
+                        <div class="stat-label">📦 Куплено (шт)</div>
+                        <div class="stat-small">на ${totalBuySum.toFixed(2)} ${symbols[currentCurrency]}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${totalSellQuantity}</div>
+                        <div class="stat-label">💸 Продано (шт)</div>
+                        <div class="stat-small">на ${totalSellSum.toFixed(2)} ${symbols[currentCurrency]}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${totalCommission.toFixed(2)} ${symbols[currentCurrency]}</div>
+                        <div class="stat-label">📉 Комиссия (13%)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value ${totalProfit >=0 ? 'profit' : 'loss'}">${totalProfit>=0 ? '+' : ''}${totalProfit.toFixed(2)} ${symbols[currentCurrency]}</div>
+                        <div class="stat-label">📈 Чистая прибыль</div>
+                    </div>
+                </div>
+                <div class="stats-grid" style="margin-top:15px">
+                    <div class="stat-card">
+                        <div class="stat-value">${(totalBuySum/totalBuyQuantity || 0).toFixed(2)} ${symbols[currentCurrency]}</div>
+                        <div class="stat-label">💰 Средняя цена покупки</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${(totalSellSum/totalSellQuantity || 0).toFixed(2)} ${symbols[currentCurrency]}</div>
+                        <div class="stat-label">💵 Средняя цена продажи</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${(totalProfit/totalBuyQuantity || 0).toFixed(2)} ${symbols[currentCurrency]}</div>
+                        <div class="stat-label">📦 Прибыль на 1 предмет</div>
+                    </div>
                 </div>
             </div>
             
@@ -315,17 +363,39 @@
                 ${trades.length === 0 ? '<div style="text-align:center;padding:40px">Нет сделок</div>' : `
                 <div style="overflow-x:auto">
                 <table>
-                    <thead><tr><th>Дата</th><th>Предмет</th><th>Покупка</th><th>Продажа</th><th>Комиссия</th><th>Чистый доход</th><th>Прибыль</th><th></th></tr></thead>
+                    <thead>
+                        <tr>
+                            <th>Дата</th>
+                            <th>Предмет</th>
+                            <th>Кол-во</th>
+                            <th>Покупка</th>
+                            <th>Продажа</th>
+                            <th>Комиссия</th>
+                            <th>Чистый доход</th>
+                            <th>Прибыль</th>
+                            <th></th>
+                        </tr>
+                    </thead>
                     <tbody>
                         ${trades.slice().reverse().map(t => `
                             <tr>
                                 <td>${t.date || '-'}</td>
-                                <td>${t.itemName}</td>
-                                <td>${t.buyPrice > 0 ? t.buyPrice.toFixed(2) + ' ' + symbols[currentCurrency] : '-'}</td>
-                                <td>${t.sellPrice > 0 ? t.sellPrice.toFixed(2) + ' ' + symbols[currentCurrency] : '-'}</td>
+                                <td>
+                                    <strong>${t.itemName}</strong>
+                                    ${t.quantity > 1 ? `<span class="quantity-badge">x${t.quantity}</span>` : ''}
+                                </td>
+                                <td>${t.quantity || 1} шт</td>
+                                <td>${t.buyPrice > 0 ? t.buyPrice.toFixed(2) + ' ' + symbols[currentCurrency] : '-'}
+                                    ${t.buyPrice > 0 && t.quantity > 1 ? `<div class="small-text">(${(t.buyPrice/t.quantity).toFixed(2)}₽/шт)</div>` : ''}
+                                </td>
+                                <td>${t.sellPrice > 0 ? t.sellPrice.toFixed(2) + ' ' + symbols[currentCurrency] : '-'}
+                                    ${t.sellPrice > 0 && t.quantity > 1 ? `<div class="small-text">(${(t.sellPrice/t.quantity).toFixed(2)}₽/шт)</div>` : ''}
+                                </td>
                                 <td>${t.commission > 0 ? t.commission.toFixed(2) + ' ' + symbols[currentCurrency] : '-'}</td>
                                 <td>${t.netSell > 0 ? t.netSell.toFixed(2) + ' ' + symbols[currentCurrency] : '-'}</td>
-                                <td class="${t.profit >=0 ? 'profit' : 'loss'}">${t.profit>=0 ? '+' : ''}${t.profit.toFixed(2)} ${symbols[currentCurrency]}</td>
+                                <td class="${t.profit >=0 ? 'profit' : 'loss'}">${t.profit>=0 ? '+' : ''}${t.profit.toFixed(2)} ${symbols[currentCurrency]}
+                                    ${t.quantity > 1 ? `<div class="small-text">(${(t.profit/t.quantity).toFixed(2)}₽/шт)</div>` : ''}
+                                </td>
                                 <td>${!isViewingOther ? `<button onclick='openEdit(${t.id})' style="background:#ffc107;color:#000;padding:5px 10px;margin-right:5px">✏️</button><button onclick='deleteTradeConfirm(${t.id})' style="background:#dc3545;padding:5px 10px">🗑️</button>` : '-'}</td>
                             </tr>
                         `).join('')}
@@ -346,11 +416,11 @@
             if (labels.length > 0) {
                 chart = new Chart(ctx, {
                     type: 'line',
-                    data: { labels, datasets: [{ label: `Прибыль (${symbols[currentCurrency]})`, data: chartData, borderColor: '#e94560', tension: 0.3 }] },
+                    data: { labels, datasets: [{ label: `Прибыль (${symbols[currentCurrency]})`, data: chartData, borderColor: '#e94560', tension: 0.3, fill: true, backgroundColor: 'rgba(233,69,96,0.1)' }] },
                     options: { responsive: true, maintainAspectRatio: true }
                 });
             } else {
-                chart = new Chart(ctx, { type: 'line', data: { labels: ['Нет'], datasets: [{ data: [0] }] } });
+                chart = new Chart(ctx, { type: 'line', data: { labels: ['Нет данных'], datasets: [{ data: [0] }] } });
             }
         }
     }
@@ -359,7 +429,7 @@
         document.getElementById("mainContent").innerHTML = `
             <div class="card" style="text-align:center">
                 <h2>🎮 Trade Tracker - The Colony</h2>
-                <p style="margin:20px 0">Учёт сделок с комиссией Steam 13%<br>Админка для сброса данных</p>
+                <p style="margin:20px 0">Учёт сделок с комиссией Steam 13%<br>Поддержка количества предметов</p>
                 <p style="margin:10px 0;color:#e94560">🔧 Админ пароль: admin123</p>
                 <button onclick="login()" style="font-size:18px;padding:12px 30px">🚀 Войти</button>
             </div>
@@ -370,19 +440,23 @@
     // ========== РАБОТА СО СДЕЛКАМИ ==========
     async function addTrade() {
         const name = document.getElementById("itemName")?.value;
-        const buy = parseFloat(document.getElementById("buyPrice")?.value) || 0;
-        const sell = parseFloat(document.getElementById("sellPrice")?.value) || 0;
-        if (!name) { alert("Введите название"); return; }
+        const quantity = parseInt(document.getElementById("itemQuantity")?.value) || 1;
+        const buyTotal = parseFloat(document.getElementById("buyPrice")?.value) || 0;
+        const sellTotal = parseFloat(document.getElementById("sellPrice")?.value) || 0;
         
-        const commission = sell * 0.13;
-        const netSell = sell - commission;
-        const profit = netSell - buy;
+        if (!name) { alert("Введите название предмета"); return; }
+        if (quantity < 1) { alert("Количество должно быть не менее 1"); return; }
+        
+        const commission = sellTotal * 0.13;
+        const netSell = sellTotal - commission;
+        const profit = netSell - buyTotal;
         
         const trade = {
             id: Date.now(),
             itemName: name,
-            buyPrice: buy,
-            sellPrice: sell,
+            quantity: quantity,
+            buyPrice: buyTotal,
+            sellPrice: sellTotal,
             commission: commission,
             netSell: netSell,
             profit: profit,
@@ -398,6 +472,7 @@
         await ref.set(trades);
         
         document.getElementById("itemName").value = "";
+        document.getElementById("itemQuantity").value = "1";
         document.getElementById("buyPrice").value = "";
         document.getElementById("sellPrice").value = "";
         renderMain();
@@ -421,6 +496,7 @@
         if (trade) {
             editTradeId = id;
             document.getElementById("editName").value = trade.itemName;
+            document.getElementById("editQuantity").value = trade.quantity || 1;
             document.getElementById("editBuy").value = trade.buyPrice;
             document.getElementById("editSell").value = trade.sellPrice;
             document.getElementById("editModal").style.display = "flex";
@@ -429,8 +505,10 @@
     
     async function saveEdit() {
         const newName = document.getElementById("editName").value;
+        const newQuantity = parseInt(document.getElementById("editQuantity").value) || 1;
         const newBuy = parseFloat(document.getElementById("editBuy").value) || 0;
         const newSell = parseFloat(document.getElementById("editSell").value) || 0;
+        
         const commission = newSell * 0.13;
         const netSell = newSell - commission;
         const profit = netSell - newBuy;
@@ -440,7 +518,15 @@
         let trades = snap.val() || [];
         const index = trades.findIndex(t => t.id === editTradeId);
         if (index !== -1) {
-            trades[index] = { ...trades[index], itemName: newName, buyPrice: newBuy, sellPrice: newSell, commission, netSell, profit };
+            trades[index] = { ...trades[index], 
+                itemName: newName, 
+                quantity: newQuantity,
+                buyPrice: newBuy, 
+                sellPrice: newSell, 
+                commission, 
+                netSell, 
+                profit 
+            };
             await ref.set(trades);
         }
         closeModal("editModal");
@@ -461,13 +547,16 @@
             for (const user of list) {
                 const tradesSnap = await db.ref(`users/${user}/trades`).once("value");
                 const trades = tradesSnap.val() || [];
-                let profit = 0;
-                trades.forEach(t => profit += t.profit || 0);
+                let profit = 0, totalQuantity = 0;
+                trades.forEach(t => {
+                    profit += t.profit || 0;
+                    totalQuantity += t.quantity || 1;
+                });
                 html += `
                     <div class="user-item">
                         <div>
                             <strong>👤 ${user}</strong>
-                            <div class="small-text">Сделок: ${trades.length} | Прибыль: ${profit.toFixed(2)} ₽</div>
+                            <div class="small-text">Сделок: ${trades.length} | Предметов: ${totalQuantity} | Прибыль: ${profit.toFixed(2)} ₽</div>
                         </div>
                         <button onclick="viewUserProfile('${user}')" style="background:#533483;padding:5px 15px;">📊 Смотреть</button>
                     </div>
@@ -484,7 +573,7 @@
         renderMain();
     }
     
-    // ========== АДМИНКА (РАБОТАЕТ!) ==========
+    // ========== АДМИНКА ==========
     async function openAdminPanel() {
         const pwd = prompt("Введите пароль администратора:");
         if (pwd !== "admin123") {
@@ -492,7 +581,6 @@
             return;
         }
         
-        // Загружаем всех пользователей
         const snap = await db.ref("users").once("value");
         const users = snap.val() || {};
         const userList = Object.keys(users);
@@ -501,16 +589,17 @@
         for (const user of userList) {
             const tradesSnap = await db.ref(`users/${user}/trades`).once("value");
             const trades = tradesSnap.val() || [];
-            let totalProfit = 0, totalSpent = 0;
+            let totalProfit = 0, totalSpent = 0, totalQuantity = 0;
             trades.forEach(t => {
                 totalProfit += t.profit || 0;
                 totalSpent += t.buyPrice || 0;
+                totalQuantity += t.quantity || 1;
             });
             usersHtml += `
                 <div class="user-item">
                     <div>
                         <strong>${user}</strong>
-                        <div class="small-text">Сделок: ${trades.length} | Потрачено: ${totalSpent.toFixed(2)}₽ | Прибыль: ${totalProfit.toFixed(2)}₽</div>
+                        <div class="small-text">Предметов: ${totalQuantity} | Потрачено: ${totalSpent.toFixed(2)}₽ | Прибыль: ${totalProfit.toFixed(2)}₽</div>
                     </div>
                     <button onclick="adminDeleteUser('${user}')" class="danger" style="padding:5px 12px;">❌ Удалить</button>
                 </div>
@@ -563,10 +652,9 @@
         if (currentUser === username) {
             logout();
         } else {
-            openAdminPanel(); // обновляем админку
+            closeModal("adminModal");
+            openAdminPanel();
         }
-        closeModal("adminModal");
-        if (currentUser !== username) openAdminPanel();
     }
     
     // ========== ВСПОМОГАТЕЛЬНЫЕ ==========
@@ -574,7 +662,7 @@
         document.getElementById(id).style.display = "none";
     }
     
-    // Глобальные функции для доступа из HTML
+    // Глобальные функции
     window.login = login;
     window.logout = logout;
     window.changeCurrency = changeCurrency;
