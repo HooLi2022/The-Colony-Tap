@@ -146,6 +146,7 @@
             margin-left: 8px;
         }
         
+        /* Отдельное окно профиля */
         .profile-window {
             position: fixed;
             top: 50%;
@@ -160,6 +161,7 @@
             display: none;
             flex-direction: column;
             border: 1px solid #e94560;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
         }
         .profile-header {
             padding: 15px 20px;
@@ -174,7 +176,15 @@
             overflow-y: auto;
             flex: 1;
         }
-        .close-profile { background: #dc3545; padding: 5px 15px; }
+        .close-profile { 
+            background: #dc3545; 
+            padding: 5px 15px; 
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 20px;
+        }
+        .close-profile:hover { opacity: 0.8; transform: none; }
         .overlay {
             position: fixed;
             top: 0;
@@ -184,6 +194,7 @@
             background: rgba(0,0,0,0.7);
             z-index: 1999;
             display: none;
+            cursor: pointer;
         }
         
         .loading {
@@ -219,6 +230,7 @@
     <div id="mainContent"><div class="loading">⏳ Загрузка...</div></div>
 </div>
 
+<!-- Затемнение и отдельное окно для просмотра профиля -->
 <div id="profileOverlay" class="overlay" onclick="closeProfileWindow()"></div>
 <div id="profileWindow" class="profile-window">
     <div class="profile-header">
@@ -278,6 +290,7 @@
     const symbols = { RUB: '₽', USD: '$', EUR: '€' };
     let myTradesListener = null;
     let currentProfileListener = null;
+    let isProfileWindowOpen = false;
     
     // ========== АВТОРИЗАЦИЯ ==========
     function login() {
@@ -301,20 +314,58 @@
     function changeCurrency() {
         currentCurrency = document.getElementById("currencySelect").value;
         renderMain();
-    }
-    
-    // ========== РЕАЛЬНОЕ ВРЕМЯ ==========
-    function setupRealtimeListener() {
-        if (myTradesListener) myTradesListener.off();
-        if (currentUser) {
-            myTradesListener = db.ref(`users/${currentUser}/trades`).on('value', () => {
-                renderMain();
-            });
+        // Если окно профиля открыто - обновляем его валюту
+        if (isProfileWindowOpen) {
+            const profileName = document.getElementById("profileTitle").innerText.replace("👤 Профиль: ", "").replace("👤 Профиль игрока: ", "");
+            if (profileName && profileName !== "игрока") {
+                refreshProfileWindow(profileName);
+            }
         }
     }
     
-    // ========== ОТДЕЛЬНОЕ ОКНО ПРОФИЛЯ (РЕАЛЬНОЕ ВРЕМЯ) ==========
-    function openProfileWindow(username) {
+    async function refreshProfileWindow(username) {
+        if (!username) return;
+        const snapshot = await db.ref(`users/${username}/trades`).once("value");
+        const trades = snapshot.val() || [];
+        
+        let totalBuySum = 0, totalSellSum = 0, totalProfit = 0;
+        trades.forEach(t => {
+            totalBuySum += t.buyPrice || 0;
+            totalSellSum += t.sellPrice || 0;
+            totalProfit += t.profit || 0;
+        });
+        
+        const profileBody = document.getElementById("profileBody");
+        profileBody.innerHTML = `
+            <div style="display:flex;gap:20px;flex-wrap:wrap;justify-content:center;margin-bottom:20px">
+                <div class="stat-card" style="min-width:120px"><div class="stat-value">${totalBuySum.toFixed(2)} ${symbols[currentCurrency]}</div><div class="stat-label">💰 Потрачено</div></div>
+                <div class="stat-card" style="min-width:120px"><div class="stat-value">${totalSellSum.toFixed(2)} ${symbols[currentCurrency]}</div><div class="stat-label">💵 Получено</div></div>
+                <div class="stat-card" style="min-width:120px"><div class="stat-value ${totalProfit>=0?'profit':'loss'}">${totalProfit>=0?'+':''}${totalProfit.toFixed(2)} ${symbols[currentCurrency]}</div><div class="stat-label">📈 Прибыль</div></div>
+            </div>
+            <h4>📋 Сделки (${trades.length})</h4>
+            ${trades.length === 0 ? '<div style="text-align:center;padding:40px">Нет сделок</div>' : `
+            <div style="overflow-x:auto;max-height:350px;overflow-y:auto">
+            <table><thead><tr><th>Дата</th><th>Предмет</th><th>Кол-во</th><th>Покупка</th><th>Продажа</th><th>Прибыль</th></tr></thead>
+            <tbody>${trades.slice().reverse().map(t => `
+                <tr>
+                    <td>${t.date || '-'}</td>
+                    <td>${t.itemName}${t.quantity>1?`<span class="quantity-badge">x${t.quantity}</span>`:''}</td>
+                    <td>${t.quantity||1}</td>
+                    <td>${t.buyPrice>0?t.buyPrice.toFixed(2)+' '+symbols[currentCurrency]:'-'}</td>
+                    <td>${t.sellPrice>0?t.sellPrice.toFixed(2)+' '+symbols[currentCurrency]:'-'}</td>
+                    <td class="${t.profit>=0?'profit':'loss'}">${t.profit>=0?'+':''}${t.profit.toFixed(2)} ${symbols[currentCurrency]}</td>
+                </tr>
+            `).join('')}</tbody></table></div>`}
+        `;
+    }
+    
+    // ========== ОТДЕЛЬНОЕ ОКНО ПРОФИЛЯ ==========
+    async function openProfileWindow(username) {
+        // Закрываем предыдущее окно если открыто
+        if (isProfileWindowOpen) {
+            closeProfileWindow();
+        }
+        
         const overlay = document.getElementById("profileOverlay");
         const window = document.getElementById("profileWindow");
         const profileTitle = document.getElementById("profileTitle");
@@ -325,12 +376,14 @@
         
         overlay.style.display = "block";
         window.style.display = "flex";
+        isProfileWindowOpen = true;
         
         // Отписываемся от предыдущего
         if (currentProfileListener) currentProfileListener.off();
         
         // Подписываемся на реальное время
         currentProfileListener = db.ref(`users/${username}/trades`).on('value', (snapshot) => {
+            if (!isProfileWindowOpen) return;
             const trades = snapshot.val() || [];
             
             let totalBuySum = 0, totalSellSum = 0, totalProfit = 0;
@@ -365,10 +418,16 @@
     }
     
     function closeProfileWindow() {
-        if (currentProfileListener) currentProfileListener.off();
-        currentProfileListener = null;
-        document.getElementById("profileOverlay").style.display = "none";
-        document.getElementById("profileWindow").style.display = "none";
+        if (currentProfileListener) {
+            currentProfileListener.off();
+            currentProfileListener = null;
+        }
+        const overlay = document.getElementById("profileOverlay");
+        const window = document.getElementById("profileWindow");
+        
+        overlay.style.display = "none";
+        window.style.display = "none";
+        isProfileWindowOpen = false;
     }
     
     // ========== ОСНОВНОЙ РЕНДЕР ==========
@@ -443,6 +502,15 @@
             </div>
         `;
         document.getElementById("currentUserName").innerHTML = "Не авторизован";
+    }
+    
+    function setupRealtimeListener() {
+        if (myTradesListener) myTradesListener.off();
+        if (currentUser) {
+            myTradesListener = db.ref(`users/${currentUser}/trades`).on('value', () => {
+                renderMain();
+            });
+        }
     }
     
     // ========== СДЕЛКИ ==========
@@ -614,7 +682,9 @@
         else { closeModal("adminModal"); openAdminPanel(); }
     }
     
-    function closeModal(id) { document.getElementById(id).style.display = "none"; }
+    function closeModal(id) { 
+        document.getElementById(id).style.display = "none"; 
+    }
     
     // Глобальные функции
     window.login = login;
