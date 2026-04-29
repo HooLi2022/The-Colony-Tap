@@ -17,7 +17,6 @@
         }
         .container { max-width: 1200px; margin: 0 auto; }
         
-        /* Шапка - компактная на мобилках */
         .header {
             background: rgba(0,0,0,0.3);
             border-radius: 15px;
@@ -52,8 +51,8 @@
         button.danger { background: #dc3545; }
         button.secondary { background: #533483; }
         button.success { background: #28a745; }
+        button.info { background: #17a2b8; }
         
-        /* Карточки */
         .card {
             background: rgba(0,0,0,0.4);
             border-radius: 16px;
@@ -78,7 +77,6 @@
             font-size: 14px;
         }
         
-        /* Статистика - 3 блока в ряд на мобилке */
         .stats-grid {
             display: flex;
             gap: 10px;
@@ -98,7 +96,47 @@
         .profit { color: #4caf50; }
         .loss { color: #f44336; }
         
-        /* Таблица - с горизонтальной прокруткой */
+        /* Калькулятор прибыли */
+        .calc-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: flex-end;
+        }
+        .calc-result {
+            background: #0f3460;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+        .price-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .price-item {
+            background: #1a1a2e;
+            padding: 10px;
+            border-radius: 10px;
+            flex: 1;
+            min-width: 80px;
+            text-align: center;
+        }
+        .price-value { font-size: 18px; font-weight: bold; color: #e94560; }
+        .price-label { font-size: 10px; color: #aaa; }
+        .target-price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4caf50;
+            text-align: center;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(76,175,80,0.2);
+            border-radius: 12px;
+        }
+        
         .table-wrapper {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
@@ -116,26 +154,13 @@
             border-bottom: 1px solid rgba(255,255,255,0.1);
             font-size: 13px;
         }
-        th { background: #0f3460; color: #e94560; font-weight: bold; }
-        tr:hover { background: rgba(255,255,255,0.05); }
+        th { background: #0f3460; color: #e94560; }
         
-        /* Кнопки действий в таблице */
-        .action-buttons {
-            display: flex;
-            gap: 5px;
-            flex-wrap: wrap;
-        }
-        .action-btn {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            border: none;
-            cursor: pointer;
-        }
+        .action-buttons { display: flex; gap: 5px; flex-wrap: wrap; }
+        .action-btn { padding: 5px 10px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; }
         .edit-btn { background: #ffc107; color: #000; }
         .delete-btn { background: #dc3545; color: white; }
         
-        /* Модальные окна */
         .modal {
             display: none;
             position: fixed;
@@ -158,7 +183,6 @@
             overflow: auto;
         }
         
-        /* Список пользователей */
         .user-item {
             display: flex;
             justify-content: space-between;
@@ -173,7 +197,6 @@
         .user-info { flex: 1; }
         .user-name { font-weight: bold; font-size: 16px; }
         
-        /* Окно профиля */
         .profile-window {
             position: fixed;
             top: 50%;
@@ -198,12 +221,7 @@
             justify-content: space-between;
             align-items: center;
         }
-        .profile-header h3 { font-size: 16px; margin: 0; }
-        .profile-body {
-            padding: 15px;
-            overflow-y: auto;
-            flex: 1;
-        }
+        .profile-body { padding: 15px; overflow-y: auto; flex: 1; }
         .overlay {
             position: fixed;
             top: 0;
@@ -216,13 +234,7 @@
         }
         .overlay.show { display: block; }
         
-        /* Быстрые суммы (подсказки) */
-        .quick-sums {
-            display: flex;
-            gap: 8px;
-            margin: 10px 0 5px;
-            flex-wrap: wrap;
-        }
+        .quick-sums { display: flex; gap: 8px; margin: 10px 0 5px; flex-wrap: wrap; }
         .quick-btn {
             background: #0f3460;
             padding: 6px 12px;
@@ -232,7 +244,6 @@
         }
         .quick-btn:active { background: #e94560; }
         
-        /* Уведомления */
         .toast {
             position: fixed;
             bottom: 20px;
@@ -250,13 +261,6 @@
         }
         .toast.show { opacity: 1; }
         
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #aaa;
-        }
-        
-        /* Иконки и компактность */
         .quantity-badge {
             background: #e94560;
             padding: 2px 6px;
@@ -269,10 +273,9 @@
         @media (max-width: 480px) {
             body { padding: 8px; }
             .stat-value { font-size: 18px; }
-            .stat-card { padding: 8px; }
-            .form-group { min-width: 70px; }
-            button { padding: 8px 12px; font-size: 12px; }
-            th, td { font-size: 11px; padding: 6px; }
+            .calc-result { padding: 10px; }
+            .price-value { font-size: 14px; }
+            .target-price { font-size: 18px; }
         }
     </style>
 </head>
@@ -293,13 +296,13 @@
             <button onclick="openAdminPanel()" class="danger" style="padding: 6px 12px;">🔧</button>
         </div>
     </div>
-    <div id="mainContent"><div class="loading">⏳ Загрузка...</div></div>
+    <div id="mainContent"><div class="loading" style="text-align:center;padding:40px">⏳ Загрузка...</div></div>
 </div>
 
 <div id="profileOverlay" class="overlay" onclick="closeProfileWindow()"></div>
 <div id="profileWindow" class="profile-window">
     <div class="profile-header">
-        <h3 id="profileTitle">👤 Профиль</h3>
+        <h3 id="profileTitle" style="font-size:16px">👤 Профиль</h3>
         <button onclick="closeProfileWindow()" style="background:#dc3545; padding: 5px 12px;">✖</button>
     </div>
     <div class="profile-body" id="profileBody">Загрузка...</div>
@@ -366,6 +369,72 @@
         setTimeout(() => toast.classList.remove("show"), 2000);
     }
     
+    // ========== КАЛЬКУЛЯТОР ПРИБЫЛИ ==========
+    function calculateProfit() {
+        const buyPrice = parseFloat(document.getElementById("calcBuyPrice")?.value) || 0;
+        const targetProfitPercent = parseFloat(document.getElementById("calcProfitPercent")?.value) || 0;
+        
+        if (buyPrice === 0) {
+            document.getElementById("calcResult").innerHTML = '<div class="small-text" style="text-align:center">Введите цену покупки</div>';
+            return;
+        }
+        
+        // Комиссия Steam 13%
+        const commissionRate = 0.13;
+        
+        // Формула: нужная_цена_продажи = (цена_покупки + желаемая_прибыль) / (1 - комиссия)
+        // Желаемая прибыль = цена_покупки * (targetProfitPercent / 100)
+        
+        const desiredProfit = buyPrice * (targetProfitPercent / 100);
+        const requiredSellPrice = (buyPrice + desiredProfit) / (1 - commissionRate);
+        const netAfterCommission = requiredSellPrice * (1 - commissionRate);
+        const actualProfit = netAfterCommission - buyPrice;
+        
+        // Расчёт для разных процентов наценки
+        const marks = [5, 10, 15, 20, 25, 30, 40, 50];
+        const priceList = marks.map(mark => {
+            const profitAmount = buyPrice * (mark / 100);
+            const sellPrice = (buyPrice + profitAmount) / (1 - commissionRate);
+            return { mark, sellPrice, profitAmount };
+        });
+        
+        const html = `
+            <div class="calc-result">
+                <div class="price-list">
+                    ${priceList.map(p => `
+                        <div class="price-item">
+                            <div class="price-value">${p.sellPrice.toFixed(2)} ${symbols[currentCurrency]}</div>
+                            <div class="price-label">наценка ${p.mark}%<br>(+${p.profitAmount.toFixed(2)}${symbols[currentCurrency]})</div>
+                        </div>
+                    `).join('')}
+                </div>
+                ${targetProfitPercent > 0 ? `
+                <div class="target-price">
+                    🎯 Чтобы получить +${targetProfitPercent}% (${desiredProfit.toFixed(2)} ${symbols[currentCurrency]}) прибыли<br>
+                    Продавай за <span style="color:#4caf50; font-size:28px;">${requiredSellPrice.toFixed(2)} ${symbols[currentCurrency]}</span><br>
+                    <span class="small-text">После комиссии получишь ${netAfterCommission.toFixed(2)} ${symbols[currentCurrency]} → чистая прибыль ${actualProfit.toFixed(2)} ${symbols[currentCurrency]}</span>
+                </div>
+                ` : `
+                <div class="target-price">
+                    💡 Введи желаемый % прибыли выше, чтобы узнать цену продажи
+                </div>
+                `}
+                <div class="small-text" style="text-align:center; margin-top:10px;">
+                    ⚡ Комиссия Steam: 13%<br>
+                    📌 Формула: цена продажи = (покупка + прибыль) / 0.87
+                </div>
+            </div>
+        `;
+        
+        document.getElementById("calcResult").innerHTML = html;
+    }
+    
+    function updateProfitPercent(value) {
+        document.getElementById("calcProfitPercent").value = value;
+        calculateProfit();
+    }
+    
+    // ========== АВТОРИЗАЦИЯ ==========
     function login() {
         let name = prompt("Введите ваш ник:", "Player" + Math.floor(Math.random()*1000));
         if (!name) return;
@@ -408,7 +477,7 @@
         const profileBody = document.getElementById("profileBody");
         
         profileTitle.innerHTML = `👤 ${username}`;
-        profileBody.innerHTML = '<div class="loading">⏳ Загрузка...</div>';
+        profileBody.innerHTML = '<div class="loading" style="text-align:center;padding:20px">⏳ Загрузка...</div>';
         
         overlay.classList.add("show");
         window.classList.add("show");
@@ -474,8 +543,35 @@
         });
         
         const html = `
+            <!-- БЛОК КАЛЬКУЛЯТОРА ПРИБЫЛИ -->
             <div class="card">
-                <h3 style="margin-bottom:12px; font-size:18px;">➕ Новая сделка</h3>
+                <h3 style="margin-bottom:12px; font-size:16px;">🧮 Калькулятор прибыли</h3>
+                <div class="calc-row">
+                    <div class="form-group" style="flex:2">
+                        <label>💰 Цена покупки (${symbols[currentCurrency]})</label>
+                        <input type="number" id="calcBuyPrice" step="0.01" placeholder="Введите цену" oninput="calculateProfit()">
+                    </div>
+                    <div class="form-group" style="flex:1">
+                        <label>🎯 Желаемая прибыль (%)</label>
+                        <input type="number" id="calcProfitPercent" step="1" value="0" placeholder="%" oninput="calculateProfit()">
+                    </div>
+                </div>
+                <div class="quick-sums">
+                    <span class="quick-btn" onclick="updateProfitPercent(5)">+5%</span>
+                    <span class="quick-btn" onclick="updateProfitPercent(10)">+10%</span>
+                    <span class="quick-btn" onclick="updateProfitPercent(15)">+15%</span>
+                    <span class="quick-btn" onclick="updateProfitPercent(20)">+20%</span>
+                    <span class="quick-btn" onclick="updateProfitPercent(25)">+25%</span>
+                    <span class="quick-btn" onclick="updateProfitPercent(30)">+30%</span>
+                </div>
+                <div id="calcResult">
+                    <div class="small-text" style="text-align:center; padding:15px;">Введите цену покупки</div>
+                </div>
+            </div>
+            
+            <!-- БЛОК ДОБАВЛЕНИЯ СДЕЛКИ -->
+            <div class="card">
+                <h3 style="margin-bottom:12px; font-size:16px;">➕ Новая сделка</h3>
                 <div class="form-row">
                     <div class="form-group"><label>Предмет</label><input type="text" id="itemName" placeholder="Название"></div>
                     <div class="form-group"><label>Кол-во</label><input type="number" id="itemQuantity" value="1" step="1" min="1"></div>
@@ -493,6 +589,7 @@
                 <div class="small-text" style="margin-top:8px">💡 Комиссия Steam 13% при продаже</div>
             </div>
             
+            <!-- СТАТИСТИКА -->
             <div class="card">
                 <h3 style="margin-bottom:12px; font-size:16px;">📊 Моя статистика</h3>
                 <div class="stats-grid">
@@ -502,6 +599,7 @@
                 </div>
             </div>
             
+            <!-- ИСТОРИЯ -->
             <div class="card">
                 <h3 style="margin-bottom:12px; font-size:16px;">📋 История сделок</h3>
                 ${trades.length === 0 ? '<div style="text-align:center;padding:30px">Нет сделок</div>' : `
@@ -526,6 +624,14 @@
         
         document.getElementById("mainContent").innerHTML = html;
         document.getElementById("currentUserName").innerHTML = currentUser;
+        
+        // Добавляем обработчик для поля покупки в калькуляторе
+        const calcInput = document.getElementById("calcBuyPrice");
+        if (calcInput) {
+            calcInput.addEventListener('input', function() {
+                if (this.value) calculateProfit();
+            });
+        }
     }
     
     function setQuickSum(type, amount) {
@@ -545,7 +651,7 @@
         document.getElementById("mainContent").innerHTML = `
             <div class="card" style="text-align:center">
                 <h2>🎮 Trade Tracker</h2>
-                <p style="margin:15px 0">Учёт сделок с комиссией Steam 13%</p>
+                <p style="margin:15px 0">Учёт сделок с комиссией Steam 13%<br>➕ Калькулятор прибыли</p>
                 <p style="margin:5px 0; color:#e94560; font-size:12px;">🔧 Админ: admin123</p>
                 <button onclick="login()" style="font-size:16px; padding:12px 25px; margin-top:10px;">🚀 Войти</button>
             </div>
@@ -751,6 +857,8 @@
     window.closeModal = closeModal;
     window.setQuickSum = setQuickSum;
     window.clearForm = clearForm;
+    window.calculateProfit = calculateProfit;
+    window.updateProfitPercent = updateProfitPercent;
     
     (function() {
         const saved = localStorage.getItem("tradeTrackerUser");
