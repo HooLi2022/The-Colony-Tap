@@ -146,7 +146,7 @@
             margin-left: 8px;
         }
         
-        /* Отдельное окно профиля - УПРОЩЁННОЕ */
+        /* Отдельное окно профиля */
         .profile-window {
             position: fixed;
             top: 50%;
@@ -161,10 +161,10 @@
             flex-direction: column;
             border: 2px solid #e94560;
             box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            display: none !important;
+            display: none;
         }
         .profile-window.show {
-            display: flex !important;
+            display: flex;
         }
         .profile-header {
             padding: 15px 20px;
@@ -197,11 +197,11 @@
             height: 100%;
             background: rgba(0,0,0,0.8);
             z-index: 1999;
-            display: none !important;
+            display: none;
             cursor: pointer;
         }
         .overlay.show {
-            display: block !important;
+            display: block;
         }
         
         .loading {
@@ -237,12 +237,12 @@
     <div id="mainContent"><div class="loading">⏳ Загрузка...</div></div>
 </div>
 
-<!-- Затемнение и отдельное окно для просмотра профиля - ID для прямого доступа -->
+<!-- Затемнение и отдельное окно для просмотра профиля -->
 <div id="profileOverlay" class="overlay" onclick="closeProfileWindow()"></div>
 <div id="profileWindow" class="profile-window">
     <div class="profile-header">
         <h3 id="profileTitle">👤 Профиль игрока</h3>
-        <button id="closeProfileBtn" class="close-profile">✖ Закрыть</button>
+        <button class="close-profile" onclick="closeProfileWindow()">✖ Закрыть</button>
     </div>
     <div class="profile-body" id="profileBody">Загрузка...</div>
 </div>
@@ -296,7 +296,7 @@
     let currentCurrency = 'RUB';
     const symbols = { RUB: '₽', USD: '$', EUR: '€' };
     let myTradesListener = null;
-    let currentProfileListener = null;
+    let currentProfileListenerRef = null; // Храним ссылку на reference, а не на listener
     
     // ========== АВТОРИЗАЦИЯ ==========
     function login() {
@@ -322,14 +322,14 @@
         renderMain();
     }
     
-    // ========== ЗАКРЫТИЕ ОКНА ПРОФИЛЯ (ГЛАВНАЯ ФУНКЦИЯ) ==========
+    // ========== ЗАКРЫТИЕ ОКНА ПРОФИЛЯ (ИСПРАВЛЕНО) ==========
     function closeProfileWindow() {
         console.log("Закрытие окна профиля...");
         
-        // Отключаем слушатель Firebase
-        if (currentProfileListener) {
-            currentProfileListener.off();
-            currentProfileListener = null;
+        // Отключаем слушатель Firebase через .off() на reference
+        if (currentProfileListenerRef) {
+            currentProfileListenerRef.off();
+            currentProfileListenerRef = null;
         }
         
         // Прячем элементы
@@ -338,10 +338,6 @@
         
         if (overlay) overlay.classList.remove("show");
         if (window) window.classList.remove("show");
-        
-        // Очищаем содержимое
-        const profileBody = document.getElementById("profileBody");
-        if (profileBody) profileBody.innerHTML = "";
         
         console.log("Окно профиля закрыто");
     }
@@ -365,19 +361,22 @@
         overlay.classList.add("show");
         window.classList.add("show");
         
-        // Загружаем данные
+        // Загружаем данные один раз
         const snapshot = await db.ref(`users/${username}/trades`).once("value");
         renderProfileContent(snapshot.val() || [], username);
         
-        // Подписываемся на обновления в реальном времени
-        if (currentProfileListener) currentProfileListener.off();
-        currentProfileListener = db.ref(`users/${username}/trades`).on('value', (snapshot) => {
+        // Подписываемся на обновления в реальном времени (ПРАВИЛЬНО)
+        const tradesRef = db.ref(`users/${username}/trades`);
+        tradesRef.on('value', (snapshot) => {
             // Проверяем, открыто ли окно
             const isOpen = document.getElementById("profileWindow")?.classList.contains("show");
             if (isOpen) {
                 renderProfileContent(snapshot.val() || [], username);
             }
         });
+        
+        // Сохраняем ссылку на reference для отписки
+        currentProfileListenerRef = tradesRef;
     }
     
     function renderProfileContent(trades, username) {
@@ -400,17 +399,20 @@
             <h4>📋 Сделки (${trades.length})</h4>
             ${trades.length === 0 ? '<div style="text-align:center;padding:40px">Нет сделок</div>' : `
             <div style="overflow-x:auto;max-height:350px;overflow-y:auto">
-            <table><thead><tr><th>Дата</th><th>Предмет</th><th>Кол-во</th><th>Покупка</th><th>Продажа</th><th>Прибыль</th></tr></thead>
-            <tbody>${trades.slice().reverse().map(t => `
-                <tr>
-                    <td>${t.date || '-'}</td>
-                    <td>${t.itemName}${t.quantity>1?`<span class="quantity-badge">x${t.quantity}</span>`:''}</td>
-                    <td>${t.quantity||1}</td>
-                    <td>${t.buyPrice>0?t.buyPrice.toFixed(2)+' '+symbols[currentCurrency]:'-'}</td>
-                    <td>${t.sellPrice>0?t.sellPrice.toFixed(2)+' '+symbols[currentCurrency]:'-'}</td>
-                    <td class="${t.profit>=0?'profit':'loss'}">${t.profit>=0?'+':''}${t.profit.toFixed(2)} ${symbols[currentCurrency]}</td>
-                </tr>
-            `).join('')}</tbody></table></div>`}
+            <table style="width:100%">
+                <thead><tr><th>Дата</th><th>Предмет</th><th>Кол-во</th><th>Покупка</th><th>Продажа</th><th>Прибыль</th></tr></thead>
+                <tbody>${trades.slice().reverse().map(t => `
+                    <tr>
+                        <td>${t.date || '-'}</td>
+                        <td>${t.itemName}${t.quantity>1?`<span class="quantity-badge">x${t.quantity}</span>`:''}</td>
+                        <td>${t.quantity||1}</td>
+                        <td>${t.buyPrice>0?t.buyPrice.toFixed(2)+' '+symbols[currentCurrency]:'-'}</td>
+                        <td>${t.sellPrice>0?t.sellPrice.toFixed(2)+' '+symbols[currentCurrency]:'-'}</td>
+                        <td class="${t.profit>=0?'profit':'loss'}">${t.profit>=0?'+':''}${t.profit.toFixed(2)} ${symbols[currentCurrency]}</td>
+                    </tr>
+                `).join('')}</tbody>
+            </table>
+            </div>`}
         `;
     }
     
@@ -454,7 +456,7 @@
                 <h3>📋 История сделок</h3>
                 ${trades.length === 0 ? '<div style="text-align:center;padding:40px">Нет сделок</div>' : `
                 <div style="overflow-x:auto">
-                <td>
+                <table style="width:100%">
                     <thead><tr><th>Дата</th><th>Предмет</th><th>Кол-во</th><th>Покупка</th><th>Продажа</th><th>Прибыль</th><th></th></tr></thead>
                     <tbody>${trades.slice().reverse().map(t => `
                         <tr>
@@ -669,20 +671,6 @@
     function closeModal(id) { 
         document.getElementById(id).style.display = "none"; 
     }
-    
-    // ========== НАВЕШИВАЕМ ОБРАБОТЧИКИ ==========
-    document.addEventListener("DOMContentLoaded", function() {
-        // Кнопка закрытия
-        const closeBtn = document.getElementById("closeProfileBtn");
-        if (closeBtn) {
-            closeBtn.onclick = function() { closeProfileWindow(); };
-        }
-        // Клик по оверлею
-        const overlay = document.getElementById("profileOverlay");
-        if (overlay) {
-            overlay.onclick = function() { closeProfileWindow(); };
-        }
-    });
     
     // Глобальные функции
     window.login = login;
