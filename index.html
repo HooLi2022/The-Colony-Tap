@@ -17,6 +17,7 @@
         }
         .container { max-width: 1200px; margin: 0 auto; }
         
+        /* Шапка */
         .header {
             background: rgba(0,0,0,0.3);
             border-radius: 15px;
@@ -59,6 +60,16 @@
             padding: 16px;
             margin-bottom: 16px;
         }
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e94560;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
         .form-row {
             display: flex;
             flex-wrap: wrap;
@@ -76,33 +87,33 @@
             width: 100%;
             font-size: 14px;
         }
+        .hint {
+            font-size: 11px;
+            color: #ffc107;
+            margin-top: 5px;
+        }
         
+        /* Статистика - 3 больших блока */
         .stats-grid {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
             justify-content: center;
         }
         .stat-card {
             background: #0f3460;
-            padding: 12px 10px;
+            padding: 15px 10px;
             border-radius: 12px;
             text-align: center;
             flex: 1;
-            min-width: 90px;
+            min-width: 100px;
         }
-        .stat-value { font-size: 22px; font-weight: bold; color: #e94560; }
-        .stat-label { font-size: 10px; color: #aaa; margin-top: 5px; }
+        .stat-value { font-size: 24px; font-weight: bold; color: #e94560; }
+        .stat-label { font-size: 11px; color: #aaa; margin-top: 5px; }
         .profit { color: #4caf50; }
         .loss { color: #f44336; }
         
-        .calc-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 15px;
-            align-items: flex-end;
-        }
+        /* Калькулятор */
         .calc-result {
             background: #0f3460;
             border-radius: 12px;
@@ -112,54 +123,56 @@
         .price-list {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
+            gap: 8px;
+            margin: 10px 0;
         }
         .price-item {
             background: #1a1a2e;
-            padding: 10px;
+            padding: 8px;
             border-radius: 10px;
             flex: 1;
-            min-width: 80px;
+            min-width: 70px;
             text-align: center;
         }
-        .price-value { font-size: 18px; font-weight: bold; color: #e94560; }
+        .price-value { font-size: 16px; font-weight: bold; color: #e94560; }
         .price-label { font-size: 10px; color: #aaa; }
         .target-price {
-            font-size: 24px;
-            font-weight: bold;
-            color: #4caf50;
             text-align: center;
             margin-top: 10px;
-            padding: 10px;
+            padding: 12px;
             background: rgba(76,175,80,0.2);
             border-radius: 12px;
         }
+        .target-price big {
+            font-size: 26px;
+            font-weight: bold;
+            color: #4caf50;
+        }
         
+        /* Таблица */
         .table-wrapper {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
-            margin: 0 -5px;
-            padding: 0 5px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 550px;
+            font-size: 13px;
         }
         th, td {
             padding: 10px 8px;
             text-align: left;
             border-bottom: 1px solid rgba(255,255,255,0.1);
-            font-size: 13px;
         }
         th { background: #0f3460; color: #e94560; }
+        tr:hover { background: rgba(255,255,255,0.05); }
         
-        .action-buttons { display: flex; gap: 5px; flex-wrap: wrap; }
+        .action-buttons { display: flex; gap: 5px; }
         .action-btn { padding: 5px 10px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; }
         .edit-btn { background: #ffc107; color: #000; }
         .delete-btn { background: #dc3545; color: white; }
         
+        /* Модалки */
         .modal {
             display: none;
             position: fixed;
@@ -233,7 +246,12 @@
         }
         .overlay.show { display: block; }
         
-        .quick-sums { display: flex; gap: 8px; margin: 10px 0 5px; flex-wrap: wrap; }
+        .quick-buttons {
+            display: flex;
+            gap: 8px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
         .quick-btn {
             background: #0f3460;
             padding: 6px 12px;
@@ -260,53 +278,56 @@
         }
         .toast.show { opacity: 1; }
         
-        .quantity-badge {
+        .badge {
             background: #e94560;
             padding: 2px 6px;
             border-radius: 20px;
             font-size: 10px;
             margin-left: 5px;
         }
-        .small-text { font-size: 11px; color: #aaa; }
+        .text-muted { font-size: 11px; color: #aaa; }
+        .text-warning { color: #ffc107; }
         
         @media (max-width: 480px) {
             body { padding: 8px; }
             .stat-value { font-size: 18px; }
-            .calc-result { padding: 10px; }
-            .price-value { font-size: 14px; }
-            .target-price { font-size: 18px; }
+            .target-price big { font-size: 20px; }
         }
     </style>
 </head>
 <body>
 <div class="container">
+    <!-- ШАПКА -->
     <div class="header">
         <div>
-            <span style="color:#aaa; font-size:12px;">👤</span>
+            <span>👤</span>
             <span class="user-badge" id="currentUserName">Не авторизован</span>
         </div>
         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
             <select id="currencySelect" onchange="changeCurrency()" style="width: auto; padding: 6px 10px;">
-                <option value="RUB">₽</option>
-                <option value="USD">$</option>
-                <option value="EUR">€</option>
+                <option value="RUB">₽ Рубль</option>
+                <option value="USD">$ Доллар</option>
+                <option value="EUR">€ Евро</option>
             </select>
-            <button onclick="showAllUsers()" class="secondary" style="padding: 6px 12px;">👥</button>
-            <button onclick="openAdminPanel()" class="danger" style="padding: 6px 12px;">🔧</button>
+            <button onclick="showAllUsers()" class="secondary" style="padding: 6px 12px;" title="Список всех игроков">👥 Игроки</button>
+            <button onclick="openAdminPanel()" class="danger" style="padding: 6px 12px;" title="Админ панель">🔧 Админ</button>
         </div>
     </div>
-    <div id="mainContent"><div class="loading" style="text-align:center;padding:40px">⏳ Загрузка...</div></div>
+    
+    <div id="mainContent"><div class="text-muted" style="text-align:center;padding:40px">⏳ Загрузка...</div></div>
 </div>
 
+<!-- ОКНО ПРОФИЛЯ -->
 <div id="profileOverlay" class="overlay" onclick="closeProfileWindow()"></div>
 <div id="profileWindow" class="profile-window">
     <div class="profile-header">
         <h3 id="profileTitle" style="font-size:16px">👤 Профиль</h3>
-        <button onclick="closeProfileWindow()" style="background:#dc3545; padding: 5px 12px;">✖</button>
+        <button onclick="closeProfileWindow()" style="background:#dc3545; padding: 5px 12px;">✖ Закрыть</button>
     </div>
     <div class="profile-body" id="profileBody">Загрузка...</div>
 </div>
 
+<!-- МОДАЛКА ВСЕХ ИГРОКОВ -->
 <div id="usersModal" class="modal">
     <div class="modal-content">
         <h3>👥 Все игроки</h3>
@@ -315,6 +336,7 @@
     </div>
 </div>
 
+<!-- АДМИН МОДАЛКА -->
 <div id="adminModal" class="modal">
     <div class="modal-content">
         <h3>🔧 Админ-панель</h3>
@@ -323,16 +345,17 @@
     </div>
 </div>
 
+<!-- МОДАЛКА РЕДАКТИРОВАНИЯ -->
 <div id="editModal" class="modal">
     <div class="modal-content">
-        <h3>✏️ Редактировать</h3>
-        <div class="form-group"><label>Предмет</label><input type="text" id="editName"></div>
-        <div class="form-group"><label>Кол-во</label><input type="number" id="editQuantity" step="1"></div>
-        <div class="form-group"><label>Цена за 1 шт (покупка)</label><input type="number" id="editBuy" step="0.01"></div>
-        <div class="form-group"><label>Цена за 1 шт (продажа)</label><input type="number" id="editSell" step="0.01"></div>
+        <h3>✏️ Редактировать сделку</h3>
+        <div class="form-group"><label>📦 Предмет</label><input type="text" id="editName"></div>
+        <div class="form-group"><label>🔢 Количество</label><input type="number" id="editQuantity" step="1"></div>
+        <div class="form-group"><label>💰 Цена покупки (за 1 шт)</label><input type="number" id="editBuy" step="0.01"></div>
+        <div class="form-group"><label>💵 Цена продажи (за 1 шт)</label><input type="number" id="editSell" step="0.01"></div>
         <div style="display: flex; gap: 10px; margin-top: 15px;">
-            <button onclick="saveEdit()" class="success" style="flex:1">Сохранить</button>
-            <button onclick="closeModal('editModal')" style="flex:1">Отмена</button>
+            <button onclick="saveEdit()" class="success" style="flex:1">💾 Сохранить</button>
+            <button onclick="closeModal('editModal')" style="flex:1">❌ Отмена</button>
         </div>
     </div>
 </div>
@@ -368,58 +391,46 @@
         setTimeout(() => toast.classList.remove("show"), 2000);
     }
     
-    // ========== КАЛЬКУЛЯТОР ПРИБЫЛИ (для 1 предмета) ==========
+    // ========== КАЛЬКУЛЯТОР ПРИБЫЛИ ==========
     function calculateProfit() {
         const buyPrice = parseFloat(document.getElementById("calcBuyPrice")?.value) || 0;
-        const targetProfitPercent = parseFloat(document.getElementById("calcProfitPercent")?.value) || 0;
+        const targetPercent = parseFloat(document.getElementById("calcProfitPercent")?.value) || 0;
         
         if (buyPrice === 0) {
-            document.getElementById("calcResult").innerHTML = '<div class="small-text" style="text-align:center">Введите цену покупки за 1 шт</div>';
+            document.getElementById("calcResult").innerHTML = '<div class="text-muted" style="text-align:center;padding:15px;">📝 Введите цену покупки за 1 предмет</div>';
             return;
         }
         
         const commissionRate = 0.13;
-        const desiredProfit = buyPrice * (targetProfitPercent / 100);
-        const requiredSellPrice = (buyPrice + desiredProfit) / (1 - commissionRate);
-        const netAfterCommission = requiredSellPrice * (1 - commissionRate);
-        const actualProfit = netAfterCommission - buyPrice;
+        const desiredProfit = buyPrice * (targetPercent / 100);
+        const requiredSell = (buyPrice + desiredProfit) / (1 - commissionRate);
         
         const marks = [5, 10, 15, 20, 25, 30, 40, 50];
         const priceList = marks.map(mark => {
             const profitAmount = buyPrice * (mark / 100);
             const sellPrice = (buyPrice + profitAmount) / (1 - commissionRate);
-            return { mark, sellPrice, profitAmount };
+            return { mark, sellPrice };
         });
         
-        const html = `
+        document.getElementById("calcResult").innerHTML = `
             <div class="calc-result">
                 <div class="price-list">
                     ${priceList.map(p => `
                         <div class="price-item">
                             <div class="price-value">${p.sellPrice.toFixed(2)} ${symbols[currentCurrency]}</div>
-                            <div class="price-label">наценка ${p.mark}%<br>(+${p.profitAmount.toFixed(2)}${symbols[currentCurrency]}/шт)</div>
+                            <div class="price-label">наценка ${p.mark}%</div>
                         </div>
                     `).join('')}
                 </div>
-                ${targetProfitPercent > 0 ? `
+                ${targetPercent > 0 ? `
                 <div class="target-price">
-                    🎯 Чтобы получить +${targetProfitPercent}% (${desiredProfit.toFixed(2)} ${symbols[currentCurrency]}/шт) прибыли<br>
-                    Продавай за <span style="color:#4caf50; font-size:28px;">${requiredSellPrice.toFixed(2)} ${symbols[currentCurrency]}</span> за 1 шт<br>
-                    <span class="small-text">После комиссии получишь ${netAfterCommission.toFixed(2)} ${symbols[currentCurrency]}/шт → чистая прибыль ${actualProfit.toFixed(2)} ${symbols[currentCurrency]}/шт</span>
+                    🎯 Чтобы получить <strong>+${targetPercent}%</strong> прибыли (${desiredProfit.toFixed(2)} ${symbols[currentCurrency]}/шт)<br>
+                    Продавай за <big>${requiredSell.toFixed(2)} ${symbols[currentCurrency]}</big> за 1 штуку<br>
+                    <span class="text-muted">⚡ После комиссии Steam 13% твоя чистая прибыль: ${(requiredSell * 0.87 - buyPrice).toFixed(2)} ${symbols[currentCurrency]}/шт</span>
                 </div>
-                ` : `
-                <div class="target-price">
-                    💡 Введи желаемый % прибыли выше, чтобы узнать цену продажи за 1 шт
-                </div>
-                `}
-                <div class="small-text" style="text-align:center; margin-top:10px;">
-                    ⚡ Комиссия Steam: 13%<br>
-                    📌 Цены указаны за 1 штуку
-                </div>
+                ` : '<div class="text-muted" style="text-align:center;margin-top:10px;">💡 Выбери желаемый % прибыли выше</div>'}
             </div>
         `;
-        
-        document.getElementById("calcResult").innerHTML = html;
     }
     
     function updateProfitPercent(value) {
@@ -429,7 +440,7 @@
     
     // ========== АВТОРИЗАЦИЯ ==========
     function login() {
-        let name = prompt("Введите ваш ник:", "Player" + Math.floor(Math.random()*1000));
+        let name = prompt("Введите ваш ник (латиница, цифры, _):", "Player" + Math.floor(Math.random()*1000));
         if (!name) return;
         name = name.replace(/[^a-zA-Z0-9_]/g, '_');
         if (name.length < 2) name = "User_" + Date.now();
@@ -463,17 +474,10 @@
     
     async function openProfileWindow(username) {
         closeProfileWindow();
-        
-        const overlay = document.getElementById("profileOverlay");
-        const window = document.getElementById("profileWindow");
-        const profileTitle = document.getElementById("profileTitle");
-        const profileBody = document.getElementById("profileBody");
-        
-        profileTitle.innerHTML = `👤 ${username}`;
-        profileBody.innerHTML = '<div class="loading" style="text-align:center;padding:20px">⏳ Загрузка...</div>';
-        
-        overlay.classList.add("show");
-        window.classList.add("show");
+        document.getElementById("profileOverlay").classList.add("show");
+        document.getElementById("profileWindow").classList.add("show");
+        document.getElementById("profileTitle").innerHTML = `👤 ${username}`;
+        document.getElementById("profileBody").innerHTML = '<div class="text-muted" style="text-align:center;padding:20px;">⏳ Загрузка...</div>';
         
         const snapshot = await db.ref(`users/${username}/trades`).once("value");
         renderProfileContent(snapshot.val() || []);
@@ -488,39 +492,36 @@
     }
     
     function renderProfileContent(trades) {
-        const profileBody = document.getElementById("profileBody");
-        if (!profileBody) return;
-        
-        let totalBuySum = 0, totalSellSum = 0, totalProfit = 0;
+        const container = document.getElementById("profileBody");
+        let totalBuy = 0, totalSell = 0, totalProfit = 0;
         trades.forEach(t => {
-            totalBuySum += t.buyPrice || 0;
-            totalSellSum += t.sellPrice || 0;
+            totalBuy += t.buyPrice || 0;
+            totalSell += t.sellPrice || 0;
             totalProfit += t.profit || 0;
         });
         
-        profileBody.innerHTML = `
+        container.innerHTML = `
             <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px">
-                <div class="stat-card"><div class="stat-value">${totalBuySum.toFixed(2)} ${symbols[currentCurrency]}</div><div class="stat-label">💰 Потрачено всего</div></div>
-                <div class="stat-card"><div class="stat-value">${totalSellSum.toFixed(2)} ${symbols[currentCurrency]}</div><div class="stat-label">💵 Получено всего</div></div>
-                <div class="stat-card"><div class="stat-value ${totalProfit>=0?'profit':'loss'}">${totalProfit>=0?'+':''}${totalProfit.toFixed(2)} ${symbols[currentCurrency]}</div><div class="stat-label">📈 Прибыль всего</div></div>
+                <div class="stat-card"><div class="stat-value">${totalBuy.toFixed(2)} ${symbols[currentCurrency]}</div><div class="stat-label">💰 Всего потрачено</div></div>
+                <div class="stat-card"><div class="stat-value">${totalSell.toFixed(2)} ${symbols[currentCurrency]}</div><div class="stat-label">💵 Всего получено</div></div>
+                <div class="stat-card"><div class="stat-value ${totalProfit>=0?'profit':'loss'}">${totalProfit>=0?'+':''}${totalProfit.toFixed(2)} ${symbols[currentCurrency]}</div><div class="stat-label">📈 Общая прибыль</div></div>
             </div>
             <div class="table-wrapper">
             <table>
-                <thead><tr><th>Дата</th><th>Предмет</th><th>Кол-во</th><th>Покупка (всего)</th><th>Продажа (всего)</th><th>Прибыль</th><th>Цена за шт</th></tr></thead>
+                <thead><tr><th>Дата</th><th>Предмет</th><th>Кол-во</th><th>Покупка</th><th>Продажа</th><th>Прибыль</th><th>Цена за шт</th></tr></thead>
                 <tbody>${trades.slice().reverse().map(t => {
-                    const buyPerItem = t.quantity > 0 ? t.buyPrice / t.quantity : 0;
-                    const sellPerItem = t.quantity > 0 ? t.sellPrice / t.quantity : 0;
-                    return `
-                    <tr>
+                    const buyPer = t.quantity > 0 ? t.buyPrice / t.quantity : 0;
+                    const sellPer = t.quantity > 0 ? t.sellPrice / t.quantity : 0;
+                    return `<tr>
                         <td>${t.date?.split(',')[0] || '-'}</td>
-                        <td>${t.itemName}${t.quantity>1?`<span class="quantity-badge">x${t.quantity}</span>`:''}</td>
+                        <td>${t.itemName}${t.quantity>1?`<span class="badge">x${t.quantity}</span>`:''}</td>
                         <td>${t.quantity||1}</td>
                         <td>${t.buyPrice>0?t.buyPrice.toFixed(2)+' '+symbols[currentCurrency]:'-'}</td>
                         <td>${t.sellPrice>0?t.sellPrice.toFixed(2)+' '+symbols[currentCurrency]:'-'}</td>
                         <td class="${t.profit>=0?'profit':'loss'}">${t.profit>=0?'+':''}${t.profit.toFixed(2)} ${symbols[currentCurrency]}</td>
-                        <td>${t.sellPrice>0 ? sellPerItem.toFixed(2)+' '+symbols[currentCurrency] : '-'} / ${buyPerItem.toFixed(2)+' '+symbols[currentCurrency]}</td>
-                    </tr>
-                `}).join('')}</tbody>
+                        <td class="text-muted">${sellPer>0?sellPer.toFixed(2):'-'}/${buyPer>0?buyPer.toFixed(2):'-'}</td>
+                    </tr>`;
+                }).join('')}</tbody>
             </table>
             </div>
         `;
@@ -532,27 +533,29 @@
         const snapshot = await db.ref(`users/${currentUser}/trades`).once("value");
         let trades = snapshot.val() || [];
         
-        let totalBuySum = 0, totalSellSum = 0, totalProfit = 0;
+        let totalBuy = 0, totalSell = 0, totalProfit = 0;
         trades.forEach(t => {
-            totalBuySum += t.buyPrice || 0;
-            totalSellSum += t.sellPrice || 0;
+            totalBuy += t.buyPrice || 0;
+            totalSell += t.sellPrice || 0;
             totalProfit += t.profit || 0;
         });
         
         const html = `
+            <!-- ========== БЛОК 1: КАЛЬКУЛЯТОР ПРИБЫЛИ ========== -->
             <div class="card">
-                <h3 style="margin-bottom:12px; font-size:16px;">🧮 Калькулятор прибыли (за 1 предмет)</h3>
-                <div class="calc-row">
+                <div class="card-title">🧮 КАЛЬКУЛЯТОР ПРИБЫЛИ</div>
+                <div class="text-muted" style="margin-bottom:10px;">📌 Узнай, за сколько продать 1 предмет, чтобы получить нужную прибыль</div>
+                <div class="form-row">
                     <div class="form-group" style="flex:2">
-                        <label>💰 Цена покупки за 1 шт (${symbols[currentCurrency]})</label>
-                        <input type="number" id="calcBuyPrice" step="0.01" placeholder="Введите цену за 1 шт" oninput="calculateProfit()">
+                        <label>💰 Цена покупки (за 1 шт)</label>
+                        <input type="number" id="calcBuyPrice" step="0.01" placeholder="Например: 9.66" oninput="calculateProfit()">
                     </div>
                     <div class="form-group" style="flex:1">
                         <label>🎯 Желаемая прибыль (%)</label>
                         <input type="number" id="calcProfitPercent" step="1" value="0" placeholder="%" oninput="calculateProfit()">
                     </div>
                 </div>
-                <div class="quick-sums">
+                <div class="quick-buttons">
                     <span class="quick-btn" onclick="updateProfitPercent(5)">+5%</span>
                     <span class="quick-btn" onclick="updateProfitPercent(10)">+10%</span>
                     <span class="quick-btn" onclick="updateProfitPercent(15)">+15%</span>
@@ -560,62 +563,89 @@
                     <span class="quick-btn" onclick="updateProfitPercent(25)">+25%</span>
                     <span class="quick-btn" onclick="updateProfitPercent(30)">+30%</span>
                 </div>
-                <div id="calcResult">
-                    <div class="small-text" style="text-align:center; padding:15px;">Введите цену покупки за 1 предмет</div>
-                </div>
+                <div id="calcResult"><div class="text-muted" style="text-align:center;padding:15px;">📝 Введите цену покупки за 1 предмет</div></div>
             </div>
             
+            <!-- ========== БЛОК 2: ДОБАВЛЕНИЕ СДЕЛКИ ========== -->
             <div class="card">
-                <h3 style="margin-bottom:12px; font-size:16px;">➕ Новая сделка</h3>
+                <div class="card-title">➕ ДОБАВИТЬ СДЕЛКУ</div>
+                <div class="text-muted" style="margin-bottom:10px;">📌 Цены указывайте ЗА 1 ПРЕДМЕТ! Система сама умножит на количество</div>
                 <div class="form-row">
-                    <div class="form-group"><label>Предмет</label><input type="text" id="itemName" placeholder="Название"></div>
-                    <div class="form-group"><label>Кол-во</label><input type="number" id="itemQuantity" value="1" step="1" min="1"></div>
+                    <div class="form-group"><label>📦 Предмет</label><input type="text" id="itemName" placeholder="Кейс, капсула, скин..."></div>
+                    <div class="form-group"><label>🔢 Количество</label><input type="number" id="itemQuantity" value="1" step="1" min="1"></div>
                     <div class="form-group"><label>💰 Покупка (за 1 шт)</label><input type="number" id="buyPricePerItem" step="0.01" placeholder="0"></div>
                     <div class="form-group"><label>💵 Продажа (за 1 шт)</label><input type="number" id="sellPricePerItem" step="0.01" placeholder="0"></div>
-                    <div class="form-group"><button onclick="addTrade()" style="width:100%">➕ Добавить</button></div>
                 </div>
-                <div class="quick-sums">
+                <div class="quick-buttons">
                     <span class="quick-btn" onclick="setQuickSum('buy', 10)">+10₽/шт</span>
                     <span class="quick-btn" onclick="setQuickSum('buy', 50)">+50₽/шт</span>
                     <span class="quick-btn" onclick="setQuickSum('sell', 10)">+10₽/шт</span>
                     <span class="quick-btn" onclick="setQuickSum('sell', 50)">+50₽/шт</span>
-                    <span class="quick-btn" onclick="clearForm()">🗑️ Очистить</span>
+                    <span class="quick-btn" onclick="clearForm()">🗑️ Очистить всё</span>
                 </div>
-                <div class="small-text" style="margin-top:8px">💡 Цены указывайте ЗА 1 ПРЕДМЕТ! Комиссия Steam 13% при продаже. Сумма умножится на количество автоматически.</div>
+                <button onclick="addTrade()" class="success" style="width:100%; margin-top:10px;">➕ ДОБАВИТЬ СДЕЛКУ</button>
+                <div class="hint">💡 Комиссия Steam 13% вычитается автоматически при продаже. В таблице будут показаны итоговые суммы за всё количество.</div>
             </div>
             
+            <!-- ========== БЛОК 3: МОЯ СТАТИСТИКА ========== -->
             <div class="card">
-                <h3 style="margin-bottom:12px; font-size:16px;">📊 Моя статистика</h3>
+                <div class="card-title">📊 МОЯ СТАТИСТИКА</div>
                 <div class="stats-grid">
-                    <div class="stat-card"><div class="stat-value">${totalBuySum.toFixed(2)} ${symbols[currentCurrency]}</div><div class="stat-label">💰 Куплено всего</div></div>
-                    <div class="stat-card"><div class="stat-value">${totalSellSum.toFixed(2)} ${symbols[currentCurrency]}</div><div class="stat-label">💵 Продано всего</div></div>
-                    <div class="stat-card"><div class="stat-value ${totalProfit>=0?'profit':'loss'}">${totalProfit>=0?'+':''}${totalProfit.toFixed(2)} ${symbols[currentCurrency]}</div><div class="stat-label">📈 Прибыль всего</div></div>
+                    <div class="stat-card">
+                        <div class="stat-value">${totalBuy.toFixed(2)} ${symbols[currentCurrency]}</div>
+                        <div class="stat-label">💰 ВСЕГО КУПЛЕНО</div>
+                        <div class="text-muted">(за всё время)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${totalSell.toFixed(2)} ${symbols[currentCurrency]}</div>
+                        <div class="stat-label">💵 ВСЕГО ПРОДАНО</div>
+                        <div class="text-muted">(за всё время)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value ${totalProfit>=0?'profit':'loss'}">${totalProfit>=0?'+':''}${totalProfit.toFixed(2)} ${symbols[currentCurrency]}</div>
+                        <div class="stat-label">📈 ЧИСТАЯ ПРИБЫЛЬ</div>
+                        <div class="text-muted">(после комиссии)</div>
+                    </div>
                 </div>
             </div>
             
+            <!-- ========== БЛОК 4: ИСТОРИЯ СДЕЛОК ========== -->
             <div class="card">
-                <h3 style="margin-bottom:12px; font-size:16px;">📋 История сделок</h3>
-                ${trades.length === 0 ? '<div style="text-align:center;padding:30px">Нет сделок</div>' : `
+                <div class="card-title">📋 ИСТОРИЯ СДЕЛОК</div>
+                ${trades.length === 0 ? '<div class="text-muted" style="text-align:center;padding:30px;">📭 Нет сделок. Добавьте свою первую сделку!</div>' : `
                 <div class="table-wrapper">
                 <table>
-                    <thead><tr><th>Дата</th><th>Предмет</th><th>Кол-во</th><th>Покупка (всего)</th><th>Продажа (всего)</th><th>Прибыль</th><th>Цена за шт</th><th></th></tr></thead>
+                    <thead>
+                        <tr>
+                            <th>📅 Дата</th>
+                            <th>📦 Предмет</th>
+                            <th>🔢 Кол-во</th>
+                            <th>💰 Покупка (всего)</th>
+                            <th>💵 Продажа (всего)</th>
+                            <th>📈 Прибыль</th>
+                            <th>💵 Цена за шт</th>
+                            <th></th>
+                        </tr>
+                    </thead>
                     <tbody>${trades.slice().reverse().map(t => {
-                        const buyPerItem = t.quantity > 0 ? t.buyPrice / t.quantity : 0;
-                        const sellPerItem = t.quantity > 0 ? t.sellPrice / t.quantity : 0;
+                        const buyPer = t.quantity > 0 ? t.buyPrice / t.quantity : 0;
+                        const sellPer = t.quantity > 0 ? t.sellPrice / t.quantity : 0;
                         return `
                         <tr>
                             <td>${t.date?.split(',')[0] || '-'}</td>
-                            <td>${t.itemName}${t.quantity>1?`<span class="quantity-badge">x${t.quantity}</span>`:''}</td>
-                            <td>${t.quantity||1}</td>
+                            <td><strong>${t.itemName}</strong>${t.quantity>1?`<span class="badge">x${t.quantity}</span>`:''}</td>
+                            <td>${t.quantity||1} шт</td>
                             <td>${t.buyPrice>0?t.buyPrice.toFixed(2)+' '+symbols[currentCurrency]:'-'}</td>
                             <td>${t.sellPrice>0?t.sellPrice.toFixed(2)+' '+symbols[currentCurrency]:'-'}</td>
                             <td class="${t.profit>=0?'profit':'loss'}">${t.profit>=0?'+':''}${t.profit.toFixed(2)} ${symbols[currentCurrency]}</td>
-                            <td>${t.sellPrice>0 ? '<span class="profit">'+sellPerItem.toFixed(2)+'</span>' : '-'}${t.sellPrice>0 ? '/' : ''} ${buyPerItem>0 ? '<span class="loss">'+buyPerItem.toFixed(2)+'</span>' : '-'} ${symbols[currentCurrency]}</td>
+                            <td class="text-muted"><span class="profit">${sellPer>0?sellPer.toFixed(2):'-'}</span> / <span class="loss">${buyPer>0?buyPer.toFixed(2):'-'}</span></td>
                             <td><div class="action-buttons"><button class="action-btn edit-btn" onclick='openEdit(${t.id})'>✏️</button><button class="action-btn delete-btn" onclick='deleteTradeConfirm(${t.id})'>🗑️</button></div></td>
-                        </tr>
-                    `}).join('')}</tbody>
+                        </tr>`;
+                    }).join('')}</tbody>
                 </table>
-                </div>`}
+                </div>
+                <div class="hint" style="margin-top:10px;">📌 В столбце "Цена за шт": продажа/покупка. Зелёное = цена продажи, красное = цена покупки.</div>
+                `}
             </div>
         `;
         
@@ -623,11 +653,7 @@
         document.getElementById("currentUserName").innerHTML = currentUser;
         
         const calcInput = document.getElementById("calcBuyPrice");
-        if (calcInput) {
-            calcInput.addEventListener('input', function() {
-                if (this.value) calculateProfit();
-            });
-        }
+        if (calcInput) calcInput.addEventListener('input', () => calculateProfit());
     }
     
     function setQuickSum(type, amount) {
@@ -646,10 +672,12 @@
     function renderLoginScreen() {
         document.getElementById("mainContent").innerHTML = `
             <div class="card" style="text-align:center">
-                <h2>🎮 Trade Tracker</h2>
-                <p style="margin:15px 0">Учёт сделок с комиссией Steam 13%<br>➕ Калькулятор прибыли<br>💰 Цены указываются за 1 предмет</p>
-                <p style="margin:5px 0; color:#e94560; font-size:12px;">🔧 Админ: admin123</p>
-                <button onclick="login()" style="font-size:16px; padding:12px 25px; margin-top:10px;">🚀 Войти</button>
+                <div class="card-title">🎮 TRADE TRACKER</div>
+                <p style="margin:15px 0">Учёт сделок с автоматическим расчётом комиссии Steam 13%</p>
+                <p style="margin:5px 0">💰 Цены указываются за 1 предмет</p>
+                <p style="margin:5px 0">📊 Калькулятор прибыли подскажет цену продажи</p>
+                <p style="margin:15px 0; color:#ffc107; font-size:12px;">🔧 Админ пароль: admin123</p>
+                <button onclick="login()" style="font-size:16px; padding:12px 25px;">🚀 ВОЙТИ / СОЗДАТЬ ПРОФИЛЬ</button>
             </div>
         `;
         document.getElementById("currentUserName").innerHTML = "Не авторизован";
@@ -658,39 +686,33 @@
     function setupRealtimeListener() {
         if (myTradesListener) myTradesListener.off();
         if (currentUser) {
-            myTradesListener = db.ref(`users/${currentUser}/trades`).on('value', () => {
-                renderMain();
-            });
+            myTradesListener = db.ref(`users/${currentUser}/trades`).on('value', () => renderMain());
         }
     }
     
     async function addTrade() {
         const name = document.getElementById("itemName")?.value;
         const quantity = parseInt(document.getElementById("itemQuantity")?.value) || 1;
-        const buyPerItem = parseFloat(document.getElementById("buyPricePerItem")?.value) || 0;
-        const sellPerItem = parseFloat(document.getElementById("sellPricePerItem")?.value) || 0;
+        const buyPer = parseFloat(document.getElementById("buyPricePerItem")?.value) || 0;
+        const sellPer = parseFloat(document.getElementById("sellPricePerItem")?.value) || 0;
         
-        if (!name) { showToast("Введите название предмета", true); return; }
-        if (quantity < 1) { showToast("Количество должно быть ≥1", true); return; }
+        if (!name) { showToast("❌ Введите название предмета", true); return; }
+        if (quantity < 1) { showToast("❌ Количество должно быть не менее 1", true); return; }
         
-        // Умножаем на количество, чтобы получить общие суммы
-        const buyTotal = buyPerItem * quantity;
-        const sellTotal = sellPerItem * quantity;
-        
+        const buyTotal = buyPer * quantity;
+        const sellTotal = sellPer * quantity;
         const commission = sellTotal * 0.13;
-        const netSell = sellTotal - commission;
-        const profit = netSell - buyTotal;
+        const profit = (sellTotal - commission) - buyTotal;
         
         const trade = {
             id: Date.now(),
             itemName: name,
             quantity: quantity,
             buyPrice: buyTotal,
-            buyPerItem: buyPerItem,
+            buyPerItem: buyPer,
             sellPrice: sellTotal,
-            sellPerItem: sellPerItem,
+            sellPerItem: sellPer,
             commission: commission,
-            netSell: netSell,
             profit: profit,
             date: new Date().toLocaleString(),
             timestamp: Date.now()
@@ -703,11 +725,11 @@
         await ref.set(trades);
         
         clearForm();
-        showToast(`✅ Добавлено: ${quantity} шт ${name} (${buyPerItem.toFixed(2)}₽/шт → продажа ${sellPerItem.toFixed(2)}₽/шт)`);
+        showToast(`✅ Добавлено: ${quantity} шт ${name} (${buyPer.toFixed(2)}₽/шт → ${sellPer.toFixed(2)}₽/шт)`);
     }
     
     async function deleteTradeConfirm(id) {
-        if (!confirm("Удалить сделку?")) return;
+        if (!confirm("Удалить эту сделку?")) return;
         const ref = db.ref(`users/${currentUser}/trades`);
         const snap = await ref.once("value");
         let trades = snap.val() || [];
@@ -733,32 +755,25 @@
     
     async function saveEdit() {
         const newName = document.getElementById("editName").value;
-        const newQuantity = parseInt(document.getElementById("editQuantity").value) || 1;
-        const newBuyPerItem = parseFloat(document.getElementById("editBuy").value) || 0;
-        const newSellPerItem = parseFloat(document.getElementById("editSell").value) || 0;
+        const newQty = parseInt(document.getElementById("editQuantity").value) || 1;
+        const newBuyPer = parseFloat(document.getElementById("editBuy").value) || 0;
+        const newSellPer = parseFloat(document.getElementById("editSell").value) || 0;
         
-        const newBuyTotal = newBuyPerItem * newQuantity;
-        const newSellTotal = newSellPerItem * newQuantity;
-        
-        const commission = newSellTotal * 0.13;
-        const netSell = newSellTotal - commission;
-        const profit = netSell - newBuyTotal;
+        const buyTotal = newBuyPer * newQty;
+        const sellTotal = newSellPer * newQty;
+        const commission = sellTotal * 0.13;
+        const profit = (sellTotal - commission) - buyTotal;
         
         const ref = db.ref(`users/${currentUser}/trades`);
         const snap = await ref.once("value");
         let trades = snap.val() || [];
-        const index = trades.findIndex(t => t.id === editTradeId);
-        if (index !== -1) {
-            trades[index] = { ...trades[index], 
-                itemName: newName, 
-                quantity: newQuantity,
-                buyPrice: newBuyTotal,
-                buyPerItem: newBuyPerItem,
-                sellPrice: newSellTotal,
-                sellPerItem: newSellPerItem,
-                commission, 
-                netSell, 
-                profit 
+        const idx = trades.findIndex(t => t.id === editTradeId);
+        if (idx !== -1) {
+            trades[idx] = { ...trades[idx], 
+                itemName: newName, quantity: newQty,
+                buyPrice: buyTotal, buyPerItem: newBuyPer,
+                sellPrice: sellTotal, sellPerItem: newSellPer,
+                commission, profit
             };
             await ref.set(trades);
         }
@@ -769,21 +784,21 @@
     async function showAllUsers() {
         const snapshot = await db.ref("users").once("value");
         const users = snapshot.val() || {};
-        const userList = Object.keys(users);
+        const list = Object.keys(users);
         const container = document.getElementById("usersList");
         
-        if (userList.length === 0) {
-            container.innerHTML = "<div>Нет пользователей</div>";
+        if (list.length === 0) {
+            container.innerHTML = "<div class='text-muted'>Нет пользователей</div>";
         } else {
             let html = "";
-            for (const user of userList) {
+            for (const user of list) {
                 const tradesSnap = await db.ref(`users/${user}/trades`).once("value");
                 const trades = tradesSnap.val() || [];
                 let profit = 0;
                 trades.forEach(t => profit += t.profit || 0);
                 html += `<div class="user-item">
-                    <div class="user-info"><div class="user-name">👤 ${user}</div><div class="small-text">Сделок: ${trades.length} | Прибыль: ${profit.toFixed(2)} ${symbols[currentCurrency]}</div></div>
-                    <button onclick="openProfileWindow('${user}')" style="background:#533483; padding:6px 12px;">📊</button>
+                    <div class="user-info"><div class="user-name">👤 ${user}</div><div class="text-muted">Сделок: ${trades.length} | Прибыль: ${profit.toFixed(2)} ${symbols[currentCurrency]}</div></div>
+                    <button onclick="openProfileWindow('${user}')" style="background:#533483; padding:6px 12px;">📊 Открыть</button>
                 </div>`;
             }
             container.innerHTML = html;
@@ -792,37 +807,36 @@
     }
     
     async function openAdminPanel() {
-        const pwd = prompt("Пароль администратора:");
-        if (pwd !== "admin123") { if (pwd !== null) showToast("Неверный пароль!", true); return; }
+        const pwd = prompt("Введите пароль администратора:");
+        if (pwd !== "admin123") { if (pwd) showToast("❌ Неверный пароль!", true); return; }
         
         const snapshot = await db.ref("users").once("value");
         const users = snapshot.val() || {};
-        const userList = Object.keys(users);
+        const list = Object.keys(users);
         
         let usersHtml = "";
-        for (const user of userList) {
+        for (const user of list) {
             const tradesSnap = await db.ref(`users/${user}/trades`).once("value");
             const trades = tradesSnap.val() || [];
-            let totalProfit = 0, totalSpent = 0;
-            trades.forEach(t => { totalProfit += t.profit || 0; totalSpent += t.buyPrice || 0; });
-            usersHtml += `<div class="user-item"><div><strong>${user}</strong><div class="small-text">Потрачено: ${totalSpent.toFixed(2)}${symbols[currentCurrency]} | Прибыль: ${totalProfit.toFixed(2)}${symbols[currentCurrency]}</div></div><button onclick="adminDeleteUser('${user}')" class="danger" style="padding:5px 12px;">❌</button></div>`;
+            let profit = 0, spent = 0;
+            trades.forEach(t => { profit += t.profit || 0; spent += t.buyPrice || 0; });
+            usersHtml += `<div class="user-item"><div><strong>${user}</strong><div class="text-muted">Потрачено: ${spent.toFixed(2)}${symbols[currentCurrency]} | Прибыль: ${profit.toFixed(2)}${symbols[currentCurrency]}</div></div><button onclick="adminDeleteUser('${user}')" class="danger" style="padding:5px 12px;">❌ Удалить</button></div>`;
         }
         
-        const adminHtml = `
+        document.getElementById("adminPanelContent").innerHTML = `
             <div style="margin-bottom:15px">
-                <button onclick="adminResetAll()" class="danger" style="width:100%;margin-bottom:8px">💣 СБРОСИТЬ ВСЕ</button>
-                <button onclick="adminResetMe()" style="width:100%;background:#ffc107;color:#000">🗑️ Сбросить мои данные</button>
+                <button onclick="adminResetAll()" class="danger" style="width:100%;margin-bottom:8px">💣 СБРОСИТЬ ВСЕ ДАННЫЕ</button>
+                <button onclick="adminResetMe()" style="width:100%;background:#ffc107;color:#000">🗑️ Сбросить ТОЛЬКО мои данные</button>
             </div>
-            <h4>👥 Игроки (${userList.length})</h4>
-            ${usersHtml || "<div>Нет пользователей</div>"}`;
-        
-        document.getElementById("adminPanelContent").innerHTML = adminHtml;
+            <h4>👥 Все игроки (${list.length})</h4>
+            ${usersHtml || "<div class='text-muted'>Нет пользователей</div>"}
+        `;
         document.getElementById("adminModal").style.display = "flex";
     }
     
     async function adminResetAll() {
-        if (!confirm("Удалить ВСЕ данные?")) return;
-        if (prompt("Введите 'УДАЛИТЬ ВСЁ'") !== "УДАЛИТЬ ВСЁ") { showToast("Отменено", true); return; }
+        if (!confirm("⚠️ УДАЛИТЬ ВСЕ ДАННЫЕ ВСЕХ ПОЛЬЗОВАТЕЛЕЙ?")) return;
+        if (prompt("Введите 'УДАЛИТЬ ВСЁ' для подтверждения") !== "УДАЛИТЬ ВСЁ") { showToast("Отменено", true); return; }
         await db.ref("users").set({});
         showToast("✅ Все данные удалены");
         closeModal("adminModal");
@@ -831,7 +845,7 @@
     
     async function adminResetMe() {
         if (!currentUser) return;
-        if (!confirm(`Удалить ваши данные (${currentUser})?`)) return;
+        if (!confirm(`Удалить ВСЕ ваши данные (${currentUser})?`)) return;
         await db.ref(`users/${currentUser}`).set({});
         showToast("✅ Ваши данные удалены");
         closeModal("adminModal");
