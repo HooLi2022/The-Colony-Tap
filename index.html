@@ -3,397 +3,596 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Городская Игра</title>
+    <title>Криминальная Игра - VK</title>
     <style>
-        /* Сброс стилей */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tahoma', sans-serif; }
-        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
         body {
-            background-color: #1a1a1a;
+            background: #111;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            overflow: hidden;
         }
 
-        /* Главный контейнер - мобильный экран */
-        .game-container {
+        /* Основной экран игры */
+        .app {
             width: 100%;
-            max-width: 420px;
-            height: 750px;
-            background-color: #322b36;
-            background-image: url('https://www.transparenttextures.com/patterns/black-scales.png'); /* Имитация текстуры */
+            max-width: 450px;
+            height: 800px;
+            background: #2b2129;
+            background-image: linear-gradient(180deg, #1c141a 0%, #2b1f2b 100%);
             position: relative;
             overflow: hidden;
-            border: 2px solid #4a3e4e;
-            box-shadow: 0 0 20px black;
+            border: 1px solid #3d2b35;
+            box-shadow: 0 0 30px rgba(0,0,0,0.9);
+            display: flex;
+            flex-direction: column;
         }
 
-        /* --- Верхняя панель ресурсов --- */
-        .top-bar {
+        /* --- Верхняя панель --- */
+        .header {
             display: flex;
             justify-content: space-between;
-            background: #2e2a2c;
-            padding: 5px 10px;
-            border-bottom: 2px solid #6b1818;
+            align-items: center;
+            padding: 4px 10px;
+            background: #201b1f;
+            border-bottom: 2px solid #5e1a1a;
             color: #fff;
             font-size: 12px;
-            height: 40px;
-            align-items: center;
+            min-height: 38px;
+            flex-shrink: 0;
         }
-        
-        .resource-item {
+
+        .user-info {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
+        }
+
+        .avatar-placeholder {
+            width: 24px;
+            height: 24px;
+            background: #444;
+            border-radius: 50%;
+        }
+
+        .resources {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .res {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            background: rgba(0,0,0,0.4);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: 0.15s;
         }
         
-        .icon {
-            width: 20px;
-            height: 20px;
-            background-color: #444;
-            border-radius: 50%;
-            display: inline-block;
-        }
-        .icon.gold { background: gold; }
-        .icon.score { background: red; }
-        .icon.coin { background: silver; }
+        .res:active { transform: scale(0.95); border-color: #fff; }
 
-        /* --- Фон с толпой (имитация) --- */
-        .game-scene {
-            height: 480px;
-            background: #1a1215;
+        .res-icon {
+            font-size: 14px;
+        }
+        
+        .res-val {
+            font-weight: bold;
+        }
+
+        .res.yellow { border-color: #f3a100; }
+        .res.red { border-color: #d62020; }
+        .res.gray { border-color: #888; }
+
+        /* --- Игровое поле --- */
+        .scene {
+            flex: 1;
             position: relative;
-            background-image: radial-gradient(circle, #2e1e2f 0%, #1a1015 100%);
+            background: #241720;
+            background: radial-gradient(circle at 50% 100%, #3a2335 0%, #170f15 80%);
+            overflow: hidden;
+        }
+
+        /* Задний фон - толпа (эффект) */
+        .crowd-bg {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: repeating-linear-gradient(90deg, 
+                transparent 0px, 
+                transparent 15px, 
+                rgba(100, 70, 70, 0.1) 15px, 
+                rgba(100, 70, 70, 0.1) 30px);
+            opacity: 0.5;
+            pointer-events: none;
         }
 
         /* --- Персонаж --- */
-        .character {
+        .character-container {
             position: absolute;
-            bottom: 30px;
+            bottom: 5px;
             left: 50%;
             transform: translateX(-50%);
-            width: 180px;
-            height: 320px;
             z-index: 10;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* Маска (сделана через CSS) */
-        .face-mask {
-            width: 70px;
-            height: 70px;
-            background: #ccc;
-            border-radius: 50%;
-            border: 2px solid #333;
-            position: absolute;
-            top: 10px;
-            background-image: radial-gradient(circle at 30% 30%, #fff, #aaa);
-        }
-        .face-mask::after {
-            content: ":)";
-            color: #300;
-            font-size: 30px;
-            font-weight: bold;
-            position: absolute;
-            top: 30%;
-            left: 20%;
-        }
-
-        /* Тело - футболка */
-        .character-body {
-            width: 120px;
-            height: 150px;
-            background: #fff;
-            position: absolute;
-            top: 60px;
-            border-radius: 10px 10px 0 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            font-size: 16px;
-            color: #000;
-        }
-        .shirt-text {
-            background-color: #ffa500;
-            padding: 2px 5px;
-        }
-
-        /* Ноги */
-        .character-legs {
-            position: absolute;
-            top: 200px;
-            display: flex;
-            gap: 10px;
-        }
-        .leg {
-            width: 40px;
-            height: 90px;
-            background: #333;
-        }
-        .leg.left { transform: rotate(5deg); }
-        .leg.right { transform: rotate(-5deg); }
-
-        /* Кроссовки */
-        .shoe {
-            width: 50px;
-            height: 20px;
-            background: #000;
-            border-radius: 5px 5px 0 0;
-            margin-top: 75px;
-            position: absolute;
-        }
-        .shoe.l { left: 10px; }
-        .shoe.r { right: 10px; }
-
-        /* Диалоговое окно */
-        .bubble {
-            position: absolute;
-            top: -60px;
-            left: -80px;
-            background: #fff;
-            padding: 10px;
-            border-radius: 8px;
             width: 200px;
-            font-size: 11px;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
-            text-align: center;
+            height: 370px;
         }
-        .bubble::after {
+
+        /* Диалог */
+        .speech-bubble {
+            position: absolute;
+            top: -30px;
+            left: -50px;
+            background: #f3f3f3;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            color: #111;
+            font-weight: 600;
+            width: 180px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+            border: 1px solid #aaa;
+        }
+        .speech-bubble:after {
             content: '';
             position: absolute;
-            bottom: -10px;
-            left: 50%;
-            border-width: 10px 10px 0;
-            border-style: solid;
-            border-color: #fff transparent transparent transparent;
+            bottom: -8px;
+            left: 40px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid #f3f3f3;
         }
 
-        /* --- Левое меню --- */
-        .menu-left {
-            position: absolute;
-            left: 10px;
-            top: 80px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .menu-btn {
-            width: 50px;
-            height: 50px;
-            background: #2b2b2b;
-            border: 2px solid #8e2811;
+        /* Маска */
+        .mask {
+            width: 70px;
+            height: 70px;
+            background: #dcdcdc;
             border-radius: 50%;
-            color: #fff;
-            font-size: 9px;
-            text-align: center;
+            position: absolute;
+            top: 26px;
+            left: 65px;
+            background: linear-gradient(145deg, #f0f0f0, #b0b0b0);
+            box-shadow: inset 0 -4px 8px rgba(0,0,0,0.2);
+        }
+        .mask-eyes {
+            position: absolute;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 35px;
+            height: 10px;
+            background: #111;
+            border-radius: 10px;
+            box-shadow: 0 0 0 2px #222;
+        }
+        .mask-smile {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 20px;
+            color: #5a1a1a;
+        }
+
+        /* Тело */
+        .torso {
+            position: absolute;
+            top: 98px;
+            left: 50px;
+            width: 100px;
+            height: 130px;
+            background: #eee;
+            border-radius: 8px 8px 0 0;
+            box-shadow: inset -10px 0 20px rgba(0,0,0,0.1);
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
-            box-shadow: 0 0 5px #000;
+            font-weight: 800;
+            font-size: 18px;
+            color: #111;
+            letter-spacing: -0.5px;
+        }
+        .torso-label {
+            background: #ffae00;
+            padding: 1px 6px;
+            color: #000;
+            font-size: 16px;
         }
 
-        /* --- Правое меню (действия) --- */
-        .menu-right {
+        /* Тату на руках */
+        .arm {
+            position: absolute;
+            top: 100px;
+            width: 20px;
+            height: 90px;
+            background: #e0b090;
+            border-radius: 5px;
+        }
+        .arm.left { left: 30px; transform: rotate(15deg); background: linear-gradient(#e0b090, #b08060); }
+        .arm.right { right: 30px; transform: rotate(-15deg); background: linear-gradient(#e0b090, #b08060); }
+        .tattoo { position: absolute; width: 100%; height: 100%; opacity: 0.6; }
+
+        /* Штаны */
+        .pants {
+            position: absolute;
+            top: 228px;
+            left: 55px;
+            width: 90px;
+            height: 100px;
+            background: #222;
+            border-radius: 5px 5px 0 0;
+        }
+        .legs {
+            display: flex;
+            justify-content: space-between;
+            width: 80px;
+            position: absolute;
+            top: 300px;
+            left: 60px;
+        }
+        .leg {
+            width: 30px;
+            height: 70px;
+            background: #222;
+            border-radius: 0 0 4px 4px;
+        }
+        .shoe {
+            width: 40px;
+            height: 12px;
+            background: #111;
+            border-radius: 4px 4px 0 0;
+            position: absolute;
+            bottom: 0;
+        }
+        .shoe.l { left: -5px; }
+        .shoe.r { right: -5px; }
+
+        .cigarette {
             position: absolute;
             right: 10px;
+            top: 140px;
+            font-size: 14px;
+            transform: rotate(20deg);
+        }
+
+        /* --- Боковые меню --- */
+        .menus {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+
+        .menu-left, .menu-right {
+            position: absolute;
             top: 100px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
+            pointer-events: auto;
         }
-        .action-icon {
-            width: 40px;
-            height: 40px;
-            background: #3a2e2e;
-            border-radius: 5px;
+
+        .menu-left { left: 8px; }
+        .menu-right { right: 8px; }
+
+        .mbtn {
+            width: 55px;
+            height: 55px;
+            background: #1c1519;
+            border: 2px solid #57312a;
+            border-radius: 50%;
             display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #ddd;
+            font-size: 10px;
+            box-shadow: 0 2px 6px black;
+            transition: 0.15s;
+            cursor: pointer;
+        }
+        .mbtn:active { transform: scale(0.9); border-color: #fff; }
+        .mbtn span { font-size: 18px; margin-bottom: 2px; }
+
+        .mbtn.red { background: #4a1919; border-color: #8a2b2b; }
+
+        .event-timer {
+            position: absolute;
+            bottom: 130px;
+            left: 8px;
+            background: #1b1012;
+            border: 1px solid #3d2a2a;
+            padding: 4px 8px;
+            color: #eee;
+            font-size: 10px;
+        }
+
+        .boevoy-propusk {
+            position: absolute;
+            top: 50px;
+            left: 10px;
+            background: #8a4513;
+            padding: 4px 8px;
+            color: #fff;
+            font-size: 10px;
+            transform: rotate(-5deg);
+            border: 2px solid #c0a030;
+        }
+
+        /* --- Нижняя панель (Здания и инвентарь) --- */
+        .footer {
+            height: 110px;
+            background: #58493b;
+            background: linear-gradient(to top, #58493b, #7a6755);
+            border-top: 3px solid #3b2e24;
+            display: flex;
+            align-items: center;
+            padding: 0 4px;
+            gap: 4px;
+            overflow-x: auto;
+            flex-shrink: 0;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .footer-item {
+            flex-shrink: 0;
+            width: 55px;
+            height: 75px;
+            background: #4a3d31;
+            border-radius: 4px;
+            border: 2px solid #2d221a;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: #fff;
+            cursor: pointer;
+            transition: 0.1s;
+            position: relative;
+        }
+        .footer-item:active { transform: scale(0.9); }
+        .footer-item .label {
+            font-size: 8px;
+            margin-top: 4px;
+            text-align: center;
+            opacity: 0.8;
+        }
+        .badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #d63031;
+            color: #fff;
+            font-size: 9px;
+            padding: 1px 4px;
+            border-radius: 6px;
+        }
+
+        .invite-special {
+            width: 70px;
+            height: 80px;
+            background: #984c2c;
+            border: 2px solid #e68a5e;
+            margin-right: 5px;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             color: #fff;
-            font-size: 20px;
-            border: 1px solid #666;
-        }
-
-        /* --- Событие (акция) --- */
-        .event-block {
-            position: absolute;
-            bottom: 50px;
-            left: 10px;
-            background: #222;
-            border: 2px solid #555;
-            padding: 5px;
-            color: #ddd;
-            font-size: 10px;
-            width: 100px;
-            text-align: center;
-        }
-        .event-timer {
-            color: #fbff00;
-            margin-top: 2px;
-        }
-
-        /* --- Нижняя панель (здания) --- */
-        .bottom-bar {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            height: 100px;
-            background: linear-gradient(to top, #8e7a63, #5a4942);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            border-top: 3px solid #333;
-            overflow-x: auto;
-            padding: 0 5px;
-        }
-        .building {
-            width: 50px;
-            height: 60px;
-            background: #4b3b33;
-            border: 1px solid #222;
-            position: relative;
-            flex-shrink: 0;
-        }
-        .building img { width: 100%; height: 100%; object-fit: cover; }
-        .shield-icon {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            width: 20px;
-            height: 20px;
-            background: #666;
-            border-radius: 50%;
-        }
-
-        .invite-btn {
-            width: 60px;
-            height: 80px;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M5 20h14v-2H5v2zM19 4h-4V2h-2v2H9V2H7v2H5v14h14V4z"/></svg>');
-            background-color: #b37d5a;
-            background-repeat: no-repeat;
-            background-position: center;
-            border: 2px solid #8b4513;
-            border-radius: 5px 0 0 5px;
-        }
-
-        /* --- Интерактив (JS обновляет это) --- */
-        .clickable {
+            font-size: 11px;
             cursor: pointer;
-            transition: 0.2s;
         }
-        .clickable:active {
-            transform: scale(0.9);
-        }
+
+        /* Скроллбар скрыт */
+        .footer::-webkit-scrollbar { height: 0px; }
+
+        /* Утилиты */
+        .clickable { cursor: pointer; }
+        .mt-10 { margin-top: 10px; }
+
     </style>
 </head>
 <body>
 
-<div class="game-container">
-    
-    <!-- Верхняя панель -->
-    <div class="top-bar">
-        <div class="resource-item">
-            <span>⚡</span> <span id="energy">6.7k</span>
+<div class="app">
+
+    <!-- Header -->
+    <div class="header">
+        <div class="user-info">
+            <div class="avatar-placeholder"></div>
+            <span>Пыр</span>
+            <span style="background:#5c3a2b; padding:0 4px; font-size:10px;">⚡483</span>
         </div>
-        <div class="resource-item clickable" onclick="addMoney()">
-            <span class="icon gold"></span> <span id="cash">11.5k</span>
-        </div>
-        <div class="resource-item" onclick="addScore()">
-            <span class="icon score"></span> <span id="score">222.6B</span>
-        </div>
-        <div class="resource-item">
-            <span class="icon coin"></span> <span id="coins">1.4Q</span>
+        <div class="resources">
+            <div class="res yellow" onclick="addResource('energy')">
+                <span class="res-icon">⚡</span>
+                <span id="energy-val" class="res-val">6.7k</span>
+            </div>
+            <div class="res yellow" onclick="addResource('cash')">
+                <span class="res-icon">💰</span>
+                <span id="cash-val" class="res-val">11.5k</span>
+            </div>
+            <div class="res red" onclick="addResource('score')">
+                <span class="res-icon">🏆</span>
+                <span id="score-val" class="res-val">222.6B</span>
+            </div>
+            <div class="res gray" onclick="addResource('coins')">
+                <span class="res-icon">🪙</span>
+                <span id="coins-val" class="res-val">1.4Q</span>
+            </div>
         </div>
     </div>
 
-    <!-- Сцена -->
-    <div class="game-scene">
-        
-        <!-- Персонаж -->
-        <div class="character">
-            <div class="bubble">Мужик не тот, кто яйца брил, а тот кто в армии служил</div>
-            
-            <div class="face-mask"></div>
-            <div class="character-body">
-                <span class="shirt-text">Хулиган</span>
+    <!-- Scene -->
+    <div class="scene">
+        <div class="crowd-bg"></div>
+
+        <!-- Характер -->
+        <div class="character-container">
+            <div class="speech-bubble">
+                Мужик не тот, кто яйца брил, а тот кто в армии служил
             </div>
-            <div class="character-legs">
-                <div class="leg left"></div>
-                <div class="leg right"></div>
+
+            <div class="mask">
+                <div class="mask-eyes"></div>
+                <div class="mask-smile">☺</div>
             </div>
-            <div class="shoe l"></div>
-            <div class="shoe r"></div>
+
+            <div class="arm left"><span class="tattoo">✖✖</span></div>
+            <div class="arm right"><span class="tattoo">✖✖</span></div>
+
+            <div class="torso">
+                <span class="torso-label">Хулиган</span>
+            </div>
+            <div class="cigarette">🚬</div>
+
+            <div class="pants"></div>
+            <div class="legs">
+                <div class="leg">
+                    <div class="shoe l"></div>
+                </div>
+                <div class="leg">
+                    <div class="shoe r"></div>
+                </div>
+            </div>
         </div>
 
-        <!-- Левая панель -->
-        <div class="menu-left">
-            <div class="menu-btn">Шнырь</div>
-            <div class="menu-btn" style="background:#5a1e1e">Положение</div>
-            <div class="menu-btn">Акция<br><span style="color:yellow; font-size:8px;">0д 2ч</span></div>
-        </div>
+        <!-- Меню -->
+        <div class="menus">
+            <div class="menu-left">
+                <div class="mbtn">
+                    <span>👤</span>
+                    Шнырь
+                </div>
+                <div class="mbtn red">
+                    <span>📜</span>
+                    Положение
+                </div>
+                <div class="mbtn" style="background: #382620;">
+                    <span>🎁</span>
+                    Акция
+                    <div style="font-size:7px; color: #ffee00;">0д 2ч</div>
+                </div>
+            </div>
 
-        <!-- Правая панель -->
-        <div class="menu-right">
-            <div class="action-icon">🏆</div>
-            <div class="action-icon">🚬</div>
-            <div class="action-icon">🚗</div>
-            <div class="action-icon">📦</div>
-        </div>
-        
-        <!-- Информация справа снизу -->
-        <div style="position: absolute; bottom: 150px; right: 10px; color: #fff; font-size: 10px; text-align: center; background: rgba(0,0,0,0.5); padding: 2px;">
-            <div>Истекает через:</div>
-            <div style="color: red;">14:03:18</div>
+            <div class="menu-right">
+                <div class="mbtn" style="background: #3a2a22;"><span>🏅</span></div>
+                <div class="mbtn" style="background: #2a2a2a;"><span>🔫</span></div>
+                <div class="mbtn" style="background: #2a2a2a;"><span>🚗</span></div>
+                <div class="mbtn" style="background: #3a2a22;"><span>🎒</span></div>
+            </div>
+
+            <div class="boevoy-propusk">БОЕВОЙ ПРОПУСК</div>
+
+            <div class="event-timer">
+                Истекает через:<br>
+                <span style="color:#ff4d4d;">14:03:18</span>
+            </div>
         </div>
     </div>
 
-    <!-- Нижняя панель -->
-    <div class="bottom-bar">
-        <!-- Имитация строений -->
-        <div class="building" style="background: url('https://via.placeholder.com/50x60/333/fff?text=🏢')"></div>
-        <div class="building" style="background: url('https://via.placeholder.com/50x60/533/fff?text=🏠')"></div>
-        <div class="building" style="background: url('https://via.placeholder.com/50x60/353/fff?text=⛪')"></div>
-        <div class="building" style="background: url('https://via.placeholder.com/50x60/335/fff?text=🏬')"></div>
-        <div class="building" style="background: url('https://via.placeholder.com/50x60/555/fff?text=⚔️')"></div>
-        <div class="building" style="background: url('https://via.placeholder.com/50x60/222/fff?text=🛡️')"></div>
-        <div class="invite-btn" onclick="alert('Пригласи друзей!')"></div>
+    <!-- Footer -->
+    <div class="footer">
+        <div class="footer-item" onclick="alert('Ферма')"><span>🏢</span><span class="label">Ферма</span></div>
+        <div class="footer-item" onclick="alert('Казино')"><span>🎰</span><span class="label">Казино</span></div>
+        <div class="footer-item" onclick="alert('Оружейная')"><span>⚔️</span><span class="label">Оружие</span></div>
+        <div class="footer-item" onclick="alert('Больница')"><span>🏥</span><span class="label">Больница</span></div>
+        <div class="footer-item" onclick="alert('Банк')"><span>🏦</span><span class="label">Банк</span></div>
+        <div class="footer-item" onclick="alert('Защита')">
+            <span>🛡️</span><span class="label">Щит</span>
+            <span class="badge">3</span>
+        </div>
+        <div class="footer-item" onclick="alert('Бизнес')"><span>🏗️</span><span class="label">Бизнес</span></div>
+        <div class="footer-item" onclick="alert('Склад')"><span>📦</span><span class="label">Склад</span></div>
+        
+        <div class="invite-special" onclick="alert('Пригласить друзей')">
+            <span style="font-size: 22px;">👥</span>
+            <span>Позвать</span>
+        </div>
     </div>
 
 </div>
 
 <script>
-    // Простая логика для демонстрации работы кода
-    let cash = 11500;
-    let score = 222.6;
-    let coins = 1.4;
+    // Данные валют
+    let resources = {
+        energy: 6700,
+        cash: 11500,
+        score: 222.6,
+        coins: 1.4
+    };
 
-    function addMoney() {
-        cash += Math.floor(Math.random() * 100);
-        document.getElementById('cash').innerText = formatNumber(cash);
+    // Функция добавления ресурсов
+    function addResource(type) {
+        let amount = 0;
+        let suffix = "";
+        
+        switch(type) {
+            case 'energy':
+                amount = 10;
+                resources.energy += amount;
+                document.getElementById('energy-val').innerText = formatNumber(resources.energy) + 'k';
+                break;
+            case 'cash':
+                amount = 50;
+                resources.cash += amount;
+                document.getElementById('cash-val').innerText = formatNumber(resources.cash) + 'k';
+                break;
+            case 'score':
+                amount = 0.5;
+                resources.score += amount;
+                document.getElementById('score-val').innerText = formatNumber(resources.score) + 'B';
+                break;
+            case 'coins':
+                amount = 0.1;
+                resources.coins += amount;
+                document.getElementById('coins-val').innerText = formatNumber(resources.coins) + 'Q';
+                break;
+        }
     }
 
-    function addScore() {
-        score += 0.5;
-        document.getElementById('score').innerText = formatNumber(score) + "B";
-    }
-
+    // Форматирование чисел (k, M, B, Q)
     function formatNumber(num) {
-        if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+        if (num >= 1000000000000) return (num / 1000000000000).toFixed(2) + 'T';
+        if (num >= 1000000000) return (num / 1000000000).toFixed(2) + 'B';
+        if (num >= 1000000) return (num / 1000000).toFixed(2) + 'M';
         if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
         return num.toFixed(0);
     }
 
-    // Автоматическое обновление энергии для реализма
-    let energy = 6.7;
+    // Имитация работы таймера (обновление энергии каждые 2 сек)
     setInterval(() => {
-        energy += 0.01;
-        document.getElementById('energy').innerText = energy.toFixed(1) + 'k';
-    }, 5000);
+        resources.energy += 0.5;
+        document.getElementById('energy-val').innerText = formatNumber(resources.energy) + 'k';
+    }, 2000);
+
+    // Добавляем случайные события при клике на персонажа
+    document.querySelector('.character-container').addEventListener('click', function() {
+        alert('Тыкнул персонажа! +10 опыта');
+        addResource('score');
+    });
+
 </script>
 
 </body>
