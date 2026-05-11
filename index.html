@@ -2,38 +2,30 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Криминальная Игра - VK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Городская битва</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
+        * { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', sans-serif; }
+        
         body {
-            background: #111;
+            background: #1a1a1a;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            overflow: hidden;
         }
 
-        /* Основной экран игры */
         .app {
             width: 100%;
             max-width: 450px;
             height: 800px;
-            background: #2b2129;
-            background-image: linear-gradient(180deg, #1c141a 0%, #2b1f2b 100%);
+            background: #231d22;
+            background-image: linear-gradient(180deg, #1c141a, #2b1f2b);
             position: relative;
             overflow: hidden;
-            border: 1px solid #3d2b35;
-            box-shadow: 0 0 30px rgba(0,0,0,0.9);
             display: flex;
             flex-direction: column;
+            border: 1px solid #3d2b35;
         }
 
         /* --- Верхняя панель --- */
@@ -42,30 +34,17 @@
             justify-content: space-between;
             align-items: center;
             padding: 4px 10px;
-            background: #201b1f;
+            background: #1a1518;
             border-bottom: 2px solid #5e1a1a;
             color: #fff;
-            font-size: 12px;
-            min-height: 38px;
+            font-size: 11px;
+            min-height: 40px;
             flex-shrink: 0;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .avatar-placeholder {
-            width: 24px;
-            height: 24px;
-            background: #444;
-            border-radius: 50%;
         }
 
         .resources {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
         }
 
@@ -73,293 +52,154 @@
             display: flex;
             align-items: center;
             gap: 3px;
-            background: rgba(0,0,0,0.4);
-            padding: 2px 6px;
+            background: rgba(0,0,0,0.5);
+            padding: 2px 8px;
             border-radius: 4px;
             border-bottom: 2px solid transparent;
             cursor: pointer;
-            transition: 0.15s;
         }
-        
-        .res:active { transform: scale(0.95); border-color: #fff; }
-
-        .res-icon {
-            font-size: 14px;
-        }
-        
-        .res-val {
-            font-weight: bold;
-        }
-
-        .res.yellow { border-color: #f3a100; }
+        .res.gold { border-color: #f3a100; }
         .res.red { border-color: #d62020; }
         .res.gray { border-color: #888; }
+        .res-val { font-weight: bold; }
 
-        /* --- Игровое поле --- */
+        /* --- Сцена --- */
         .scene {
             flex: 1;
             position: relative;
-            background: #241720;
-            background: radial-gradient(circle at 50% 100%, #3a2335 0%, #170f15 80%);
+            background: radial-gradient(circle at 50% 100%, #3f2238, #140c12);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Локации и боссы */
+        .location-display {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        .location-name {
+            font-size: 22px;
+            font-weight: 800;
+            text-shadow: 0 0 10px rgba(255,0,0,0.3);
+            background: rgba(0,0,0,0.7);
+            padding: 4px 15px;
+            display: inline-block;
+            border-radius: 5px;
+            border: 1px solid #5e2a2a;
+        }
+
+        /* Босс */
+        .boss-container {
+            width: 180px;
+            height: 200px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 15px;
+            border: 2px solid #4a2a2a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 10px;
+            position: relative;
+        }
+
+        .boss-sprite {
+            font-size: 100px;
+            line-height: 1;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 0 10px rgba(255,0,0,0.4));
+        }
+
+        .boss-info {
+            width: 100%;
+            color: #fff;
+            font-size: 12px;
+            text-align: center;
+        }
+        .boss-name { font-weight: bold; color: #ff4444; }
+        .hp-bar-bg {
+            width: 100%;
+            height: 10px;
+            background: #2a2a2a;
+            border-radius: 5px;
+            margin: 4px 0;
             overflow: hidden;
         }
-
-        /* Задний фон - толпа (эффект) */
-        .crowd-bg {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 50%;
-            background: repeating-linear-gradient(90deg, 
-                transparent 0px, 
-                transparent 15px, 
-                rgba(100, 70, 70, 0.1) 15px, 
-                rgba(100, 70, 70, 0.1) 30px);
-            opacity: 0.5;
-            pointer-events: none;
-        }
-
-        /* --- Персонаж --- */
-        .character-container {
-            position: absolute;
-            bottom: 5px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            width: 200px;
-            height: 370px;
-        }
-
-        /* Диалог */
-        .speech-bubble {
-            position: absolute;
-            top: -30px;
-            left: -50px;
-            background: #f3f3f3;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 11px;
-            color: #111;
-            font-weight: 600;
-            width: 180px;
-            text-align: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.6);
-            border: 1px solid #aaa;
-        }
-        .speech-bubble:after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 40px;
-            width: 0;
-            height: 0;
-            border-left: 8px solid transparent;
-            border-right: 8px solid transparent;
-            border-top: 8px solid #f3f3f3;
-        }
-
-        /* Маска */
-        .mask {
-            width: 70px;
-            height: 70px;
-            background: #dcdcdc;
-            border-radius: 50%;
-            position: absolute;
-            top: 26px;
-            left: 65px;
-            background: linear-gradient(145deg, #f0f0f0, #b0b0b0);
-            box-shadow: inset 0 -4px 8px rgba(0,0,0,0.2);
-        }
-        .mask-eyes {
-            position: absolute;
-            top: 25px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 35px;
-            height: 10px;
-            background: #111;
-            border-radius: 10px;
-            box-shadow: 0 0 0 2px #222;
-        }
-        .mask-smile {
-            position: absolute;
-            top: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 20px;
-            color: #5a1a1a;
-        }
-
-        /* Тело */
-        .torso {
-            position: absolute;
-            top: 98px;
-            left: 50px;
-            width: 100px;
-            height: 130px;
-            background: #eee;
-            border-radius: 8px 8px 0 0;
-            box-shadow: inset -10px 0 20px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: 800;
-            font-size: 18px;
-            color: #111;
-            letter-spacing: -0.5px;
-        }
-        .torso-label {
-            background: #ffae00;
-            padding: 1px 6px;
-            color: #000;
-            font-size: 16px;
-        }
-
-        /* Тату на руках */
-        .arm {
-            position: absolute;
-            top: 100px;
-            width: 20px;
-            height: 90px;
-            background: #e0b090;
-            border-radius: 5px;
-        }
-        .arm.left { left: 30px; transform: rotate(15deg); background: linear-gradient(#e0b090, #b08060); }
-        .arm.right { right: 30px; transform: rotate(-15deg); background: linear-gradient(#e0b090, #b08060); }
-        .tattoo { position: absolute; width: 100%; height: 100%; opacity: 0.6; }
-
-        /* Штаны */
-        .pants {
-            position: absolute;
-            top: 228px;
-            left: 55px;
-            width: 90px;
-            height: 100px;
-            background: #222;
-            border-radius: 5px 5px 0 0;
-        }
-        .legs {
-            display: flex;
-            justify-content: space-between;
-            width: 80px;
-            position: absolute;
-            top: 300px;
-            left: 60px;
-        }
-        .leg {
-            width: 30px;
-            height: 70px;
-            background: #222;
-            border-radius: 0 0 4px 4px;
-        }
-        .shoe {
-            width: 40px;
-            height: 12px;
-            background: #111;
-            border-radius: 4px 4px 0 0;
-            position: absolute;
-            bottom: 0;
-        }
-        .shoe.l { left: -5px; }
-        .shoe.r { right: -5px; }
-
-        .cigarette {
-            position: absolute;
-            right: 10px;
-            top: 140px;
-            font-size: 14px;
-            transform: rotate(20deg);
-        }
-
-        /* --- Боковые меню --- */
-        .menus {
-            position: absolute;
-            width: 100%;
+        .hp-bar-fill {
             height: 100%;
-            top: 0;
-            left: 0;
-            pointer-events: none;
+            background: linear-gradient(90deg, #ff0000, #ff5555);
+            border-radius: 5px;
+            transition: width 0.2s;
         }
 
-        .menu-left, .menu-right {
-            position: absolute;
-            top: 100px;
+        /* Кнопки действий */
+        .actions {
             display: flex;
-            flex-direction: column;
-            gap: 12px;
-            pointer-events: auto;
-        }
-
-        .menu-left { left: 8px; }
-        .menu-right { right: 8px; }
-
-        .mbtn {
-            width: 55px;
-            height: 55px;
-            background: #1c1519;
-            border: 2px solid #57312a;
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
             justify-content: center;
-            align-items: center;
-            color: #ddd;
-            font-size: 10px;
-            box-shadow: 0 2px 6px black;
-            transition: 0.15s;
-            cursor: pointer;
         }
-        .mbtn:active { transform: scale(0.9); border-color: #fff; }
-        .mbtn span { font-size: 18px; margin-bottom: 2px; }
-
-        .mbtn.red { background: #4a1919; border-color: #8a2b2b; }
-
-        .event-timer {
-            position: absolute;
-            bottom: 130px;
-            left: 8px;
-            background: #1b1012;
-            border: 1px solid #3d2a2a;
-            padding: 4px 8px;
-            color: #eee;
-            font-size: 10px;
-        }
-
-        .boevoy-propusk {
-            position: absolute;
-            top: 50px;
-            left: 10px;
-            background: #8a4513;
-            padding: 4px 8px;
+        .btn {
+            padding: 8px 18px;
+            border: none;
+            border-radius: 25px;
+            background: #3a2a2a;
             color: #fff;
-            font-size: 10px;
-            transform: rotate(-5deg);
-            border: 2px solid #c0a030;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            cursor: pointer;
+            transition: 0.1s;
+            font-size: 12px;
+        }
+        .btn:active { transform: scale(0.95); }
+        .btn.attack { background: #a82a2a; }
+        .btn.heal { background: #2a6a2a; }
+        .btn.gold { background: #a87a2a; }
+        .btn.info { background: #2a4a6a; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Лог боя */
+        .log {
+            height: 50px;
+            width: 90%;
+            margin-top: 10px;
+            background: rgba(0,0,0,0.7);
+            border-radius: 8px;
+            padding: 5px 10px;
+            color: #ccc;
+            font-size: 11px;
+            overflow-y: auto;
+            border: 1px solid #333;
+            text-align: center;
         }
 
-        /* --- Нижняя панель (Здания и инвентарь) --- */
+        /* --- Нижняя панель (Локации) --- */
         .footer {
-            height: 110px;
-            background: #58493b;
-            background: linear-gradient(to top, #58493b, #7a6755);
+            height: 100px;
+            background: #4a3c2e;
+            background: linear-gradient(to top, #4a3c2e, #6b5a48);
             border-top: 3px solid #3b2e24;
             display: flex;
             align-items: center;
-            padding: 0 4px;
-            gap: 4px;
+            padding: 0 5px;
+            gap: 6px;
             overflow-x: auto;
             flex-shrink: 0;
-            border-radius: 10px 10px 0 0;
         }
 
-        .footer-item {
+        .loc-item {
             flex-shrink: 0;
-            width: 55px;
-            height: 75px;
-            background: #4a3d31;
-            border-radius: 4px;
-            border: 2px solid #2d221a;
+            width: 60px;
+            height: 70px;
+            background: #3e3026;
+            border-radius: 6px;
+            border: 2px solid #2a1e16;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -368,231 +208,334 @@
             color: #fff;
             cursor: pointer;
             transition: 0.1s;
-            position: relative;
         }
-        .footer-item:active { transform: scale(0.9); }
-        .footer-item .label {
+        .loc-item:active { transform: scale(0.9); border-color: gold; }
+        .loc-item .lname {
             font-size: 8px;
-            margin-top: 4px;
-            text-align: center;
-            opacity: 0.8;
+            margin-top: 2px;
+            opacity: 0.9;
         }
-        .badge {
-            position: absolute;
-            top: -4px;
-            right: -4px;
-            background: #d63031;
-            color: #fff;
-            font-size: 9px;
-            padding: 1px 4px;
-            border-radius: 6px;
+        .loc-item.active {
+            border-color: #ffaa00;
+            box-shadow: 0 0 10px rgba(255,170,0,0.4);
+            background: #5a4a3a;
         }
 
-        .invite-special {
-            width: 70px;
-            height: 80px;
-            background: #984c2c;
-            border: 2px solid #e68a5e;
-            margin-right: 5px;
-            border-radius: 6px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: #fff;
-            font-size: 11px;
-            cursor: pointer;
-        }
-
-        /* Скроллбар скрыт */
         .footer::-webkit-scrollbar { height: 0px; }
 
-        /* Утилиты */
-        .clickable { cursor: pointer; }
-        .mt-10 { margin-top: 10px; }
-
+        /* Сообщения */
+        .overlay-msg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.9);
+            padding: 20px;
+            border-radius: 10px;
+            color: #fff;
+            text-align: center;
+            display: none;
+            z-index: 100;
+            border: 2px solid #6a2a2a;
+        }
     </style>
 </head>
 <body>
 
 <div class="app">
-
     <!-- Header -->
     <div class="header">
-        <div class="user-info">
-            <div class="avatar-placeholder"></div>
+        <div style="display:flex; align-items:center; gap:5px; color:#fff;">
+            <span style="background:#444; border-radius:50%; width:24px; height:24px; display:inline-block;"></span>
             <span>Пыр</span>
-            <span style="background:#5c3a2b; padding:0 4px; font-size:10px;">⚡483</span>
         </div>
         <div class="resources">
-            <div class="res yellow" onclick="addResource('energy')">
-                <span class="res-icon">⚡</span>
-                <span id="energy-val" class="res-val">6.7k</span>
+            <div class="res gold" onclick="addRes('gold')">
+                <span>💰</span> <span id="gold-val" class="res-val">1000</span>
             </div>
-            <div class="res yellow" onclick="addResource('cash')">
-                <span class="res-icon">💰</span>
-                <span id="cash-val" class="res-val">11.5k</span>
+            <div class="res red" onclick="addRes('score')">
+                <span>🏆</span> <span id="score-val" class="res-val">0</span>
             </div>
-            <div class="res red" onclick="addResource('score')">
-                <span class="res-icon">🏆</span>
-                <span id="score-val" class="res-val">222.6B</span>
-            </div>
-            <div class="res gray" onclick="addResource('coins')">
-                <span class="res-icon">🪙</span>
-                <span id="coins-val" class="res-val">1.4Q</span>
+            <div class="res gray" onclick="addRes('energy')">
+                <span>⚡</span> <span id="energy-val" class="res-val">100</span>
             </div>
         </div>
     </div>
 
-    <!-- Scene -->
-    <div class="scene">
-        <div class="crowd-bg"></div>
+    <!-- Сцена -->
+    <div class="scene" id="scene">
+        <div class="location-display">
+            <div class="location-name" id="loc-name">🏚️ Подворотня</div>
+        </div>
 
-        <!-- Характер -->
-        <div class="character-container">
-            <div class="speech-bubble">
-                Мужик не тот, кто яйца брил, а тот кто в армии служил
-            </div>
-
-            <div class="mask">
-                <div class="mask-eyes"></div>
-                <div class="mask-smile">☺</div>
-            </div>
-
-            <div class="arm left"><span class="tattoo">✖✖</span></div>
-            <div class="arm right"><span class="tattoo">✖✖</span></div>
-
-            <div class="torso">
-                <span class="torso-label">Хулиган</span>
-            </div>
-            <div class="cigarette">🚬</div>
-
-            <div class="pants"></div>
-            <div class="legs">
-                <div class="leg">
-                    <div class="shoe l"></div>
+        <!-- Босс -->
+        <div class="boss-container" id="boss-container">
+            <div class="boss-sprite" id="boss-sprite">💀</div>
+            <div class="boss-info">
+                <div class="boss-name" id="boss-name">Бомж</div>
+                <div class="hp-bar-bg">
+                    <div class="hp-bar-fill" id="boss-hp-fill" style="width:100%"></div>
                 </div>
-                <div class="leg">
-                    <div class="shoe r"></div>
-                </div>
+                <div id="boss-hp-text">HP: 50/50</div>
+                <div style="font-size:10px; opacity:0.7;" id="boss-reward">💰 Награда: 20</div>
             </div>
         </div>
 
-        <!-- Меню -->
-        <div class="menus">
-            <div class="menu-left">
-                <div class="mbtn">
-                    <span>👤</span>
-                    Шнырь
-                </div>
-                <div class="mbtn red">
-                    <span>📜</span>
-                    Положение
-                </div>
-                <div class="mbtn" style="background: #382620;">
-                    <span>🎁</span>
-                    Акция
-                    <div style="font-size:7px; color: #ffee00;">0д 2ч</div>
-                </div>
-            </div>
+        <!-- Кнопки -->
+        <div class="actions">
+            <button class="btn attack" id="btn-attack" onclick="attack()">⚔️ Атака (5⚡)</button>
+            <button class="btn heal" onclick="heal()">❤️‍🩹 Лечиться (10💰)</button>
+        </div>
 
-            <div class="menu-right">
-                <div class="mbtn" style="background: #3a2a22;"><span>🏅</span></div>
-                <div class="mbtn" style="background: #2a2a2a;"><span>🔫</span></div>
-                <div class="mbtn" style="background: #2a2a2a;"><span>🚗</span></div>
-                <div class="mbtn" style="background: #3a2a22;"><span>🎒</span></div>
-            </div>
+        <!-- Лог -->
+        <div class="log" id="log">Добро пожаловать! Бей боссов, получай деньги!</div>
+    </div>
 
-            <div class="boevoy-propusk">БОЕВОЙ ПРОПУСК</div>
-
-            <div class="event-timer">
-                Истекает через:<br>
-                <span style="color:#ff4d4d;">14:03:18</span>
-            </div>
+    <!-- Footer (Локации) -->
+    <div class="footer" id="footer">
+        <div class="loc-item active" data-loc="0" onclick="goToLoc(0)">
+            <span>🏚️</span> <span class="lname">Подворотня</span>
+        </div>
+        <div class="loc-item" data-loc="1" onclick="goToLoc(1)">
+            <span>🏢</span> <span class="lname">Офис</span>
+        </div>
+        <div class="loc-item" data-loc="2" onclick="goToLoc(2)">
+            <span>🏪</span> <span class="lname">Магазин</span>
+        </div>
+        <div class="loc-item" data-loc="3" onclick="goToLoc(3)">
+            <span>🏦</span> <span class="lname">Банк</span>
+        </div>
+        <div class="loc-item" data-loc="4" onclick="goToLoc(4)">
+            <span>⛪</span> <span class="lname">Церковь</span>
+        </div>
+        <div class="loc-item" data-loc="5" onclick="goToLoc(5)">
+            <span>🏭</span> <span class="lname">Завод</span>
         </div>
     </div>
 
-    <!-- Footer -->
-    <div class="footer">
-        <div class="footer-item" onclick="alert('Ферма')"><span>🏢</span><span class="label">Ферма</span></div>
-        <div class="footer-item" onclick="alert('Казино')"><span>🎰</span><span class="label">Казино</span></div>
-        <div class="footer-item" onclick="alert('Оружейная')"><span>⚔️</span><span class="label">Оружие</span></div>
-        <div class="footer-item" onclick="alert('Больница')"><span>🏥</span><span class="label">Больница</span></div>
-        <div class="footer-item" onclick="alert('Банк')"><span>🏦</span><span class="label">Банк</span></div>
-        <div class="footer-item" onclick="alert('Защита')">
-            <span>🛡️</span><span class="label">Щит</span>
-            <span class="badge">3</span>
-        </div>
-        <div class="footer-item" onclick="alert('Бизнес')"><span>🏗️</span><span class="label">Бизнес</span></div>
-        <div class="footer-item" onclick="alert('Склад')"><span>📦</span><span class="label">Склад</span></div>
-        
-        <div class="invite-special" onclick="alert('Пригласить друзей')">
-            <span style="font-size: 22px;">👥</span>
-            <span>Позвать</span>
-        </div>
+    <!-- Overlay -->
+    <div class="overlay-msg" id="overlay">
+        <h3 id="overlay-title">Победа!</h3>
+        <p id="overlay-desc">Ты получил 100 монет</p>
+        <button class="btn gold" onclick="closeOverlay()">OK</button>
     </div>
-
 </div>
 
 <script>
-    // Данные валют
-    let resources = {
-        energy: 6700,
-        cash: 11500,
-        score: 222.6,
-        coins: 1.4
+    // --- Данные игры ---
+    // 6 локаций: каждая содержит босса
+    const LOCATIONS = [
+        { id: 0, name: '🏚️ Подворотня', boss: { name: 'Бомж', hp: 50, maxHp: 50, reward: 20, emoji: '💀', attack: 3 } },
+        { id: 1, name: '🏢 Офис', boss: { name: 'Менеджер', hp: 80, maxHp: 80, reward: 40, emoji: '👔', attack: 5 } },
+        { id: 2, name: '🏪 Магазин', boss: { name: 'Продавец', hp: 60, maxHp: 60, reward: 30, emoji: '🧑‍💼', attack: 4 } },
+        { id: 3, name: '🏦 Банк', boss: { name: 'Охранник', hp: 120, maxHp: 120, reward: 60, emoji: '💂', attack: 8 } },
+        { id: 4, name: '⛪ Церковь', boss: { name: 'Монах', hp: 90, maxHp: 90, reward: 45, emoji: '🧘', attack: 6 } },
+        { id: 5, name: '🏭 Завод', boss: { name: 'Бригадир', hp: 200, maxHp: 200, reward: 100, emoji: '👷', attack: 12 } }
+    ];
+
+    // --- Состояние игры ---
+    let state = {
+        gold: 1000,
+        score: 0,
+        energy: 100,
+        maxEnergy: 100,
+        currentLoc: 0,
+        bossHp: 50,
+        bossMaxHp: 50,
+        playerHp: 100,        // Жизни игрока (не используется в бою, только для логики)
+        playerMaxHp: 100
     };
 
-    // Функция добавления ресурсов
-    function addResource(type) {
-        let amount = 0;
-        let suffix = "";
+    // --- Загрузка сохранений ---
+    function loadGame() {
+        const saved = localStorage.getItem('gameState');
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                state = { ...state, ...parsed };
+            } catch(e) {}
+        }
+        // Синхронизируем босса с текущей локацией
+        applyLoc(state.currentLoc);
+        updateUI();
+    }
+
+    function saveGame() {
+        localStorage.setItem('gameState', JSON.stringify(state));
+    }
+
+    // --- Переход по локациям ---
+    function goToLoc(index) {
+        state.currentLoc = index;
+        applyLoc(index);
+        updateUI();
+        // Подсветка кнопки локации
+        document.querySelectorAll('.loc-item').forEach((el, i) => {
+            el.classList.toggle('active', i === index);
+        });
+        saveGame();
+        addLog(`Перешел в: ${LOCATIONS[index].name}`);
+    }
+
+    function applyLoc(index) {
+        const loc = LOCATIONS[index];
+        // Сбрасываем босса до максимального HP
+        state.bossHp = loc.boss.maxHp;
+        state.bossMaxHp = loc.boss.maxHp;
         
-        switch(type) {
-            case 'energy':
-                amount = 10;
-                resources.energy += amount;
-                document.getElementById('energy-val').innerText = formatNumber(resources.energy) + 'k';
-                break;
-            case 'cash':
-                amount = 50;
-                resources.cash += amount;
-                document.getElementById('cash-val').innerText = formatNumber(resources.cash) + 'k';
-                break;
-            case 'score':
-                amount = 0.5;
-                resources.score += amount;
-                document.getElementById('score-val').innerText = formatNumber(resources.score) + 'B';
-                break;
-            case 'coins':
-                amount = 0.1;
-                resources.coins += amount;
-                document.getElementById('coins-val').innerText = formatNumber(resources.coins) + 'Q';
-                break;
+        document.getElementById('loc-name').innerText = loc.name;
+        document.getElementById('boss-sprite').innerText = loc.boss.emoji;
+        document.getElementById('boss-name').innerText = loc.boss.name;
+        document.getElementById('boss-hp-text').innerText = `HP: ${state.bossHp}/${state.bossMaxHp}`;
+        document.getElementById('boss-reward').innerText = `💰 Награда: ${loc.boss.reward}`;
+        updateBossHpBar();
+    }
+
+    // --- Обновление UI ---
+    function updateUI() {
+        document.getElementById('gold-val').innerText = formatNumber(state.gold);
+        document.getElementById('score-val').innerText = formatNumber(state.score);
+        document.getElementById('energy-val').innerText = formatNumber(state.energy);
+        updateBossHpBar();
+    }
+
+    function updateBossHpBar() {
+        const pct = (state.bossHp / state.bossMaxHp) * 100;
+        document.getElementById('boss-hp-fill').style.width = Math.max(0, pct) + '%';
+        document.getElementById('boss-hp-text').innerText = `HP: ${Math.max(0, state.bossHp)}/${state.bossMaxHp}`;
+    }
+
+    // --- Бой ---
+    function attack() {
+        // Проверка энергии
+        if (state.energy < 5) {
+            addLog('❌ Недостаточно энергии! (нужно 5⚡)');
+            return;
+        }
+        // Проверка, жив ли босс
+        if (state.bossHp <= 0) {
+            addLog('👑 Босс уже мертв! Перейди на другую локацию');
+            return;
+        }
+
+        // Тратим энергию
+        state.energy -= 5;
+
+        // Считаем урон (случайный + крит)
+        const baseDamage = Math.floor(Math.random() * 10) + 3;
+        const isCrit = Math.random() < 0.2; // 20% крита
+        let damage = baseDamage;
+        if (isCrit) {
+            damage = Math.floor(damage * 2.5);
+            addLog(`💥 КРИТИЧЕСКИЙ УДАР! +${damage} урона!`);
+        } else {
+            addLog(`⚔️ Удар! -${damage} HP`);
+        }
+
+        // Наносим урон боссу
+        state.bossHp -= damage;
+        if (state.bossHp < 0) state.bossHp = 0;
+
+        updateUI();
+        saveGame();
+
+        // Проверка победы
+        if (state.bossHp === 0) {
+            onBossDefeated();
+        }
+
+        // Босс контратакует (только если не умер)
+        if (state.bossHp > 0) {
+            const bossAttack = LOCATIONS[state.currentLoc].boss.attack;
+            const bossDamage = Math.floor(Math.random() * bossAttack) + 1;
+            addLog(`👊 Босс контратаковал! -${bossDamage} (Игрок)`);
+            // У игрока нет HP в этой упрощенной версии, но можно добавить штраф
+            // Упрощенно: теряем энергию или золото
+            const penalty = Math.floor(bossDamage / 2);
+            state.gold = Math.max(0, state.gold - penalty);
+            addLog(`💸 Потерял ${penalty} золота от контратаки`);
+            updateUI();
+            saveGame();
         }
     }
 
-    // Форматирование чисел (k, M, B, Q)
-    function formatNumber(num) {
-        if (num >= 1000000000000) return (num / 1000000000000).toFixed(2) + 'T';
-        if (num >= 1000000000) return (num / 1000000000).toFixed(2) + 'B';
-        if (num >= 1000000) return (num / 1000000).toFixed(2) + 'M';
-        if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
-        return num.toFixed(0);
+    function onBossDefeated() {
+        const loc = LOCATIONS[state.currentLoc];
+        const reward = loc.boss.reward + Math.floor(Math.random() * 20);
+        state.gold += reward;
+        state.score += 10;
+        addLog(`🎉 Босс побежден! Получено ${reward}💰 и 10🏆`);
+        
+        // Показываем оверлей победы
+        document.getElementById('overlay-title').innerText = '👑 Победа!';
+        document.getElementById('overlay-desc').innerText = `Ты получил ${reward} золота и 10 опыта!`;
+        document.getElementById('overlay').style.display = 'block';
+        
+        // Сброс HP босса не делаем автоматически, чтобы игрок мог перейти в другую локацию
+        updateUI();
+        saveGame();
     }
 
-    // Имитация работы таймера (обновление энергии каждые 2 сек)
+    // --- Лечение (упрощенно: восстановление энергии) ---
+    function heal() {
+        if (state.gold < 10) {
+            addLog('❌ Недостаточно золота (нужно 10💰)');
+            return;
+        }
+        state.gold -= 10;
+        state.energy = Math.min(state.maxEnergy, state.energy + 20);
+        addLog('❤️‍🩹 Восстановлено 20 энергии');
+        updateUI();
+        saveGame();
+    }
+
+    // --- Добавление ресурсов (для тестирования) ---
+    function addRes(type) {
+        if (type === 'gold') state.gold += 100;
+        else if (type === 'score') state.score += 5;
+        else if (type === 'energy') state.energy = Math.min(state.maxEnergy, state.energy + 10);
+        updateUI();
+        saveGame();
+        addLog(`+${type === 'gold' ? '100💰' : type === 'score' ? '5🏆' : '10⚡'}`);
+    }
+
+    // --- Лог ---
+    function addLog(msg) {
+        const log = document.getElementById('log');
+        log.innerText = msg;
+        log.style.color = '#fff';
+    }
+
+    // --- Overlay ---
+    function closeOverlay() {
+        document.getElementById('overlay').style.display = 'none';
+        // После закрытия оверлея можно сбросить босса или оставить мертвым
+        // Здесь оставляем мертвым, игрок должен перейти на другую локацию
+        addLog('Босс мертв. Перейди на другую локацию!');
+    }
+
+    // --- Форматирование чисел ---
+    function formatNumber(num) {
+        if (num >= 1000000) return (num / 1000000).toFixed(2) + 'M';
+        if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
+        return Math.floor(num);
+    }
+
+    // --- Автоматическая регенерация энергии ---
     setInterval(() => {
-        resources.energy += 0.5;
-        document.getElementById('energy-val').innerText = formatNumber(resources.energy) + 'k';
-    }, 2000);
+        if (state.energy < state.maxEnergy) {
+            state.energy += 1;
+            if (state.energy > state.maxEnergy) state.energy = state.maxEnergy;
+            updateUI();
+            saveGame();
+        }
+    }, 3000); // 3 сек = 1 энергия
 
-    // Добавляем случайные события при клике на персонажа
-    document.querySelector('.character-container').addEventListener('click', function() {
-        alert('Тыкнул персонажа! +10 опыта');
-        addResource('score');
-    });
+    // --- Инициализация ---
+    loadGame();
 
+    // Обновлять UI каждые 2 сек (для счетчиков)
+    setInterval(updateUI, 2000);
 </script>
 
 </body>
