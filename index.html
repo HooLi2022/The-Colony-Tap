@@ -1,542 +1,492 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Городская битва</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Копим на мечту</title>
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', sans-serif; }
-        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            background: #1a1a1a;
+            background: linear-gradient(145deg, #f7f0fc 0%, #e9dff2 100%);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            padding: 20px;
+            margin: 0;
         }
 
-        .app {
+        .card {
+            max-width: 600px;
             width: 100%;
-            max-width: 450px;
-            height: 800px;
-            background: #231d22;
-            background-image: linear-gradient(180deg, #1c141a, #2b1f2b);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            border: 1px solid #3d2b35;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 56px;
+            padding: 40px 32px 48px;
+            box-shadow: 0 25px 50px -10px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+            transition: all 0.2s ease;
+            text-align: center;
         }
 
-        /* --- Верхняя панель --- */
-        .header {
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2d1b3d;
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        h1 span {
+            background: #d9c7f0;
+            padding: 0 14px;
+            border-radius: 60px;
+            font-size: 1.6rem;
+            line-height: 1.4;
+        }
+
+        .subhead {
+            font-size: 1.1rem;
+            color: #4b3a5a;
+            background: rgba(210, 185, 230, 0.3);
+            padding: 8px 20px;
+            border-radius: 60px;
+            display: inline-block;
+            backdrop-filter: blur(4px);
+            margin-bottom: 28px;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .balance-wrapper {
+            background: #2d1b3d;
+            border-radius: 120px;
+            padding: 20px 24px;
+            margin: 20px 0 32px;
+            box-shadow: 0 10px 0 #1c0f27, 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .balance-label {
+            color: #b8a1cf;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .balance-number {
+            font-size: 4.4rem;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.2;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .balance-number small {
+            font-size: 1.8rem;
+            font-weight: 500;
+            color: #b8a1cf;
+            margin-left: 6px;
+        }
+
+        .dream-progress {
+            background: #e3d5ee;
+            height: 14px;
+            border-radius: 40px;
+            margin: 18px 0 28px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .dream-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #a77ac9, #7f4ca5);
+            border-radius: 40px;
+            transition: width 0.3s ease;
+        }
+
+        .dream-target {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 4px 10px;
-            background: #1a1518;
-            border-bottom: 2px solid #5e1a1a;
-            color: #fff;
-            font-size: 11px;
-            min-height: 40px;
-            flex-shrink: 0;
+            font-size: 0.95rem;
+            color: #2f1f3f;
+            font-weight: 500;
+            margin: -10px 0 28px;
         }
 
-        .resources {
+        .dream-target span:last-child {
+            font-weight: 700;
+            color: #4b1f6b;
+        }
+
+        .help-section {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 60px;
+            padding: 24px 20px 28px;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+        }
+
+        .help-title {
+            font-weight: 600;
+            color: #1f112b;
+            margin-bottom: 16px;
+            font-size: 1.2rem;
+        }
+
+        .input-group {
             display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .res {
-            display: flex;
-            align-items: center;
-            gap: 3px;
-            background: rgba(0,0,0,0.5);
-            padding: 2px 8px;
-            border-radius: 4px;
-            border-bottom: 2px solid transparent;
-            cursor: pointer;
-        }
-        .res.gold { border-color: #f3a100; }
-        .res.red { border-color: #d62020; }
-        .res.gray { border-color: #888; }
-        .res-val { font-weight: bold; }
-
-        /* --- Сцена --- */
-        .scene {
-            flex: 1;
-            position: relative;
-            background: radial-gradient(circle at 50% 100%, #3f2238, #140c12);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Локации и боссы */
-        .location-display {
-            text-align: center;
-            color: #fff;
-            margin-bottom: 10px;
-            width: 100%;
-        }
-
-        .location-name {
-            font-size: 22px;
-            font-weight: 800;
-            text-shadow: 0 0 10px rgba(255,0,0,0.3);
-            background: rgba(0,0,0,0.7);
-            padding: 4px 15px;
-            display: inline-block;
-            border-radius: 5px;
-            border: 1px solid #5e2a2a;
-        }
-
-        /* Босс */
-        .boss-container {
-            width: 180px;
-            height: 200px;
-            background: rgba(0,0,0,0.5);
-            border-radius: 15px;
-            border: 2px solid #4a2a2a;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-end;
-            padding: 10px;
-            position: relative;
-        }
-
-        .boss-sprite {
-            font-size: 100px;
-            line-height: 1;
-            margin-bottom: 10px;
-            filter: drop-shadow(0 0 10px rgba(255,0,0,0.4));
-        }
-
-        .boss-info {
-            width: 100%;
-            color: #fff;
-            font-size: 12px;
-            text-align: center;
-        }
-        .boss-name { font-weight: bold; color: #ff4444; }
-        .hp-bar-bg {
-            width: 100%;
-            height: 10px;
-            background: #2a2a2a;
-            border-radius: 5px;
-            margin: 4px 0;
-            overflow: hidden;
-        }
-        .hp-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #ff0000, #ff5555);
-            border-radius: 5px;
-            transition: width 0.2s;
-        }
-
-        /* Кнопки действий */
-        .actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
             flex-wrap: wrap;
+            gap: 10px;
             justify-content: center;
+            margin-bottom: 10px;
         }
-        .btn {
-            padding: 8px 18px;
+
+        .input-group input {
+            flex: 2 1 160px;
+            padding: 16px 20px;
             border: none;
-            border-radius: 25px;
-            background: #3a2a2a;
-            color: #fff;
-            font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-            cursor: pointer;
-            transition: 0.1s;
-            font-size: 12px;
-        }
-        .btn:active { transform: scale(0.95); }
-        .btn.attack { background: #a82a2a; }
-        .btn.heal { background: #2a6a2a; }
-        .btn.gold { background: #a87a2a; }
-        .btn.info { background: #2a4a6a; }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        /* Лог боя */
-        .log {
-            height: 50px;
-            width: 90%;
-            margin-top: 10px;
-            background: rgba(0,0,0,0.7);
-            border-radius: 8px;
-            padding: 5px 10px;
-            color: #ccc;
-            font-size: 11px;
-            overflow-y: auto;
-            border: 1px solid #333;
+            border-radius: 60px;
+            background: white;
+            font-size: 1.1rem;
+            font-weight: 500;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02), 0 0 0 1px #d0bce3;
+            transition: 0.15s;
+            color: #1f112b;
             text-align: center;
         }
 
-        /* --- Нижняя панель (Локации) --- */
-        .footer {
-            height: 100px;
-            background: #4a3c2e;
-            background: linear-gradient(to top, #4a3c2e, #6b5a48);
-            border-top: 3px solid #3b2e24;
-            display: flex;
-            align-items: center;
-            padding: 0 5px;
-            gap: 6px;
-            overflow-x: auto;
-            flex-shrink: 0;
+        .input-group input:focus {
+            outline: 2px solid #946bb9;
+            outline-offset: 2px;
+            box-shadow: 0 6px 14px rgba(110, 60, 150, 0.15);
         }
 
-        .loc-item {
-            flex-shrink: 0;
-            width: 60px;
-            height: 70px;
-            background: #3e3026;
-            border-radius: 6px;
-            border: 2px solid #2a1e16;
-            display: flex;
-            flex-direction: column;
+        .input-group input::placeholder {
+            color: #a48db3;
+            font-weight: 400;
+        }
+
+        .btn {
+            padding: 16px 28px;
+            border: none;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            background: #2d1b3d;
+            color: white;
+            cursor: pointer;
+            transition: 0.15s ease;
+            box-shadow: 0 6px 0 #150b1d, 0 6px 16px rgba(45, 27, 61, 0.3);
+            display: inline-flex;
+            align-items: center;
             justify-content: center;
-            align-items: center;
-            font-size: 24px;
-            color: #fff;
+            gap: 10px;
+            flex: 1 0 auto;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            background: #3f2860;
+            box-shadow: 0 8px 0 #150b1d, 0 12px 28px rgba(45, 27, 61, 0.35);
+        }
+
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #150b1d;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            transform: translateY(2px);
+            box-shadow: 0 3px 0 #150b1d;
+            pointer-events: none;
+        }
+
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin: 14px 0 6px;
+        }
+
+        .quick-btn {
+            background: #ede3f7;
+            border: 1px solid #dcc5ee;
+            padding: 10px 18px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: #2d1b3d;
+            cursor: pointer;
+            transition: 0.1s ease;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            flex: 1 0 auto;
+        }
+
+        .quick-btn:hover {
+            background: #dcc5ee;
+            transform: scale(0.97);
+            border-color: #b48ad4;
+        }
+
+        .reset-area {
+            margin-top: 24px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .reset-btn {
+            background: transparent;
+            border: 1px solid #b69ecb;
+            color: #3f2a53;
+            padding: 8px 22px;
+            border-radius: 60px;
+            font-weight: 500;
+            font-size: 0.8rem;
             cursor: pointer;
             transition: 0.1s;
-        }
-        .loc-item:active { transform: scale(0.9); border-color: gold; }
-        .loc-item .lname {
-            font-size: 8px;
-            margin-top: 2px;
-            opacity: 0.9;
-        }
-        .loc-item.active {
-            border-color: #ffaa00;
-            box-shadow: 0 0 10px rgba(255,170,0,0.4);
-            background: #5a4a3a;
+            backdrop-filter: blur(4px);
         }
 
-        .footer::-webkit-scrollbar { height: 0px; }
+        .reset-btn:hover {
+            background: rgba(45, 27, 61, 0.06);
+            border-color: #7f4ca5;
+        }
 
-        /* Сообщения */
-        .overlay-msg {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.9);
-            padding: 20px;
-            border-radius: 10px;
-            color: #fff;
-            text-align: center;
-            display: none;
-            z-index: 100;
-            border: 2px solid #6a2a2a;
+        .footnote {
+            margin-top: 22px;
+            color: #4f3a61;
+            font-size: 0.85rem;
+            border-top: 1px dashed #cbb5de;
+            padding-top: 18px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 480px) {
+            .card { padding: 28px 18px 32px; }
+            .balance-number { font-size: 3.2rem; }
+            .balance-number small { font-size: 1.4rem; }
+            h1 { font-size: 1.8rem; }
         }
     </style>
 </head>
 <body>
+    <div class="card" role="main">
+        <h1>
+            🌟 Мечта
+            <span>✨</span>
+        </h1>
+        <div class="subhead">⚡ общая копилка</div>
 
-<div class="app">
-    <!-- Header -->
-    <div class="header">
-        <div style="display:flex; align-items:center; gap:5px; color:#fff;">
-            <span style="background:#444; border-radius:50%; width:24px; height:24px; display:inline-block;"></span>
-            <span>Пыр</span>
+        <div class="balance-wrapper">
+            <div class="balance-label">💰 Общий баланс</div>
+            <div class="balance-number" id="balanceDisplay">0<small>₽</small></div>
         </div>
-        <div class="resources">
-            <div class="res gold" onclick="addRes('gold')">
-                <span>💰</span> <span id="gold-val" class="res-val">1000</span>
+
+        <!-- Прогресс до цели -->
+        <div class="dream-progress">
+            <div class="dream-progress-fill" id="progressFill" style="width: 0%;"></div>
+        </div>
+        <div class="dream-target">
+            <span>🏆 цель: 100 000 ₽</span>
+            <span id="percentLabel">0%</span>
+        </div>
+
+        <div class="help-section">
+            <div class="help-title">🤝 Помоги накопить</div>
+            <div class="input-group">
+                <input type="number" id="amountInput" placeholder="Сумма, ₽" min="1" value="100" step="1" />
+                <button class="btn" id="addBtn">➕ Внести</button>
             </div>
-            <div class="res red" onclick="addRes('score')">
-                <span>🏆</span> <span id="score-val" class="res-val">0</span>
+
+            <div class="quick-actions">
+                <button class="quick-btn" data-amount="50">50 ₽</button>
+                <button class="quick-btn" data-amount="150">150 ₽</button>
+                <button class="quick-btn" data-amount="500">500 ₽</button>
+                <button class="quick-btn" data-amount="1000">1 000 ₽</button>
             </div>
-            <div class="res gray" onclick="addRes('energy')">
-                <span>⚡</span> <span id="energy-val" class="res-val">100</span>
+
+            <div class="reset-area">
+                <button class="reset-btn" id="resetBtn">⟲ Сбросить баланс</button>
             </div>
+        </div>
+
+        <div class="footnote">
+            ❤️ Спасибо, что помогаешь! Каждый вклад приближает мечту.
         </div>
     </div>
 
-    <!-- Сцена -->
-    <div class="scene" id="scene">
-        <div class="location-display">
-            <div class="location-name" id="loc-name">🏚️ Подворотня</div>
-        </div>
+    <script>
+        (function() {
+            // ----- Настройки -----
+            const TARGET = 100000;          // цель в рублях
+            const STORAGE_KEY = 'dreamBalance';
 
-        <!-- Босс -->
-        <div class="boss-container" id="boss-container">
-            <div class="boss-sprite" id="boss-sprite">💀</div>
-            <div class="boss-info">
-                <div class="boss-name" id="boss-name">Бомж</div>
-                <div class="hp-bar-bg">
-                    <div class="hp-bar-fill" id="boss-hp-fill" style="width:100%"></div>
-                </div>
-                <div id="boss-hp-text">HP: 50/50</div>
-                <div style="font-size:10px; opacity:0.7;" id="boss-reward">💰 Награда: 20</div>
-            </div>
-        </div>
+            // ----- Элементы -----
+            const balanceDisplay = document.getElementById('balanceDisplay');
+            const progressFill = document.getElementById('progressFill');
+            const percentLabel = document.getElementById('percentLabel');
+            const amountInput = document.getElementById('amountInput');
+            const addBtn = document.getElementById('addBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const quickBtns = document.querySelectorAll('.quick-btn');
 
-        <!-- Кнопки -->
-        <div class="actions">
-            <button class="btn attack" id="btn-attack" onclick="attack()">⚔️ Атака (5⚡)</button>
-            <button class="btn heal" onclick="heal()">❤️‍🩹 Лечиться (10💰)</button>
-        </div>
+            // ----- Текущий баланс (загружаем из localStorage) -----
+            let currentBalance = 0;
 
-        <!-- Лог -->
-        <div class="log" id="log">Добро пожаловать! Бей боссов, получай деньги!</div>
-    </div>
+            function loadBalance() {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                if (stored !== null) {
+                    const parsed = parseFloat(stored);
+                    if (!isNaN(parsed) && parsed >= 0) {
+                        currentBalance = Math.round(parsed); // округляем до рубля
+                    } else {
+                        currentBalance = 0;
+                    }
+                } else {
+                    // при первом запуске — стартовый баланс 0
+                    currentBalance = 0;
+                }
+                // защита от отрицательного
+                if (currentBalance < 0) currentBalance = 0;
+                // если больше цели — можно, но оставим, просто прогресс 100%
+            }
 
-    <!-- Footer (Локации) -->
-    <div class="footer" id="footer">
-        <div class="loc-item active" data-loc="0" onclick="goToLoc(0)">
-            <span>🏚️</span> <span class="lname">Подворотня</span>
-        </div>
-        <div class="loc-item" data-loc="1" onclick="goToLoc(1)">
-            <span>🏢</span> <span class="lname">Офис</span>
-        </div>
-        <div class="loc-item" data-loc="2" onclick="goToLoc(2)">
-            <span>🏪</span> <span class="lname">Магазин</span>
-        </div>
-        <div class="loc-item" data-loc="3" onclick="goToLoc(3)">
-            <span>🏦</span> <span class="lname">Банк</span>
-        </div>
-        <div class="loc-item" data-loc="4" onclick="goToLoc(4)">
-            <span>⛪</span> <span class="lname">Церковь</span>
-        </div>
-        <div class="loc-item" data-loc="5" onclick="goToLoc(5)">
-            <span>🏭</span> <span class="lname">Завод</span>
-        </div>
-    </div>
+            // ----- Сохраняем баланс -----
+            function saveBalance() {
+                localStorage.setItem(STORAGE_KEY, String(currentBalance));
+            }
 
-    <!-- Overlay -->
-    <div class="overlay-msg" id="overlay">
-        <h3 id="overlay-title">Победа!</h3>
-        <p id="overlay-desc">Ты получил 100 монет</p>
-        <button class="btn gold" onclick="closeOverlay()">OK</button>
-    </div>
-</div>
+            // ----- Обновляем UI (баланс, прогресс, проценты) -----
+            function updateUI() {
+                // Форматируем баланс с разделителями тысяч
+                const formatted = new Intl.NumberFormat('ru-RU').format(currentBalance);
+                balanceDisplay.innerHTML = `${formatted}<small>₽</small>`;
 
-<script>
-    // --- Данные игры ---
-    // 6 локаций: каждая содержит босса
-    const LOCATIONS = [
-        { id: 0, name: '🏚️ Подворотня', boss: { name: 'Бомж', hp: 50, maxHp: 50, reward: 20, emoji: '💀', attack: 3 } },
-        { id: 1, name: '🏢 Офис', boss: { name: 'Менеджер', hp: 80, maxHp: 80, reward: 40, emoji: '👔', attack: 5 } },
-        { id: 2, name: '🏪 Магазин', boss: { name: 'Продавец', hp: 60, maxHp: 60, reward: 30, emoji: '🧑‍💼', attack: 4 } },
-        { id: 3, name: '🏦 Банк', boss: { name: 'Охранник', hp: 120, maxHp: 120, reward: 60, emoji: '💂', attack: 8 } },
-        { id: 4, name: '⛪ Церковь', boss: { name: 'Монах', hp: 90, maxHp: 90, reward: 45, emoji: '🧘', attack: 6 } },
-        { id: 5, name: '🏭 Завод', boss: { name: 'Бригадир', hp: 200, maxHp: 200, reward: 100, emoji: '👷', attack: 12 } }
-    ];
+                // Процент достижения цели (не больше 100)
+                let percent = (currentBalance / TARGET) * 100;
+                if (percent > 100) percent = 100;
+                if (percent < 0) percent = 0;
 
-    // --- Состояние игры ---
-    let state = {
-        gold: 1000,
-        score: 0,
-        energy: 100,
-        maxEnergy: 100,
-        currentLoc: 0,
-        bossHp: 50,
-        bossMaxHp: 50,
-        playerHp: 100,        // Жизни игрока (не используется в бою, только для логики)
-        playerMaxHp: 100
-    };
+                progressFill.style.width = `${percent}%`;
+                percentLabel.textContent = `${Math.round(percent)}%`;
+            }
 
-    // --- Загрузка сохранений ---
-    function loadGame() {
-        const saved = localStorage.getItem('gameState');
-        if (saved) {
-            try {
-                const parsed = JSON.parse(saved);
-                state = { ...state, ...parsed };
-            } catch(e) {}
-        }
-        // Синхронизируем босса с текущей локацией
-        applyLoc(state.currentLoc);
-        updateUI();
-    }
+            // ----- Добавляем сумму (проверка) -----
+            function addAmount(amount) {
+                if (typeof amount !== 'number' || isNaN(amount) || amount <= 0) {
+                    alert('Пожалуйста, введите положительное число.');
+                    return false;
+                }
 
-    function saveGame() {
-        localStorage.setItem('gameState', JSON.stringify(state));
-    }
+                // Округляем до целых рублей
+                const rounded = Math.round(amount);
+                if (rounded <= 0) {
+                    alert('Сумма должна быть больше 0 ₽');
+                    return false;
+                }
 
-    // --- Переход по локациям ---
-    function goToLoc(index) {
-        state.currentLoc = index;
-        applyLoc(index);
-        updateUI();
-        // Подсветка кнопки локации
-        document.querySelectorAll('.loc-item').forEach((el, i) => {
-            el.classList.toggle('active', i === index);
-        });
-        saveGame();
-        addLog(`Перешел в: ${LOCATIONS[index].name}`);
-    }
+                currentBalance += rounded;
+                // Если вдруг баланс стал отрицательным (не должно случиться)
+                if (currentBalance < 0) currentBalance = 0;
 
-    function applyLoc(index) {
-        const loc = LOCATIONS[index];
-        // Сбрасываем босса до максимального HP
-        state.bossHp = loc.boss.maxHp;
-        state.bossMaxHp = loc.boss.maxHp;
-        
-        document.getElementById('loc-name').innerText = loc.name;
-        document.getElementById('boss-sprite').innerText = loc.boss.emoji;
-        document.getElementById('boss-name').innerText = loc.boss.name;
-        document.getElementById('boss-hp-text').innerText = `HP: ${state.bossHp}/${state.bossMaxHp}`;
-        document.getElementById('boss-reward').innerText = `💰 Награда: ${loc.boss.reward}`;
-        updateBossHpBar();
-    }
+                saveBalance();
+                updateUI();
+                return true;
+            }
 
-    // --- Обновление UI ---
-    function updateUI() {
-        document.getElementById('gold-val').innerText = formatNumber(state.gold);
-        document.getElementById('score-val').innerText = formatNumber(state.score);
-        document.getElementById('energy-val').innerText = formatNumber(state.energy);
-        updateBossHpBar();
-    }
+            // ----- Сброс баланса (с подтверждением) -----
+            function resetBalance() {
+                if (currentBalance === 0) {
+                    alert('Баланс уже нулевой 😉');
+                    return;
+                }
+                const confirmReset = confirm('Сбросить баланс до 0?');
+                if (!confirmReset) return;
 
-    function updateBossHpBar() {
-        const pct = (state.bossHp / state.bossMaxHp) * 100;
-        document.getElementById('boss-hp-fill').style.width = Math.max(0, pct) + '%';
-        document.getElementById('boss-hp-text').innerText = `HP: ${Math.max(0, state.bossHp)}/${state.bossMaxHp}`;
-    }
+                currentBalance = 0;
+                saveBalance();
+                updateUI();
+            }
 
-    // --- Бой ---
-    function attack() {
-        // Проверка энергии
-        if (state.energy < 5) {
-            addLog('❌ Недостаточно энергии! (нужно 5⚡)');
-            return;
-        }
-        // Проверка, жив ли босс
-        if (state.bossHp <= 0) {
-            addLog('👑 Босс уже мертв! Перейди на другую локацию');
-            return;
-        }
+            // ----- Обработчик для кнопки "Внести" -----
+            function handleAddClick() {
+                let rawValue = amountInput.value.trim();
+                if (rawValue === '') {
+                    alert('Введите сумму');
+                    return;
+                }
+                // заменяем запятую на точку, чтобы парсилось
+                rawValue = rawValue.replace(',', '.');
+                const value = parseFloat(rawValue);
+                if (isNaN(value) || value <= 0) {
+                    alert('Введите корректную сумму (число больше 0)');
+                    return;
+                }
+                addAmount(value);
+                // не очищаем поле, чтобы можно было быстро добавить ещё
+                // но можно подсветить: оставляем как есть
+            }
 
-        // Тратим энергию
-        state.energy -= 5;
+            // ----- Инициализация -----
+            function init() {
+                loadBalance();
+                updateUI();
 
-        // Считаем урон (случайный + крит)
-        const baseDamage = Math.floor(Math.random() * 10) + 3;
-        const isCrit = Math.random() < 0.2; // 20% крита
-        let damage = baseDamage;
-        if (isCrit) {
-            damage = Math.floor(damage * 2.5);
-            addLog(`💥 КРИТИЧЕСКИЙ УДАР! +${damage} урона!`);
-        } else {
-            addLog(`⚔️ Удар! -${damage} HP`);
-        }
+                // ----- Слушатели -----
+                addBtn.addEventListener('click', handleAddClick);
 
-        // Наносим урон боссу
-        state.bossHp -= damage;
-        if (state.bossHp < 0) state.bossHp = 0;
+                // Enter в поле ввода
+                amountInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleAddClick();
+                    }
+                });
 
-        updateUI();
-        saveGame();
+                // Быстрые кнопки
+                quickBtns.forEach((btn) => {
+                    btn.addEventListener('click', (e) => {
+                        const amount = parseInt(btn.getAttribute('data-amount'), 10);
+                        if (!isNaN(amount) && amount > 0) {
+                            addAmount(amount);
+                        }
+                    });
+                });
 
-        // Проверка победы
-        if (state.bossHp === 0) {
-            onBossDefeated();
-        }
+                // Сброс
+                resetBtn.addEventListener('click', resetBalance);
 
-        // Босс контратакует (только если не умер)
-        if (state.bossHp > 0) {
-            const bossAttack = LOCATIONS[state.currentLoc].boss.attack;
-            const bossDamage = Math.floor(Math.random() * bossAttack) + 1;
-            addLog(`👊 Босс контратаковал! -${bossDamage} (Игрок)`);
-            // У игрока нет HP в этой упрощенной версии, но можно добавить штраф
-            // Упрощенно: теряем энергию или золото
-            const penalty = Math.floor(bossDamage / 2);
-            state.gold = Math.max(0, state.gold - penalty);
-            addLog(`💸 Потерял ${penalty} золота от контратаки`);
-            updateUI();
-            saveGame();
-        }
-    }
+                // Дополнительно: при изменении поля можно валидировать, но необязательно
+                amountInput.addEventListener('blur', () => {
+                    let val = amountInput.value.trim().replace(',', '.');
+                    if (val !== '') {
+                        const num = parseFloat(val);
+                        if (!isNaN(num) && num > 0) {
+                            // Можно округлить для красоты
+                            amountInput.value = Math.round(num);
+                        }
+                    }
+                });
+            }
 
-    function onBossDefeated() {
-        const loc = LOCATIONS[state.currentLoc];
-        const reward = loc.boss.reward + Math.floor(Math.random() * 20);
-        state.gold += reward;
-        state.score += 10;
-        addLog(`🎉 Босс побежден! Получено ${reward}💰 и 10🏆`);
-        
-        // Показываем оверлей победы
-        document.getElementById('overlay-title').innerText = '👑 Победа!';
-        document.getElementById('overlay-desc').innerText = `Ты получил ${reward} золота и 10 опыта!`;
-        document.getElementById('overlay').style.display = 'block';
-        
-        // Сброс HP босса не делаем автоматически, чтобы игрок мог перейти в другую локацию
-        updateUI();
-        saveGame();
-    }
-
-    // --- Лечение (упрощенно: восстановление энергии) ---
-    function heal() {
-        if (state.gold < 10) {
-            addLog('❌ Недостаточно золота (нужно 10💰)');
-            return;
-        }
-        state.gold -= 10;
-        state.energy = Math.min(state.maxEnergy, state.energy + 20);
-        addLog('❤️‍🩹 Восстановлено 20 энергии');
-        updateUI();
-        saveGame();
-    }
-
-    // --- Добавление ресурсов (для тестирования) ---
-    function addRes(type) {
-        if (type === 'gold') state.gold += 100;
-        else if (type === 'score') state.score += 5;
-        else if (type === 'energy') state.energy = Math.min(state.maxEnergy, state.energy + 10);
-        updateUI();
-        saveGame();
-        addLog(`+${type === 'gold' ? '100💰' : type === 'score' ? '5🏆' : '10⚡'}`);
-    }
-
-    // --- Лог ---
-    function addLog(msg) {
-        const log = document.getElementById('log');
-        log.innerText = msg;
-        log.style.color = '#fff';
-    }
-
-    // --- Overlay ---
-    function closeOverlay() {
-        document.getElementById('overlay').style.display = 'none';
-        // После закрытия оверлея можно сбросить босса или оставить мертвым
-        // Здесь оставляем мертвым, игрок должен перейти на другую локацию
-        addLog('Босс мертв. Перейди на другую локацию!');
-    }
-
-    // --- Форматирование чисел ---
-    function formatNumber(num) {
-        if (num >= 1000000) return (num / 1000000).toFixed(2) + 'M';
-        if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
-        return Math.floor(num);
-    }
-
-    // --- Автоматическая регенерация энергии ---
-    setInterval(() => {
-        if (state.energy < state.maxEnergy) {
-            state.energy += 1;
-            if (state.energy > state.maxEnergy) state.energy = state.maxEnergy;
-            updateUI();
-            saveGame();
-        }
-    }, 3000); // 3 сек = 1 энергия
-
-    // --- Инициализация ---
-    loadGame();
-
-    // Обновлять UI каждые 2 сек (для счетчиков)
-    setInterval(updateUI, 2000);
-</script>
-
+            // Запускаем
+            init();
+        })();
+    </script>
 </body>
 </html>
