@@ -3,490 +3,575 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Копим на мечту</title>
+    <title>Копим на мечту ✨</title>
     <style>
+        /* ===== Глобальные стили ===== */
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            background: linear-gradient(145deg, #f7f0fc 0%, #e9dff2 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0b0813;
             padding: 20px;
-            margin: 0;
+            background-image: radial-gradient(ellipse at 50% 0%, #1e1430 0%, #0b0813 70%);
         }
 
+        /* ===== Основная карточка ===== */
         .card {
-            max-width: 600px;
+            max-width: 540px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 56px;
-            padding: 40px 32px 48px;
-            box-shadow: 0 25px 50px -10px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.6) inset;
-            transition: all 0.2s ease;
+            background: linear-gradient(165deg, rgba(30, 20, 48, 0.92), rgba(15, 10, 28, 0.96));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 48px;
+            padding: 40px 32px 44px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease;
+        }
+
+        /* Декоративный глянец */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at 30% 20%, rgba(160, 100, 220, 0.06), transparent 60%);
+            pointer-events: none;
+        }
+
+        /* ===== Шапка ===== */
+        .header {
+            position: relative;
+            z-index: 1;
+        }
+
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            padding: 6px 20px;
+            border-radius: 100px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #fff;
+            margin-bottom: 14px;
+            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
         }
 
         h1 {
-            font-size: 2.2rem;
+            font-size: 2.6rem;
             font-weight: 700;
-            color: #2d1b3d;
+            color: #fff;
             letter-spacing: -0.5px;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
+            line-height: 1.2;
         }
 
-        h1 span {
-            background: #d9c7f0;
-            padding: 0 14px;
-            border-radius: 60px;
-            font-size: 1.6rem;
-            line-height: 1.4;
-        }
-
-        .subhead {
-            font-size: 1.1rem;
-            color: #4b3a5a;
-            background: rgba(210, 185, 230, 0.3);
-            padding: 8px 20px;
-            border-radius: 60px;
+        h1 .emoji {
             display: inline-block;
-            backdrop-filter: blur(4px);
-            margin-bottom: 28px;
-            font-weight: 500;
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            animation: float 3s ease-in-out infinite;
         }
 
-        .balance-wrapper {
-            background: #2d1b3d;
-            border-radius: 120px;
-            padding: 20px 24px;
-            margin: 20px 0 32px;
-            box-shadow: 0 10px 0 #1c0f27, 0 8px 20px rgba(0, 0, 0, 0.3);
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.95rem;
+            margin-top: 6px;
+            font-weight: 400;
+        }
+
+        /* ===== Баланс ===== */
+        .balance-wrap {
+            position: relative;
+            z-index: 1;
+            margin: 28px 0 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 32px;
+            padding: 24px 20px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .balance-label {
-            color: #b8a1cf;
+            color: rgba(255, 255, 255, 0.35);
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 2px;
-            font-size: 0.8rem;
             font-weight: 600;
         }
 
         .balance-number {
-            font-size: 4.4rem;
+            font-size: 4.2rem;
             font-weight: 800;
-            color: #ffffff;
-            line-height: 1.2;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            color: #fff;
+            line-height: 1.1;
+            margin-top: 2px;
+            letter-spacing: -1px;
+            text-shadow: 0 0 40px rgba(124, 58, 237, 0.15);
         }
 
-        .balance-number small {
+        .balance-number .currency {
             font-size: 1.8rem;
-            font-weight: 500;
-            color: #b8a1cf;
-            margin-left: 6px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.4);
+            margin-left: 4px;
         }
 
-        .dream-progress {
-            background: #e3d5ee;
-            height: 14px;
-            border-radius: 40px;
-            margin: 18px 0 28px;
+        /* ===== Прогресс ===== */
+        .progress-wrap {
+            position: relative;
+            z-index: 1;
+            margin: 8px 0 6px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: inset 0 2px 6px rgba(0,0,0,0.1);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
         }
 
-        .dream-progress-fill {
+        .progress-fill {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, #a77ac9, #7f4ca5);
-            border-radius: 40px;
-            transition: width 0.3s ease;
+            background: linear-gradient(90deg, #7c3aed, #a855f7, #d946ef);
+            border-radius: 20px;
+            transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
         }
 
-        .dream-target {
+        .progress-info {
             display: flex;
             justify-content: space-between;
-            font-size: 0.95rem;
-            color: #2f1f3f;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.35);
             font-weight: 500;
-            margin: -10px 0 28px;
         }
 
-        .dream-target span:last-child {
+        .progress-info .target {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .progress-info .percent {
+            color: #a855f7;
             font-weight: 700;
-            color: #4b1f6b;
         }
 
+        /* ===== Секция "Помочь" ===== */
         .help-section {
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 60px;
+            position: relative;
+            z-index: 1;
+            margin-top: 28px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 28px;
             padding: 24px 20px 28px;
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.04);
         }
 
         .help-title {
+            color: #fff;
+            font-size: 1.1rem;
             font-weight: 600;
-            color: #1f112b;
             margin-bottom: 16px;
-            font-size: 1.2rem;
         }
 
-        .input-group {
+        .help-title span {
+            color: #a855f7;
+        }
+
+        /* Поле ввода + кнопка */
+        .input-row {
             display: flex;
-            flex-wrap: wrap;
             gap: 10px;
-            justify-content: center;
-            margin-bottom: 10px;
+            flex-wrap: wrap;
         }
 
-        .input-group input {
-            flex: 2 1 160px;
+        .input-row input {
+            flex: 1;
+            min-width: 130px;
             padding: 16px 20px;
             border: none;
-            border-radius: 60px;
-            background: white;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.05);
             font-size: 1.1rem;
             font-weight: 500;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02), 0 0 0 1px #d0bce3;
-            transition: 0.15s;
-            color: #1f112b;
+            color: #fff;
+            outline: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.2s ease;
             text-align: center;
         }
 
-        .input-group input:focus {
-            outline: 2px solid #946bb9;
-            outline-offset: 2px;
-            box-shadow: 0 6px 14px rgba(110, 60, 150, 0.15);
-        }
-
-        .input-group input::placeholder {
-            color: #a48db3;
+        .input-row input::placeholder {
+            color: rgba(255, 255, 255, 0.2);
             font-weight: 400;
         }
 
-        .btn {
-            padding: 16px 28px;
+        .input-row input:focus {
+            outline: 1px solid #7c3aed;
+            background: rgba(255, 255, 255, 0.07);
+            box-shadow: 0 0 30px rgba(124, 58, 237, 0.05);
+        }
+
+        /* Главная кнопка — ПРИВЛЕКАЕТ ВНИМАНИЕ */
+        .btn-primary {
+            padding: 16px 32px;
             border: none;
-            border-radius: 60px;
+            border-radius: 18px;
             font-weight: 700;
             font-size: 1.1rem;
-            background: #2d1b3d;
-            color: white;
+            color: #fff;
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
             cursor: pointer;
-            transition: 0.15s ease;
-            box-shadow: 0 6px 0 #150b1d, 0 6px 16px rgba(45, 27, 61, 0.3);
+            transition: all 0.2s ease;
+            box-shadow: 0 6px 30px rgba(124, 58, 237, 0.35);
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            flex: 1 0 auto;
+            gap: 8px;
+            flex: 1;
+            min-width: 100px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .btn:hover {
-            transform: translateY(-2px);
-            background: #3f2860;
-            box-shadow: 0 8px 0 #150b1d, 0 12px 28px rgba(45, 27, 61, 0.35);
-        }
-
-        .btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #150b1d;
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            transform: translateY(2px);
-            box-shadow: 0 3px 0 #150b1d;
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), transparent 50%);
             pointer-events: none;
         }
 
-        .quick-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-            margin: 14px 0 6px;
+        .btn-primary:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 10px 40px rgba(124, 58, 237, 0.5);
+        }
+
+        .btn-primary:active {
+            transform: translateY(2px) scale(0.98);
+            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
+        }
+
+        /* ===== Быстрые суммы ===== */
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 14px;
         }
 
         .quick-btn {
-            background: #ede3f7;
-            border: 1px solid #dcc5ee;
-            padding: 10px 18px;
-            border-radius: 40px;
+            padding: 12px 6px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.02);
+            color: rgba(255, 255, 255, 0.6);
             font-weight: 600;
-            color: #2d1b3d;
+            font-size: 0.9rem;
             cursor: pointer;
-            transition: 0.1s ease;
-            font-size: 0.95rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-            flex: 1 0 auto;
+            transition: all 0.15s ease;
+            font-family: inherit;
         }
 
         .quick-btn:hover {
-            background: #dcc5ee;
-            transform: scale(0.97);
-            border-color: #b48ad4;
+            background: rgba(124, 58, 237, 0.15);
+            border-color: rgba(124, 58, 237, 0.2);
+            color: #fff;
+            transform: translateY(-2px);
         }
 
-        .reset-area {
-            margin-top: 24px;
+        .quick-btn:active {
+            transform: scale(0.95);
+        }
+
+        .quick-btn.highlight {
+            border-color: #7c3aed;
+            color: #a855f7;
+            background: rgba(124, 58, 237, 0.08);
+        }
+
+        /* ===== Доп. кнопки ===== */
+        .footer-actions {
             display: flex;
             justify-content: center;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
         }
 
-        .reset-btn {
+        .btn-ghost {
             background: transparent;
-            border: 1px solid #b69ecb;
-            color: #3f2a53;
-            padding: 8px 22px;
-            border-radius: 60px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.25);
+            padding: 8px 20px;
+            border-radius: 100px;
+            font-size: 0.75rem;
             font-weight: 500;
-            font-size: 0.8rem;
             cursor: pointer;
-            transition: 0.1s;
-            backdrop-filter: blur(4px);
+            transition: all 0.15s ease;
+            font-family: inherit;
         }
 
-        .reset-btn:hover {
-            background: rgba(45, 27, 61, 0.06);
-            border-color: #7f4ca5;
+        .btn-ghost:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.5);
         }
 
-        .footnote {
-            margin-top: 22px;
-            color: #4f3a61;
-            font-size: 0.85rem;
-            border-top: 1px dashed #cbb5de;
-            padding-top: 18px;
-            opacity: 0.8;
+        /* ===== Подвал ===== */
+        .footer-text {
+            margin-top: 24px;
+            color: rgba(255, 255, 255, 0.12);
+            font-size: 0.7rem;
+            letter-spacing: 0.3px;
+            position: relative;
+            z-index: 1;
         }
 
+        .footer-text strong {
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ===== Анимация при загрузке ===== */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            animation: fadeUp 0.8s ease forwards;
+        }
+
+        /* ===== Адаптив ===== */
         @media (max-width: 480px) {
             .card { padding: 28px 18px 32px; }
+            h1 { font-size: 2rem; }
             .balance-number { font-size: 3.2rem; }
-            .balance-number small { font-size: 1.4rem; }
-            h1 { font-size: 1.8rem; }
+            .balance-number .currency { font-size: 1.4rem; }
+            .quick-grid { grid-template-columns: repeat(2, 1fr); }
+            .input-row input { min-width: 100px; }
+            .btn-primary { padding: 14px 20px; font-size: 1rem; }
         }
     </style>
 </head>
 <body>
-    <div class="card" role="main">
+
+<div class="card">
+    <!-- Шапка -->
+    <div class="header">
+        <div class="badge">🔥 Общая копилка</div>
         <h1>
-            🌟 Мечта
-            <span>✨</span>
+            <span class="emoji">⭐</span> Мечта сбудется
         </h1>
-        <div class="subhead">⚡ общая копилка</div>
+        <p class="subtitle">Вместе мы справимся быстрее</p>
+    </div>
 
-        <div class="balance-wrapper">
-            <div class="balance-label">💰 Общий баланс</div>
-            <div class="balance-number" id="balanceDisplay">0<small>₽</small></div>
-        </div>
-
-        <!-- Прогресс до цели -->
-        <div class="dream-progress">
-            <div class="dream-progress-fill" id="progressFill" style="width: 0%;"></div>
-        </div>
-        <div class="dream-target">
-            <span>🏆 цель: 100 000 ₽</span>
-            <span id="percentLabel">0%</span>
-        </div>
-
-        <div class="help-section">
-            <div class="help-title">🤝 Помоги накопить</div>
-            <div class="input-group">
-                <input type="number" id="amountInput" placeholder="Сумма, ₽" min="1" value="100" step="1" />
-                <button class="btn" id="addBtn">➕ Внести</button>
-            </div>
-
-            <div class="quick-actions">
-                <button class="quick-btn" data-amount="50">50 ₽</button>
-                <button class="quick-btn" data-amount="150">150 ₽</button>
-                <button class="quick-btn" data-amount="500">500 ₽</button>
-                <button class="quick-btn" data-amount="1000">1 000 ₽</button>
-            </div>
-
-            <div class="reset-area">
-                <button class="reset-btn" id="resetBtn">⟲ Сбросить баланс</button>
-            </div>
-        </div>
-
-        <div class="footnote">
-            ❤️ Спасибо, что помогаешь! Каждый вклад приближает мечту.
+    <!-- Баланс -->
+    <div class="balance-wrap">
+        <div class="balance-label">Собрано</div>
+        <div class="balance-number" id="balanceDisplay">
+            0<span class="currency">₽</span>
         </div>
     </div>
 
-    <script>
-        (function() {
-            // ----- Настройки -----
-            const TARGET = 100000;          // цель в рублях
-            const STORAGE_KEY = 'dreamBalance';
+    <!-- Прогресс -->
+    <div class="progress-wrap">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+        </div>
+        <div class="progress-info">
+            <span class="target">🎯 100 000 ₽</span>
+            <span class="percent" id="percentLabel">0%</span>
+        </div>
+    </div>
 
-            // ----- Элементы -----
-            const balanceDisplay = document.getElementById('balanceDisplay');
-            const progressFill = document.getElementById('progressFill');
-            const percentLabel = document.getElementById('percentLabel');
-            const amountInput = document.getElementById('amountInput');
-            const addBtn = document.getElementById('addBtn');
-            const resetBtn = document.getElementById('resetBtn');
-            const quickBtns = document.querySelectorAll('.quick-btn');
+    <!-- Секция помощи -->
+    <div class="help-section">
+        <div class="help-title">🤝 <span>Помоги</span> накопить</div>
 
-            // ----- Текущий баланс (загружаем из localStorage) -----
-            let currentBalance = 0;
+        <div class="input-row">
+            <input type="number" id="amountInput" placeholder="Сумма, ₽" value="100" min="1" step="1" />
+            <button class="btn-primary" id="addBtn">✨ Внести</button>
+        </div>
 
-            function loadBalance() {
-                const stored = localStorage.getItem(STORAGE_KEY);
-                if (stored !== null) {
-                    const parsed = parseFloat(stored);
-                    if (!isNaN(parsed) && parsed >= 0) {
-                        currentBalance = Math.round(parsed); // округляем до рубля
-                    } else {
-                        currentBalance = 0;
-                    }
+        <!-- Быстрые суммы -->
+        <div class="quick-grid">
+            <button class="quick-btn" data-amount="50">50 ₽</button>
+            <button class="quick-btn" data-amount="150">150 ₽</button>
+            <button class="quick-btn highlight" data-amount="500">500 ₽</button>
+            <button class="quick-btn" data-amount="1000">1 000 ₽</button>
+        </div>
+
+        <!-- Дополнительные действия -->
+        <div class="footer-actions">
+            <button class="btn-ghost" id="resetBtn">⟳ Сбросить</button>
+        </div>
+    </div>
+
+    <!-- Подвал -->
+    <div class="footer-text">
+        <strong>❤️</strong> Спасибо, что ты с нами
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ===== Конфиг =====
+        const TARGET = 100000;
+        const STORAGE_KEY = 'dreamBalance';
+
+        // ===== Элементы =====
+        const balanceDisplay = document.getElementById('balanceDisplay');
+        const progressFill = document.getElementById('progressFill');
+        const percentLabel = document.getElementById('percentLabel');
+        const amountInput = document.getElementById('amountInput');
+        const addBtn = document.getElementById('addBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const quickBtns = document.querySelectorAll('.quick-btn');
+
+        // ===== Состояние =====
+        let currentBalance = 0;
+
+        // ===== Загрузка =====
+        function loadBalance() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored !== null) {
+                const parsed = parseFloat(stored);
+                if (!isNaN(parsed) && parsed >= 0) {
+                    currentBalance = Math.round(parsed);
                 } else {
-                    // при первом запуске — стартовый баланс 0
                     currentBalance = 0;
                 }
-                // защита от отрицательного
-                if (currentBalance < 0) currentBalance = 0;
-                // если больше цели — можно, но оставим, просто прогресс 100%
-            }
-
-            // ----- Сохраняем баланс -----
-            function saveBalance() {
-                localStorage.setItem(STORAGE_KEY, String(currentBalance));
-            }
-
-            // ----- Обновляем UI (баланс, прогресс, проценты) -----
-            function updateUI() {
-                // Форматируем баланс с разделителями тысяч
-                const formatted = new Intl.NumberFormat('ru-RU').format(currentBalance);
-                balanceDisplay.innerHTML = `${formatted}<small>₽</small>`;
-
-                // Процент достижения цели (не больше 100)
-                let percent = (currentBalance / TARGET) * 100;
-                if (percent > 100) percent = 100;
-                if (percent < 0) percent = 0;
-
-                progressFill.style.width = `${percent}%`;
-                percentLabel.textContent = `${Math.round(percent)}%`;
-            }
-
-            // ----- Добавляем сумму (проверка) -----
-            function addAmount(amount) {
-                if (typeof amount !== 'number' || isNaN(amount) || amount <= 0) {
-                    alert('Пожалуйста, введите положительное число.');
-                    return false;
-                }
-
-                // Округляем до целых рублей
-                const rounded = Math.round(amount);
-                if (rounded <= 0) {
-                    alert('Сумма должна быть больше 0 ₽');
-                    return false;
-                }
-
-                currentBalance += rounded;
-                // Если вдруг баланс стал отрицательным (не должно случиться)
-                if (currentBalance < 0) currentBalance = 0;
-
-                saveBalance();
-                updateUI();
-                return true;
-            }
-
-            // ----- Сброс баланса (с подтверждением) -----
-            function resetBalance() {
-                if (currentBalance === 0) {
-                    alert('Баланс уже нулевой 😉');
-                    return;
-                }
-                const confirmReset = confirm('Сбросить баланс до 0?');
-                if (!confirmReset) return;
-
+            } else {
                 currentBalance = 0;
-                saveBalance();
-                updateUI();
+            }
+            if (currentBalance < 0) currentBalance = 0;
+        }
+
+        function saveBalance() {
+            localStorage.setItem(STORAGE_KEY, String(currentBalance));
+        }
+
+        // ===== Обновление UI =====
+        function updateUI() {
+            const formatted = new Intl.NumberFormat('ru-RU').format(currentBalance);
+            balanceDisplay.innerHTML = `${formatted}<span class="currency">₽</span>`;
+
+            let percent = (currentBalance / TARGET) * 100;
+            if (percent > 100) percent = 100;
+            if (percent < 0) percent = 0;
+
+            progressFill.style.width = `${percent}%`;
+            percentLabel.textContent = `${Math.round(percent)}%`;
+        }
+
+        // ===== Добавление суммы =====
+        function addAmount(amount) {
+            if (typeof amount !== 'number' || isNaN(amount) || amount <= 0) {
+                alert('Введите сумму больше 0 ₽');
+                return false;
             }
 
-            // ----- Обработчик для кнопки "Внести" -----
-            function handleAddClick() {
-                let rawValue = amountInput.value.trim();
-                if (rawValue === '') {
-                    alert('Введите сумму');
-                    return;
-                }
-                // заменяем запятую на точку, чтобы парсилось
-                rawValue = rawValue.replace(',', '.');
-                const value = parseFloat(rawValue);
-                if (isNaN(value) || value <= 0) {
-                    alert('Введите корректную сумму (число больше 0)');
-                    return;
-                }
-                addAmount(value);
-                // не очищаем поле, чтобы можно было быстро добавить ещё
-                // но можно подсветить: оставляем как есть
+            const rounded = Math.round(amount);
+            if (rounded <= 0) {
+                alert('Сумма должна быть больше 0');
+                return false;
             }
 
-            // ----- Инициализация -----
-            function init() {
-                loadBalance();
-                updateUI();
+            currentBalance += rounded;
+            if (currentBalance < 0) currentBalance = 0;
 
-                // ----- Слушатели -----
-                addBtn.addEventListener('click', handleAddClick);
+            saveBalance();
+            updateUI();
 
-                // Enter в поле ввода
-                amountInput.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        handleAddClick();
+            // Лёгкая вибрация (если поддерживается)
+            if (navigator.vibrate) navigator.vibrate(10);
+
+            return true;
+        }
+
+        // ===== Сброс =====
+        function resetBalance() {
+            if (currentBalance === 0) {
+                alert('Баланс уже нулевой ✨');
+                return;
+            }
+            if (!confirm('Сбросить баланс до 0?')) return;
+            currentBalance = 0;
+            saveBalance();
+            updateUI();
+        }
+
+        // ===== Обработчик ввода =====
+        function handleAddClick() {
+            let raw = amountInput.value.trim().replace(',', '.');
+            if (raw === '') {
+                alert('Введите сумму');
+                return;
+            }
+            const value = parseFloat(raw);
+            if (isNaN(value) || value <= 0) {
+                alert('Введите корректную сумму');
+                return;
+            }
+            addAmount(value);
+        }
+
+        // ===== Инициализация =====
+        function init() {
+            loadBalance();
+            updateUI();
+
+            // Кнопка "Внести"
+            addBtn.addEventListener('click', handleAddClick);
+
+            // Enter в поле
+            amountInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAddClick();
+                }
+            });
+
+            // Быстрые кнопки
+            quickBtns.forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    const amount = parseInt(btn.getAttribute('data-amount'), 10);
+                    if (!isNaN(amount) && amount > 0) {
+                        addAmount(amount);
                     }
                 });
+            });
 
-                // Быстрые кнопки
-                quickBtns.forEach((btn) => {
-                    btn.addEventListener('click', (e) => {
-                        const amount = parseInt(btn.getAttribute('data-amount'), 10);
-                        if (!isNaN(amount) && amount > 0) {
-                            addAmount(amount);
-                        }
-                    });
-                });
+            // Сброс
+            resetBtn.addEventListener('click', resetBalance);
 
-                // Сброс
-                resetBtn.addEventListener('click', resetBalance);
+            // Автофокус на поле
+            amountInput.focus();
+            amountInput.select();
+        }
 
-                // Дополнительно: при изменении поля можно валидировать, но необязательно
-                amountInput.addEventListener('blur', () => {
-                    let val = amountInput.value.trim().replace(',', '.');
-                    if (val !== '') {
-                        const num = parseFloat(val);
-                        if (!isNaN(num) && num > 0) {
-                            // Можно округлить для красоты
-                            amountInput.value = Math.round(num);
-                        }
-                    }
-                });
-            }
+        init();
+    })();
+</script>
 
-            // Запускаем
-            init();
-        })();
-    </script>
 </body>
 </html>
