@@ -4,8 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Копим на мечту ✨</title>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js">
+    </script>
+
     <style>
-        /* ===== Глобальные стили ===== */
+        /* ===== Глобальные стили (такие же красивые) ===== */
         * {
             margin: 0;
             padding: 0;
@@ -23,7 +30,6 @@
             background-image: radial-gradient(ellipse at 50% 0%, #1e1430 0%, #0b0813 70%);
         }
 
-        /* ===== Основная карточка ===== */
         .card {
             max-width: 540px;
             width: 100%;
@@ -37,10 +43,9 @@
             text-align: center;
             position: relative;
             overflow: hidden;
-            transition: transform 0.2s ease;
+            animation: fadeUp 0.8s ease forwards;
         }
 
-        /* Декоративный глянец */
         .card::before {
             content: '';
             position: absolute;
@@ -52,12 +57,13 @@
             pointer-events: none;
         }
 
-        /* ===== Шапка ===== */
-        .header {
-            position: relative;
-            z-index: 1;
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
+        /* ===== Остальные стили (как в прошлой версии) ===== */
+        .header { position: relative; z-index: 1; }
         .badge {
             display: inline-block;
             background: linear-gradient(135deg, #7c3aed, #a855f7);
@@ -71,7 +77,6 @@
             margin-bottom: 14px;
             box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
         }
-
         h1 {
             font-size: 2.6rem;
             font-weight: 700;
@@ -79,17 +84,11 @@
             letter-spacing: -0.5px;
             line-height: 1.2;
         }
-
-        h1 .emoji {
-            display: inline-block;
-            animation: float 3s ease-in-out infinite;
-        }
-
+        h1 .emoji { display: inline-block; animation: float 3s ease-in-out infinite; }
         @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-6px); }
         }
-
         .subtitle {
             color: rgba(255, 255, 255, 0.5);
             font-size: 0.95rem;
@@ -97,7 +96,6 @@
             font-weight: 400;
         }
 
-        /* ===== Баланс ===== */
         .balance-wrap {
             position: relative;
             z-index: 1;
@@ -107,7 +105,6 @@
             padding: 24px 20px 18px;
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
-
         .balance-label {
             color: rgba(255, 255, 255, 0.35);
             font-size: 0.75rem;
@@ -115,7 +112,6 @@
             letter-spacing: 2px;
             font-weight: 600;
         }
-
         .balance-number {
             font-size: 4.2rem;
             font-weight: 800;
@@ -125,7 +121,6 @@
             letter-spacing: -1px;
             text-shadow: 0 0 40px rgba(124, 58, 237, 0.15);
         }
-
         .balance-number .currency {
             font-size: 1.8rem;
             font-weight: 600;
@@ -133,13 +128,11 @@
             margin-left: 4px;
         }
 
-        /* ===== Прогресс ===== */
         .progress-wrap {
             position: relative;
             z-index: 1;
             margin: 8px 0 6px;
         }
-
         .progress-bar {
             width: 100%;
             height: 8px;
@@ -148,7 +141,6 @@
             overflow: hidden;
             box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
         }
-
         .progress-fill {
             height: 100%;
             width: 0%;
@@ -157,7 +149,6 @@
             transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
             box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
         }
-
         .progress-info {
             display: flex;
             justify-content: space-between;
@@ -166,17 +157,9 @@
             color: rgba(255, 255, 255, 0.35);
             font-weight: 500;
         }
+        .progress-info .target { color: rgba(255, 255, 255, 0.5); }
+        .progress-info .percent { color: #a855f7; font-weight: 700; }
 
-        .progress-info .target {
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        .progress-info .percent {
-            color: #a855f7;
-            font-weight: 700;
-        }
-
-        /* ===== Секция "Помочь" ===== */
         .help-section {
             position: relative;
             z-index: 1;
@@ -186,25 +169,19 @@
             padding: 24px 20px 28px;
             border: 1px solid rgba(255, 255, 255, 0.04);
         }
-
         .help-title {
             color: #fff;
             font-size: 1.1rem;
             font-weight: 600;
             margin-bottom: 16px;
         }
+        .help-title span { color: #a855f7; }
 
-        .help-title span {
-            color: #a855f7;
-        }
-
-        /* Поле ввода + кнопка */
         .input-row {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
         }
-
         .input-row input {
             flex: 1;
             min-width: 130px;
@@ -219,19 +196,16 @@
             transition: all 0.2s ease;
             text-align: center;
         }
-
         .input-row input::placeholder {
             color: rgba(255, 255, 255, 0.2);
             font-weight: 400;
         }
-
         .input-row input:focus {
             outline: 1px solid #7c3aed;
             background: rgba(255, 255, 255, 0.07);
             box-shadow: 0 0 30px rgba(124, 58, 237, 0.05);
         }
 
-        /* Главная кнопка — ПРИВЛЕКАЕТ ВНИМАНИЕ */
         .btn-primary {
             padding: 16px 32px;
             border: none;
@@ -252,7 +226,6 @@
             position: relative;
             overflow: hidden;
         }
-
         .btn-primary::after {
             content: '';
             position: absolute;
@@ -260,25 +233,26 @@
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), transparent 50%);
             pointer-events: none;
         }
-
         .btn-primary:hover {
             transform: translateY(-2px) scale(1.02);
             box-shadow: 0 10px 40px rgba(124, 58, 237, 0.5);
         }
-
         .btn-primary:active {
             transform: translateY(2px) scale(0.98);
             box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
         }
+        .btn-primary:disabled {
+            opacity: 0.5;
+            transform: none;
+            pointer-events: none;
+        }
 
-        /* ===== Быстрые суммы ===== */
         .quick-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 8px;
             margin-top: 14px;
         }
-
         .quick-btn {
             padding: 12px 6px;
             border: 1px solid rgba(255, 255, 255, 0.06);
@@ -291,25 +265,19 @@
             transition: all 0.15s ease;
             font-family: inherit;
         }
-
         .quick-btn:hover {
             background: rgba(124, 58, 237, 0.15);
             border-color: rgba(124, 58, 237, 0.2);
             color: #fff;
             transform: translateY(-2px);
         }
-
-        .quick-btn:active {
-            transform: scale(0.95);
-        }
-
+        .quick-btn:active { transform: scale(0.95); }
         .quick-btn.highlight {
             border-color: #7c3aed;
             color: #a855f7;
             background: rgba(124, 58, 237, 0.08);
         }
 
-        /* ===== Доп. кнопки ===== */
         .footer-actions {
             display: flex;
             justify-content: center;
@@ -317,7 +285,6 @@
             margin-top: 20px;
             flex-wrap: wrap;
         }
-
         .btn-ghost {
             background: transparent;
             border: 1px solid rgba(255, 255, 255, 0.06);
@@ -330,13 +297,11 @@
             transition: all 0.15s ease;
             font-family: inherit;
         }
-
         .btn-ghost:hover {
             border-color: rgba(255, 255, 255, 0.15);
             color: rgba(255, 255, 255, 0.5);
         }
 
-        /* ===== Подвал ===== */
         .footer-text {
             margin-top: 24px;
             color: rgba(255, 255, 255, 0.12);
@@ -345,22 +310,17 @@
             position: relative;
             z-index: 1;
         }
+        .footer-text strong { color: rgba(255, 255, 255, 0.2); }
 
-        .footer-text strong {
-            color: rgba(255, 255, 255, 0.2);
+        .status-message {
+            margin-top: 12px;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.3);
+            min-height: 1.5em;
         }
+        .status-message.success { color: #4ade80; }
+        .status-message.error { color: #f87171; }
 
-        /* ===== Анимация при загрузке ===== */
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .card {
-            animation: fadeUp 0.8s ease forwards;
-        }
-
-        /* ===== Адаптив ===== */
         @media (max-width: 480px) {
             .card { padding: 28px 18px 32px; }
             h1 { font-size: 2rem; }
@@ -374,71 +334,89 @@
 </head>
 <body>
 
-<div class="card">
-    <!-- Шапка -->
-    <div class="header">
-        <div class="badge">🔥 Общая копилка</div>
-        <h1>
-            <span class="emoji">⭐</span> Мечта сбудется
-        </h1>
-        <p class="subtitle">Вместе мы справимся быстрее</p>
-    </div>
+    <div class="card">
+        <!-- Шапка -->
+        <div class="header">
+            <div class="badge">🔥 Общая копилка</div>
+            <h1><span class="emoji">⭐</span> Мечта сбудется</h1>
+            <p class="subtitle">Вместе мы справимся быстрее</p>
+        </div>
 
-    <!-- Баланс -->
-    <div class="balance-wrap">
-        <div class="balance-label">Собрано</div>
-        <div class="balance-number" id="balanceDisplay">
-            0<span class="currency">₽</span>
+        <!-- Баланс -->
+        <div class="balance-wrap">
+            <div class="balance-label">Собрано</div>
+            <div class="balance-number" id="balanceDisplay">
+                0<span class="currency">₽</span>
+            </div>
+        </div>
+
+        <!-- Прогресс -->
+        <div class="progress-wrap">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+            </div>
+            <div class="progress-info">
+                <span class="target">🎯 100 000 ₽</span>
+                <span class="percent" id="percentLabel">0%</span>
+            </div>
+        </div>
+
+        <!-- Секция помощи -->
+        <div class="help-section">
+            <div class="help-title">🤝 <span>Помоги</span> накопить</div>
+
+            <div class="input-row">
+                <input type="number" id="amountInput" placeholder="Сумма, ₽" value="100" min="1" step="1" />
+                <button class="btn-primary" id="addBtn">✨ Внести</button>
+            </div>
+
+            <div class="quick-grid">
+                <button class="quick-btn" data-amount="50">50 ₽</button>
+                <button class="quick-btn" data-amount="150">150 ₽</button>
+                <button class="quick-btn highlight" data-amount="500">500 ₽</button>
+                <button class="quick-btn" data-amount="1000">1 000 ₽</button>
+            </div>
+
+            <!-- Статус -->
+            <div class="status-message" id="statusMessage">🔄 Подключение к базе...</div>
+
+            <div class="footer-actions">
+                <button class="btn-ghost" id="resetBtn">⟳ Сбросить (только для теста)</button>
+            </div>
+        </div>
+
+        <div class="footer-text">
+            <strong>❤️</strong> Спасибо, что ты с нами
         </div>
     </div>
 
-    <!-- Прогресс -->
-    <div class="progress-wrap">
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
-        </div>
-        <div class="progress-info">
-            <span class="target">🎯 100 000 ₽</span>
-            <span class="percent" id="percentLabel">0%</span>
-        </div>
-    </div>
+    <script>
+        // ============================================================
+        // 1. НАСТРОЙКИ FIREBASE (твоя база)
+        // ============================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyB3n0Nj-c2NqhX3f6KOUIkOnzxBRb6bh08",
+            authDomain: "the-colony-tap.firebaseapp.com",
+            databaseURL: "https://the-colony-tap-default-rtdb.firebaseio.com",
+            projectId: "the-colony-tap",
+            storageBucket: "the-colony-tap.firebasestorage.app",
+            messagingSenderId: "1083321575328",
+            appId: "1:1083321575328:web:bf1ce8c0a05a92523ce8c7"
+        };
 
-    <!-- Секция помощи -->
-    <div class="help-section">
-        <div class="help-title">🤝 <span>Помоги</span> накопить</div>
+        // Инициализация
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
 
-        <div class="input-row">
-            <input type="number" id="amountInput" placeholder="Сумма, ₽" value="100" min="1" step="1" />
-            <button class="btn-primary" id="addBtn">✨ Внести</button>
-        </div>
-
-        <!-- Быстрые суммы -->
-        <div class="quick-grid">
-            <button class="quick-btn" data-amount="50">50 ₽</button>
-            <button class="quick-btn" data-amount="150">150 ₽</button>
-            <button class="quick-btn highlight" data-amount="500">500 ₽</button>
-            <button class="quick-btn" data-amount="1000">1 000 ₽</button>
-        </div>
-
-        <!-- Дополнительные действия -->
-        <div class="footer-actions">
-            <button class="btn-ghost" id="resetBtn">⟳ Сбросить</button>
-        </div>
-    </div>
-
-    <!-- Подвал -->
-    <div class="footer-text">
-        <strong>❤️</strong> Спасибо, что ты с нами
-    </div>
-</div>
-
-<script>
-    (function() {
-        // ===== Конфиг =====
+        // ============================================================
+        // 2. НАСТРОЙКИ ПРИЛОЖЕНИЯ
+        // ============================================================
         const TARGET = 100000;
-        const STORAGE_KEY = 'dreamBalance';
+        const DB_PATH = 'balance'; // путь в базе
 
-        // ===== Элементы =====
+        // ============================================================
+        // 3. ЭЛЕМЕНТЫ UI
+        // ============================================================
         const balanceDisplay = document.getElementById('balanceDisplay');
         const progressFill = document.getElementById('progressFill');
         const percentLabel = document.getElementById('percentLabel');
@@ -446,36 +424,22 @@
         const addBtn = document.getElementById('addBtn');
         const resetBtn = document.getElementById('resetBtn');
         const quickBtns = document.querySelectorAll('.quick-btn');
+        const statusMessage = document.getElementById('statusMessage');
 
-        // ===== Состояние =====
+        // ============================================================
+        // 4. СОСТОЯНИЕ
+        // ============================================================
         let currentBalance = 0;
+        let isUpdating = false; // чтобы не было конфликтов при обновлении
 
-        // ===== Загрузка =====
-        function loadBalance() {
-            const stored = localStorage.getItem(STORAGE_KEY);
-            if (stored !== null) {
-                const parsed = parseFloat(stored);
-                if (!isNaN(parsed) && parsed >= 0) {
-                    currentBalance = Math.round(parsed);
-                } else {
-                    currentBalance = 0;
-                }
-            } else {
-                currentBalance = 0;
-            }
-            if (currentBalance < 0) currentBalance = 0;
-        }
-
-        function saveBalance() {
-            localStorage.setItem(STORAGE_KEY, String(currentBalance));
-        }
-
-        // ===== Обновление UI =====
-        function updateUI() {
-            const formatted = new Intl.NumberFormat('ru-RU').format(currentBalance);
+        // ============================================================
+        // 5. ФУНКЦИИ UI
+        // ============================================================
+        function updateUI(balance) {
+            const formatted = new Intl.NumberFormat('ru-RU').format(balance);
             balanceDisplay.innerHTML = `${formatted}<span class="currency">₽</span>`;
 
-            let percent = (currentBalance / TARGET) * 100;
+            let percent = (balance / TARGET) * 100;
             if (percent > 100) percent = 100;
             if (percent < 0) percent = 0;
 
@@ -483,62 +447,138 @@
             percentLabel.textContent = `${Math.round(percent)}%`;
         }
 
-        // ===== Добавление суммы =====
-        function addAmount(amount) {
+        function setStatus(text, type = '') {
+            statusMessage.textContent = text;
+            statusMessage.className = 'status-message ' + type;
+        }
+
+        // ============================================================
+        // 6. РАБОТА С БАЗОЙ
+        // ============================================================
+
+        // --- Чтение баланса (один раз + слушатель изменений) ---
+        function listenBalance() {
+            const balanceRef = database.ref(DB_PATH);
+
+            // Сначала читаем один раз, чтобы показать данные
+            balanceRef.once('value')
+                .then((snapshot) => {
+                    const val = snapshot.val();
+                    if (val !== null && typeof val === 'number' && !isNaN(val)) {
+                        currentBalance = Math.round(val);
+                    } else {
+                        // Если в базе нет данных, создаём начальное значение 0
+                        currentBalance = 0;
+                        balanceRef.set(0);
+                    }
+                    updateUI(currentBalance);
+                    setStatus('✅ Данные загружены', 'success');
+                })
+                .catch((error) => {
+                    console.error('Ошибка загрузки:', error);
+                    setStatus('❌ Ошибка подключения к базе', 'error');
+                });
+
+            // --- Слушаем изменения в реальном времени (синхронизация) ---
+            balanceRef.on('value', (snapshot) => {
+                const val = snapshot.val();
+                if (val !== null && typeof val === 'number' && !isNaN(val)) {
+                    const newBalance = Math.round(val);
+                    if (newBalance !== currentBalance) {
+                        currentBalance = newBalance;
+                        updateUI(currentBalance);
+                        setStatus('🔄 Баланс обновлён', 'success');
+                    }
+                }
+            }, (error) => {
+                console.error('Ошибка слушателя:', error);
+                setStatus('❌ Потеря связи с базой', 'error');
+            });
+        }
+
+        // --- Запись нового баланса ---
+        function setBalance(newBalance, callback) {
+            if (isUpdating) return;
+            isUpdating = true;
+            addBtn.disabled = true;
+
+            const rounded = Math.round(newBalance);
+            if (rounded < 0) {
+                setStatus('❌ Баланс не может быть отрицательным', 'error');
+                isUpdating = false;
+                addBtn.disabled = false;
+                return;
+            }
+
+            const balanceRef = database.ref(DB_PATH);
+            balanceRef.set(rounded)
+                .then(() => {
+                    // База обновится, слушатель сам подхватит новое значение
+                    setStatus('✅ Спасибо! Баланс обновлён', 'success');
+                    if (navigator.vibrate) navigator.vibrate(10);
+                })
+                .catch((error) => {
+                    console.error('Ошибка записи:', error);
+                    setStatus('❌ Не удалось сохранить. Попробуй ещё.', 'error');
+                })
+                .finally(() => {
+                    isUpdating = false;
+                    addBtn.disabled = false;
+                });
+        }
+
+        // --- Сброс (только для теста) ---
+        function resetBalance() {
+            if (currentBalance === 0) {
+                setStatus('Баланс уже нулевой ✨', '');
+                return;
+            }
+            if (!confirm('Сбросить баланс до 0? Это действие увидят все!')) return;
+            setBalance(0);
+        }
+
+        // ============================================================
+        // 7. ОБРАБОТЧИКИ ДЕЙСТВИЙ
+        // ============================================================
+
+        // --- Добавление суммы ---
+        function handleAddAmount(amount) {
             if (typeof amount !== 'number' || isNaN(amount) || amount <= 0) {
-                alert('Введите сумму больше 0 ₽');
-                return false;
+                setStatus('❌ Введите сумму больше 0', 'error');
+                return;
             }
 
             const rounded = Math.round(amount);
             if (rounded <= 0) {
-                alert('Сумма должна быть больше 0');
-                return false;
-            }
-
-            currentBalance += rounded;
-            if (currentBalance < 0) currentBalance = 0;
-
-            saveBalance();
-            updateUI();
-
-            // Лёгкая вибрация (если поддерживается)
-            if (navigator.vibrate) navigator.vibrate(10);
-
-            return true;
-        }
-
-        // ===== Сброс =====
-        function resetBalance() {
-            if (currentBalance === 0) {
-                alert('Баланс уже нулевой ✨');
+                setStatus('❌ Сумма должна быть больше 0', 'error');
                 return;
             }
-            if (!confirm('Сбросить баланс до 0?')) return;
-            currentBalance = 0;
-            saveBalance();
-            updateUI();
+
+            const newBalance = currentBalance + rounded;
+            setBalance(newBalance);
         }
 
-        // ===== Обработчик ввода =====
+        // --- Обработчик кнопки "Внести" ---
         function handleAddClick() {
             let raw = amountInput.value.trim().replace(',', '.');
             if (raw === '') {
-                alert('Введите сумму');
+                setStatus('❌ Введите сумму', 'error');
                 return;
             }
             const value = parseFloat(raw);
             if (isNaN(value) || value <= 0) {
-                alert('Введите корректную сумму');
+                setStatus('❌ Введите корректную сумму', 'error');
                 return;
             }
-            addAmount(value);
+            handleAddAmount(value);
         }
 
-        // ===== Инициализация =====
+        // ============================================================
+        // 8. ИНИЦИАЛИЗАЦИЯ
+        // ============================================================
         function init() {
-            loadBalance();
-            updateUI();
+            // Подключаемся к базе и слушаем изменения
+            listenBalance();
 
             // Кнопка "Внести"
             addBtn.addEventListener('click', handleAddClick);
@@ -556,7 +596,7 @@
                 btn.addEventListener('click', () => {
                     const amount = parseInt(btn.getAttribute('data-amount'), 10);
                     if (!isNaN(amount) && amount > 0) {
-                        addAmount(amount);
+                        handleAddAmount(amount);
                     }
                 });
             });
@@ -564,14 +604,16 @@
             // Сброс
             resetBtn.addEventListener('click', resetBalance);
 
-            // Автофокус на поле
+            // Фокус на поле
             amountInput.focus();
             amountInput.select();
+
+            setStatus('🔄 Подключение к базе...', '');
         }
 
+        // Запускаем
         init();
-    })();
-</script>
+    </script>
 
 </body>
 </html>
