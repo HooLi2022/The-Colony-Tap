@@ -20,7 +20,7 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 950px;
             margin: 0 auto;
             background: #1e1e32;
             border-radius: 20px;
@@ -325,10 +325,11 @@
             padding: 12px 14px;
             border-radius: 10px;
             background: rgba(255, 255, 255, 0.02);
-            cursor: pointer;
             margin-bottom: 4px;
             border: 1px solid transparent;
             transition: all 0.2s ease;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .service-row:hover {
@@ -346,6 +347,8 @@
             align-items: center;
             gap: 10px;
             flex: 1;
+            min-width: 180px;
+            cursor: pointer;
         }
 
         .check-box {
@@ -377,12 +380,18 @@
             font-weight: 600;
         }
 
+        .service-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
         .service-price {
             font-size: 16px;
             font-weight: 700;
             color: #ff9800;
             white-space: nowrap;
-            margin-left: 10px;
         }
 
         .service-row.selected .service-price {
@@ -396,8 +405,215 @@
             margin-left: 4px;
         }
 
+        .detail-btn {
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid #ff9800;
+            background: transparent;
+            color: #ff9800;
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-btn:hover {
+            background: #ff9800;
+            color: #000;
+            box-shadow: 0 0 12px rgba(255, 152, 0, 0.4);
+        }
+
         .hidden {
             display: none !important;
+        }
+
+        /* Модальное окно */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal {
+            background: #1e1e32;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 152, 0, 0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal::-webkit-scrollbar {
+            width: 5px;
+        }
+        .modal::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .modal::-webkit-scrollbar-thumb {
+            background: rgba(255, 152, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+            padding: 18px 24px;
+            border-radius: 16px 16px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #000;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid #000;
+            background: transparent;
+            color: #000;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            background: #000;
+            color: #ff9800;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-section {
+            margin-bottom: 20px;
+        }
+
+        .modal-section h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #ff9800;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .modal-section p,
+        .modal-section li {
+            font-size: 14px;
+            color: #ccc;
+            line-height: 1.7;
+            margin-bottom: 8px;
+        }
+
+        .modal-section ul,
+        .modal-section ol {
+            padding-left: 20px;
+            margin-bottom: 12px;
+        }
+
+        .modal-section li {
+            margin-bottom: 6px;
+        }
+
+        .modal-image {
+            width: 100%;
+            max-width: 100%;
+            border-radius: 10px;
+            margin: 12px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 10px;
+            margin: 12px 0;
+            background: #000;
+        }
+
+        .modal-video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        .modal-warning {
+            background: rgba(255, 152, 0, 0.1);
+            border-left: 4px solid #ff9800;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin: 12px 0;
+            font-size: 13px;
+            color: #ff9800;
+        }
+
+        .modal-tools {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 8px 0;
+        }
+
+        .modal-tool-tag {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            color: #ddd;
         }
 
         /* Футер */
@@ -433,7 +649,8 @@
                 font-size: 20px;
             }
             .service-row {
-                padding: 10px 10px;
+                padding: 10px;
+                gap: 6px;
             }
             .service-name {
                 font-size: 12px;
@@ -447,6 +664,17 @@
             .filter-btn {
                 padding: 6px 10px;
                 font-size: 10px;
+            }
+            .detail-btn {
+                padding: 5px 10px;
+                font-size: 9px;
+            }
+            .modal {
+                width: 95%;
+                max-height: 85vh;
+            }
+            .modal-title {
+                font-size: 16px;
             }
         }
     </style>
@@ -504,201 +732,100 @@
 
         <!-- Футер -->
         <div class="footer">
-            © 2026 AutoService. Цены без учёта запчастей и материалов.
+            © 2026 AutoService. Цены без учёта запчастей и материалов.<br>
+            Нажмите «Подробнее» для просмотра инструкции по выполнению работы.
+        </div>
+    </div>
+
+    <!-- Модальное окно (скрыто по умолчанию) -->
+    <div class="modal-overlay hidden" id="modalOverlay">
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <span class="modal-title" id="modalTitle">Инструкция</span>
+                <button class="modal-close" id="modalClose">✕</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
         </div>
     </div>
 
     <script>
-        // ==================== АВТОМОБИЛИ (популярные в России) ====================
+        // ==================== АВТОМОБИЛИ ====================
         const cars = [
-            // VAG (Volkswagen, Skoda, Audi)
             { id: 'vw_passat_b6', brand: 'VW', model: 'Passat B6', engine: '1.6 BSE', icon: '🚙', badge: 'Средне',
                 multiplier: 1.0, custom: {} },
-            { id: 'vw_passat_b7', brand: 'VW', model: 'Passat B7', engine: '1.8 TSI', icon: '🚙', badge: 'Средне',
-                multiplier: 1.1, custom: {} },
-            { id: 'vw_golf6', brand: 'VW', model: 'Golf 6', engine: '1.6 BSE', icon: '🚗', badge: 'Легко',
-                multiplier: 0.9, custom: {} },
-            { id: 'vw_jetta6', brand: 'VW', model: 'Jetta 6', engine: '1.6 MPI', icon: '🚗', badge: 'Легко',
-                multiplier: 0.9, custom: {} },
             { id: 'vw_polo_sedan', brand: 'VW', model: 'Polo Sedan', engine: '1.6 CFNA', icon: '🚗', badge: 'Легко',
                 multiplier: 0.85, custom: {} },
             { id: 'vw_tiguan', brand: 'VW', model: 'Tiguan', engine: '2.0 TSI', icon: '🚙', badge: 'Сложно',
                 multiplier: 1.3, custom: { 8: 5500, 14: 3000 } },
-            { id: 'vw_touareg', brand: 'VW', model: 'Touareg', engine: '3.0 TDI', icon: '🚙', badge: 'Очень сложно',
-                multiplier: 1.6, custom: { 7: 3500, 8: 7000, 14: 4000 } },
-
-            { id: 'skoda_octavia_a5', brand: 'Skoda', model: 'Octavia A5', engine: '1.6 BSE', icon: '🚗', badge: 'Легко',
+            { id: 'skoda_octavia_a5', brand: 'Skoda', model: 'Octavia A5', engine: '1.6 BSE', icon: '🚗',
+            badge: 'Легко',
                 multiplier: 0.85, custom: {} },
-            { id: 'skoda_octavia_a7', brand: 'Skoda', model: 'Octavia A7', engine: '1.8 TSI', icon: '🚗',
-                badge: 'Средне', multiplier: 1.0, custom: {} },
             { id: 'skoda_rapid', brand: 'Skoda', model: 'Rapid', engine: '1.6 CFNA', icon: '🚗', badge: 'Легко',
                 multiplier: 0.8, custom: {} },
-            { id: 'skoda_superb', brand: 'Skoda', model: 'Superb', engine: '2.0 TSI', icon: '🚙', badge: 'Сложно',
-                multiplier: 1.3, custom: { 8: 5500, 14: 3000 } },
-
             { id: 'audi_a4_b7', brand: 'Audi', model: 'A4 B7', engine: '2.0 TFSI', icon: '🏎️', badge: 'Сложно',
                 multiplier: 1.4, custom: { 7: 2800, 8: 5500, 14: 3000 } },
-            { id: 'audi_a6_c6', brand: 'Audi', model: 'A6 C6', engine: '2.4/3.0', icon: '🏎️', badge: 'Очень сложно',
-                multiplier: 1.6, custom: { 7: 3500, 8: 7000, 14: 4000 } },
-            { id: 'audi_q5', brand: 'Audi', model: 'Q5', engine: '2.0 TFSI', icon: '🏎️', badge: 'Сложно',
-                multiplier: 1.5, custom: { 7: 3000, 8: 6000, 14: 3500 } },
-
-            // BMW
             { id: 'bmw_e90', brand: 'BMW', model: '3 E90', engine: '320i N46', icon: '🚘', badge: 'Сложно',
                 multiplier: 1.5, custom: { 7: 3200, 8: 6000, 14: 3500 } },
             { id: 'bmw_f30', brand: 'BMW', model: '3 F30', engine: '320i N20', icon: '🚘', badge: 'Сложно',
                 multiplier: 1.5, custom: { 7: 3500, 8: 6500, 14: 3800 } },
-            { id: 'bmw_e70', brand: 'BMW', model: 'X5 E70', engine: '3.0d', icon: '🚘', badge: 'Очень сложно',
-                multiplier: 1.8, custom: { 7: 4000, 8: 8000, 14: 5000 } },
-            { id: 'bmw_x3_f25', brand: 'BMW', model: 'X3 F25', engine: '2.0d', icon: '🚘', badge: 'Сложно',
-                multiplier: 1.5, custom: { 7: 3200, 8: 6000, 14: 3800 } },
-
-            // Mercedes
             { id: 'mb_w204', brand: 'MB', model: 'C-klasse W204', engine: 'C180/C200', icon: '🚘', badge: 'Сложно',
                 multiplier: 1.5, custom: { 7: 3200, 8: 6000, 14: 3500 } },
-            { id: 'mb_w211', brand: 'MB', model: 'E-klasse W211', engine: 'E200/E240', icon: '🚘', badge: 'Сложно',
-                multiplier: 1.5, custom: { 7: 3200, 8: 6000, 14: 3500 } },
-            { id: 'mb_w164', brand: 'MB', model: 'ML W164', engine: 'ML350', icon: '🚘', badge: 'Очень сложно',
-                multiplier: 1.7, custom: { 7: 4000, 8: 7500, 14: 4500 } },
-
-            // Toyota / Lexus
-            { id: 'toyota_camry40', brand: 'Toyota', model: 'Camry V40', engine: '2.4', icon: '🚙', badge: 'Средне',
-                multiplier: 1.0, custom: {} },
             { id: 'toyota_camry50', brand: 'Toyota', model: 'Camry V50', engine: '2.5', icon: '🚙', badge: 'Средне',
                 multiplier: 1.0, custom: {} },
             { id: 'toyota_corolla', brand: 'Toyota', model: 'Corolla', engine: '1.6', icon: '🚗', badge: 'Легко',
                 multiplier: 0.85, custom: {} },
             { id: 'toyota_rav4', brand: 'Toyota', model: 'RAV4', engine: '2.0', icon: '🚙', badge: 'Средне',
                 multiplier: 1.1, custom: {} },
-            { id: 'toyota_land_cruiser', brand: 'Toyota', model: 'Land Cruiser 200', engine: '4.5D', icon: '🚙',
-                badge: 'Сложно', multiplier: 1.4, custom: { 8: 5500, 14: 3000 } },
-            { id: 'lexus_rx350', brand: 'Lexus', model: 'RX350', engine: '3.5', icon: '🏎️', badge: 'Сложно',
-                multiplier: 1.4, custom: { 8: 5500, 14: 3000 } },
-
-            // Nissan / Infiniti
             { id: 'nissan_x-trail_t31', brand: 'Nissan', model: 'X-Trail T31', engine: '2.0', icon: '🚙',
-                badge: 'Средне', multiplier: 1.0, custom: {} },
+            badge: 'Средне',
+                multiplier: 1.0, custom: {} },
             { id: 'nissan_qashqai', brand: 'Nissan', model: 'Qashqai J10', engine: '1.6/2.0', icon: '🚙',
-                badge: 'Средне', multiplier: 1.0, custom: {} },
-            { id: 'nissan_almera', brand: 'Nissan', model: 'Almera G15', engine: '1.6', icon: '🚗', badge: 'Легко',
-                multiplier: 0.8, custom: {} },
-            { id: 'nissan_teana', brand: 'Nissan', model: 'Teana J32', engine: '2.5 V6', icon: '🚙', badge: 'Сложно',
-                multiplier: 1.2, custom: { 8: 5000, 14: 2800 } },
-
-            // KIA / Hyundai
+            badge: 'Средне',
+                multiplier: 1.0, custom: {} },
             { id: 'kia_rio', brand: 'KIA', model: 'Rio', engine: '1.6 G4FC', icon: '🚗', badge: 'Легко',
             multiplier: 0.8,
                 custom: {} },
             { id: 'kia_ceed', brand: 'KIA', model: "Cee'd", engine: '1.6 G4FC', icon: '🚗', badge: 'Легко',
                 multiplier: 0.85, custom: {} },
-            { id: 'kia_sportage', brand: 'KIA', model: 'Sportage', engine: '2.0', icon: '🚙', badge: 'Средне',
-                multiplier: 1.0, custom: {} },
-            { id: 'kia_sorento', brand: 'KIA', model: 'Sorento', engine: '2.4/2.2D', icon: '🚙', badge: 'Средне',
-                multiplier: 1.1, custom: {} },
             { id: 'hyundai_solaris', brand: 'Hyundai', model: 'Solaris', engine: '1.6 G4FC', icon: '🚗',
             badge: 'Легко',
                 multiplier: 0.8, custom: {} },
-            { id: 'hyundai_ix35', brand: 'Hyundai', model: 'ix35', engine: '2.0', icon: '🚙', badge: 'Средне',
-                multiplier: 1.0, custom: {} },
-            { id: 'hyundai_santa_fe', brand: 'Hyundai', model: 'Santa Fe', engine: '2.4/2.2D', icon: '🚙',
-                badge: 'Средне', multiplier: 1.1, custom: {} },
-
-            // Renault
             { id: 'reno_logan', brand: 'Renault', model: 'Logan', engine: '1.6 K7M', icon: '🚕', badge: 'Легко',
                 multiplier: 0.75, custom: {} },
             { id: 'reno_duster', brand: 'Renault', model: 'Duster', engine: '2.0 F4R', icon: '🚙', badge: 'Легко',
                 multiplier: 0.85, custom: {} },
-            { id: 'reno_megane3', brand: 'Renault', model: 'Megane 3', engine: '1.6/2.0', icon: '🚗', badge: 'Средне',
-                multiplier: 0.95, custom: {} },
-
-            // Ford
-            { id: 'ford_focus2', brand: 'Ford', model: 'Focus 2', engine: '1.6 Duratec', icon: '🚓', badge: 'Средне',
-                multiplier: 0.9, custom: {} },
             { id: 'ford_focus3', brand: 'Ford', model: 'Focus 3', engine: '1.6/2.0', icon: '🚓', badge: 'Средне',
                 multiplier: 1.0, custom: {} },
-            { id: 'ford_mondeo4', brand: 'Ford', model: 'Mondeo 4', engine: '2.0 EcoBoost', icon: '🚙',
-            badge: 'Средне',
-                multiplier: 1.1, custom: {} },
-            { id: 'ford_kuga', brand: 'Ford', model: 'Kuga', engine: '2.5', icon: '🚙', badge: 'Средне',
-            multiplier: 1.1,
-                custom: {} },
-
-            // Chevrolet / Opel
-            { id: 'chevrolet_aveo', brand: 'Chevrolet', model: 'Aveo T300', engine: '1.6', icon: '🚗', badge: 'Легко',
-                multiplier: 0.8, custom: {} },
             { id: 'chevrolet_cruze', brand: 'Chevrolet', model: 'Cruze', engine: '1.8', icon: '🚗', badge: 'Средне',
-                multiplier: 0.95, custom: {} },
-            { id: 'opel_astra_h', brand: 'Opel', model: 'Astra H', engine: '1.6 Z16XER', icon: '🚗', badge: 'Средне',
                 multiplier: 0.95, custom: {} },
             { id: 'opel_astra_j', brand: 'Opel', model: 'Astra J', engine: '1.6/1.4T', icon: '🚗', badge: 'Средне',
                 multiplier: 1.0, custom: {} },
-            { id: 'opel_insignia', brand: 'Opel', model: 'Insignia', engine: '2.0T', icon: '🚙', badge: 'Сложно',
-                multiplier: 1.2, custom: { 8: 5000, 14: 2800 } },
-
-            // Mitsubishi
             { id: 'mitsu_lancer_x', brand: 'Mitsubishi', model: 'Lancer X', engine: '1.8/2.0', icon: '🚗',
             badge: 'Средне',
                 multiplier: 1.0, custom: {} },
-            { id: 'mitsu_outlander', brand: 'Mitsubishi', model: 'Outlander', engine: '2.4', icon: '🚙',
-            badge: 'Средне',
-                multiplier: 1.1, custom: {} },
-            { id: 'mitsu_pajero4', brand: 'Mitsubishi', model: 'Pajero 4', engine: '3.0/3.2D', icon: '🚙',
-            badge: 'Сложно',
-                multiplier: 1.3, custom: { 8: 5500, 14: 3000 } },
-
-            // Mazda
-            { id: 'mazda3', brand: 'Mazda', model: '3', engine: '1.6/2.0', icon: '🚗', badge: 'Средне', multiplier: 1.0,
+            { id: 'mazda3', brand: 'Mazda', model: '3', engine: '1.6/2.0', icon: '🚗', badge: 'Средне',
+            multiplier: 1.0,
                 custom: {} },
-            { id: 'mazda6', brand: 'Mazda', model: '6', engine: '2.0/2.5', icon: '🚙', badge: 'Средне',
-            multiplier: 1.1,
-                custom: {} },
-            { id: 'mazda_cx5', brand: 'Mazda', model: 'CX-5', engine: '2.0/2.5', icon: '🚙', badge: 'Средне',
-                multiplier: 1.1, custom: {} },
-
-            // Honda
             { id: 'honda_civic', brand: 'Honda', model: 'Civic', engine: '1.8', icon: '🚗', badge: 'Средне',
                 multiplier: 1.0, custom: {} },
-            { id: 'honda_accord', brand: 'Honda', model: 'Accord', engine: '2.4', icon: '🚙', badge: 'Средне',
-                multiplier: 1.1, custom: {} },
-            { id: 'honda_crv', brand: 'Honda', model: 'CR-V', engine: '2.0/2.4', icon: '🚙', badge: 'Средне',
-                multiplier: 1.1, custom: {} },
-
-            // Subaru
             { id: 'subaru_forester', brand: 'Subaru', model: 'Forester', engine: '2.5', icon: '🚙', badge: 'Сложно',
                 multiplier: 1.3, custom: { 8: 5500, 7: 2600 } },
-            { id: 'subaru_outback', brand: 'Subaru', model: 'Outback', engine: '2.5', icon: '🚙', badge: 'Сложно',
-                multiplier: 1.3, custom: { 8: 5500, 7: 2600 } },
-
-            // Лада
-            { id: 'lada_priora', brand: 'Lada', model: 'Priora', engine: '1.6 16V', icon: '🚕', badge: 'Очень легко',
-                multiplier: 0.6, custom: {} },
-            { id: 'lada_granta', brand: 'Lada', model: 'Granta', engine: '1.6 8V', icon: '🚕', badge: 'Очень легко',
-                multiplier: 0.55, custom: {} },
             { id: 'lada_vesta', brand: 'Lada', model: 'Vesta', engine: '1.6/1.8', icon: '🚕', badge: 'Легко',
                 multiplier: 0.7, custom: {} },
-            { id: 'lada_largus', brand: 'Lada', model: 'Largus', engine: '1.6 K7M', icon: '🚕', badge: 'Легко',
-                multiplier: 0.7, custom: {} },
+            { id: 'lada_granta', brand: 'Lada', model: 'Granta', engine: '1.6 8V', icon: '🚕', badge: 'Очень легко',
+                multiplier: 0.55, custom: {} },
             { id: 'lada_niva', brand: 'Lada', model: 'Niva 4x4', engine: '1.7', icon: '🚙', badge: 'Легко',
                 multiplier: 0.65, custom: {} },
-
-            // ГАЗ / УАЗ
-            { id: 'gazelle', brand: 'ГАЗ', model: 'Gazelle', engine: 'УМЗ 4216', icon: '🚚', badge: 'Средне',
-                multiplier: 0.9, custom: {} },
             { id: 'uaz_patriot', brand: 'УАЗ', model: 'Patriot', engine: 'ЗМЗ 409', icon: '🚙', badge: 'Средне',
                 multiplier: 0.85, custom: {} },
-
-            // Китайские авто
+            { id: 'gazelle', brand: 'ГАЗ', model: 'Gazelle', engine: 'УМЗ 4216', icon: '🚚', badge: 'Средне',
+                multiplier: 0.9, custom: {} },
+            { id: 'haval_jolion', brand: 'Haval', model: 'Jolion', engine: '1.5T', icon: '🚙', badge: 'Средне',
+                multiplier: 0.95, custom: {} },
             { id: 'chery_tiggo', brand: 'Chery', model: 'Tiggo 4', engine: '1.5T', icon: '🚙', badge: 'Средне',
                 multiplier: 0.9, custom: {} },
             { id: 'geely_atlas', brand: 'Geely', model: 'Atlas', engine: '2.4', icon: '🚙', badge: 'Средне',
                 multiplier: 0.95, custom: {} },
-            { id: 'haval_jolion', brand: 'Haval', model: 'Jolion', engine: '1.5T', icon: '🚙', badge: 'Средне',
-                multiplier: 0.95, custom: {} },
-            { id: 'changan_cs35', brand: 'Changan', model: 'CS35 Plus', engine: '1.6', icon: '🚙', badge: 'Средне',
-                multiplier: 0.9, custom: {} },
-            { id: 'omoda_c5', brand: 'Omoda', model: 'C5', engine: '1.5T', icon: '🚙', badge: 'Средне',
-            multiplier: 0.95,
-                custom: {} },
         ];
 
         // ==================== УСЛУГИ ====================
@@ -724,11 +851,226 @@
             catName: '⚙️ ТРАНСМИССИЯ' },
             { id: 15, name: 'Устранение скрипа ручки КПП', price: 500, cat: 'transmission',
             catName: '⚙️ ТРАНСМИССИЯ' },
-            { id: 16, name: 'Снятие/установка задних барабанов (2 шт)', price: 800, cat: 'brakes',
+            { id: 16, name: 'Замена тормозных колодок (перед)', price: 1200, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
+            { id: 17, name: 'Замена тормозных колодок (зад)', price: 1500, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
+            { id: 18, name: 'Замена тормозных дисков (перед)', price: 2000, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
+            { id: 19, name: 'Снятие/установка задних барабанов (2 шт)', price: 800, cat: 'brakes',
             catName: '🛑 ТОРМОЗА' },
-            { id: 17, name: 'Покраска задних барабанов (2 шт)', price: 1200, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
-            { id: 18, name: 'Сварочные работы (от)', price: 500, cat: 'welding', catName: '🔥 СВАРКА' },
+            { id: 20, name: 'Покраска задних барабанов (2 шт)', price: 1200, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
+            { id: 21, name: 'Замена тормозной жидкости', price: 1000, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
+            { id: 22, name: 'Сварочные работы (от)', price: 500, cat: 'welding', catName: '🔥 СВАРКА' },
         ];
+
+        // ==================== ИНСТРУКЦИИ ДЛЯ МОДАЛЬНОГО ОКНА ====================
+        const instructions = {
+            1: {
+                title: 'Компьютерная диагностика',
+                tools: ['Сканер OBD2', 'Ноутбук / планшет', 'Программа диагностики (VCDS, FORScan, Launch и др.)'],
+                steps: [
+                    'Найдите диагностический разъём OBD2 (обычно под рулевой колонкой или в бардачке).',
+                    'Подключите сканер к разъёму OBD2.',
+                    'Включите зажигание (двигатель можно не запускать).',
+                    'Запустите программу диагностики на ноутбуке/планшете.',
+                    'Выберите марку и модель автомобиля.',
+                    'Нажмите «Считать ошибки» (Read Fault Codes).',
+                    'Запишите все найденные коды ошибок.',
+                    'При необходимости выполните сброс ошибок после устранения неисправностей.',
+                ],
+                warning: 'Не стирайте ошибки до выяснения причины! Коды ошибок — это подсказка, а не приговор.',
+                images: [],
+                video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                videoTitle: 'Видео: Как провести компьютерную диагностику',
+            },
+            2: {
+                title: 'Замена масла и масляного фильтра',
+                tools: ['Ключ для сливной пробки', 'Съёмник масляного фильтра', 'Ёмкость для отработки (5-6 л)',
+                    'Воронка', 'Ветошь', 'Перчатки'
+                ],
+                steps: [
+                    'Прогрейте двигатель до рабочей температуры (5-7 минут).',
+                    'Заглушите двигатель и откройте капот.',
+                    'Открутите крышку маслозаливной горловины.',
+                    'Поднимите автомобиль на подъёмнике или домкрате с упорами.',
+                    'Снимите защиту двигателя (если есть).',
+                    'Подставьте ёмкость и аккуратно открутите сливную пробку поддона.',
+                    'Дождитесь полного слива масла (10-15 минут).',
+                    'Съёмником открутите масляный фильтр (осторожно — в нём тоже масло!).',
+                    'Смажьте уплотнительное кольцо нового фильтра свежим маслом.',
+                    'Закрутите новый фильтр от руки + доверните на 3/4 оборота.',
+                    'Закрутите сливную пробку (при необходимости замените прокладку).',
+                    'Залейте новое масло через воронку (сверяйтесь с объёмом по инструкции).',
+                    'Проверьте уровень щупом, долейте при необходимости.',
+                    'Запустите двигатель на 2-3 минуты, проверьте отсутствие течи.',
+                    'Установите защиту двигателя обратно.',
+                ],
+                warning: 'Отработанное масло токсично! Сдавайте его в пункты приёма. Не сливайте в землю или канализацию.',
+                images: [],
+                video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                videoTitle: 'Видео: Замена масла своими руками',
+            },
+            5: {
+                title: 'Замена свечей зажигания (4 шт)',
+                tools: ['Свечной ключ (16 мм или 21 мм)', 'Динамометрический ключ', 'Щётка по металлу',
+                    'Сжатый воздух (баллончик)', 'Диэлектрическая смазка'
+                ],
+                steps: [
+                    'Дайте двигателю полностью остыть (работа с горячим мотором опасна!).',
+                    'Снимите декоративную крышку двигателя.',
+                    'Продуйте свечные колодцы сжатым воздухом, чтобы грязь не попала в цилиндры.',
+                    'Отсоедините разъёмы от катушек зажигания.',
+                    'Открутите болты крепления катушек и аккуратно извлеките их.',
+                    'Свечным ключом выкрутите старые свечи.',
+                    'Проверьте зазор на новых свечах (обычно 1.0-1.1 мм).',
+                    'Нанесите немного диэлектрической смазки на резьбу новых свечей.',
+                    'Вкрутите свечи от руки до упора, затем затяните динамометрическим ключом (момент 25-30 Нм).',
+                    'Установите катушки и закрутите болты крепления.',
+                    'Подсоедините разъёмы катушек.',
+                    'Установите декоративную крышку.',
+                ],
+                warning: 'Не перетяните свечи — можно повредить резьбу в ГБЦ! Используйте динамометрический ключ.',
+                images: [],
+                video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                videoTitle: 'Видео: Замена свечей зажигания',
+            },
+            8: {
+                title: 'Снятие/установка выпускного коллектора',
+                tools: ['Набор головок и вороток', 'Трещотка', 'Удлинители', 'Карданчик', 'WD-40', 'Щётка по металлу',
+                    'Новые прокладки', 'Новые гайки/шпильки'
+                ],
+                steps: [
+                    'Обработайте все гайки и болты WD-40 за 20-30 минут до начала работы.',
+                    'Отсоедините аккумулятор.',
+                    'Снимите защиту двигателя.',
+                    'Отсоедините приёмную трубу от коллектора.',
+                    'Открутите датчики кислорода (лямбда-зонды) до или после коллектора.',
+                    'Открутите гайки крепления коллектора к ГБЦ (работайте аккуратно — шпильки часто ломаются!).',
+                    'Снимите коллектор и старую прокладку.',
+                    'Очистите привалочную поверхность ГБЦ щёткой.',
+                    'Установите новую прокладку.',
+                    'Прикрутите коллектор, затягивая гайки крест-накрест в 2-3 этапа.',
+                    'Подсоедините приёмную трубу с новой прокладкой.',
+                    'Установите датчики кислорода.',
+                    'Подсоедините аккумулятор, запустите двигатель и проверьте на утечки.',
+                ],
+                warning: 'Шпильки коллектора часто прикипают и ломаются! Если гайка не идёт — не применяйте грубую силу, используйте нагрев.',
+                images: [],
+                video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                videoTitle: 'Видео: Снятие выпускного коллектора',
+            },
+            16: {
+                title: 'Замена передних тормозных колодок',
+                tools: ['Домкрат', 'Баллонный ключ', 'Ключ на 13-15 мм', 'Отвёртка', 'С-образная струбцина',
+                    'Медная смазка', 'Очиститель тормозов'
+                ],
+                steps: [
+                    'Ослабьте болты колеса, поднимите авто домкратом, установите упоры.',
+                    'Полностью снимите колесо.',
+                    'Открутите нижний болт суппорта (обычно на 13-15 мм).',
+                    'Откиньте суппорт вверх и закрепите проволокой (не давите на тормозной шланг!).',
+                    'Извлеките старые колодки из скобы.',
+                    'Очистите посадочные места щёткой и очистителем тормозов.',
+                    'Струбциной утопите поршень суппорта обратно в цилиндр.',
+                    'Нанесите медную смазку на тыльную сторону новых колодок и места контакта.',
+                    'Установите новые колодки в скобу.',
+                    'Опустите суппорт и закрутите болт.',
+                    'Установите колесо, опустите авто.',
+                    'Перед началом движения несколько раз нажмите педаль тормоза для подвода колодок!',
+                ],
+                warning: '⚠️ ОБЯЗАТЕЛЬНО прокачайте педаль тормоза перед поездкой! Первое нажатие будет пустым — это нормально.',
+                images: [],
+                video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                videoTitle: 'Видео: Замена передних тормозных колодок',
+            },
+            17: {
+                title: 'Замена задних тормозных колодок',
+                tools: ['Домкрат', 'Баллонный ключ', 'Набор ключей', 'Отвёртка', 'Специнструмент для утапливания поршня (для авто с ручником в суппорте)',
+                    'Медная смазка', 'Очиститель тормозов'
+                ],
+                steps: [
+                    'Ослабьте болты колеса, поднимите авто, установите упоры.',
+                    'Снимите колесо.',
+                    'Отсоедините тросик ручного тормоза от суппорта (если ручник в суппорте).',
+                    'Открутите болты суппорта и снимите его.',
+                    'Извлеките старые колодки.',
+                    'Очистите всё очистителем тормозов.',
+                    'Специнструментом утопите поршень (на авто с ручником в суппорте поршень вкручивается, а не вдавливается!).',
+                    'Нанесите медную смазку и установите новые колодки.',
+                    'Установите суппорт, подсоедините тросик ручника.',
+                    'Установите колесо, опустите авто.',
+                    'Прокачайте педаль тормоза и проверьте работу ручника.',
+                ],
+                warning: 'На многих авто задний поршень НЕ вдавливается, а ВКРУЧИВАЕТСЯ по часовой стрелке! Используйте специнструмент.',
+                images: [],
+                video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                videoTitle: 'Видео: Замена задних тормозных колодок',
+            },
+            18: {
+                title: 'Замена передних тормозных дисков',
+                tools: ['Домкрат', 'Баллонный ключ', 'Головки и трещотка', 'Отвёртка', 'Очиститель тормозов',
+                    'Медная смазка'
+                ],
+                steps: [
+                    'Снимите колесо.',
+                    'Полностью снимите суппорт и отвести его в сторону.',
+                    'Открутите винты крепления тормозного диска к ступице.',
+                    'Снимите старый диск (может потребоваться постучать молотком).',
+                    'Очистите ступицу щёткой.',
+                    'Обработайте новый диск очистителем (удалите консервационную смазку).',
+                    'Установите новый диск и закрутите крепёжные винты.',
+                    'Установите суппорт и новые колодки (рекомендуется менять одновременно!).',
+                    'Установите колесо.',
+                    'Прокачайте педаль тормоза.',
+                ],
+                warning: 'Новые диски покрыты консервационной смазкой — обязательно удалите её очистителем!',
+                images: [],
+                video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                videoTitle: 'Видео: Замена тормозных дисков',
+            },
+            21: {
+                title: 'Замена тормозной жидкости',
+                tools: ['Ключ для штуцеров прокачки', 'Прозрачный шланг', 'Ёмкость', 'Свежая тормозная жидкость (DOT-4)',
+                    'Помощник или вакуумный прокачник'
+                ],
+                steps: [
+                    'Откройте капот и открутите крышку бачка тормозной жидкости.',
+                    'Шприцем откачайте старую жидкость из бачка (не досуха!).',
+                    'Залейте свежую жидкость до максимума.',
+                    'Наденьте шланг на штуцер прокачки заднего правого колеса.',
+                    'Помощник нажимает педаль тормоза 3-4 раза и держит.',
+                    'Открутите штуцер — пойдёт жидкость, педаль провалится.',
+                    'Закрутите штуцер, помощник отпускает педаль.',
+                    'Повторяйте, пока не пойдёт чистая жидкость.',
+                    'Порядок прокачки: заднее правое → заднее левое → переднее правое → переднее левое.',
+                    'Следите за уровнем жидкости в бачке — не допускайте осушения!',
+                ],
+                warning: 'Порядок прокачки важен! Обычно начинают с самого дальнего колеса от главного тормозного цилиндра.',
+                images: [],
+                video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                videoTitle: 'Видео: Замена тормозной жидкости',
+            },
+        };
+
+        // Добавляем заглушку-инструкцию для всех услуг, у которых нет своей
+        services.forEach(s => {
+            if (!instructions[s.id]) {
+                instructions[s.id] = {
+                    title: s.name,
+                    tools: ['Стандартный набор инструментов', 'Специнструмент (зависит от авто)'],
+                    steps: [
+                        'Подготовьте автомобиль и необходимые инструменты.',
+                        'Обесточьте автомобиль (снимите клемму АКБ, если работа связана с электрикой).',
+                        'Выполните демонтаж необходимых узлов для доступа.',
+                        'Проведите требуемые работы согласно регламенту.',
+                        'Произведите сборку в обратной последовательности.',
+                        'Проверьте работоспособность узла после ремонта.',
+                    ],
+                    warning: 'При отсутствии опыта рекомендуется обратиться в автосервис.',
+                    images: [],
+                    video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                    videoTitle: 'Видео: Общая инструкция',
+                };
+            }
+        });
 
         let selectedCar = cars[0];
         let selectedIds = new Set();
@@ -755,7 +1097,6 @@
                 div.className = 'car-card';
                 if (car.id === selectedCar.id) div.classList.add('active');
 
-                // Поиск по авто
                 if (carSearchQuery.trim() !== '') {
                     const q = carSearchQuery.toLowerCase().trim();
                     const searchStr = (car.brand + ' ' + car.model + ' ' + car.engine).toLowerCase();
@@ -826,16 +1167,26 @@
                             <div class="check-box">${selectedIds.has(s.id) ? '✓' : ''}</div>
                             <span class="service-name">${s.name}</span>
                         </div>
-                        <span class="service-price">${formatPrice(price)} ${note}</span>
+                        <div class="service-right">
+                            <span class="service-price">${formatPrice(price)} ${note}</span>
+                            <button class="detail-btn" data-id="${s.id}">📋 Подробнее</button>
+                        </div>
                     `;
 
-                    row.addEventListener('click', () => {
+                    // Клик по чекбоксу
+                    row.querySelector('.service-left').addEventListener('click', () => {
                         if (selectedIds.has(s.id)) {
                             selectedIds.delete(s.id);
                         } else {
                             selectedIds.add(s.id);
                         }
                         renderServices();
+                    });
+
+                    // Клик по кнопке "Подробнее"
+                    row.querySelector('.detail-btn').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        openModal(s.id);
                     });
 
                     container.appendChild(row);
@@ -862,6 +1213,86 @@
                 selectedCar.brand + ' ' + selectedCar.model + ' (' + selectedCar.engine + ')';
         }
 
+        // ==================== МОДАЛЬНОЕ ОКНО ====================
+        function openModal(serviceId) {
+            const instr = instructions[serviceId];
+            const overlay = document.getElementById('modalOverlay');
+            const titleEl = document.getElementById('modalTitle');
+            const bodyEl = document.getElementById('modalBody');
+
+            titleEl.textContent = '📋 ' + instr.title;
+
+            let html = '';
+
+            // Инструменты
+            html += '<div class="modal-section">';
+            html += '<h3>🔧 Необходимые инструменты</h3>';
+            html += '<div class="modal-tools">';
+            instr.tools.forEach(t => {
+                html += `<span class="modal-tool-tag">${t}</span>`;
+            });
+            html += '</div></div>';
+
+            // Пошаговая инструкция
+            html += '<div class="modal-section">';
+            html += '<h3>📝 Пошаговая инструкция</h3>';
+            html += '<ol>';
+            instr.steps.forEach(step => {
+                html += `<li>${step}</li>`;
+            });
+            html += '</ol></div>';
+
+            // Предупреждение
+            if (instr.warning) {
+                html += '<div class="modal-section">';
+                html += '<h3>⚠️ Важное предупреждение</h3>';
+                html += `<div class="modal-warning">${instr.warning}</div>`;
+                html += '</div>';
+            }
+
+            // Изображения (если есть)
+            if (instr.images && instr.images.length > 0) {
+                html += '<div class="modal-section">';
+                html += '<h3>🖼️ Фотографии процесса</h3>';
+                instr.images.forEach(img => {
+                    html +=
+                        `<img src="${img}" alt="Фото ремонта" class="modal-image" onerror="this.style.display='none'">`;
+                });
+                html += '</div>';
+            }
+
+            // Видео
+            if (instr.video) {
+                html += '<div class="modal-section">';
+                html += '<h3>🎬 Видеоинструкция</h3>';
+                html += `<p style="color:#ccc;font-size:13px;">${instr.videoTitle}</p>`;
+                html += '<div class="modal-video-wrapper">';
+                html +=
+                    `<iframe src="${instr.video}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                html += '</div></div>';
+            }
+
+            bodyEl.innerHTML = html;
+            overlay.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        document.getElementById('modalClose').addEventListener('click', closeModal);
+        document.getElementById('modalOverlay').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('modalOverlay')) {
+                closeModal();
+            }
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // Остальные обработчики
         document.getElementById('clearBtn').addEventListener('click', () => {
             selectedIds.clear();
             renderServices();
@@ -892,6 +1323,7 @@
         renderServices();
         console.log('🚗 Загружено автомобилей: ' + cars.length);
         console.log('🔧 Загружено услуг: ' + services.length);
+        console.log('📋 Нажмите «Подробнее» для просмотра инструкции.');
     </script>
 </body>
 </html>
