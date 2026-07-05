@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Автосервис - Прайс-лист на работы</title>
+    <title>Автосервис - Прайс-лист с выбором автомобиля</title>
     <style>
         * {
             margin: 0;
@@ -20,7 +20,7 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 950px;
             margin: 0 auto;
             background: rgba(30, 30, 50, 0.95);
             border-radius: 20px;
@@ -32,7 +32,7 @@
         /* Шапка */
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             padding-bottom: 20px;
             border-bottom: 2px solid rgba(255, 165, 0, 0.3);
         }
@@ -59,20 +59,107 @@
             text-transform: uppercase;
         }
 
+        /* Выбор автомобиля */
+        .car-selector {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .car-selector-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #ff9800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .car-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+        }
+
+        .car-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-radius: 14px;
+            padding: 15px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .car-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 152, 0, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .car-card.active {
+            background: rgba(255, 152, 0, 0.15);
+            border-color: #ff9800;
+            box-shadow: 0 0 20px rgba(255, 152, 0, 0.3);
+        }
+
+        .car-card.active::after {
+            content: '✓';
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            color: #ff9800;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .car-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .car-name {
+            font-weight: 700;
+            font-size: 14px;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .car-detail {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .car-badge {
+            display: inline-block;
+            background: #ff9800;
+            color: #000;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 20px;
+            margin-top: 6px;
+            letter-spacing: 0.5px;
+        }
+
         /* Поиск */
         .search-box {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             position: relative;
         }
 
         .search-box input {
             width: 100%;
-            padding: 15px 50px 15px 20px;
+            padding: 14px 50px 14px 20px;
             border-radius: 50px;
             border: 2px solid rgba(255, 255, 255, 0.15);
             background: rgba(0, 0, 0, 0.3);
             color: #fff;
-            font-size: 16px;
+            font-size: 15px;
             outline: none;
             transition: all 0.3s ease;
         }
@@ -97,23 +184,23 @@
             pointer-events: none;
         }
 
-        /* Фильтр-кнопки (категории) */
+        /* Фильтр-кнопки */
         .filter-buttons {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             justify-content: center;
         }
 
         .filter-btn {
-            padding: 10px 18px;
+            padding: 9px 16px;
             border-radius: 50px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             background: rgba(255, 255, 255, 0.05);
             color: #ccc;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 12px;
             transition: all 0.3s ease;
             white-space: nowrap;
             font-weight: 500;
@@ -145,10 +232,13 @@
             flex-wrap: wrap;
             gap: 10px;
             box-shadow: 0 8px 25px rgba(255, 152, 0, 0.3);
+            position: sticky;
+            top: 10px;
+            z-index: 10;
         }
 
         .total-label {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
             color: #000;
             letter-spacing: 1px;
@@ -156,7 +246,7 @@
         }
 
         .total-price {
-            font-size: 32px;
+            font-size: 30px;
             font-weight: 900;
             color: #000;
             letter-spacing: 1px;
@@ -191,11 +281,11 @@
         .services-list {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 5px;
         }
 
         .category-title {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
             color: #ff9800;
             text-transform: uppercase;
@@ -272,7 +362,7 @@
         }
 
         .service-name {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 500;
             color: #ddd;
         }
@@ -283,15 +373,23 @@
         }
 
         .service-price {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 700;
             color: #ff9800;
             white-space: nowrap;
             margin-left: 15px;
+            min-width: 90px;
+            text-align: right;
         }
 
         .service-item.selected .service-price {
             color: #fff;
+        }
+
+        .price-diff {
+            font-size: 11px;
+            color: #999;
+            font-weight: 400;
         }
 
         .hidden {
@@ -309,12 +407,7 @@
             letter-spacing: 1px;
         }
 
-        .footer a {
-            color: #ff9800;
-            text-decoration: none;
-        }
-
-        /* Анимация появления */
+        /* Анимация */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -330,14 +423,38 @@
             animation: fadeInUp 0.4s ease forwards;
         }
 
+        @keyframes pulse {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(255, 152, 0, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 35px rgba(255, 152, 0, 0.6);
+            }
+        }
+
+        .car-card.active {
+            animation: pulse 2s infinite;
+        }
+
         /* Responsive */
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             .container {
                 padding: 15px;
                 border-radius: 12px;
             }
             .logo {
                 font-size: 24px;
+            }
+            .car-cards {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                gap: 8px;
+            }
+            .car-card {
+                padding: 12px 8px;
+            }
+            .car-name {
+                font-size: 12px;
             }
             .service-item {
                 padding: 10px 12px;
@@ -346,18 +463,38 @@
                 font-size: 13px;
             }
             .service-price {
-                font-size: 15px;
+                font-size: 14px;
+                min-width: 70px;
             }
             .total-price {
                 font-size: 24px;
             }
             .filter-btn {
-                padding: 8px 12px;
+                padding: 7px 11px;
                 font-size: 11px;
+            }
+            .total-panel {
+                padding: 14px 16px;
             }
         }
 
-        /* Стиль для прокрутки */
+        @media (max-width: 400px) {
+            .car-cards {
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+            }
+            .car-card {
+                padding: 10px 6px;
+            }
+            .car-name {
+                font-size: 11px;
+            }
+            .car-icon {
+                font-size: 24px;
+            }
+        }
+
+        /* Скроллбар */
         ::-webkit-scrollbar {
             width: 6px;
         }
@@ -377,7 +514,15 @@
         <!-- Шапка -->
         <div class="header">
             <div class="logo">AUTO<span>SERVICE</span></div>
-            <div class="subtitle">Прайс-лист на слесарные работы</div>
+            <div class="subtitle">Прайс-лист с учётом марки автомобиля</div>
+        </div>
+
+        <!-- Выбор автомобиля -->
+        <div class="car-selector" id="carSelector">
+            <div class="car-selector-label">🚗 Выберите автомобиль</div>
+            <div class="car-cards" id="carCards">
+                <!-- Заполняется через JS -->
+            </div>
         </div>
 
         <!-- Поиск -->
@@ -405,99 +550,209 @@
                 <div class="total-count" id="totalCount">0</div>
             </div>
             <div style="text-align:right;">
-                <div class="total-label">Итого:</div>
+                <div class="total-label" id="totalCarLabel">Сумма:</div>
                 <div class="total-price" id="totalPrice">0 ₽</div>
             </div>
-            <button class="clear-btn" id="clearBtn">✕ Сбросить всё</button>
+            <button class="clear-btn" id="clearBtn">✕ Сбросить</button>
         </div>
 
         <!-- Список услуг -->
         <div class="services-list" id="servicesList">
-            <!-- Заполняется через JavaScript -->
+            <!-- Заполняется через JS -->
         </div>
 
         <!-- Футер -->
         <div class="footer">
-            © 2026 AutoService. Цены указаны за работу без учёта стоимости запчастей и материалов.
+            © 2026 AutoService. Цены указаны за работу без учёта запчастей и материалов.<br>
+            Стоимость зависит от марки автомобиля и сложности доступа к узлам.
         </div>
 
     </div>
 
     <script>
-        // Массив всех услуг
+        // ==================== ДАННЫЕ: АВТОМОБИЛИ ====================
+        const cars = [{
+            id: 'passat_b6',
+            name: 'VW Passat B6',
+            detail: '1.6 BSE',
+            icon: '🚙',
+            badge: 'Средняя сложность',
+            // Коэффициент сложности (базовая цена * коэффициент)
+            multiplier: 1.0,
+            // Для некоторых работ можно указать персональную цену
+            customPrices: {}
+        }, {
+            id: 'skoda_octavia',
+            name: 'Škoda Octavia Tour',
+            detail: '1.6 BSE/BFQ',
+            icon: '🚗',
+            badge: 'Низкая сложность',
+            multiplier: 0.85,
+            customPrices: {}
+        }, {
+            id: 'audi_a4',
+            name: 'Audi A4 B7',
+            detail: '1.8 TFSI / 2.0 TFSI',
+            icon: '🏎️',
+            badge: 'Высокая сложность',
+            multiplier: 1.4,
+            customPrices: {
+                // Для Ауди некоторые работы дороже из-за компоновки
+                7: 2800, // впускной коллектор
+                8: 5500, // выпускной коллектор
+                14: 3000, // ШРУС
+            }
+        }, {
+            id: 'bmw_e90',
+            name: 'BMW E90',
+            detail: '318i / 320i N46',
+            icon: '🚘',
+            badge: 'Высокая сложность',
+            multiplier: 1.5,
+            customPrices: {
+                7: 3200,
+                8: 6000,
+                14: 3500,
+            }
+        }, {
+            id: 'ford_focus',
+            name: 'Ford Focus 2',
+            detail: '1.6 Duratec',
+            icon: '🚓',
+            badge: 'Средняя сложность',
+            multiplier: 0.9,
+            customPrices: {}
+        }, {
+            id: 'reno_logan',
+            name: 'Renault Logan',
+            detail: '1.6 K7M',
+            icon: '🚕',
+            badge: 'Низкая сложность',
+            multiplier: 0.75,
+            customPrices: {}
+        }, ];
+
+        // ==================== ДАННЫЕ: УСЛУГИ (БАЗОВЫЕ ЦЕНЫ) ====================
         const services = [
-            { id: 1, name: 'Компьютерная диагностика автомобиля', price: 800, category: 'diagnostics',
+            { id: 1, name: 'Компьютерная диагностика автомобиля', basePrice: 800, category: 'diagnostics',
                 categoryName: '🔍 ДИАГНОСТИКА' },
-            { id: 2, name: 'Замена моторного масла и масляного фильтра', price: 800, category: 'maintenance',
+            { id: 2, name: 'Замена моторного масла и масляного фильтра', basePrice: 800, category: 'maintenance',
                 categoryName: '🛠️ ТЕХНИЧЕСКОЕ ОБСЛУЖИВАНИЕ' },
-            { id: 3, name: 'Снятие/установка декоративной крышки двигателя', price: 200, category: 'maintenance',
+            { id: 3, name: 'Снятие/установка декоративной крышки двигателя', basePrice: 200, category: 'maintenance',
                 categoryName: '🛠️ ТЕХНИЧЕСКОЕ ОБСЛУЖИВАНИЕ' },
-            { id: 4, name: 'Снятие/установка катушек зажигания (4 шт)', price: 500, category: 'maintenance',
+            { id: 4, name: 'Снятие/установка катушек зажигания (4 шт)', basePrice: 500, category: 'maintenance',
                 categoryName: '🛠️ ТЕХНИЧЕСКОЕ ОБСЛУЖИВАНИЕ' },
-            { id: 5, name: 'Замена свечей зажигания (4 шт)', price: 600, category: 'maintenance',
+            { id: 5, name: 'Замена свечей зажигания (4 шт)', basePrice: 600, category: 'maintenance',
                 categoryName: '🛠️ ТЕХНИЧЕСКОЕ ОБСЛУЖИВАНИЕ' },
-            { id: 6, name: 'Снятие/установка защиты двигателя (нижний пыльник)', price: 500, category: 'maintenance',
+            { id: 6, name: 'Снятие/установка защиты двигателя (нижний пыльник)', basePrice: 500, category: 'maintenance',
                 categoryName: '🛠️ ТЕХНИЧЕСКОЕ ОБСЛУЖИВАНИЕ' },
-            { id: 7, name: 'Снятие/установка впускного коллектора', price: 2000, category: 'exhaust',
+            { id: 7, name: 'Снятие/установка впускного коллектора', basePrice: 2000, category: 'exhaust',
                 categoryName: '💨 СИСТЕМА ВЫПУСКА' },
-            { id: 8, name: 'Снятие/установка выпускного коллектора (штаны)', price: 4000, category: 'exhaust',
+            { id: 8, name: 'Снятие/установка выпускного коллектора (штаны)', basePrice: 4000, category: 'exhaust',
                 categoryName: '💨 СИСТЕМА ВЫПУСКА' },
-            { id: 9, name: 'Резка приемной трубы болгаркой (для быстрого съема)', price: 500, category: 'exhaust',
+            { id: 9, name: 'Резка приемной трубы болгаркой (быстрый съем)', basePrice: 500, category: 'exhaust',
                 categoryName: '💨 СИСТЕМА ВЫПУСКА' },
-            { id: 10, name: 'Резка старых гофр болгаркой (2 шт)', price: 400, category: 'exhaust',
+            { id: 10, name: 'Резка старых гофр болгаркой (2 шт)', basePrice: 400, category: 'exhaust',
                 categoryName: '💨 СИСТЕМА ВЫПУСКА' },
-            { id: 11, name: 'Подгонка и приварка новых гофр (2 шт)', price: 3500, category: 'exhaust',
+            { id: 11, name: 'Подгонка и приварка новых гофр (2 шт)', basePrice: 3500, category: 'exhaust',
                 categoryName: '💨 СИСТЕМА ВЫПУСКА' },
-            { id: 12, name: 'Высверливание/выкручивание сломанной шпильки (1 шт)', price: 1000, category: 'threads',
+            { id: 12, name: 'Высверливание/выкручивание сломанной шпильки (1 шт)', basePrice: 1000, category: 'threads',
                 categoryName: '🔩 РЕМОНТ РЕЗЬБОВЫХ СОЕДИНЕНИЙ' },
-            { id: 13, name: 'Приварка гайки/прутка для выкручивания обломанной шпильки (1 шт)', price: 800,
+            { id: 13, name: 'Приварка гайки для выкручивания обломанной шпильки (1 шт)', basePrice: 800,
                 category: 'threads', categoryName: '🔩 РЕМОНТ РЕЗЬБОВЫХ СОЕДИНЕНИЙ' },
-            { id: 14, name: 'Снятие/установка внутреннего ШРУСа (отведение от КПП для доступа)', price: 2000,
+            { id: 14, name: 'Снятие/установка внутреннего ШРУСа (отведение от КПП)', basePrice: 2000,
                 category: 'transmission', categoryName: '⚙️ ТРАНСМИССИЯ' },
-            { id: 15, name: 'Устранение скрипа ручки КПП (смазка механизма кулисы)', price: 500, category: 'transmission',
+            { id: 15, name: 'Устранение скрипа ручки КПП (смазка кулисы)', basePrice: 500, category: 'transmission',
                 categoryName: '⚙️ ТРАНСМИССИЯ' },
-            { id: 16, name: 'Снятие/установка задних тормозных барабанов (2 шт)', price: 800, category: 'brakes',
+            { id: 16, name: 'Снятие/установка задних тормозных барабанов (2 шт)', basePrice: 800, category: 'brakes',
                 categoryName: '🛑 ТОРМОЗНАЯ СИСТЕМА' },
-            { id: 17, name: 'Зачистка и покраска задних тормозных барабанов с баллона (2 шт)', price: 1200,
-                category: 'brakes', categoryName: '🛑 ТОРМОЗНАЯ СИСТЕМА' },
-            { id: 18, name: 'Сварочные работы (приварка гаек, прутков, гофр) — от', price: 500, category: 'welding',
+            { id: 17, name: 'Зачистка и покраска задних тормозных барабанов (2 шт)', basePrice: 1200, category: 'brakes',
+                categoryName: '🛑 ТОРМОЗНАЯ СИСТЕМА' },
+            { id: 18, name: 'Сварочные работы (приварка гаек, прутков, гофр) — от', basePrice: 500, category: 'welding',
                 categoryName: '🔥 СВАРОЧНЫЕ РАБОТЫ' },
         ];
 
-        // Состояние выбранных услуг
-        let selectedServices = new Set();
-
-        // Текущий фильтр
+        // ==================== СОСТОЯНИЕ ====================
+        let selectedCarId = 'passat_b6'; // Выбранный автомобиль по умолчанию
+        let selectedServices = new Set(); // ID выбранных услуг
         let currentFilter = 'all';
-        // Текущий поисковый запрос
         let currentSearch = '';
 
-        // Получить DOM-элементы
+        // DOM-элементы
+        const carCardsContainer = document.getElementById('carCards');
         const servicesList = document.getElementById('servicesList');
         const totalPriceEl = document.getElementById('totalPrice');
         const totalCountEl = document.getElementById('totalCount');
+        const totalCarLabel = document.getElementById('totalCarLabel');
         const clearBtn = document.getElementById('clearBtn');
         const searchInput = document.getElementById('searchInput');
         const filterButtons = document.querySelectorAll('.filter-btn');
 
-        // Функция форматирования цены
+        // ==================== ФУНКЦИИ ====================
+
+        // Получить выбранный автомобиль
+        function getSelectedCar() {
+            return cars.find(c => c.id === selectedCarId) || cars[0];
+        }
+
+        // Рассчитать цену услуги для выбранного авто
+        function getServicePrice(service) {
+            const car = getSelectedCar();
+            // Если есть персональная цена для этого авто — используем её
+            if (car.customPrices && car.customPrices[service.id] !== undefined) {
+                return car.customPrices[service.id];
+            }
+            // Иначе умножаем базовую цену на коэффициент сложности авто
+            return Math.round(service.basePrice * car.multiplier);
+        }
+
+        // Форматирование цены
         function formatPrice(price) {
             return price.toLocaleString('ru-RU') + ' ₽';
         }
 
-        // Функция отрисовки списка услуг
+        // Отрисовка карточек автомобилей
+        function renderCarCards() {
+            carCardsContainer.innerHTML = '';
+            cars.forEach(car => {
+                const card = document.createElement('div');
+                card.className = 'car-card';
+                if (car.id === selectedCarId) {
+                    card.classList.add('active');
+                }
+                card.setAttribute('data-car-id', car.id);
+                card.innerHTML = `
+                            <div class="car-icon">${car.icon}</div>
+                            <div class="car-name">${car.name}</div>
+                            <div class="car-detail">${car.detail}</div>
+                            <div class="car-badge">${car.badge}</div>
+                        `;
+                card.addEventListener('click', () => selectCar(car.id));
+                carCardsContainer.appendChild(card);
+            });
+        }
+
+        // Выбор автомобиля
+        function selectCar(carId) {
+            selectedCarId = carId;
+            // При смене авто сбрасываем выбор услуг (цены же поменялись)
+            selectedServices.clear();
+            renderCarCards();
+            renderServices();
+        }
+
+        // Отрисовка списка услуг
         function renderServices() {
             servicesList.innerHTML = '';
+            const car = getSelectedCar();
 
             // Фильтруем услуги
             let filteredServices = services;
 
-            // Применяем фильтр категории
             if (currentFilter !== 'all') {
                 filteredServices = filteredServices.filter(s => s.category === currentFilter);
             }
 
-            // Применяем поиск
             if (currentSearch.trim() !== '') {
                 const searchLower = currentSearch.toLowerCase().trim();
                 filteredServices = filteredServices.filter(s =>
@@ -517,24 +772,32 @@
                 grouped[s.category].items.push(s);
             });
 
-            // Отрисовываем сгруппированный список
+            // Отрисовываем
             Object.keys(grouped).forEach(catKey => {
                 const group = grouped[catKey];
 
-                // Заголовок категории
                 const titleDiv = document.createElement('div');
                 titleDiv.className = 'category-title';
                 titleDiv.textContent = group.categoryName;
                 servicesList.appendChild(titleDiv);
 
-                // Услуги в категории
                 group.items.forEach(service => {
+                    const price = getServicePrice(service);
                     const itemDiv = document.createElement('div');
                     itemDiv.className = 'service-item';
                     if (selectedServices.has(service.id)) {
                         itemDiv.classList.add('selected');
                     }
                     itemDiv.setAttribute('data-id', service.id);
+
+                    // Показываем разницу с базовой ценой, если она есть
+                    let priceDiffHtml = '';
+                    if (price !== service.basePrice) {
+                        const diff = price - service.basePrice;
+                        const sign = diff > 0 ? '+' : '';
+                        priceDiffHtml =
+                            `<span class="price-diff">(${sign}${diff} ₽)</span>`;
+                    }
 
                     itemDiv.innerHTML = `
                                 <div class="service-info">
@@ -543,7 +806,7 @@
                                     </div>
                                     <span class="service-name">${service.name}</span>
                                 </div>
-                                <span class="service-price">${formatPrice(service.price)}</span>
+                                <span class="service-price">${formatPrice(price)} ${priceDiffHtml}</span>
                             `;
 
                     itemDiv.addEventListener('click', () => toggleService(service.id));
@@ -551,11 +814,11 @@
                 });
             });
 
-            // Если ничего не найдено
             if (filteredServices.length === 0) {
                 const emptyDiv = document.createElement('div');
-                emptyDiv.style.cssText = 'text-align:center; padding:40px; color:#777; font-size:16px;';
-                emptyDiv.textContent = '😕 Ничего не найдено. Попробуйте изменить запрос.';
+                emptyDiv.style.cssText =
+                'text-align:center; padding:40px; color:#777; font-size:16px;';
+                emptyDiv.textContent = '😕 Ничего не найдено. Попробуйте изменить запрос или фильтр.';
                 servicesList.appendChild(emptyDiv);
             }
 
@@ -578,15 +841,17 @@
             selectedServices.forEach(id => {
                 const service = services.find(s => s.id === id);
                 if (service) {
-                    total += service.price;
+                    total += getServicePrice(service);
                 }
             });
 
+            const car = getSelectedCar();
             totalPriceEl.textContent = formatPrice(total);
             totalCountEl.textContent = selectedServices.size + ' шт.';
+            totalCarLabel.textContent = car.name + ' — Сумма:';
         }
 
-        // Сброс всего выбора
+        // Сброс выбора
         function clearAll() {
             selectedServices.clear();
             renderServices();
@@ -595,7 +860,6 @@
         // Установка фильтра
         function setFilter(filter) {
             currentFilter = filter;
-            // Обновляем активную кнопку
             filterButtons.forEach(btn => {
                 btn.classList.remove('active');
                 if (btn.getAttribute('data-filter') === filter) {
@@ -605,7 +869,7 @@
             renderServices();
         }
 
-        // Обработчики событий
+        // ==================== ОБРАБОТЧИКИ ====================
         clearBtn.addEventListener('click', clearAll);
 
         searchInput.addEventListener('input', (e) => {
@@ -620,12 +884,17 @@
             });
         });
 
-        // Инициализация — отрисовываем список при загрузке
-        renderServices();
+        // ==================== ИНИЦИАЛИЗАЦИЯ ====================
+        function init() {
+            renderCarCards();
+            renderServices();
+            console.log('🚗 Прайс-лист загружен!');
+            console.log('📋 Автомобилей: ' + cars.length);
+            console.log('🔧 Услуг: ' + services.length);
+            console.log('💡 Выберите автомобиль — цены пересчитаются автоматически.');
+        }
 
-        console.log('🚗 Прайс-лист автосервиса загружен и готов к работе!');
-        console.log('📋 Всего услуг: ' + services.length);
-        console.log('💰 Выбирайте услуги — сумма считается автоматически.');
+        init();
     </script>
 </body>
 </html>
