@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Автосервис - Прайс-лист</title>
+    <title>Автосервис - Прайс-лист на работы</title>
     <style>
         * {
             margin: 0;
@@ -66,19 +66,66 @@
             text-align: center;
         }
 
+        /* Поиск авто */
+        .car-search-box {
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .car-search-box input {
+            width: 100%;
+            padding: 10px 40px 10px 14px;
+            border-radius: 25px;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .car-search-box input:focus {
+            border-color: #ff9800;
+        }
+
+        .car-search-box input::placeholder {
+            color: #777;
+        }
+
+        .car-search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+        }
+
         /* Сетка автомобилей */
         .cars-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            gap: 8px;
             margin-bottom: 25px;
+            max-height: 350px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .cars-grid::-webkit-scrollbar {
+            width: 5px;
+        }
+        .cars-grid::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .cars-grid::-webkit-scrollbar-thumb {
+            background: rgba(255, 152, 0, 0.3);
+            border-radius: 10px;
         }
 
         .car-card {
             background: rgba(255, 255, 255, 0.03);
-            border: 2px solid rgba(255, 255, 255, 0.15);
-            border-radius: 12px;
-            padding: 12px 8px;
+            border: 2px solid rgba(255, 255, 255, 0.12);
+            border-radius: 10px;
+            padding: 10px 6px;
             cursor: pointer;
             text-align: center;
             transition: all 0.2s ease;
@@ -96,33 +143,33 @@
         }
 
         .car-card-icon {
-            font-size: 28px;
+            font-size: 24px;
             display: block;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
-        .car-card-name {
+        .car-card-brand {
             font-weight: 700;
-            font-size: 12px;
+            font-size: 11px;
             color: #fff;
             line-height: 1.2;
         }
 
-        .car-card-detail {
-            font-size: 10px;
+        .car-card-model {
+            font-size: 9px;
             color: #999;
-            margin-top: 2px;
+            margin-top: 1px;
         }
 
         .car-card-badge {
             display: inline-block;
             background: #ff9800;
             color: #000;
-            font-size: 9px;
+            font-size: 8px;
             font-weight: 700;
-            padding: 2px 8px;
+            padding: 2px 7px;
             border-radius: 10px;
-            margin-top: 4px;
+            margin-top: 3px;
         }
 
         .car-card.active .car-card-badge {
@@ -130,7 +177,11 @@
             color: #000;
         }
 
-        /* Поиск */
+        .car-card.hidden-by-search {
+            display: none;
+        }
+
+        /* Поиск услуг */
         .search-box {
             margin-bottom: 15px;
             position: relative;
@@ -369,16 +420,17 @@
             }
             .cars-grid {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 6px;
+                gap: 5px;
+                max-height: 300px;
             }
             .car-card {
-                padding: 10px 6px;
+                padding: 8px 4px;
             }
-            .car-card-name {
+            .car-card-brand {
                 font-size: 10px;
             }
             .car-card-icon {
-                font-size: 22px;
+                font-size: 20px;
             }
             .service-row {
                 padding: 10px 10px;
@@ -411,9 +463,13 @@
 
         <!-- Выбор автомобиля -->
         <div class="section-title">🚗 Выберите автомобиль</div>
+        <div class="car-search-box">
+            <input type="text" id="carSearchInput" placeholder="Поиск по марке или модели...">
+            <span class="car-search-icon">🔍</span>
+        </div>
         <div class="cars-grid" id="carsGrid"></div>
 
-        <!-- Поиск -->
+        <!-- Поиск услуг -->
         <div class="search-box">
             <input type="text" id="searchInput" placeholder="Поиск услуги...">
             <span class="search-icon">🔍</span>
@@ -453,23 +509,199 @@
     </div>
 
     <script>
-        // АВТОМОБИЛИ
+        // ==================== АВТОМОБИЛИ (популярные в России) ====================
         const cars = [
-            { id: 'passat_b6', name: 'VW Passat B6', detail: '1.6 BSE', icon: '🚙', badge: 'Средне',
+            // VAG (Volkswagen, Skoda, Audi)
+            { id: 'vw_passat_b6', brand: 'VW', model: 'Passat B6', engine: '1.6 BSE', icon: '🚙', badge: 'Средне',
                 multiplier: 1.0, custom: {} },
-            { id: 'skoda_octavia', name: 'Skoda Octavia', detail: '1.6 Tour', icon: '🚗', badge: 'Легко',
-                multiplier: 0.85, custom: {} },
-            { id: 'audi_a4', name: 'Audi A4 B7', detail: '1.8/2.0 TFSI', icon: '🏎️', badge: 'Сложно', multiplier: 1.4,
-                custom: { 7: 2800, 8: 5500, 14: 3000 } },
-            { id: 'bmw_e90', name: 'BMW E90', detail: '318i/320i', icon: '🚘', badge: 'Сложно', multiplier: 1.5,
-                custom: { 7: 3200, 8: 6000, 14: 3500 } },
-            { id: 'ford_focus', name: 'Ford Focus 2', detail: '1.6 Duratec', icon: '🚓', badge: 'Средне',
+            { id: 'vw_passat_b7', brand: 'VW', model: 'Passat B7', engine: '1.8 TSI', icon: '🚙', badge: 'Средне',
+                multiplier: 1.1, custom: {} },
+            { id: 'vw_golf6', brand: 'VW', model: 'Golf 6', engine: '1.6 BSE', icon: '🚗', badge: 'Легко',
                 multiplier: 0.9, custom: {} },
-            { id: 'reno_logan', name: 'Renault Logan', detail: '1.6 K7M', icon: '🚕', badge: 'Легко', multiplier: 0.75,
+            { id: 'vw_jetta6', brand: 'VW', model: 'Jetta 6', engine: '1.6 MPI', icon: '🚗', badge: 'Легко',
+                multiplier: 0.9, custom: {} },
+            { id: 'vw_polo_sedan', brand: 'VW', model: 'Polo Sedan', engine: '1.6 CFNA', icon: '🚗', badge: 'Легко',
+                multiplier: 0.85, custom: {} },
+            { id: 'vw_tiguan', brand: 'VW', model: 'Tiguan', engine: '2.0 TSI', icon: '🚙', badge: 'Сложно',
+                multiplier: 1.3, custom: { 8: 5500, 14: 3000 } },
+            { id: 'vw_touareg', brand: 'VW', model: 'Touareg', engine: '3.0 TDI', icon: '🚙', badge: 'Очень сложно',
+                multiplier: 1.6, custom: { 7: 3500, 8: 7000, 14: 4000 } },
+
+            { id: 'skoda_octavia_a5', brand: 'Skoda', model: 'Octavia A5', engine: '1.6 BSE', icon: '🚗', badge: 'Легко',
+                multiplier: 0.85, custom: {} },
+            { id: 'skoda_octavia_a7', brand: 'Skoda', model: 'Octavia A7', engine: '1.8 TSI', icon: '🚗',
+                badge: 'Средне', multiplier: 1.0, custom: {} },
+            { id: 'skoda_rapid', brand: 'Skoda', model: 'Rapid', engine: '1.6 CFNA', icon: '🚗', badge: 'Легко',
+                multiplier: 0.8, custom: {} },
+            { id: 'skoda_superb', brand: 'Skoda', model: 'Superb', engine: '2.0 TSI', icon: '🚙', badge: 'Сложно',
+                multiplier: 1.3, custom: { 8: 5500, 14: 3000 } },
+
+            { id: 'audi_a4_b7', brand: 'Audi', model: 'A4 B7', engine: '2.0 TFSI', icon: '🏎️', badge: 'Сложно',
+                multiplier: 1.4, custom: { 7: 2800, 8: 5500, 14: 3000 } },
+            { id: 'audi_a6_c6', brand: 'Audi', model: 'A6 C6', engine: '2.4/3.0', icon: '🏎️', badge: 'Очень сложно',
+                multiplier: 1.6, custom: { 7: 3500, 8: 7000, 14: 4000 } },
+            { id: 'audi_q5', brand: 'Audi', model: 'Q5', engine: '2.0 TFSI', icon: '🏎️', badge: 'Сложно',
+                multiplier: 1.5, custom: { 7: 3000, 8: 6000, 14: 3500 } },
+
+            // BMW
+            { id: 'bmw_e90', brand: 'BMW', model: '3 E90', engine: '320i N46', icon: '🚘', badge: 'Сложно',
+                multiplier: 1.5, custom: { 7: 3200, 8: 6000, 14: 3500 } },
+            { id: 'bmw_f30', brand: 'BMW', model: '3 F30', engine: '320i N20', icon: '🚘', badge: 'Сложно',
+                multiplier: 1.5, custom: { 7: 3500, 8: 6500, 14: 3800 } },
+            { id: 'bmw_e70', brand: 'BMW', model: 'X5 E70', engine: '3.0d', icon: '🚘', badge: 'Очень сложно',
+                multiplier: 1.8, custom: { 7: 4000, 8: 8000, 14: 5000 } },
+            { id: 'bmw_x3_f25', brand: 'BMW', model: 'X3 F25', engine: '2.0d', icon: '🚘', badge: 'Сложно',
+                multiplier: 1.5, custom: { 7: 3200, 8: 6000, 14: 3800 } },
+
+            // Mercedes
+            { id: 'mb_w204', brand: 'MB', model: 'C-klasse W204', engine: 'C180/C200', icon: '🚘', badge: 'Сложно',
+                multiplier: 1.5, custom: { 7: 3200, 8: 6000, 14: 3500 } },
+            { id: 'mb_w211', brand: 'MB', model: 'E-klasse W211', engine: 'E200/E240', icon: '🚘', badge: 'Сложно',
+                multiplier: 1.5, custom: { 7: 3200, 8: 6000, 14: 3500 } },
+            { id: 'mb_w164', brand: 'MB', model: 'ML W164', engine: 'ML350', icon: '🚘', badge: 'Очень сложно',
+                multiplier: 1.7, custom: { 7: 4000, 8: 7500, 14: 4500 } },
+
+            // Toyota / Lexus
+            { id: 'toyota_camry40', brand: 'Toyota', model: 'Camry V40', engine: '2.4', icon: '🚙', badge: 'Средне',
+                multiplier: 1.0, custom: {} },
+            { id: 'toyota_camry50', brand: 'Toyota', model: 'Camry V50', engine: '2.5', icon: '🚙', badge: 'Средне',
+                multiplier: 1.0, custom: {} },
+            { id: 'toyota_corolla', brand: 'Toyota', model: 'Corolla', engine: '1.6', icon: '🚗', badge: 'Легко',
+                multiplier: 0.85, custom: {} },
+            { id: 'toyota_rav4', brand: 'Toyota', model: 'RAV4', engine: '2.0', icon: '🚙', badge: 'Средне',
+                multiplier: 1.1, custom: {} },
+            { id: 'toyota_land_cruiser', brand: 'Toyota', model: 'Land Cruiser 200', engine: '4.5D', icon: '🚙',
+                badge: 'Сложно', multiplier: 1.4, custom: { 8: 5500, 14: 3000 } },
+            { id: 'lexus_rx350', brand: 'Lexus', model: 'RX350', engine: '3.5', icon: '🏎️', badge: 'Сложно',
+                multiplier: 1.4, custom: { 8: 5500, 14: 3000 } },
+
+            // Nissan / Infiniti
+            { id: 'nissan_x-trail_t31', brand: 'Nissan', model: 'X-Trail T31', engine: '2.0', icon: '🚙',
+                badge: 'Средне', multiplier: 1.0, custom: {} },
+            { id: 'nissan_qashqai', brand: 'Nissan', model: 'Qashqai J10', engine: '1.6/2.0', icon: '🚙',
+                badge: 'Средне', multiplier: 1.0, custom: {} },
+            { id: 'nissan_almera', brand: 'Nissan', model: 'Almera G15', engine: '1.6', icon: '🚗', badge: 'Легко',
+                multiplier: 0.8, custom: {} },
+            { id: 'nissan_teana', brand: 'Nissan', model: 'Teana J32', engine: '2.5 V6', icon: '🚙', badge: 'Сложно',
+                multiplier: 1.2, custom: { 8: 5000, 14: 2800 } },
+
+            // KIA / Hyundai
+            { id: 'kia_rio', brand: 'KIA', model: 'Rio', engine: '1.6 G4FC', icon: '🚗', badge: 'Легко',
+            multiplier: 0.8,
+                custom: {} },
+            { id: 'kia_ceed', brand: 'KIA', model: "Cee'd", engine: '1.6 G4FC', icon: '🚗', badge: 'Легко',
+                multiplier: 0.85, custom: {} },
+            { id: 'kia_sportage', brand: 'KIA', model: 'Sportage', engine: '2.0', icon: '🚙', badge: 'Средне',
+                multiplier: 1.0, custom: {} },
+            { id: 'kia_sorento', brand: 'KIA', model: 'Sorento', engine: '2.4/2.2D', icon: '🚙', badge: 'Средне',
+                multiplier: 1.1, custom: {} },
+            { id: 'hyundai_solaris', brand: 'Hyundai', model: 'Solaris', engine: '1.6 G4FC', icon: '🚗',
+            badge: 'Легко',
+                multiplier: 0.8, custom: {} },
+            { id: 'hyundai_ix35', brand: 'Hyundai', model: 'ix35', engine: '2.0', icon: '🚙', badge: 'Средне',
+                multiplier: 1.0, custom: {} },
+            { id: 'hyundai_santa_fe', brand: 'Hyundai', model: 'Santa Fe', engine: '2.4/2.2D', icon: '🚙',
+                badge: 'Средне', multiplier: 1.1, custom: {} },
+
+            // Renault
+            { id: 'reno_logan', brand: 'Renault', model: 'Logan', engine: '1.6 K7M', icon: '🚕', badge: 'Легко',
+                multiplier: 0.75, custom: {} },
+            { id: 'reno_duster', brand: 'Renault', model: 'Duster', engine: '2.0 F4R', icon: '🚙', badge: 'Легко',
+                multiplier: 0.85, custom: {} },
+            { id: 'reno_megane3', brand: 'Renault', model: 'Megane 3', engine: '1.6/2.0', icon: '🚗', badge: 'Средне',
+                multiplier: 0.95, custom: {} },
+
+            // Ford
+            { id: 'ford_focus2', brand: 'Ford', model: 'Focus 2', engine: '1.6 Duratec', icon: '🚓', badge: 'Средне',
+                multiplier: 0.9, custom: {} },
+            { id: 'ford_focus3', brand: 'Ford', model: 'Focus 3', engine: '1.6/2.0', icon: '🚓', badge: 'Средне',
+                multiplier: 1.0, custom: {} },
+            { id: 'ford_mondeo4', brand: 'Ford', model: 'Mondeo 4', engine: '2.0 EcoBoost', icon: '🚙',
+            badge: 'Средне',
+                multiplier: 1.1, custom: {} },
+            { id: 'ford_kuga', brand: 'Ford', model: 'Kuga', engine: '2.5', icon: '🚙', badge: 'Средне',
+            multiplier: 1.1,
+                custom: {} },
+
+            // Chevrolet / Opel
+            { id: 'chevrolet_aveo', brand: 'Chevrolet', model: 'Aveo T300', engine: '1.6', icon: '🚗', badge: 'Легко',
+                multiplier: 0.8, custom: {} },
+            { id: 'chevrolet_cruze', brand: 'Chevrolet', model: 'Cruze', engine: '1.8', icon: '🚗', badge: 'Средне',
+                multiplier: 0.95, custom: {} },
+            { id: 'opel_astra_h', brand: 'Opel', model: 'Astra H', engine: '1.6 Z16XER', icon: '🚗', badge: 'Средне',
+                multiplier: 0.95, custom: {} },
+            { id: 'opel_astra_j', brand: 'Opel', model: 'Astra J', engine: '1.6/1.4T', icon: '🚗', badge: 'Средне',
+                multiplier: 1.0, custom: {} },
+            { id: 'opel_insignia', brand: 'Opel', model: 'Insignia', engine: '2.0T', icon: '🚙', badge: 'Сложно',
+                multiplier: 1.2, custom: { 8: 5000, 14: 2800 } },
+
+            // Mitsubishi
+            { id: 'mitsu_lancer_x', brand: 'Mitsubishi', model: 'Lancer X', engine: '1.8/2.0', icon: '🚗',
+            badge: 'Средне',
+                multiplier: 1.0, custom: {} },
+            { id: 'mitsu_outlander', brand: 'Mitsubishi', model: 'Outlander', engine: '2.4', icon: '🚙',
+            badge: 'Средне',
+                multiplier: 1.1, custom: {} },
+            { id: 'mitsu_pajero4', brand: 'Mitsubishi', model: 'Pajero 4', engine: '3.0/3.2D', icon: '🚙',
+            badge: 'Сложно',
+                multiplier: 1.3, custom: { 8: 5500, 14: 3000 } },
+
+            // Mazda
+            { id: 'mazda3', brand: 'Mazda', model: '3', engine: '1.6/2.0', icon: '🚗', badge: 'Средне', multiplier: 1.0,
+                custom: {} },
+            { id: 'mazda6', brand: 'Mazda', model: '6', engine: '2.0/2.5', icon: '🚙', badge: 'Средне',
+            multiplier: 1.1,
+                custom: {} },
+            { id: 'mazda_cx5', brand: 'Mazda', model: 'CX-5', engine: '2.0/2.5', icon: '🚙', badge: 'Средне',
+                multiplier: 1.1, custom: {} },
+
+            // Honda
+            { id: 'honda_civic', brand: 'Honda', model: 'Civic', engine: '1.8', icon: '🚗', badge: 'Средне',
+                multiplier: 1.0, custom: {} },
+            { id: 'honda_accord', brand: 'Honda', model: 'Accord', engine: '2.4', icon: '🚙', badge: 'Средне',
+                multiplier: 1.1, custom: {} },
+            { id: 'honda_crv', brand: 'Honda', model: 'CR-V', engine: '2.0/2.4', icon: '🚙', badge: 'Средне',
+                multiplier: 1.1, custom: {} },
+
+            // Subaru
+            { id: 'subaru_forester', brand: 'Subaru', model: 'Forester', engine: '2.5', icon: '🚙', badge: 'Сложно',
+                multiplier: 1.3, custom: { 8: 5500, 7: 2600 } },
+            { id: 'subaru_outback', brand: 'Subaru', model: 'Outback', engine: '2.5', icon: '🚙', badge: 'Сложно',
+                multiplier: 1.3, custom: { 8: 5500, 7: 2600 } },
+
+            // Лада
+            { id: 'lada_priora', brand: 'Lada', model: 'Priora', engine: '1.6 16V', icon: '🚕', badge: 'Очень легко',
+                multiplier: 0.6, custom: {} },
+            { id: 'lada_granta', brand: 'Lada', model: 'Granta', engine: '1.6 8V', icon: '🚕', badge: 'Очень легко',
+                multiplier: 0.55, custom: {} },
+            { id: 'lada_vesta', brand: 'Lada', model: 'Vesta', engine: '1.6/1.8', icon: '🚕', badge: 'Легко',
+                multiplier: 0.7, custom: {} },
+            { id: 'lada_largus', brand: 'Lada', model: 'Largus', engine: '1.6 K7M', icon: '🚕', badge: 'Легко',
+                multiplier: 0.7, custom: {} },
+            { id: 'lada_niva', brand: 'Lada', model: 'Niva 4x4', engine: '1.7', icon: '🚙', badge: 'Легко',
+                multiplier: 0.65, custom: {} },
+
+            // ГАЗ / УАЗ
+            { id: 'gazelle', brand: 'ГАЗ', model: 'Gazelle', engine: 'УМЗ 4216', icon: '🚚', badge: 'Средне',
+                multiplier: 0.9, custom: {} },
+            { id: 'uaz_patriot', brand: 'УАЗ', model: 'Patriot', engine: 'ЗМЗ 409', icon: '🚙', badge: 'Средне',
+                multiplier: 0.85, custom: {} },
+
+            // Китайские авто
+            { id: 'chery_tiggo', brand: 'Chery', model: 'Tiggo 4', engine: '1.5T', icon: '🚙', badge: 'Средне',
+                multiplier: 0.9, custom: {} },
+            { id: 'geely_atlas', brand: 'Geely', model: 'Atlas', engine: '2.4', icon: '🚙', badge: 'Средне',
+                multiplier: 0.95, custom: {} },
+            { id: 'haval_jolion', brand: 'Haval', model: 'Jolion', engine: '1.5T', icon: '🚙', badge: 'Средне',
+                multiplier: 0.95, custom: {} },
+            { id: 'changan_cs35', brand: 'Changan', model: 'CS35 Plus', engine: '1.6', icon: '🚙', badge: 'Средне',
+                multiplier: 0.9, custom: {} },
+            { id: 'omoda_c5', brand: 'Omoda', model: 'C5', engine: '1.5T', icon: '🚙', badge: 'Средне',
+            multiplier: 0.95,
                 custom: {} },
         ];
 
-        // УСЛУГИ
+        // ==================== УСЛУГИ ====================
         const services = [
             { id: 1, name: 'Компьютерная диагностика', price: 800, cat: 'diagnostics',
                 catName: '🔍 ДИАГНОСТИКА' },
@@ -502,6 +734,7 @@
         let selectedIds = new Set();
         let currentFilter = 'all';
         let searchQuery = '';
+        let carSearchQuery = '';
 
         function getPrice(service) {
             if (selectedCar.custom[service.id] !== undefined) {
@@ -521,10 +754,20 @@
                 const div = document.createElement('div');
                 div.className = 'car-card';
                 if (car.id === selectedCar.id) div.classList.add('active');
+
+                // Поиск по авто
+                if (carSearchQuery.trim() !== '') {
+                    const q = carSearchQuery.toLowerCase().trim();
+                    const searchStr = (car.brand + ' ' + car.model + ' ' + car.engine).toLowerCase();
+                    if (!searchStr.includes(q)) {
+                        div.classList.add('hidden-by-search');
+                    }
+                }
+
                 div.innerHTML = `
                     <span class="car-card-icon">${car.icon}</span>
-                    <div class="car-card-name">${car.name}</div>
-                    <div class="car-card-detail">${car.detail}</div>
+                    <div class="car-card-brand">${car.brand} ${car.model}</div>
+                    <div class="car-card-model">${car.engine}</div>
                     <span class="car-card-badge">${car.badge}</span>
                 `;
                 div.addEventListener('click', () => {
@@ -615,7 +858,8 @@
             });
             document.getElementById('totalPrice').textContent = formatPrice(total);
             document.getElementById('totalCount').textContent = selectedIds.size + ' шт.';
-            document.getElementById('totalCarLabel').textContent = selectedCar.name;
+            document.getElementById('totalCarLabel').textContent =
+                selectedCar.brand + ' ' + selectedCar.model + ' (' + selectedCar.engine + ')';
         }
 
         document.getElementById('clearBtn').addEventListener('click', () => {
@@ -628,11 +872,16 @@
             renderServices();
         });
 
+        document.getElementById('carSearchInput').addEventListener('input', (e) => {
+            carSearchQuery = e.target.value;
+            renderCars();
+        });
+
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 currentFilter = btn.getAttribute('data-filter');
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove(
-                    'active'));
+                'active'));
                 btn.classList.add('active');
                 renderServices();
             });
@@ -641,6 +890,8 @@
         // Старт
         renderCars();
         renderServices();
+        console.log('🚗 Загружено автомобилей: ' + cars.length);
+        console.log('🔧 Загружено услуг: ' + services.length);
     </script>
 </body>
 </html>
