@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Автосервис - Прайс-лист с выбором автомобиля</title>
+    <title>Автосервис - Прайс-лист</title>
     <style>
         * {
             margin: 0;
@@ -13,20 +13,19 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background: #1a1a2e;
             min-height: 100vh;
             padding: 20px;
             color: #e0e0e0;
         }
 
         .container {
-            max-width: 950px;
+            max-width: 900px;
             margin: 0 auto;
-            background: rgba(30, 30, 50, 0.95);
+            background: #1e1e32;
             border-radius: 20px;
             padding: 30px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         /* Шапка */
@@ -42,9 +41,6 @@
             font-weight: 900;
             color: #ff9800;
             letter-spacing: 3px;
-            text-transform: uppercase;
-            text-shadow: 0 0 20px rgba(255, 152, 0, 0.5);
-            margin-bottom: 5px;
         }
 
         .logo span {
@@ -56,222 +52,103 @@
             font-size: 14px;
             color: #aaa;
             letter-spacing: 2px;
-            text-transform: uppercase;
+            margin-top: 5px;
         }
 
-        /* Выбор автомобиля — выпадающий список */
-        .car-selector-wrapper {
-            margin-bottom: 25px;
-        }
-
-        .car-selector-header {
-            background: rgba(0, 0, 0, 0.4);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 16px;
-            padding: 16px 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: all 0.3s ease;
-            user-select: none;
-        }
-
-        .car-selector-header:hover {
-            border-color: rgba(255, 152, 0, 0.5);
-            background: rgba(0, 0, 0, 0.5);
-        }
-
-        .car-selector-header.open {
-            border-color: #ff9800;
-            border-radius: 16px 16px 0 0;
-            box-shadow: 0 0 20px rgba(255, 152, 0, 0.3);
-            background: rgba(255, 152, 0, 0.08);
-        }
-
-        .selected-car-info {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .selected-car-icon {
-            font-size: 36px;
-            transition: transform 0.3s ease;
-        }
-
-        .car-selector-header.open .selected-car-icon {
-            transform: scale(1.1);
-        }
-
-        .selected-car-details {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .selected-car-name {
-            font-size: 18px;
+        /* Заголовок блока */
+        .section-title {
+            font-size: 15px;
             font-weight: 700;
-            color: #fff;
-            letter-spacing: 0.5px;
-        }
-
-        .selected-car-model {
-            font-size: 13px;
-            color: #aaa;
-        }
-
-        .selected-car-badge {
-            display: inline-block;
-            background: #ff9800;
-            color: #000;
-            font-size: 10px;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 20px;
-            letter-spacing: 0.5px;
-            width: fit-content;
-            margin-top: 3px;
-        }
-
-        .arrow-icon {
-            font-size: 20px;
             color: #ff9800;
-            transition: transform 0.3s ease;
-            font-weight: bold;
-        }
-
-        .car-selector-header.open .arrow-icon {
-            transform: rotate(180deg);
-        }
-
-        /* Выпадающая панель со списком авто */
-        .car-dropdown {
-            background: rgba(0, 0, 0, 0.5);
-            border: 2px solid #ff9800;
-            border-top: none;
-            border-radius: 0 0 16px 16px;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
-            opacity: 0;
-        }
-
-        .car-dropdown.open {
-            max-height: 600px;
-            opacity: 1;
-        }
-
-        .car-dropdown-inner {
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .car-option {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 14px 16px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid transparent;
-        }
-
-        .car-option:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 152, 0, 0.3);
-            transform: translateX(4px);
-        }
-
-        .car-option.active {
-            background: rgba(255, 152, 0, 0.15);
-            border-color: #ff9800;
-            box-shadow: 0 0 15px rgba(255, 152, 0, 0.2);
-        }
-
-        .car-option-icon {
-            font-size: 28px;
-            flex-shrink: 0;
-            width: 40px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
             text-align: center;
         }
 
-        .car-option-info {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
+        /* Сетка автомобилей */
+        .cars-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
         }
 
-        .car-option-name {
-            font-weight: 700;
-            font-size: 15px;
-            color: #fff;
+        .car-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 12px 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease;
         }
 
-        .car-option-detail {
-            font-size: 12px;
-            color: #999;
+        .car-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 152, 0, 0.5);
         }
 
-        .car-option-badge {
-            display: inline-block;
+        .car-card.active {
             background: rgba(255, 152, 0, 0.2);
-            color: #ff9800;
+            border-color: #ff9800;
+            box-shadow: 0 0 15px rgba(255, 152, 0, 0.3);
+        }
+
+        .car-card-icon {
+            font-size: 28px;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .car-card-name {
+            font-weight: 700;
+            font-size: 12px;
+            color: #fff;
+            line-height: 1.2;
+        }
+
+        .car-card-detail {
             font-size: 10px;
-            font-weight: 600;
-            padding: 3px 9px;
-            border-radius: 20px;
-            letter-spacing: 0.5px;
-            width: fit-content;
+            color: #999;
             margin-top: 2px;
         }
 
-        .car-option.active .car-option-badge {
+        .car-card-badge {
+            display: inline-block;
             background: #ff9800;
             color: #000;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-top: 4px;
         }
 
-        .car-option-check {
-            font-size: 20px;
-            color: #ff9800;
-            font-weight: bold;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            flex-shrink: 0;
-        }
-
-        .car-option.active .car-option-check {
-            opacity: 1;
+        .car-card.active .car-card-badge {
+            background: #fff;
+            color: #000;
         }
 
         /* Поиск */
         .search-box {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             position: relative;
         }
 
         .search-box input {
             width: 100%;
-            padding: 14px 50px 14px 20px;
-            border-radius: 50px;
+            padding: 12px 45px 12px 18px;
+            border-radius: 30px;
             border: 2px solid rgba(255, 255, 255, 0.15);
             background: rgba(0, 0, 0, 0.3);
             color: #fff;
-            font-size: 15px;
+            font-size: 14px;
             outline: none;
-            transition: all 0.3s ease;
         }
 
         .search-box input:focus {
             border-color: #ff9800;
-            box-shadow: 0 0 15px rgba(255, 152, 0, 0.3);
-            background: rgba(0, 0, 0, 0.5);
         }
 
         .search-box input::placeholder {
@@ -280,33 +157,30 @@
 
         .search-icon {
             position: absolute;
-            right: 18px;
+            right: 14px;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 22px;
-            color: #ff9800;
-            pointer-events: none;
+            font-size: 18px;
         }
 
         /* Фильтр-кнопки */
         .filter-buttons {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 6px;
             margin-bottom: 20px;
             justify-content: center;
         }
 
         .filter-btn {
-            padding: 9px 16px;
-            border-radius: 50px;
+            padding: 8px 14px;
+            border-radius: 30px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             background: rgba(255, 255, 255, 0.05);
             color: #ccc;
             cursor: pointer;
-            font-size: 12px;
-            transition: all 0.3s ease;
-            white-space: nowrap;
+            font-size: 11px;
+            transition: all 0.2s ease;
             font-weight: 500;
         }
 
@@ -321,59 +195,53 @@
             color: #000;
             border-color: #ff9800;
             font-weight: 700;
-            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
         }
 
-        /* Итоговая панель */
+        /* Итог */
         .total-panel {
-            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
-            border-radius: 15px;
-            padding: 18px 25px;
+            background: #ff9800;
+            border-radius: 12px;
+            padding: 16px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
-            gap: 10px;
-            box-shadow: 0 8px 25px rgba(255, 152, 0, 0.3);
+            gap: 8px;
             position: sticky;
             top: 10px;
             z-index: 10;
         }
 
         .total-label {
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 600;
             color: #000;
-            letter-spacing: 1px;
             text-transform: uppercase;
         }
 
         .total-price {
-            font-size: 30px;
+            font-size: 28px;
             font-weight: 900;
             color: #000;
-            letter-spacing: 1px;
         }
 
         .total-count {
-            font-size: 13px;
+            font-size: 12px;
             color: rgba(0, 0, 0, 0.7);
             font-weight: 500;
         }
 
         .clear-btn {
-            padding: 10px 20px;
-            border-radius: 50px;
+            padding: 8px 16px;
+            border-radius: 30px;
             border: 2px solid #000;
             background: transparent;
             color: #000;
             cursor: pointer;
             font-weight: 700;
-            font-size: 13px;
-            transition: all 0.3s ease;
+            font-size: 12px;
             text-transform: uppercase;
-            letter-spacing: 1px;
         }
 
         .clear-btn:hover {
@@ -382,20 +250,14 @@
         }
 
         /* Список услуг */
-        .services-list {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
         .category-title {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
             color: #ff9800;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            margin: 15px 0 8px 5px;
-            padding-top: 10px;
+            letter-spacing: 1px;
+            margin: 12px 0 6px 5px;
+            padding-top: 8px;
             border-top: 1px solid rgba(255, 255, 255, 0.08);
         }
 
@@ -405,95 +267,82 @@
             padding-top: 0;
         }
 
-        .service-item {
+        .service-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 13px 18px;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.03);
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.02);
             cursor: pointer;
-            transition: all 0.3s ease;
+            margin-bottom: 4px;
             border: 1px solid transparent;
-            user-select: none;
+            transition: all 0.2s ease;
         }
 
-        .service-item:hover {
-            background: rgba(255, 255, 255, 0.07);
+        .service-row:hover {
+            background: rgba(255, 255, 255, 0.05);
             border-color: rgba(255, 152, 0, 0.3);
         }
 
-        .service-item.selected {
-            background: rgba(255, 152, 0, 0.15);
+        .service-row.selected {
+            background: rgba(255, 152, 0, 0.2);
             border-color: #ff9800;
-            box-shadow: 0 0 15px rgba(255, 152, 0, 0.2);
         }
 
-        .service-info {
+        .service-left {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             flex: 1;
         }
 
-        .checkbox-custom {
-            width: 24px;
-            height: 24px;
-            border-radius: 6px;
+        .check-box {
+            width: 22px;
+            height: 22px;
+            border-radius: 5px;
             border: 2px solid rgba(255, 255, 255, 0.3);
+            flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
-            flex-shrink: 0;
+            font-size: 13px;
+            font-weight: bold;
+            color: #000;
         }
 
-        .service-item.selected .checkbox-custom {
+        .service-row.selected .check-box {
             background: #ff9800;
             border-color: #ff9800;
         }
 
-        .check-mark {
-            color: #000;
-            font-size: 14px;
-            font-weight: bold;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .service-item.selected .check-mark {
-            opacity: 1;
-        }
-
         .service-name {
-            font-size: 14px;
-            font-weight: 500;
+            font-size: 13px;
             color: #ddd;
         }
 
-        .service-item.selected .service-name {
+        .service-row.selected .service-name {
             color: #fff;
             font-weight: 600;
         }
 
         .service-price {
-            font-size: 17px;
+            font-size: 16px;
             font-weight: 700;
             color: #ff9800;
             white-space: nowrap;
-            margin-left: 15px;
-            min-width: 90px;
-            text-align: right;
+            margin-left: 10px;
         }
 
-        .service-item.selected .service-price {
+        .service-row.selected .service-price {
             color: #fff;
         }
 
-        .price-diff {
-            font-size: 11px;
-            color: #999;
+        .price-note {
+            font-size: 10px;
+            color: #888;
             font-weight: 400;
+            margin-left: 4px;
         }
 
         .hidden {
@@ -503,96 +352,50 @@
         /* Футер */
         .footer {
             text-align: center;
-            margin-top: 30px;
-            padding-top: 20px;
+            margin-top: 25px;
+            padding-top: 15px;
             border-top: 1px solid rgba(255, 255, 255, 0.08);
             color: #666;
-            font-size: 12px;
-            letter-spacing: 1px;
+            font-size: 11px;
         }
 
-        /* Анимация */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(15px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .service-item {
-            animation: fadeInUp 0.4s ease forwards;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
+        @media (max-width: 600px) {
             .container {
-                padding: 15px;
+                padding: 12px;
                 border-radius: 12px;
             }
             .logo {
                 font-size: 24px;
             }
-            .selected-car-name {
-                font-size: 15px;
+            .cars-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 6px;
             }
-            .selected-car-icon {
-                font-size: 28px;
+            .car-card {
+                padding: 10px 6px;
             }
-            .service-item {
-                padding: 10px 12px;
+            .car-card-name {
+                font-size: 10px;
+            }
+            .car-card-icon {
+                font-size: 22px;
+            }
+            .service-row {
+                padding: 10px 10px;
             }
             .service-name {
-                font-size: 13px;
+                font-size: 12px;
             }
             .service-price {
                 font-size: 14px;
-                min-width: 70px;
             }
             .total-price {
-                font-size: 24px;
+                font-size: 22px;
             }
             .filter-btn {
-                padding: 7px 11px;
-                font-size: 11px;
+                padding: 6px 10px;
+                font-size: 10px;
             }
-            .total-panel {
-                padding: 14px 16px;
-            }
-            .car-option {
-                padding: 12px 10px;
-            }
-            .car-option-name {
-                font-size: 13px;
-            }
-        }
-
-        @media (max-width: 400px) {
-            .selected-car-name {
-                font-size: 13px;
-            }
-            .selected-car-icon {
-                font-size: 24px;
-            }
-            .car-option-icon {
-                font-size: 22px;
-                width: 30px;
-            }
-        }
-
-        /* Скроллбар */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255, 152, 0, 0.3);
-            border-radius: 10px;
         }
     </style>
 </head>
@@ -603,463 +406,241 @@
         <!-- Шапка -->
         <div class="header">
             <div class="logo">AUTO<span>SERVICE</span></div>
-            <div class="subtitle">Прайс-лист с учётом марки автомобиля</div>
+            <div class="subtitle">Прайс-лист на слесарные работы</div>
         </div>
 
-        <!-- Выбор автомобиля — выпадающий список -->
-        <div class="car-selector-wrapper" id="carSelectorWrapper">
-            <!-- Заголовок (всегда виден) -->
-            <div class="car-selector-header" id="carSelectorHeader">
-                <div class="selected-car-info">
-                    <span class="selected-car-icon" id="selectedCarIcon">🚙</span>
-                    <div class="selected-car-details">
-                        <span class="selected-car-name" id="selectedCarName">VW Passat B6</span>
-                        <span class="selected-car-model" id="selectedCarModel">1.6 BSE</span>
-                        <span class="selected-car-badge" id="selectedCarBadge">Средняя сложность</span>
-                    </div>
-                </div>
-                <span class="arrow-icon" id="arrowIcon">▼</span>
-            </div>
-
-            <!-- Выпадающая панель -->
-            <div class="car-dropdown" id="carDropdown">
-                <div class="car-dropdown-inner" id="carDropdownInner">
-                    <!-- Заполняется через JS -->
-                </div>
-            </div>
-        </div>
+        <!-- Выбор автомобиля -->
+        <div class="section-title">🚗 Выберите автомобиль</div>
+        <div class="cars-grid" id="carsGrid"></div>
 
         <!-- Поиск -->
         <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Поиск по названию услуги...">
+            <input type="text" id="searchInput" placeholder="Поиск услуги...">
             <span class="search-icon">🔍</span>
         </div>
 
-        <!-- Кнопки категорий -->
+        <!-- Фильтры -->
         <div class="filter-buttons" id="filterButtons">
-            <button class="filter-btn active" data-filter="all">Все услуги</button>
+            <button class="filter-btn active" data-filter="all">Все</button>
             <button class="filter-btn" data-filter="diagnostics">Диагностика</button>
             <button class="filter-btn" data-filter="maintenance">ТО</button>
-            <button class="filter-btn" data-filter="exhaust">Выпускная система</button>
-            <button class="filter-btn" data-filter="threads">Ремонт резьбы</button>
+            <button class="filter-btn" data-filter="exhaust">Выхлоп</button>
+            <button class="filter-btn" data-filter="threads">Резьба</button>
             <button class="filter-btn" data-filter="transmission">Трансмиссия</button>
             <button class="filter-btn" data-filter="brakes">Тормоза</button>
             <button class="filter-btn" data-filter="welding">Сварка</button>
         </div>
 
-        <!-- Итоговая сумма -->
+        <!-- Итог -->
         <div class="total-panel" id="totalPanel">
             <div>
-                <div class="total-label">Выбрано услуг:</div>
-                <div class="total-count" id="totalCount">0</div>
+                <div class="total-label">Выбрано: <span id="totalCount">0</span></div>
+                <div class="total-label" id="totalCarLabel"></div>
             </div>
             <div style="text-align:right;">
-                <div class="total-label" id="totalCarLabel">Сумма:</div>
                 <div class="total-price" id="totalPrice">0 ₽</div>
             </div>
-            <button class="clear-btn" id="clearBtn">✕ Сбросить</button>
+            <button class="clear-btn" id="clearBtn">Сбросить</button>
         </div>
 
         <!-- Список услуг -->
-        <div class="services-list" id="servicesList">
-            <!-- Заполняется через JS -->
-        </div>
+        <div id="servicesList"></div>
 
         <!-- Футер -->
         <div class="footer">
-            © 2026 AutoService. Цены указаны за работу без учёта запчастей и материалов.<br>
-            Стоимость зависит от марки автомобиля и сложности доступа к узлам.
+            © 2026 AutoService. Цены без учёта запчастей и материалов.
         </div>
-
     </div>
 
     <script>
-        // ==================== ДАННЫЕ: АВТОМОБИЛИ ====================
+        // АВТОМОБИЛИ
         const cars = [
-            {
-                id: 'passat_b6',
-                name: 'VW Passat B6',
-                detail: '1.6 BSE',
-                icon: '🚙',
-                badge: 'Средняя сложность',
-                multiplier: 1.0,
-                customPrices: {}
-            },
-            {
-                id: 'skoda_octavia',
-                name: 'Škoda Octavia Tour',
-                detail: '1.6 BSE/BFQ',
-                icon: '🚗',
-                badge: 'Низкая сложность',
-                multiplier: 0.85,
-                customPrices: {}
-            },
-            {
-                id: 'audi_a4',
-                name: 'Audi A4 B7',
-                detail: '1.8 TFSI / 2.0 TFSI',
-                icon: '🏎️',
-                badge: 'Высокая сложность',
-                multiplier: 1.4,
-                customPrices: {
-                    7: 2800,
-                    8: 5500,
-                    14: 3000,
-                }
-            },
-            {
-                id: 'bmw_e90',
-                name: 'BMW E90',
-                detail: '318i / 320i N46',
-                icon: '🚘',
-                badge: 'Высокая сложность',
-                multiplier: 1.5,
-                customPrices: {
-                    7: 3200,
-                    8: 6000,
-                    14: 3500,
-                }
-            },
-            {
-                id: 'ford_focus',
-                name: 'Ford Focus 2',
-                detail: '1.6 Duratec',
-                icon: '🚓',
-                badge: 'Средняя сложность',
-                multiplier: 0.9,
-                customPrices: {}
-            },
-            {
-                id: 'reno_logan',
-                name: 'Renault Logan',
-                detail: '1.6 K7M',
-                icon: '🚕',
-                badge: 'Низкая сложность',
-                multiplier: 0.75,
-                customPrices: {}
-            },
+            { id: 'passat_b6', name: 'VW Passat B6', detail: '1.6 BSE', icon: '🚙', badge: 'Средне',
+                multiplier: 1.0, custom: {} },
+            { id: 'skoda_octavia', name: 'Skoda Octavia', detail: '1.6 Tour', icon: '🚗', badge: 'Легко',
+                multiplier: 0.85, custom: {} },
+            { id: 'audi_a4', name: 'Audi A4 B7', detail: '1.8/2.0 TFSI', icon: '🏎️', badge: 'Сложно', multiplier: 1.4,
+                custom: { 7: 2800, 8: 5500, 14: 3000 } },
+            { id: 'bmw_e90', name: 'BMW E90', detail: '318i/320i', icon: '🚘', badge: 'Сложно', multiplier: 1.5,
+                custom: { 7: 3200, 8: 6000, 14: 3500 } },
+            { id: 'ford_focus', name: 'Ford Focus 2', detail: '1.6 Duratec', icon: '🚓', badge: 'Средне',
+                multiplier: 0.9, custom: {} },
+            { id: 'reno_logan', name: 'Renault Logan', detail: '1.6 K7M', icon: '🚕', badge: 'Легко', multiplier: 0.75,
+                custom: {} },
         ];
 
-        // ==================== ДАННЫЕ: УСЛУГИ (БАЗОВЫЕ ЦЕНЫ) ====================
+        // УСЛУГИ
         const services = [
-            { id: 1, name: 'Компьютерная диагностика автомобиля', basePrice: 800, category: 'diagnostics',
-                categoryName: '🔍 ДИАГНОСТИКА' },
-            { id: 2, name: 'Замена моторного масла и масляного фильтра', basePrice: 800, category: 'maintenance',
-                categoryName: '🛠️ ТЕХНИЧЕСКОЕ ОБСЛУЖИВАНИЕ' },
-            { id: 3, name: 'Снятие/установка декоративной крышки двигателя', basePrice: 200, category: 'maintenance',
-                categoryName: '🛠️ ТЕХНИЧЕСКОЕ ОБСЛУЖИВАНИЕ' },
-            { id: 4, name: 'Снятие/установка катушек зажигания (4 шт)', basePrice: 500, category: 'maintenance',
-                categoryName: '🛠️ ТЕХНИЧЕСКОЕ ОБСЛУЖИВАНИЕ' },
-            { id: 5, name: 'Замена свечей зажигания (4 шт)', basePrice: 600, category: 'maintenance',
-                categoryName: '🛠️ ТЕХНИЧЕСКОЕ ОБСЛУЖИВАНИЕ' },
-            { id: 6, name: 'Снятие/установка защиты двигателя (нижний пыльник)', basePrice: 500, category: 'maintenance',
-                categoryName: '🛠️ ТЕХНИЧЕСКОЕ ОБСЛУЖИВАНИЕ' },
-            { id: 7, name: 'Снятие/установка впускного коллектора', basePrice: 2000, category: 'exhaust',
-                categoryName: '💨 СИСТЕМА ВЫПУСКА' },
-            { id: 8, name: 'Снятие/установка выпускного коллектора (штаны)', basePrice: 4000, category: 'exhaust',
-                categoryName: '💨 СИСТЕМА ВЫПУСКА' },
-            { id: 9, name: 'Резка приемной трубы болгаркой (быстрый съем)', basePrice: 500, category: 'exhaust',
-                categoryName: '💨 СИСТЕМА ВЫПУСКА' },
-            { id: 10, name: 'Резка старых гофр болгаркой (2 шт)', basePrice: 400, category: 'exhaust',
-                categoryName: '💨 СИСТЕМА ВЫПУСКА' },
-            { id: 11, name: 'Подгонка и приварка новых гофр (2 шт)', basePrice: 3500, category: 'exhaust',
-                categoryName: '💨 СИСТЕМА ВЫПУСКА' },
-            { id: 12, name: 'Высверливание/выкручивание сломанной шпильки (1 шт)', basePrice: 1000, category: 'threads',
-                categoryName: '🔩 РЕМОНТ РЕЗЬБОВЫХ СОЕДИНЕНИЙ' },
-            { id: 13, name: 'Приварка гайки для выкручивания обломанной шпильки (1 шт)', basePrice: 800,
-                category: 'threads', categoryName: '🔩 РЕМОНТ РЕЗЬБОВЫХ СОЕДИНЕНИЙ' },
-            { id: 14, name: 'Снятие/установка внутреннего ШРУСа (отведение от КПП)', basePrice: 2000,
-                category: 'transmission', categoryName: '⚙️ ТРАНСМИССИЯ' },
-            { id: 15, name: 'Устранение скрипа ручки КПП (смазка кулисы)', basePrice: 500, category: 'transmission',
-                categoryName: '⚙️ ТРАНСМИССИЯ' },
-            { id: 16, name: 'Снятие/установка задних тормозных барабанов (2 шт)', basePrice: 800, category: 'brakes',
-                categoryName: '🛑 ТОРМОЗНАЯ СИСТЕМА' },
-            { id: 17, name: 'Зачистка и покраска задних тормозных барабанов (2 шт)', basePrice: 1200, category: 'brakes',
-                categoryName: '🛑 ТОРМОЗНАЯ СИСТЕМА' },
-            { id: 18, name: 'Сварочные работы (приварка гаек, прутков, гофр) — от', basePrice: 500, category: 'welding',
-                categoryName: '🔥 СВАРОЧНЫЕ РАБОТЫ' },
+            { id: 1, name: 'Компьютерная диагностика', price: 800, cat: 'diagnostics',
+                catName: '🔍 ДИАГНОСТИКА' },
+            { id: 2, name: 'Замена масла и фильтра', price: 800, cat: 'maintenance', catName: '🛠️ ТО' },
+            { id: 3, name: 'Снятие/установка крышки двигателя', price: 200, cat: 'maintenance', catName: '🛠️ ТО' },
+            { id: 4, name: 'Снятие/установка катушек (4 шт)', price: 500, cat: 'maintenance', catName: '🛠️ ТО' },
+            { id: 5, name: 'Замена свечей зажигания (4 шт)', price: 600, cat: 'maintenance', catName: '🛠️ ТО' },
+            { id: 6, name: 'Снятие/установка защиты двигателя', price: 500, cat: 'maintenance', catName: '🛠️ ТО' },
+            { id: 7, name: 'Снятие/установка впускного коллектора', price: 2000, cat: 'exhaust',
+            catName: '💨 ВЫПУСК' },
+            { id: 8, name: 'Снятие/установка выпускного коллектора', price: 4000, cat: 'exhaust', catName: '💨 ВЫПУСК' },
+            { id: 9, name: 'Резка приёмной трубы болгаркой', price: 500, cat: 'exhaust', catName: '💨 ВЫПУСК' },
+            { id: 10, name: 'Резка старых гофр (2 шт)', price: 400, cat: 'exhaust', catName: '💨 ВЫПУСК' },
+            { id: 11, name: 'Приварка новых гофр (2 шт)', price: 3500, cat: 'exhaust', catName: '💨 ВЫПУСК' },
+            { id: 12, name: 'Высверливание сломанной шпильки (1 шт)', price: 1000, cat: 'threads',
+            catName: '🔩 РЕЗЬБА' },
+            { id: 13, name: 'Приварка гайки для выкручивания (1 шт)', price: 800, cat: 'threads',
+            catName: '🔩 РЕЗЬБА' },
+            { id: 14, name: 'Снятие/установка внутр. ШРУСа', price: 2000, cat: 'transmission',
+            catName: '⚙️ ТРАНСМИССИЯ' },
+            { id: 15, name: 'Устранение скрипа ручки КПП', price: 500, cat: 'transmission',
+            catName: '⚙️ ТРАНСМИССИЯ' },
+            { id: 16, name: 'Снятие/установка задних барабанов (2 шт)', price: 800, cat: 'brakes',
+            catName: '🛑 ТОРМОЗА' },
+            { id: 17, name: 'Покраска задних барабанов (2 шт)', price: 1200, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
+            { id: 18, name: 'Сварочные работы (от)', price: 500, cat: 'welding', catName: '🔥 СВАРКА' },
         ];
 
-        // ==================== СОСТОЯНИЕ ====================
-        let selectedCarId = 'passat_b6';
-        let selectedServices = new Set();
+        let selectedCar = cars[0];
+        let selectedIds = new Set();
         let currentFilter = 'all';
-        let currentSearch = '';
-        let isDropdownOpen = false;
+        let searchQuery = '';
 
-        // DOM-элементы
-        const carSelectorHeader = document.getElementById('carSelectorHeader');
-        const carDropdown = document.getElementById('carDropdown');
-        const carDropdownInner = document.getElementById('carDropdownInner');
-        const arrowIcon = document.getElementById('arrowIcon');
-        const selectedCarIcon = document.getElementById('selectedCarIcon');
-        const selectedCarName = document.getElementById('selectedCarName');
-        const selectedCarModel = document.getElementById('selectedCarModel');
-        const selectedCarBadge = document.getElementById('selectedCarBadge');
-        const servicesList = document.getElementById('servicesList');
-        const totalPriceEl = document.getElementById('totalPrice');
-        const totalCountEl = document.getElementById('totalCount');
-        const totalCarLabel = document.getElementById('totalCarLabel');
-        const clearBtn = document.getElementById('clearBtn');
-        const searchInput = document.getElementById('searchInput');
-        const filterButtons = document.querySelectorAll('.filter-btn');
-
-        // ==================== ФУНКЦИИ ====================
-
-        function getSelectedCar() {
-            return cars.find(c => c.id === selectedCarId) || cars[0];
-        }
-
-        function getServicePrice(service) {
-            const car = getSelectedCar();
-            if (car.customPrices && car.customPrices[service.id] !== undefined) {
-                return car.customPrices[service.id];
+        function getPrice(service) {
+            if (selectedCar.custom[service.id] !== undefined) {
+                return selectedCar.custom[service.id];
             }
-            return Math.round(service.basePrice * car.multiplier);
+            return Math.round(service.price * selectedCar.multiplier);
         }
 
-        function formatPrice(price) {
-            return price.toLocaleString('ru-RU') + ' ₽';
+        function formatPrice(p) {
+            return p.toLocaleString('ru-RU') + ' ₽';
         }
 
-        // Обновление шапки выбранного авто
-        function updateSelectedCarHeader() {
-            const car = getSelectedCar();
-            selectedCarIcon.textContent = car.icon;
-            selectedCarName.textContent = car.name;
-            selectedCarModel.textContent = car.detail;
-            selectedCarBadge.textContent = car.badge;
-        }
-
-        // Отрисовка выпадающего списка авто
-        function renderCarDropdown() {
-            carDropdownInner.innerHTML = '';
+        function renderCars() {
+            const grid = document.getElementById('carsGrid');
+            grid.innerHTML = '';
             cars.forEach(car => {
-                const option = document.createElement('div');
-                option.className = 'car-option';
-                if (car.id === selectedCarId) {
-                    option.classList.add('active');
-                }
-                option.setAttribute('data-car-id', car.id);
-                option.innerHTML = `
-                    <span class="car-option-icon">${car.icon}</span>
-                    <div class="car-option-info">
-                        <span class="car-option-name">${car.name}</span>
-                        <span class="car-option-detail">${car.detail}</span>
-                        <span class="car-option-badge">${car.badge}</span>
-                    </div>
-                    <span class="car-option-check">✓</span>
+                const div = document.createElement('div');
+                div.className = 'car-card';
+                if (car.id === selectedCar.id) div.classList.add('active');
+                div.innerHTML = `
+                    <span class="car-card-icon">${car.icon}</span>
+                    <div class="car-card-name">${car.name}</div>
+                    <div class="car-card-detail">${car.detail}</div>
+                    <span class="car-card-badge">${car.badge}</span>
                 `;
-                option.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    selectCar(car.id);
-                    closeDropdown();
+                div.addEventListener('click', () => {
+                    selectedCar = car;
+                    selectedIds.clear();
+                    renderCars();
+                    renderServices();
                 });
-                carDropdownInner.appendChild(option);
+                grid.appendChild(div);
             });
         }
 
-        // Открыть/закрыть выпадающий список
-        function toggleDropdown() {
-            if (isDropdownOpen) {
-                closeDropdown();
-            } else {
-                openDropdown();
-            }
-        }
-
-        function openDropdown() {
-            isDropdownOpen = true;
-            carSelectorHeader.classList.add('open');
-            carDropdown.classList.add('open');
-            arrowIcon.textContent = '▲';
-            renderCarDropdown();
-        }
-
-        function closeDropdown() {
-            isDropdownOpen = false;
-            carSelectorHeader.classList.remove('open');
-            carDropdown.classList.remove('open');
-            arrowIcon.textContent = '▼';
-        }
-
-        // Выбор автомобиля
-        function selectCar(carId) {
-            if (selectedCarId === carId) return;
-            selectedCarId = carId;
-            selectedServices.clear();
-            updateSelectedCarHeader();
-            renderCarDropdown();
-            renderServices();
-        }
-
-        // Закрытие при клике вне списка
-        document.addEventListener('click', (e) => {
-            const wrapper = document.getElementById('carSelectorWrapper');
-            if (isDropdownOpen && !wrapper.contains(e.target)) {
-                closeDropdown();
-            }
-        });
-
-        // Отрисовка списка услуг
         function renderServices() {
-            servicesList.innerHTML = '';
-            const car = getSelectedCar();
+            const container = document.getElementById('servicesList');
+            container.innerHTML = '';
 
-            let filteredServices = services;
+            let list = services;
 
             if (currentFilter !== 'all') {
-                filteredServices = filteredServices.filter(s => s.category === currentFilter);
+                list = list.filter(s => s.cat === currentFilter);
             }
 
-            if (currentSearch.trim() !== '') {
-                const searchLower = currentSearch.toLowerCase().trim();
-                filteredServices = filteredServices.filter(s =>
-                    s.name.toLowerCase().includes(searchLower)
-                );
+            if (searchQuery.trim() !== '') {
+                const q = searchQuery.toLowerCase().trim();
+                list = list.filter(s => s.name.toLowerCase().includes(q));
             }
 
             const grouped = {};
-            filteredServices.forEach(s => {
-                if (!grouped[s.category]) {
-                    grouped[s.category] = {
-                        categoryName: s.categoryName,
-                        items: []
-                    };
-                }
-                grouped[s.category].items.push(s);
+            list.forEach(s => {
+                if (!grouped[s.cat]) grouped[s.cat] = { catName: s.catName, items: [] };
+                grouped[s.cat].items.push(s);
             });
 
-            Object.keys(grouped).forEach(catKey => {
-                const group = grouped[catKey];
+            Object.keys(grouped).forEach(key => {
+                const g = grouped[key];
+                const title = document.createElement('div');
+                title.className = 'category-title';
+                title.textContent = g.catName;
+                container.appendChild(title);
 
-                const titleDiv = document.createElement('div');
-                titleDiv.className = 'category-title';
-                titleDiv.textContent = group.categoryName;
-                servicesList.appendChild(titleDiv);
+                g.items.forEach(s => {
+                    const price = getPrice(s);
+                    const row = document.createElement('div');
+                    row.className = 'service-row';
+                    if (selectedIds.has(s.id)) row.classList.add('selected');
 
-                group.items.forEach(service => {
-                    const price = getServicePrice(service);
-                    const itemDiv = document.createElement('div');
-                    itemDiv.className = 'service-item';
-                    if (selectedServices.has(service.id)) {
-                        itemDiv.classList.add('selected');
-                    }
-                    itemDiv.setAttribute('data-id', service.id);
-
-                    let priceDiffHtml = '';
-                    if (price !== service.basePrice) {
-                        const diff = price - service.basePrice;
+                    let note = '';
+                    if (price !== s.price) {
+                        const diff = price - s.price;
                         const sign = diff > 0 ? '+' : '';
-                        priceDiffHtml = `<span class="price-diff">(${sign}${diff} ₽)</span>`;
+                        note = `<span class="price-note">(${sign}${diff} ₽)</span>`;
                     }
 
-                    itemDiv.innerHTML = `
-                        <div class="service-info">
-                            <div class="checkbox-custom">
-                                <span class="check-mark">✓</span>
-                            </div>
-                            <span class="service-name">${service.name}</span>
+                    row.innerHTML = `
+                        <div class="service-left">
+                            <div class="check-box">${selectedIds.has(s.id) ? '✓' : ''}</div>
+                            <span class="service-name">${s.name}</span>
                         </div>
-                        <span class="service-price">${formatPrice(price)} ${priceDiffHtml}</span>
+                        <span class="service-price">${formatPrice(price)} ${note}</span>
                     `;
 
-                    itemDiv.addEventListener('click', () => toggleService(service.id));
-                    servicesList.appendChild(itemDiv);
+                    row.addEventListener('click', () => {
+                        if (selectedIds.has(s.id)) {
+                            selectedIds.delete(s.id);
+                        } else {
+                            selectedIds.add(s.id);
+                        }
+                        renderServices();
+                    });
+
+                    container.appendChild(row);
                 });
             });
 
-            if (filteredServices.length === 0) {
-                const emptyDiv = document.createElement('div');
-                emptyDiv.style.cssText =
-                    'text-align:center; padding:40px; color:#777; font-size:16px;';
-                emptyDiv.textContent = '😕 Ничего не найдено. Попробуйте изменить запрос или фильтр.';
-                servicesList.appendChild(emptyDiv);
+            if (list.length === 0) {
+                container.innerHTML =
+                    '<div style="text-align:center;padding:30px;color:#777;">Ничего не найдено</div>';
             }
 
             updateTotal();
         }
 
-        function toggleService(id) {
-            if (selectedServices.has(id)) {
-                selectedServices.delete(id);
-            } else {
-                selectedServices.add(id);
-            }
-            renderServices();
-        }
-
         function updateTotal() {
             let total = 0;
-            selectedServices.forEach(id => {
-                const service = services.find(s => s.id === id);
-                if (service) {
-                    total += getServicePrice(service);
-                }
+            selectedIds.forEach(id => {
+                const s = services.find(x => x.id === id);
+                if (s) total += getPrice(s);
             });
-
-            const car = getSelectedCar();
-            totalPriceEl.textContent = formatPrice(total);
-            totalCountEl.textContent = selectedServices.size + ' шт.';
-            totalCarLabel.textContent = car.name + ' — Сумма:';
+            document.getElementById('totalPrice').textContent = formatPrice(total);
+            document.getElementById('totalCount').textContent = selectedIds.size + ' шт.';
+            document.getElementById('totalCarLabel').textContent = selectedCar.name;
         }
 
-        function clearAll() {
-            selectedServices.clear();
-            renderServices();
-        }
-
-        function setFilter(filter) {
-            currentFilter = filter;
-            filterButtons.forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.getAttribute('data-filter') === filter) {
-                    btn.classList.add('active');
-                }
-            });
-            renderServices();
-        }
-
-        // ==================== ОБРАБОТЧИКИ ====================
-        carSelectorHeader.addEventListener('click', (e) => {
-            e.stopPropagation();
-            toggleDropdown();
-        });
-
-        clearBtn.addEventListener('click', clearAll);
-
-        searchInput.addEventListener('input', (e) => {
-            currentSearch = e.target.value;
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            selectedIds.clear();
             renderServices();
         });
 
-        filterButtons.forEach(btn => {
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            renderServices();
+        });
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                const filter = btn.getAttribute('data-filter');
-                setFilter(filter);
+                currentFilter = btn.getAttribute('data-filter');
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove(
+                    'active'));
+                btn.classList.add('active');
+                renderServices();
             });
         });
 
-        // Закрытие выпадающего списка по клавише Escape
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && isDropdownOpen) {
-                closeDropdown();
-            }
-        });
-
-        // ==================== ИНИЦИАЛИЗАЦИЯ ====================
-        function init() {
-            updateSelectedCarHeader();
-            renderCarDropdown();
-            renderServices();
-            console.log('🚗 Прайс-лист загружен!');
-            console.log('📋 Автомобилей: ' + cars.length);
-            console.log('🔧 Услуг: ' + services.length);
-            console.log('💡 Нажмите на панель автомобиля, чтобы открыть список.');
-            console.log('💡 Кликните вне списка или нажмите Escape, чтобы закрыть.');
-        }
-
-        init();
+        // Старт
+        renderCars();
+        renderServices();
     </script>
 </body>
 </html>
