@@ -1,18 +1,10 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Копим на мечту ✨</title>
-
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js">
-    </script>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Автосервис - Прайс-лист на работы</title>
     <style>
-        /* ===== Глобальные стили (такие же красивые) ===== */
         * {
             margin: 0;
             padding: 0;
@@ -20,600 +12,620 @@
         }
 
         body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0b0813;
             padding: 20px;
-            background-image: radial-gradient(ellipse at 50% 0%, #1e1430 0%, #0b0813 70%);
+            color: #e0e0e0;
         }
 
-        .card {
-            max-width: 540px;
-            width: 100%;
-            background: linear-gradient(165deg, rgba(30, 20, 48, 0.92), rgba(15, 10, 28, 0.96));
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 48px;
-            padding: 40px 32px 44px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(30, 30, 50, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Шапка */
+        .header {
             text-align: center;
-            position: relative;
-            overflow: hidden;
-            animation: fadeUp 0.8s ease forwards;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(255, 165, 0, 0.3);
         }
 
-        .card::before {
-            content: '';
+        .logo {
+            font-size: 36px;
+            font-weight: 900;
+            color: #ff9800;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(255, 152, 0, 0.5);
+            margin-bottom: 5px;
+        }
+
+        .logo span {
+            color: #fff;
+            font-weight: 300;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #aaa;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Поиск */
+        .search-box {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            border-radius: 50px;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            border-color: #ff9800;
+            box-shadow: 0 0 15px rgba(255, 152, 0, 0.3);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .search-box input::placeholder {
+            color: #777;
+        }
+
+        .search-icon {
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(ellipse at 30% 20%, rgba(160, 100, 220, 0.06), transparent 60%);
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 22px;
+            color: #ff9800;
             pointer-events: none;
         }
 
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Фильтр-кнопки (категории) */
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 25px;
+            justify-content: center;
         }
 
-        /* ===== Остальные стили (как в прошлой версии) ===== */
-        .header { position: relative; z-index: 1; }
-        .badge {
-            display: inline-block;
-            background: linear-gradient(135deg, #7c3aed, #a855f7);
-            padding: 6px 20px;
-            border-radius: 100px;
-            font-size: 0.7rem;
+        .filter-btn {
+            padding: 10px 18px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: #ccc;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+
+        .filter-btn:hover {
+            background: rgba(255, 152, 0, 0.2);
+            border-color: #ff9800;
+            color: #fff;
+        }
+
+        .filter-btn.active {
+            background: #ff9800;
+            color: #000;
+            border-color: #ff9800;
             font-weight: 700;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            color: #fff;
-            margin-bottom: 14px;
-            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
-        }
-        h1 {
-            font-size: 2.6rem;
-            font-weight: 700;
-            color: #fff;
-            letter-spacing: -0.5px;
-            line-height: 1.2;
-        }
-        h1 .emoji { display: inline-block; animation: float 3s ease-in-out infinite; }
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
-        }
-        .subtitle {
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 0.95rem;
-            margin-top: 6px;
-            font-weight: 400;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
         }
 
-        .balance-wrap {
-            position: relative;
-            z-index: 1;
-            margin: 28px 0 20px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 32px;
-            padding: 24px 20px 18px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .balance-label {
-            color: rgba(255, 255, 255, 0.35);
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: 600;
-        }
-        .balance-number {
-            font-size: 4.2rem;
-            font-weight: 800;
-            color: #fff;
-            line-height: 1.1;
-            margin-top: 2px;
-            letter-spacing: -1px;
-            text-shadow: 0 0 40px rgba(124, 58, 237, 0.15);
-        }
-        .balance-number .currency {
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.4);
-            margin-left: 4px;
-        }
-
-        .progress-wrap {
-            position: relative;
-            z-index: 1;
-            margin: 8px 0 6px;
-        }
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.06);
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
-        }
-        .progress-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #7c3aed, #a855f7, #d946ef);
-            border-radius: 20px;
-            transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-            box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
-        }
-        .progress-info {
+        /* Итоговая панель */
+        .total-panel {
+            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+            border-radius: 15px;
+            padding: 18px 25px;
             display: flex;
             justify-content: space-between;
-            margin-top: 10px;
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.35);
-            font-weight: 500;
-        }
-        .progress-info .target { color: rgba(255, 255, 255, 0.5); }
-        .progress-info .percent { color: #a855f7; font-weight: 700; }
-
-        .help-section {
-            position: relative;
-            z-index: 1;
-            margin-top: 28px;
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 28px;
-            padding: 24px 20px 28px;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-        }
-        .help-title {
-            color: #fff;
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 16px;
-        }
-        .help-title span { color: #a855f7; }
-
-        .input-row {
-            display: flex;
-            gap: 10px;
+            align-items: center;
+            margin-bottom: 25px;
             flex-wrap: wrap;
-        }
-        .input-row input {
-            flex: 1;
-            min-width: 130px;
-            padding: 16px 20px;
-            border: none;
-            border-radius: 18px;
-            background: rgba(255, 255, 255, 0.05);
-            font-size: 1.1rem;
-            font-weight: 500;
-            color: #fff;
-            outline: 1px solid rgba(255, 255, 255, 0.06);
-            transition: all 0.2s ease;
-            text-align: center;
-        }
-        .input-row input::placeholder {
-            color: rgba(255, 255, 255, 0.2);
-            font-weight: 400;
-        }
-        .input-row input:focus {
-            outline: 1px solid #7c3aed;
-            background: rgba(255, 255, 255, 0.07);
-            box-shadow: 0 0 30px rgba(124, 58, 237, 0.05);
+            gap: 10px;
+            box-shadow: 0 8px 25px rgba(255, 152, 0, 0.3);
         }
 
-        .btn-primary {
-            padding: 16px 32px;
-            border: none;
-            border-radius: 18px;
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: #fff;
-            background: linear-gradient(135deg, #7c3aed, #a855f7);
+        .total-label {
+            font-size: 15px;
+            font-weight: 600;
+            color: #000;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .total-price {
+            font-size: 32px;
+            font-weight: 900;
+            color: #000;
+            letter-spacing: 1px;
+        }
+
+        .total-count {
+            font-size: 13px;
+            color: rgba(0, 0, 0, 0.7);
+            font-weight: 500;
+        }
+
+        .clear-btn {
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: 2px solid #000;
+            background: transparent;
+            color: #000;
             cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 6px 30px rgba(124, 58, 237, 0.35);
-            display: inline-flex;
+            font-weight: 700;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .clear-btn:hover {
+            background: #000;
+            color: #ff9800;
+        }
+
+        /* Список услуг */
+        .services-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .category-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #ff9800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 15px 0 8px 5px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .category-title:first-child {
+            border-top: none;
+            margin-top: 0;
+            padding-top: 0;
+        }
+
+        .service-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 13px 18px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            user-select: none;
+        }
+
+        .service-item:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(255, 152, 0, 0.3);
+        }
+
+        .service-item.selected {
+            background: rgba(255, 152, 0, 0.15);
+            border-color: #ff9800;
+            box-shadow: 0 0 15px rgba(255, 152, 0, 0.2);
+        }
+
+        .service-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .checkbox-custom {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            flex: 1;
-            min-width: 100px;
-            position: relative;
-            overflow: hidden;
-        }
-        .btn-primary::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), transparent 50%);
-            pointer-events: none;
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 10px 40px rgba(124, 58, 237, 0.5);
-        }
-        .btn-primary:active {
-            transform: translateY(2px) scale(0.98);
-            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
-        }
-        .btn-primary:disabled {
-            opacity: 0.5;
-            transform: none;
-            pointer-events: none;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
         }
 
-        .quick-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-top: 14px;
-        }
-        .quick-btn {
-            padding: 12px 6px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 14px;
-            background: rgba(255, 255, 255, 0.02);
-            color: rgba(255, 255, 255, 0.6);
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            font-family: inherit;
-        }
-        .quick-btn:hover {
-            background: rgba(124, 58, 237, 0.15);
-            border-color: rgba(124, 58, 237, 0.2);
-            color: #fff;
-            transform: translateY(-2px);
-        }
-        .quick-btn:active { transform: scale(0.95); }
-        .quick-btn.highlight {
-            border-color: #7c3aed;
-            color: #a855f7;
-            background: rgba(124, 58, 237, 0.08);
+        .service-item.selected .checkbox-custom {
+            background: #ff9800;
+            border-color: #ff9800;
         }
 
-        .footer-actions {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 20px;
-            flex-wrap: wrap;
+        .check-mark {
+            color: #000;
+            font-size: 14px;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
-        .btn-ghost {
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            color: rgba(255, 255, 255, 0.25);
-            padding: 8px 20px;
-            border-radius: 100px;
-            font-size: 0.75rem;
+
+        .service-item.selected .check-mark {
+            opacity: 1;
+        }
+
+        .service-name {
+            font-size: 15px;
             font-weight: 500;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            font-family: inherit;
-        }
-        .btn-ghost:hover {
-            border-color: rgba(255, 255, 255, 0.15);
-            color: rgba(255, 255, 255, 0.5);
+            color: #ddd;
         }
 
-        .footer-text {
-            margin-top: 24px;
-            color: rgba(255, 255, 255, 0.12);
-            font-size: 0.7rem;
-            letter-spacing: 0.3px;
-            position: relative;
-            z-index: 1;
+        .service-item.selected .service-name {
+            color: #fff;
+            font-weight: 600;
         }
-        .footer-text strong { color: rgba(255, 255, 255, 0.2); }
 
-        .status-message {
-            margin-top: 12px;
-            font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.3);
-            min-height: 1.5em;
+        .service-price {
+            font-size: 18px;
+            font-weight: 700;
+            color: #ff9800;
+            white-space: nowrap;
+            margin-left: 15px;
         }
-        .status-message.success { color: #4ade80; }
-        .status-message.error { color: #f87171; }
 
-        @media (max-width: 480px) {
-            .card { padding: 28px 18px 32px; }
-            h1 { font-size: 2rem; }
-            .balance-number { font-size: 3.2rem; }
-            .balance-number .currency { font-size: 1.4rem; }
-            .quick-grid { grid-template-columns: repeat(2, 1fr); }
-            .input-row input { min-width: 100px; }
-            .btn-primary { padding: 14px 20px; font-size: 1rem; }
+        .service-item.selected .service-price {
+            color: #fff;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Футер */
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            color: #666;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        .footer a {
+            color: #ff9800;
+            text-decoration: none;
+        }
+
+        /* Анимация появления */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .service-item {
+            animation: fadeInUp 0.4s ease forwards;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+                border-radius: 12px;
+            }
+            .logo {
+                font-size: 24px;
+            }
+            .service-item {
+                padding: 10px 12px;
+            }
+            .service-name {
+                font-size: 13px;
+            }
+            .service-price {
+                font-size: 15px;
+            }
+            .total-price {
+                font-size: 24px;
+            }
+            .filter-btn {
+                padding: 8px 12px;
+                font-size: 11px;
+            }
+        }
+
+        /* Стиль для прокрутки */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 152, 0, 0.3);
+            border-radius: 10px;
         }
     </style>
 </head>
 <body>
 
-    <div class="card">
+    <div class="container">
+
         <!-- Шапка -->
         <div class="header">
-            <div class="badge">🔥 Общая копилка</div>
-            <h1><span class="emoji">⭐</span> Мечта сбудется</h1>
-            <p class="subtitle">Вместе мы справимся быстрее</p>
+            <div class="logo">AUTO<span>SERVICE</span></div>
+            <div class="subtitle">Прайс-лист на слесарные работы</div>
         </div>
 
-        <!-- Баланс -->
-        <div class="balance-wrap">
-            <div class="balance-label">Собрано</div>
-            <div class="balance-number" id="balanceDisplay">
-                0<span class="currency">₽</span>
-            </div>
+        <!-- Поиск -->
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Поиск по названию услуги...">
+            <span class="search-icon">🔍</span>
         </div>
 
-        <!-- Прогресс -->
-        <div class="progress-wrap">
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
-            </div>
-            <div class="progress-info">
-                <span class="target">🎯 100 000 ₽</span>
-                <span class="percent" id="percentLabel">0%</span>
-            </div>
+        <!-- Кнопки категорий -->
+        <div class="filter-buttons" id="filterButtons">
+            <button class="filter-btn active" data-filter="all">Все услуги</button>
+            <button class="filter-btn" data-filter="diagnostics">Диагностика</button>
+            <button class="filter-btn" data-filter="maintenance">ТО</button>
+            <button class="filter-btn" data-filter="exhaust">Выпускная система</button>
+            <button class="filter-btn" data-filter="threads">Ремонт резьбы</button>
+            <button class="filter-btn" data-filter="transmission">Трансмиссия</button>
+            <button class="filter-btn" data-filter="brakes">Тормоза</button>
+            <button class="filter-btn" data-filter="welding">Сварка</button>
         </div>
 
-        <!-- Секция помощи -->
-        <div class="help-section">
-            <div class="help-title">🤝 <span>Помоги</span> накопить</div>
-
-            <div class="input-row">
-                <input type="number" id="amountInput" placeholder="Сумма, ₽" value="100" min="1" step="1" />
-                <button class="btn-primary" id="addBtn">✨ Внести</button>
+        <!-- Итоговая сумма -->
+        <div class="total-panel" id="totalPanel">
+            <div>
+                <div class="total-label">Выбрано услуг:</div>
+                <div class="total-count" id="totalCount">0</div>
             </div>
-
-            <div class="quick-grid">
-                <button class="quick-btn" data-amount="50">50 ₽</button>
-                <button class="quick-btn" data-amount="150">150 ₽</button>
-                <button class="quick-btn highlight" data-amount="500">500 ₽</button>
-                <button class="quick-btn" data-amount="1000">1 000 ₽</button>
+            <div style="text-align:right;">
+                <div class="total-label">Итого:</div>
+                <div class="total-price" id="totalPrice">0 ₽</div>
             </div>
-
-            <!-- Статус -->
-            <div class="status-message" id="statusMessage">🔄 Подключение к базе...</div>
-
-            <div class="footer-actions">
-                <button class="btn-ghost" id="resetBtn">⟳ Сбросить (только для теста)</button>
-            </div>
+            <button class="clear-btn" id="clearBtn">✕ Сбросить всё</button>
         </div>
 
-        <div class="footer-text">
-            <strong>❤️</strong> Спасибо, что ты с нами
+        <!-- Список услуг -->
+        <div class="services-list" id="servicesList">
+            <!-- Заполняется через JavaScript -->
         </div>
+
+        <!-- Футер -->
+        <div class="footer">
+            © 2026 AutoService. Цены указаны за работу без учёта стоимости запчастей и материалов.
+        </div>
+
     </div>
 
     <script>
-        // ============================================================
-        // 1. НАСТРОЙКИ FIREBASE (твоя база)
-        // ============================================================
-        const firebaseConfig = {
-            apiKey: "AIzaSyB3n0Nj-c2NqhX3f6KOUIkOnzxBRb6bh08",
-            authDomain: "the-colony-tap.firebaseapp.com",
-            databaseURL: "https://the-colony-tap-default-rtdb.firebaseio.com",
-            projectId: "the-colony-tap",
-            storageBucket: "the-colony-tap.firebasestorage.app",
-            messagingSenderId: "1083321575328",
-            appId: "1:1083321575328:web:bf1ce8c0a05a92523ce8c7"
-        };
+        // Массив всех услуг
+        const services = [
+            { id: 1, name: 'Компьютерная диагностика автомобиля', price: 800, category: 'diagnostics',
+                categoryName: '🔍 ДИАГНОСТИКА' },
+            { id: 2, name: 'Замена моторного масла и масляного фильтра', price: 800, category: 'maintenance',
+                categoryName: '🛠️ ТЕХНИЧЕСКОЕ ОБСЛУЖИВАНИЕ' },
+            { id: 3, name: 'Снятие/установка декоративной крышки двигателя', price: 200, category: 'maintenance',
+                categoryName: '🛠️ ТЕХНИЧЕСКОЕ ОБСЛУЖИВАНИЕ' },
+            { id: 4, name: 'Снятие/установка катушек зажигания (4 шт)', price: 500, category: 'maintenance',
+                categoryName: '🛠️ ТЕХНИЧЕСКОЕ ОБСЛУЖИВАНИЕ' },
+            { id: 5, name: 'Замена свечей зажигания (4 шт)', price: 600, category: 'maintenance',
+                categoryName: '🛠️ ТЕХНИЧЕСКОЕ ОБСЛУЖИВАНИЕ' },
+            { id: 6, name: 'Снятие/установка защиты двигателя (нижний пыльник)', price: 500, category: 'maintenance',
+                categoryName: '🛠️ ТЕХНИЧЕСКОЕ ОБСЛУЖИВАНИЕ' },
+            { id: 7, name: 'Снятие/установка впускного коллектора', price: 2000, category: 'exhaust',
+                categoryName: '💨 СИСТЕМА ВЫПУСКА' },
+            { id: 8, name: 'Снятие/установка выпускного коллектора (штаны)', price: 4000, category: 'exhaust',
+                categoryName: '💨 СИСТЕМА ВЫПУСКА' },
+            { id: 9, name: 'Резка приемной трубы болгаркой (для быстрого съема)', price: 500, category: 'exhaust',
+                categoryName: '💨 СИСТЕМА ВЫПУСКА' },
+            { id: 10, name: 'Резка старых гофр болгаркой (2 шт)', price: 400, category: 'exhaust',
+                categoryName: '💨 СИСТЕМА ВЫПУСКА' },
+            { id: 11, name: 'Подгонка и приварка новых гофр (2 шт)', price: 3500, category: 'exhaust',
+                categoryName: '💨 СИСТЕМА ВЫПУСКА' },
+            { id: 12, name: 'Высверливание/выкручивание сломанной шпильки (1 шт)', price: 1000, category: 'threads',
+                categoryName: '🔩 РЕМОНТ РЕЗЬБОВЫХ СОЕДИНЕНИЙ' },
+            { id: 13, name: 'Приварка гайки/прутка для выкручивания обломанной шпильки (1 шт)', price: 800,
+                category: 'threads', categoryName: '🔩 РЕМОНТ РЕЗЬБОВЫХ СОЕДИНЕНИЙ' },
+            { id: 14, name: 'Снятие/установка внутреннего ШРУСа (отведение от КПП для доступа)', price: 2000,
+                category: 'transmission', categoryName: '⚙️ ТРАНСМИССИЯ' },
+            { id: 15, name: 'Устранение скрипа ручки КПП (смазка механизма кулисы)', price: 500, category: 'transmission',
+                categoryName: '⚙️ ТРАНСМИССИЯ' },
+            { id: 16, name: 'Снятие/установка задних тормозных барабанов (2 шт)', price: 800, category: 'brakes',
+                categoryName: '🛑 ТОРМОЗНАЯ СИСТЕМА' },
+            { id: 17, name: 'Зачистка и покраска задних тормозных барабанов с баллона (2 шт)', price: 1200,
+                category: 'brakes', categoryName: '🛑 ТОРМОЗНАЯ СИСТЕМА' },
+            { id: 18, name: 'Сварочные работы (приварка гаек, прутков, гофр) — от', price: 500, category: 'welding',
+                categoryName: '🔥 СВАРОЧНЫЕ РАБОТЫ' },
+        ];
 
-        // Инициализация
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
+        // Состояние выбранных услуг
+        let selectedServices = new Set();
 
-        // ============================================================
-        // 2. НАСТРОЙКИ ПРИЛОЖЕНИЯ
-        // ============================================================
-        const TARGET = 100000;
-        const DB_PATH = 'balance'; // путь в базе
+        // Текущий фильтр
+        let currentFilter = 'all';
+        // Текущий поисковый запрос
+        let currentSearch = '';
 
-        // ============================================================
-        // 3. ЭЛЕМЕНТЫ UI
-        // ============================================================
-        const balanceDisplay = document.getElementById('balanceDisplay');
-        const progressFill = document.getElementById('progressFill');
-        const percentLabel = document.getElementById('percentLabel');
-        const amountInput = document.getElementById('amountInput');
-        const addBtn = document.getElementById('addBtn');
-        const resetBtn = document.getElementById('resetBtn');
-        const quickBtns = document.querySelectorAll('.quick-btn');
-        const statusMessage = document.getElementById('statusMessage');
+        // Получить DOM-элементы
+        const servicesList = document.getElementById('servicesList');
+        const totalPriceEl = document.getElementById('totalPrice');
+        const totalCountEl = document.getElementById('totalCount');
+        const clearBtn = document.getElementById('clearBtn');
+        const searchInput = document.getElementById('searchInput');
+        const filterButtons = document.querySelectorAll('.filter-btn');
 
-        // ============================================================
-        // 4. СОСТОЯНИЕ
-        // ============================================================
-        let currentBalance = 0;
-        let isUpdating = false; // чтобы не было конфликтов при обновлении
-
-        // ============================================================
-        // 5. ФУНКЦИИ UI
-        // ============================================================
-        function updateUI(balance) {
-            const formatted = new Intl.NumberFormat('ru-RU').format(balance);
-            balanceDisplay.innerHTML = `${formatted}<span class="currency">₽</span>`;
-
-            let percent = (balance / TARGET) * 100;
-            if (percent > 100) percent = 100;
-            if (percent < 0) percent = 0;
-
-            progressFill.style.width = `${percent}%`;
-            percentLabel.textContent = `${Math.round(percent)}%`;
+        // Функция форматирования цены
+        function formatPrice(price) {
+            return price.toLocaleString('ru-RU') + ' ₽';
         }
 
-        function setStatus(text, type = '') {
-            statusMessage.textContent = text;
-            statusMessage.className = 'status-message ' + type;
-        }
+        // Функция отрисовки списка услуг
+        function renderServices() {
+            servicesList.innerHTML = '';
 
-        // ============================================================
-        // 6. РАБОТА С БАЗОЙ
-        // ============================================================
+            // Фильтруем услуги
+            let filteredServices = services;
 
-        // --- Чтение баланса (один раз + слушатель изменений) ---
-        function listenBalance() {
-            const balanceRef = database.ref(DB_PATH);
+            // Применяем фильтр категории
+            if (currentFilter !== 'all') {
+                filteredServices = filteredServices.filter(s => s.category === currentFilter);
+            }
 
-            // Сначала читаем один раз, чтобы показать данные
-            balanceRef.once('value')
-                .then((snapshot) => {
-                    const val = snapshot.val();
-                    if (val !== null && typeof val === 'number' && !isNaN(val)) {
-                        currentBalance = Math.round(val);
-                    } else {
-                        // Если в базе нет данных, создаём начальное значение 0
-                        currentBalance = 0;
-                        balanceRef.set(0);
-                    }
-                    updateUI(currentBalance);
-                    setStatus('✅ Данные загружены', 'success');
-                })
-                .catch((error) => {
-                    console.error('Ошибка загрузки:', error);
-                    setStatus('❌ Ошибка подключения к базе', 'error');
-                });
+            // Применяем поиск
+            if (currentSearch.trim() !== '') {
+                const searchLower = currentSearch.toLowerCase().trim();
+                filteredServices = filteredServices.filter(s =>
+                    s.name.toLowerCase().includes(searchLower)
+                );
+            }
 
-            // --- Слушаем изменения в реальном времени (синхронизация) ---
-            balanceRef.on('value', (snapshot) => {
-                const val = snapshot.val();
-                if (val !== null && typeof val === 'number' && !isNaN(val)) {
-                    const newBalance = Math.round(val);
-                    if (newBalance !== currentBalance) {
-                        currentBalance = newBalance;
-                        updateUI(currentBalance);
-                        setStatus('🔄 Баланс обновлён', 'success');
-                    }
+            // Группируем по категориям
+            const grouped = {};
+            filteredServices.forEach(s => {
+                if (!grouped[s.category]) {
+                    grouped[s.category] = {
+                        categoryName: s.categoryName,
+                        items: []
+                    };
                 }
-            }, (error) => {
-                console.error('Ошибка слушателя:', error);
-                setStatus('❌ Потеря связи с базой', 'error');
+                grouped[s.category].items.push(s);
             });
-        }
 
-        // --- Запись нового баланса ---
-        function setBalance(newBalance, callback) {
-            if (isUpdating) return;
-            isUpdating = true;
-            addBtn.disabled = true;
+            // Отрисовываем сгруппированный список
+            Object.keys(grouped).forEach(catKey => {
+                const group = grouped[catKey];
 
-            const rounded = Math.round(newBalance);
-            if (rounded < 0) {
-                setStatus('❌ Баланс не может быть отрицательным', 'error');
-                isUpdating = false;
-                addBtn.disabled = false;
-                return;
-            }
+                // Заголовок категории
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'category-title';
+                titleDiv.textContent = group.categoryName;
+                servicesList.appendChild(titleDiv);
 
-            const balanceRef = database.ref(DB_PATH);
-            balanceRef.set(rounded)
-                .then(() => {
-                    // База обновится, слушатель сам подхватит новое значение
-                    setStatus('✅ Спасибо! Баланс обновлён', 'success');
-                    if (navigator.vibrate) navigator.vibrate(10);
-                })
-                .catch((error) => {
-                    console.error('Ошибка записи:', error);
-                    setStatus('❌ Не удалось сохранить. Попробуй ещё.', 'error');
-                })
-                .finally(() => {
-                    isUpdating = false;
-                    addBtn.disabled = false;
+                // Услуги в категории
+                group.items.forEach(service => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'service-item';
+                    if (selectedServices.has(service.id)) {
+                        itemDiv.classList.add('selected');
+                    }
+                    itemDiv.setAttribute('data-id', service.id);
+
+                    itemDiv.innerHTML = `
+                                <div class="service-info">
+                                    <div class="checkbox-custom">
+                                        <span class="check-mark">✓</span>
+                                    </div>
+                                    <span class="service-name">${service.name}</span>
+                                </div>
+                                <span class="service-price">${formatPrice(service.price)}</span>
+                            `;
+
+                    itemDiv.addEventListener('click', () => toggleService(service.id));
+                    servicesList.appendChild(itemDiv);
                 });
+            });
+
+            // Если ничего не найдено
+            if (filteredServices.length === 0) {
+                const emptyDiv = document.createElement('div');
+                emptyDiv.style.cssText = 'text-align:center; padding:40px; color:#777; font-size:16px;';
+                emptyDiv.textContent = '😕 Ничего не найдено. Попробуйте изменить запрос.';
+                servicesList.appendChild(emptyDiv);
+            }
+
+            updateTotal();
         }
 
-        // --- Сброс (только для теста) ---
-        function resetBalance() {
-            if (currentBalance === 0) {
-                setStatus('Баланс уже нулевой ✨', '');
-                return;
+        // Переключение выбора услуги
+        function toggleService(id) {
+            if (selectedServices.has(id)) {
+                selectedServices.delete(id);
+            } else {
+                selectedServices.add(id);
             }
-            if (!confirm('Сбросить баланс до 0? Это действие увидят все!')) return;
-            setBalance(0);
+            renderServices();
         }
 
-        // ============================================================
-        // 7. ОБРАБОТЧИКИ ДЕЙСТВИЙ
-        // ============================================================
-
-        // --- Добавление суммы ---
-        function handleAddAmount(amount) {
-            if (typeof amount !== 'number' || isNaN(amount) || amount <= 0) {
-                setStatus('❌ Введите сумму больше 0', 'error');
-                return;
-            }
-
-            const rounded = Math.round(amount);
-            if (rounded <= 0) {
-                setStatus('❌ Сумма должна быть больше 0', 'error');
-                return;
-            }
-
-            const newBalance = currentBalance + rounded;
-            setBalance(newBalance);
-        }
-
-        // --- Обработчик кнопки "Внести" ---
-        function handleAddClick() {
-            let raw = amountInput.value.trim().replace(',', '.');
-            if (raw === '') {
-                setStatus('❌ Введите сумму', 'error');
-                return;
-            }
-            const value = parseFloat(raw);
-            if (isNaN(value) || value <= 0) {
-                setStatus('❌ Введите корректную сумму', 'error');
-                return;
-            }
-            handleAddAmount(value);
-        }
-
-        // ============================================================
-        // 8. ИНИЦИАЛИЗАЦИЯ
-        // ============================================================
-        function init() {
-            // Подключаемся к базе и слушаем изменения
-            listenBalance();
-
-            // Кнопка "Внести"
-            addBtn.addEventListener('click', handleAddClick);
-
-            // Enter в поле
-            amountInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleAddClick();
+        // Обновление итоговой суммы
+        function updateTotal() {
+            let total = 0;
+            selectedServices.forEach(id => {
+                const service = services.find(s => s.id === id);
+                if (service) {
+                    total += service.price;
                 }
             });
 
-            // Быстрые кнопки
-            quickBtns.forEach((btn) => {
-                btn.addEventListener('click', () => {
-                    const amount = parseInt(btn.getAttribute('data-amount'), 10);
-                    if (!isNaN(amount) && amount > 0) {
-                        handleAddAmount(amount);
-                    }
-                });
-            });
-
-            // Сброс
-            resetBtn.addEventListener('click', resetBalance);
-
-            // Фокус на поле
-            amountInput.focus();
-            amountInput.select();
-
-            setStatus('🔄 Подключение к базе...', '');
+            totalPriceEl.textContent = formatPrice(total);
+            totalCountEl.textContent = selectedServices.size + ' шт.';
         }
 
-        // Запускаем
-        init();
+        // Сброс всего выбора
+        function clearAll() {
+            selectedServices.clear();
+            renderServices();
+        }
+
+        // Установка фильтра
+        function setFilter(filter) {
+            currentFilter = filter;
+            // Обновляем активную кнопку
+            filterButtons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-filter') === filter) {
+                    btn.classList.add('active');
+                }
+            });
+            renderServices();
+        }
+
+        // Обработчики событий
+        clearBtn.addEventListener('click', clearAll);
+
+        searchInput.addEventListener('input', (e) => {
+            currentSearch = e.target.value;
+            renderServices();
+        });
+
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const filter = btn.getAttribute('data-filter');
+                setFilter(filter);
+            });
+        });
+
+        // Инициализация — отрисовываем список при загрузке
+        renderServices();
+
+        console.log('🚗 Прайс-лист автосервиса загружен и готов к работе!');
+        console.log('📋 Всего услуг: ' + services.length);
+        console.log('💰 Выбирайте услуги — сумма считается автоматически.');
     </script>
-
 </body>
 </html>
