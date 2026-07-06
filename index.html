@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Автосервис - Прайс-лист с регламентом ТО</title>
+    <title>Автосервис - Прайс-лист</title>
     <style>
         * {
             margin: 0;
@@ -361,9 +361,6 @@
             box-shadow: 0 0 15px rgba(255, 152, 0, 0.5);
             transform: scale(1.05);
         }
-        .hidden {
-            display: none !important;
-        }
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -376,6 +373,9 @@
             align-items: center;
             justify-content: center;
         }
+        .modal-overlay.hidden {
+            display: none;
+        }
         .modal {
             background: #1e1e32;
             border-radius: 16px;
@@ -385,13 +385,6 @@
             overflow-y: auto;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
             border: 2px solid #ff9800;
-        }
-        .modal::-webkit-scrollbar {
-            width: 5px;
-        }
-        .modal::-webkit-scrollbar-thumb {
-            background: rgba(255, 152, 0, 0.4);
-            border-radius: 10px;
         }
         .modal-header {
             background: #ff9800;
@@ -435,23 +428,6 @@
             color: #ff9800;
             margin: 20px 0 10px 0;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .modal-body h3:first-child {
-            margin-top: 0;
-        }
-        .modal-body p,
-        .modal-body li {
-            font-size: 13px;
-            color: #ccc;
-            line-height: 1.7;
-        }
-        .modal-body ol,
-        .modal-body ul {
-            padding-left: 20px;
-        }
-        .modal-body li {
-            margin-bottom: 6px;
         }
         .modal-tools {
             display: flex;
@@ -519,49 +495,11 @@
             justify-content: center;
             font-weight: 900;
             font-size: 13px;
-            flex-shrink: 0;
         }
         .step-text {
             font-size: 13px;
             color: #ccc;
             line-height: 1.6;
-            margin-bottom: 8px;
-        }
-        .step-image {
-            width: 100%;
-            max-width: 500px;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            cursor: pointer;
-            transition: transform 0.2s;
-            display: block;
-            margin-top: 6px;
-        }
-        .step-image:hover {
-            transform: scale(1.03);
-        }
-        .image-caption {
-            font-size: 11px;
-            color: #888;
-            margin-top: 4px;
-            font-style: italic;
-        }
-        .modal-video-wrapper {
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            overflow: hidden;
-            border-radius: 10px;
-            margin: 10px 0;
-            background: #000;
-        }
-        .modal-video-wrapper iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 10px;
         }
         .footer {
             text-align: center;
@@ -571,45 +509,15 @@
             color: #666;
             font-size: 11px;
         }
-        @media (max-width: 600px) {
-            .container {
-                padding: 10px;
-            }
-            .selector-row {
-                flex-direction: column;
-                gap: 8px;
-            }
-            .selector-group {
-                min-width: auto;
-            }
-            .service-row {
-                flex-wrap: wrap;
-                padding: 10px;
-            }
-            .service-right {
-                width: 100%;
-                justify-content: space-between;
-            }
-            .detail-btn {
-                padding: 6px 12px;
-                font-size: 10px;
-            }
-            .modal {
-                width: 95%;
-                max-height: 80vh;
-            }
-        }
     </style>
 </head>
 <body>
-
     <div class="container">
         <div class="header">
             <div class="logo">AUTO<span>SERVICE</span></div>
-            <div class="subtitle">Прайс-лист с регламентом ТО</div>
+            <div class="subtitle">Прайс-лист с выбором модификации и регламентом ТО</div>
         </div>
 
-        <!-- Выбор автомобиля -->
         <div class="selector-section">
             <div class="selector-title">🚗 Выберите автомобиль</div>
             <div class="selector-row">
@@ -641,13 +549,11 @@
             </div>
         </div>
 
-        <!-- Поиск -->
         <div class="search-box">
             <input type="text" id="searchInput" placeholder="Поиск услуги...">
             <span class="search-icon">🔍</span>
         </div>
 
-        <!-- Фильтры -->
         <div class="filter-buttons" id="filterButtons">
             <button class="filter-btn active" data-filter="all">Все</button>
             <button class="filter-btn" data-filter="maintenance">ТО</button>
@@ -659,7 +565,6 @@
             <button class="filter-btn" data-filter="welding">Сварка</button>
         </div>
 
-        <!-- Итог -->
         <div class="total-panel">
             <div>
                 <div class="total-label">Выбрано: <span id="totalCount">0</span></div>
@@ -669,12 +574,10 @@
             <button class="clear-btn" id="clearBtn">Сбросить</button>
         </div>
 
-        <!-- Список услуг -->
         <div id="servicesList"></div>
-        <div class="footer">© 2026 AutoService. Цены без учёта запчастей. Нажмите «Подробнее» для регламента ТО.</div>
+        <div class="footer">© 2026 AutoService. Нажмите «Подробнее» для инструкции и регламента ТО.</div>
     </div>
 
-    <!-- Модальное окно -->
     <div class="modal-overlay hidden" id="modalOverlay">
         <div class="modal">
             <div class="modal-header">
@@ -686,90 +589,51 @@
     </div>
 
     <script>
-        // ==================== БАЗА АВТОМОБИЛЕЙ ====================
         const carDatabase = [{
-            carId: 'vaz2107',
-            carName: 'ВАЗ 2107',
-            carIcon: '🚗',
-            category: 'Эконом',
-            engines: [{
-                engineId: 'vaz16carb',
-                engineName: '1.6 карбюратор',
-                engineCode: '2106',
-                power: '74 л.с.',
-                fuel: 'Бензин',
-                gearboxes: [{ gearboxId: 'vaz_m5', gearboxName: 'МКПП-5', gearboxCode: '2107',
-                    drive: 'Задний', multiplier: 0.70, badge: 'Эконом' }]
-            }, {
-                engineId: 'vaz16inj',
-                engineName: '1.6 инжектор',
-                engineCode: '21067',
-                power: '74 л.с.',
-                fuel: 'Бензин',
-                gearboxes: [{ gearboxId: 'vaz_m5', gearboxName: 'МКПП-5', gearboxCode: '2107',
-                    drive: 'Задний', multiplier: 0.75, badge: 'Эконом' }]
-            }]
+            carId: 'vaz2107', carName: 'ВАЗ 2107', carIcon: '🚗', category: 'Эконом',
+            engines: [
+                { engineId: 'vaz16carb', engineName: '1.6 карбюратор', engineCode: '2106', power: '74 л.с.',
+                    fuel: 'Бензин', gearboxes: [{ gearboxId: 'vaz_m5', gearboxName: 'МКПП-5', gearboxCode: '2107',
+                        drive: 'Задний', multiplier: 0.70, badge: 'Эконом' }] },
+                { engineId: 'vaz16inj', engineName: '1.6 инжектор', engineCode: '21067', power: '74 л.с.',
+                    fuel: 'Бензин', gearboxes: [{ gearboxId: 'vaz_m5', gearboxName: 'МКПП-5', gearboxCode: '2107',
+                        drive: 'Задний', multiplier: 0.75, badge: 'Эконом' }] }
+            ]
         }, {
-            carId: 'passatb5',
-            carName: 'VW Passat B5/B5.5',
-            carIcon: '🚙',
-            category: 'Бизнес',
-            engines: [{
-                engineId: '18t_aeb',
-                engineName: '1.8T 20V Turbo',
-                engineCode: 'AEB/ATW/AUG/AWM',
-                power: '150 л.с.',
-                fuel: 'Бензин',
-                gearboxes: [
-                    { gearboxId: '012', gearboxName: 'МКПП-5 (012)', gearboxCode: '012',
-                    drive: 'Передний',
-                        multiplier: 1.20, badge: 'Средне' },
-                    { gearboxId: '01v_fwd', gearboxName: 'АКПП-5 Tiptronic (01V)', gearboxCode: '01V',
-                        drive: 'Передний', multiplier: 1.40, badge: 'Сложно' }
-                ]
-            }, {
-                engineId: '28_vr6',
-                engineName: '2.8 VR6 5V',
-                engineCode: 'AHA/ATQ',
-                power: '190 л.с.',
-                fuel: 'Бензин',
-                gearboxes: [
-                    { gearboxId: '01a_quattro', gearboxName: 'МКПП-5 (01A) 4Motion',
-                    gearboxCode: '01A',
-                        drive: 'Полный', multiplier: 1.50, badge: 'Сложно' },
-                    { gearboxId: '01v_quattro', gearboxName: 'АКПП-5 (01V) 4Motion', gearboxCode: '01V',
-                        drive: 'Полный', multiplier: 1.65, badge: 'Очень сложно' }
-                ]
-            }, {
-                engineId: '19tdi_110',
-                engineName: '1.9 TDI',
-                engineCode: 'AFN',
-                power: '110 л.с.',
+            carId: 'passatb5', carName: 'VW Passat B5/B5.5', carIcon: '🚙', category: 'Бизнес',
+            engines: [
+                { engineId: '18t_aeb', engineName: '1.8T 20V Turbo', engineCode: 'AEB/ATW/AUG/AWM',
+                    power: '150 л.с.', fuel: 'Бензин', gearboxes: [
+                        { gearboxId: '012', gearboxName: 'МКПП-5 (012)', gearboxCode: '012', drive: 'Передний',
+                            multiplier: 1.20, badge: 'Средне' },
+                        { gearboxId: '01v_fwd', gearboxName: 'АКПП-5 Tiptronic (01V)', gearboxCode: '01V',
+                            drive: 'Передний', multiplier: 1.40, badge: 'Сложно' }
+                    ] },
+                { engineId: '28_vr6', engineName: '2.8 VR6 5V', engineCode: 'AHA/ATQ', power: '190 л.с.',
+                    fuel: 'Бензин', gearboxes: [
+                        { gearboxId: '01a_quattro', gearboxName: 'МКПП-5 (01A) 4Motion', gearboxCode: '01A',
+                            drive: 'Полный', multiplier: 1.50, badge: 'Сложно' },
+                        { gearboxId: '01v_quattro', gearboxName: 'АКПП-5 (01V) 4Motion', gearboxCode: '01V',
+                            drive: 'Полный', multiplier: 1.65, badge: 'Очень сложно' }
+                    ] },
+                { engineId: '19tdi_110', engineName: '1.9 TDI', engineCode: 'AFN', power: '110 л.с.',
                 fuel: 'Дизель',
-                gearboxes: [
-                    { gearboxId: '012', gearboxName: 'МКПП-5 (012)', gearboxCode: '012',
-                    drive: 'Передний',
-                        multiplier: 1.15, badge: 'Средне' },
-                    { gearboxId: '01v_fwd', gearboxName: 'АКПП-5 Tiptronic (01V)', gearboxCode: '01V',
-                        drive: 'Передний', multiplier: 1.35, badge: 'Сложно' }
-                ]
-            }, {
-                engineId: '19tdi_130',
-                engineName: '1.9 TDI PD',
-                engineCode: 'AVF/AWX',
-                power: '130 л.с.',
-                fuel: 'Дизель',
-                gearboxes: [
-                    { gearboxId: '012', gearboxName: 'МКПП-5 (012)', gearboxCode: '012',
-                    drive: 'Передний',
-                        multiplier: 1.20, badge: 'Средне' },
-                    { gearboxId: '01v_fwd', gearboxName: 'АКПП-5 Tiptronic (01V)', gearboxCode: '01V',
-                        drive: 'Передний', multiplier: 1.40, badge: 'Сложно' }
-                ]
-            }]
+                    gearboxes: [
+                        { gearboxId: '012', gearboxName: 'МКПП-5 (012)', gearboxCode: '012', drive: 'Передний',
+                            multiplier: 1.15, badge: 'Средне' },
+                        { gearboxId: '01v_fwd', gearboxName: 'АКПП-5 Tiptronic (01V)', gearboxCode: '01V',
+                            drive: 'Передний', multiplier: 1.35, badge: 'Сложно' }
+                    ] },
+                { engineId: '19tdi_130', engineName: '1.9 TDI PD', engineCode: 'AVF/AWX', power: '130 л.с.',
+                    fuel: 'Дизель', gearboxes: [
+                        { gearboxId: '012', gearboxName: 'МКПП-5 (012)', gearboxCode: '012', drive: 'Передний',
+                            multiplier: 1.20, badge: 'Средне' },
+                        { gearboxId: '01v_fwd', gearboxName: 'АКПП-5 Tiptronic (01V)', gearboxCode: '01V',
+                            drive: 'Передний', multiplier: 1.40, badge: 'Сложно' }
+                    ] }
+            ]
         }];
 
-        // ==================== УСЛУГИ С БАЗОВЫМИ ЦЕНАМИ ====================
         const services = [
             { id: 1, name: 'Замена масла и масляного фильтра', basePrice: 800, cat: 'maintenance',
                 catName: '🛠️ ТО' },
@@ -783,486 +647,284 @@
             { id: 9, name: 'Замена турбины', basePrice: 12000, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
             { id: 10, name: 'Замена помпы', basePrice: 2500, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
             { id: 11, name: 'Замена поликлинового ремня', basePrice: 1500, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
-            { id: 12, name: 'Снятие/установка выпускного коллектора', basePrice: 3500, cat: 'exhaust',
-                catName: '💨 ВЫПУСК' },
-            { id: 13, name: 'Замена глушителя', basePrice: 1500, cat: 'exhaust', catName: '💨 ВЫПУСК' },
-            { id: 14, name: 'Замена гофры', basePrice: 2000, cat: 'exhaust', catName: '💨 ВЫПУСК' },
-            { id: 15, name: 'Замена масла в МКПП', basePrice: 800, cat: 'transmission', catName: '⚙️ ТРАНСМИССИЯ' },
-            { id: 16, name: 'Замена масла в АКПП', basePrice: 2500, cat: 'transmission',
+            { id: 12, name: 'Замена глушителя', basePrice: 1500, cat: 'exhaust', catName: '💨 ВЫПУСК' },
+            { id: 13, name: 'Замена гофры', basePrice: 2000, cat: 'exhaust', catName: '💨 ВЫПУСК' },
+            { id: 14, name: 'Замена масла в МКПП', basePrice: 800, cat: 'transmission', catName: '⚙️ ТРАНСМИССИЯ' },
+            { id: 15, name: 'Замена масла в АКПП', basePrice: 2500, cat: 'transmission',
             catName: '⚙️ ТРАНСМИССИЯ' },
-            { id: 17, name: 'Замена сцепления (комплект)', basePrice: 7000, cat: 'transmission',
+            { id: 16, name: 'Замена сцепления (комплект)', basePrice: 7000, cat: 'transmission',
                 catName: '⚙️ ТРАНСМИССИЯ' },
-            { id: 18, name: 'Замена передних колодок', basePrice: 1200, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
-            { id: 19, name: 'Замена задних колодок', basePrice: 1400, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
-            { id: 20, name: 'Замена передних дисков', basePrice: 1800, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
-            { id: 21, name: 'Замена тормозной жидкости', basePrice: 1200, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
-            { id: 22, name: 'Замена амортизаторов перед (2 шт)', basePrice: 3000, cat: 'suspension',
+            { id: 17, name: 'Замена передних колодок', basePrice: 1200, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
+            { id: 18, name: 'Замена задних колодок', basePrice: 1400, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
+            { id: 19, name: 'Замена передних дисков', basePrice: 1800, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
+            { id: 20, name: 'Замена тормозной жидкости', basePrice: 1200, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
+            { id: 21, name: 'Замена амортизаторов перед (2 шт)', basePrice: 3000, cat: 'suspension',
                 catName: '🔧 ПОДВЕСКА' },
-            { id: 23, name: 'Замена амортизаторов зад (2 шт)', basePrice: 2500, cat: 'suspension',
+            { id: 22, name: 'Замена амортизаторов зад (2 шт)', basePrice: 2500, cat: 'suspension',
                 catName: '🔧 ПОДВЕСКА' },
-            { id: 24, name: 'Замена шаровых опор (2 шт)', basePrice: 2000, cat: 'suspension',
-            catName: '🔧 ПОДВЕСКА' },
-            { id: 25, name: 'Регулировка развал-схождения', basePrice: 2000, cat: 'suspension',
+            { id: 23, name: 'Регулировка развал-схождения', basePrice: 2000, cat: 'suspension',
                 catName: '🔧 ПОДВЕСКА' },
-            { id: 26, name: 'Сварочные работы (кузов, час)', basePrice: 3000, cat: 'welding', catName: '🔥 СВАРКА' },
+            { id: 24, name: 'Сварочные работы (кузов, час)', basePrice: 3000, cat: 'welding', catName: '🔥 СВАРКА' },
         ];
 
-        // ==================== ИНСТРУКЦИИ С РЕГЛАМЕНТОМ ТО ====================
         const instructions = {
             1: {
                 title: 'Замена масла и масляного фильтра',
-                tools: ['Ключ для пробки', 'Съёмник фильтра', 'Ёмкость 5 л', 'Воронка', 'Ветошь'],
+                tools: ['Ключ для пробки', 'Съёмник фильтра', 'Ёмкость 5 л', 'Воронка'],
                 specs: [
                     { label: 'Интервал замены', value: 'Каждые 15 000 км' },
-                    { label: 'Объём масла (1.8T)', value: '4.0 л (с фильтром)' },
-                    { label: 'Объём масла (2.8 VR6)', value: '5.5 л (с фильтром)' },
-                    { label: 'Объём масла (1.9 TDI)', value: '4.5 л (с фильтром)' },
+                    { label: 'Объём (1.8T)', value: '4.0 л' },
+                    { label: 'Объём (2.8 VR6)', value: '5.5 л' },
+                    { label: 'Объём (1.9 TDI)', value: '4.5 л' },
                     { label: 'Спецификация', value: 'VW 502.00 / 505.00' },
-                    { label: 'Момент пробки', value: '30 Нм' },
                 ],
-                video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-                videoTitle: 'Видео: Замена масла',
-                warning: 'На моторах 1.8T интервал замены масла лучше сократить до 10 000 км при активной езде.',
-                stepsWithImages: [
-                    { step: 1, title: 'Прогрев', text: 'Прогрейте двигатель 5-7 минут.',
-                image: null, caption: '' },
-                    { step: 2, title: 'Слив', text: 'Открутите пробку, слейте масло (10-15 мин).',
-                        image: null, caption: '' },
-                    { step: 3, title: 'Замена фильтра',
-                        text: 'Снимите старый фильтр. Смажьте уплотнитель нового, закрутите.',
-                        image: null, caption: '' },
-                    { step: 4, title: 'Заливка',
-                        text: 'Залейте масло, проверьте уровень щупом.', image: null,
-                    caption: '' },
-                ],
+                warning: 'На 1.8T сократите интервал до 10 000 км при активной езде.',
+                steps: ['Прогрейте двигатель.', 'Слейте масло.', 'Замените фильтр.', 'Залейте новое масло.']
             },
             4: {
-                title: 'Замена салонного фильтра (противопыльного)',
-                tools: ['Отвёртка Torx T20', 'Новый фильтр'],
-                specs: [
-                    { label: 'Интервал замены', value: 'Каждые 30 000 км' },
-                    { label: 'Расположение', value: 'Под панелью со стороны пассажира' },
-                ],
-                video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-                videoTitle: 'Видео: Замена салонного фильтра Passat B5',
-                warning: 'При эксплуатации в пыльной местности меняйте каждые 15 000 км.',
-                stepsWithImages: [
-                    { step: 1, title: 'Доступ',
-                        text: 'Снимите нижнюю облицовку со стороны пассажира.', image: null,
-                    caption: '' },
-                    { step: 2, title: 'Извлечение',
-                        text: 'Открутите винты крышки фильтра. Извлеките старый фильтр.', image: null,
-                        caption: '' },
-                    { step: 3, title: 'Установка',
-                        text: 'Установите новый фильтр (стрелка по направлению потока).', image: null,
-                        caption: '' },
-                ],
+                title: 'Замена салонного фильтра',
+                tools: ['Отвёртка Torx T20'],
+                specs: [{ label: 'Интервал', value: 'Каждые 30 000 км' }, { label: 'Расположение',
+                    value: 'Под панелью пассажира' }],
+                warning: 'В пыльной местности — каждые 15 000 км.',
+                steps: ['Снимите облицовку.', 'Извлеките старый фильтр.', 'Установите новый.']
             },
             5: {
                 title: 'Замена свечей зажигания',
-                tools: ['Свечной ключ 16 мм', 'Динамометрический ключ', 'Съёмник катушек'],
-                specs: [
-                    { label: 'Интервал замены', value: 'Каждые 60 000 км (бензин)' },
-                    { label: 'Тип свечей (1.8T)', value: 'Bosch F7LTCR / NGK BKUR6ET' },
-                    { label: 'Тип свечей (2.8 VR6)', value: 'Bosch F7LTCR' },
-                    { label: 'Момент затяжки', value: '30 Нм' },
-                    { label: 'Зазор', value: '1.0-1.1 мм' },
-                ],
-                video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-                videoTitle: 'Видео: Замена свечей',
-                warning: 'На двигателе 1.8T будьте аккуратны с катушками — их легко повредить при снятии.',
-                stepsWithImages: [
-                    { step: 1, title: 'Остывание',
-                        text: 'Дайте двигателю полностью остыть перед заменой.', image: null,
-                    caption: '' },
-                    { step: 2, title: 'Снятие катушек',
-                        text: 'Отсоедините разъёмы, извлеките катушки зажигания.', image: null,
-                        caption: '' },
-                    { step: 3, title: 'Замена свечей',
-                        text: 'Выкрутите старые свечи. Установите новые с моментом 30 Нм.',
-                        image: null, caption: '' },
-                ],
+                tools: ['Свечной ключ 16 мм', 'Динамометрический ключ'],
+                specs: [{ label: 'Интервал', value: 'Каждые 60 000 км' }, { label: 'Тип (1.8T)',
+                    value: 'Bosch F7LTCR / NGK BKUR6ET' }, { label: 'Момент', value: '30 Нм' }],
+                warning: 'Аккуратно с катушками на 1.8T!',
+                steps: ['Дайте двигателю остыть.', 'Снимите катушки.', 'Замените свечи (30 Нм).']
             },
             6: {
-                title: 'Замена ремня ГРМ + натяжной ролик',
-                tools: ['Набор ключей', 'Динамометрический ключ', 'Фиксаторы распредвалов', 'Съёмник шкива'],
-                specs: [
-                    { label: 'Интервал замены', value: 'Каждые 90 000 км' },
-                    { label: 'Критичность', value: 'ОЧЕНЬ ВАЖНО для 1.8T!' },
-                    { label: 'Дополнительно', value: 'Заменить помпу и поликлиновой ремень' },
-                ],
-                video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-                videoTitle: 'Видео: Замена ремня ГРМ 1.8T',
-                warning: 'Обрыв ремня ГРМ на 1.8T приводит к загибу клапанов! Не откладывайте замену. Рекомендуется менять помпу одновременно с ремнём.',
-                stepsWithImages: [
-                    { step: 1, title: 'Подготовка', text: 'Снимите защитный кожух. Выставьте метки.',
-                        image: null, caption: '' },
-                    { step: 2, title: 'Снятие', text: 'Ослабьте натяжитель. Снимите старый ремень.',
-                        image: null, caption: '' },
-                    { step: 3, title: 'Установка',
-                        text: 'Установите новый ремень и ролик. Натяните по спецификации.',
-                        image: null, caption: '' },
-                    { step: 4, title: 'Проверка',
-                        text: 'Прокрутите двигатель вручную на 2 оборота.', image: null,
-                    caption: '' },
-                ],
+                title: 'Замена ремня ГРМ + ролик',
+                tools: ['Набор ключей', 'Фиксаторы', 'Динамометрический ключ'],
+                specs: [{ label: 'Интервал', value: 'Каждые 90 000 км' }, { label: 'Критичность',
+                    value: 'ОЧЕНЬ ВАЖНО для 1.8T!' }],
+                warning: 'Обрыв ремня = загиб клапанов! Меняйте помпу одновременно.',
+                steps: ['Выставьте метки.', 'Снимите ремень.', 'Установите новый с роликом.', 'Проверните 2 оборота.']
             },
-            11: {
-                title: 'Замена поликлинового ремня',
-                tools: ['Ключ на 16', 'Ключ для натяжителя'],
-                specs: [
-                    { label: 'Проверка', value: 'Каждые 30 000 км (если нет автонатяжителя)' },
-                    { label: 'Замена', value: 'По износу, обычно вместе с ГРМ' },
-                ],
-                video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-                videoTitle: 'Видео: Замена поликлинового ремня',
-                warning: 'Изношенный ремень может свистеть и привести к отказу генератора или ГУРа.',
-                stepsWithImages: [
-                    { step: 1, title: 'Снятие',
-                        text: 'Ослабьте натяжитель. Снимите старый ремень.', image: null,
-                    caption: '' },
-                    { step: 2, title: 'Установка',
-                        text: 'Установите новый ремень по схеме. Проверьте натяжение.', image: null,
-                        caption: '' },
-                ],
+            14: {
+                title: 'Замена масла в МКПП',
+                tools: ['Шестигранник 17 мм', 'Шприц'],
+                specs: [{ label: 'Тип масла', value: 'G052 SAE 75W90' }, { label: 'Объём (FWD)',
+                    value: '2.25 л' }, { label: 'Объём (4Motion)', value: '2.75 л' }],
+                warning: 'Только масло G052!',
+                steps: ['Слейте масло.', 'Залейте новое шприцем до уровня.']
             },
             15: {
-                title: 'Замена масла в МКПП',
-                tools: ['Ключ-шестигранник 17 мм', 'Шприц для заливки', 'Ёмкость'],
-                specs: [
-                    { label: 'Интервал проверки', value: 'Каждые 30 000 км' },
-                    { label: 'Тип масла', value: 'G052 SAE 75W90' },
-                    { label: 'Объём (передний привод)', value: '2.25 л' },
-                    { label: 'Объём (полный привод)', value: '2.75 л' },
-                ],
-                video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-                videoTitle: 'Видео: Замена масла в МКПП',
-                warning: 'Используйте только масло спецификации G052!',
-                stepsWithImages: [
-                    { step: 1, title: 'Слив',
-                        text: 'Открутите сливную пробку. Слейте масло в ёмкость.', image: null,
-                        caption: '' },
-                    { step: 2, title: 'Заливка',
-                        text: 'Шприцом залейте новое масло через заливное отверстие до уровня.',
-                        image: null, caption: '' },
-                ],
+                title: 'Замена масла в АКПП (01V)',
+                tools: ['Шестигранник', 'Шприц', 'Фильтр АКПП', 'Прокладка'],
+                specs: [{ label: 'Тип масла', value: 'ATF ESSO 71141 / G052 162' }, { label: 'Объём',
+                    value: '3.5 л' }],
+                warning: 'Только оригинальное масло VW!',
+                steps: ['Снимите поддон.', 'Замените фильтр.', 'Залейте масло.', 'Проверьте уровень при t°.']
             },
-            16: {
-                title: 'Замена масла в АКПП (01V Tiptronic)',
-                tools: ['Ключ-шестигранник', 'Шприц', 'Новый фильтр АКПП', 'Прокладка поддона'],
-                specs: [
-                    { label: 'Интервал проверки', value: 'Каждые 60 000 км' },
-                    { label: 'Тип масла', value: 'ATF ESSO EGL 71141 / VW-ET G052 162' },
-                    { label: 'Объём', value: '3.5 л (частичная замена)' },
-                ],
-                video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-                videoTitle: 'Видео: Замена масла в АКПП 01V',
-                warning: 'Используйте только оригинальное масло VW! Неправильная жидкость убьёт коробку.',
-                stepsWithImages: [
-                    { step: 1, title: 'Снятие поддона',
-                        text: 'Открутите поддон АКПП. Слейте масло.', image: null, caption: '' },
-                    { step: 2, title: 'Замена фильтра',
-                        text: 'Замените фильтр АКПП. Установите поддон с новой прокладкой.',
-                        image: null, caption: '' },
-                    { step: 3, title: 'Заливка',
-                        text: 'Залейте новое масло. Проверьте уровень при рабочей температуре.',
-                        image: null, caption: '' },
-                ],
-            },
-            21: {
+            20: {
                 title: 'Замена тормозной жидкости',
-                tools: ['Ключ для штуцеров', 'Шланг', 'Ёмкость', 'Жидкость DOT-4'],
-                specs: [
-                    { label: 'Интервал', value: 'Проверка на каждом ТО, замена по необходимости' },
-                    { label: 'Тип', value: 'DOT-4' },
-                    { label: 'Объём', value: '~1.0 л' },
-                ],
-                video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-                videoTitle: 'Видео: Замена тормозной жидкости',
-                warning: 'Соблюдайте порядок прокачки: заднее правое → заднее левое → переднее правое → переднее левое.',
-                stepsWithImages: [
-                    { step: 1, title: 'Подготовка',
-                        text: 'Откачайте старую жидкость из бачка. Залейте свежую.', image: null,
-                        caption: '' },
-                    { step: 2, title: 'Прокачка',
-                        text: 'Прокачайте каждое колесо до чистой жидкости.', image: null,
-                    caption: '' },
-                ],
-            },
+                tools: ['Ключ для штуцеров', 'Шланг', 'DOT-4'],
+                specs: [{ label: 'Тип', value: 'DOT-4' }, { label: 'Порядок',
+                    value: 'ПЗ → ЛЗ → ПП → ЛП' }],
+                warning: 'Не допускайте осушения бачка.',
+                steps: ['Откачайте старую жидкость.', 'Прокачайте каждое колесо.']
+            }
         };
 
         // Заглушка
         services.forEach(s => {
-            if (!instructions[s.id]) {
-                instructions[s.id] = {
-                    title: s.name,
-                    tools: ['Набор инструментов'],
-                    specs: [{ label: 'Интервал', value: 'По регламенту производителя' }],
-                    stepsWithImages: [{ step: 1, title: 'Выполнение',
-                        text: 'Выполните работу согласно регламенту.', image: null, caption: '' }],
-                    warning: 'При отсутствии опыта обратитесь в автосервис.',
-                    video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-                    videoTitle: 'Видео по ремонту',
-                };
-            }
+            if (!instructions[s.id]) instructions[s.id] = {
+                title: s.name,
+                tools: ['Набор инструментов'],
+                specs: [{ label: 'Интервал', value: 'По регламенту' }],
+                steps: ['Выполните работу согласно регламенту.'],
+                warning: 'При отсутствии опыта обратитесь в автосервис.'
+            };
         });
 
-        // ==================== СОСТОЯНИЕ ====================
-        let selectedCarId = 'vaz2107';
-        let selectedEngineId = 'vaz16carb';
-        let selectedGearboxId = 'vaz_m5';
-        let selectedIds = new Set();
-        let currentFilter = 'all';
-        let searchQuery = '';
+        let selectedCarId = 'vaz2107',
+            selectedEngineId = 'vaz16carb',
+            selectedGearboxId = 'vaz_m5';
+        let selectedIds = new Set(),
+            currentFilter = 'all',
+            searchQuery = '';
 
-        function getSelectedCarData() {
-            const car = carDatabase.find(c => c.carId === selectedCarId);
-            if (!car) return null;
-            const engine = car.engines.find(e => e.engineId === selectedEngineId);
-            if (!engine) return null;
-            const gearbox = engine.gearboxes.find(g => g.gearboxId === selectedGearboxId);
-            if (!gearbox) return null;
-            return { car, engine, gearbox };
+        function getData() {
+            const c = carDatabase.find(x => x.carId === selectedCarId);
+            if (!c) return null;
+            const e = c.engines.find(x => x.engineId === selectedEngineId);
+            if (!e) return null;
+            const g = e.gearboxes.find(x => x.gearboxId === selectedGearboxId);
+            return g ? { car: c, engine: e, gearbox: g } : null;
         }
 
-        function getMultiplier() {
-            const data = getSelectedCarData();
-            return data ? data.gearbox.multiplier : 1.0;
-        }
+        function mult() { const d = getData(); return d ? d.gearbox.multiplier : 1; }
 
-        function getServicePrice(service) {
-            return Math.round(service.basePrice * getMultiplier());
-        }
+        function price(s) { return Math.round(s.basePrice * mult()); }
 
-        function formatPrice(p) { return p.toLocaleString('ru-RU') + ' ₽'; }
+        function fmt(p) { return p.toLocaleString('ru-RU') + ' ₽'; }
 
-        function renderCarButtons() {
-            const container = document.getElementById('carButtons');
-            container.innerHTML = '';
-            carDatabase.forEach(car => {
-                const btn = document.createElement('button');
-                btn.className = 'sel-btn';
-                if (car.carId === selectedCarId) btn.classList.add('active');
-                btn.innerHTML = `${car.carIcon} ${car.carName}<span class="btn-code">${car.category}</span>`;
-                btn.addEventListener('click', () => {
-                    selectedCarId = car.carId;
-                    selectedEngineId = car.engines[0].engineId;
-                    selectedGearboxId = car.engines[0].gearboxes[0].gearboxId;
+        function renderCars() {
+            const el = document.getElementById('carButtons');
+            el.innerHTML = '';
+            carDatabase.forEach(c => {
+                const b = document.createElement('button');
+                b.className = 'sel-btn' + (c.carId === selectedCarId ? ' active' : '');
+                b.innerHTML = c.carIcon + ' ' + c.carName + '<span class="btn-code">' + c.category +
+                    '</span>';
+                b.onclick = () => {
+                    selectedCarId = c.carId;
+                    selectedEngineId = c.engines[0].engineId;
+                    selectedGearboxId = c.engines[0].gearboxes[0].gearboxId;
                     selectedIds.clear();
                     renderAll();
-                });
-                container.appendChild(btn);
+                };
+                el.appendChild(b);
             });
         }
 
-        function renderEngineButtons() {
-            const container = document.getElementById('engineButtons');
-            container.innerHTML = '';
-            const car = carDatabase.find(c => c.carId === selectedCarId);
-            if (!car) return;
-            car.engines.forEach(engine => {
-                const btn = document.createElement('button');
-                btn.className = 'sel-btn';
-                if (engine.engineId === selectedEngineId) btn.classList.add('active');
-                btn.innerHTML =
-                    `${engine.engineName} (${engine.power})<span class="btn-code">Код: ${engine.engineCode}</span>`;
-                btn.addEventListener('click', () => {
-                    selectedEngineId = engine.engineId;
-                    selectedGearboxId = engine.gearboxes[0].gearboxId;
+        function renderEngines() {
+            const el = document.getElementById('engineButtons');
+            el.innerHTML = '';
+            const c = carDatabase.find(x => x.carId === selectedCarId);
+            if (!c) return;
+            c.engines.forEach(e => {
+                const b = document.createElement('button');
+                b.className = 'sel-btn' + (e.engineId === selectedEngineId ? ' active' : '');
+                b.innerHTML = e.engineName + ' (' + e.power + ')<span class="btn-code">Код: ' + e
+                    .engineCode + '</span>';
+                b.onclick = () => {
+                    selectedEngineId = e.engineId;
+                    selectedGearboxId = e.gearboxes[0].gearboxId;
                     selectedIds.clear();
                     renderAll();
-                });
-                container.appendChild(btn);
+                };
+                el.appendChild(b);
             });
         }
 
-        function renderGearboxButtons() {
-            const container = document.getElementById('gearboxButtons');
-            container.innerHTML = '';
-            const car = carDatabase.find(c => c.carId === selectedCarId);
-            if (!car) return;
-            const engine = car.engines.find(e => e.engineId === selectedEngineId);
-            if (!engine) return;
-            engine.gearboxes.forEach(gearbox => {
-                const btn = document.createElement('button');
-                btn.className = 'sel-btn';
-                if (gearbox.gearboxId === selectedGearboxId) btn.classList.add('active');
-                btn.innerHTML =
-                    `${gearbox.gearboxName}<span class="btn-code">${gearbox.drive} привод • Код: ${gearbox.gearboxCode}</span>`;
-                btn.addEventListener('click', () => {
-                    selectedGearboxId = gearbox.gearboxId;
+        function renderGearboxes() {
+            const el = document.getElementById('gearboxButtons');
+            el.innerHTML = '';
+            const d = getData();
+            if (!d) return;
+            d.engine.gearboxes.forEach(g => {
+                const b = document.createElement('button');
+                b.className = 'sel-btn' + (g.gearboxId === selectedGearboxId ? ' active' : '');
+                b.innerHTML = g.gearboxName + '<span class="btn-code">' + g.drive + ' • ' + g.gearboxCode +
+                    '</span>';
+                b.onclick = () => { selectedGearboxId = g.gearboxId;
                     selectedIds.clear();
-                    renderAll();
-                });
-                container.appendChild(btn);
+                    renderAll(); };
+                el.appendChild(b);
             });
         }
 
-        function updateSelectedConfig() {
-            const data = getSelectedCarData();
-            if (!data) return;
-            document.getElementById('configName').textContent = data.car.carIcon + ' ' + data.car.carName;
-            document.getElementById('configDetail').textContent =
-                data.engine.engineName + ' (' + data.engine.power + ') • ' + data.gearbox.gearboxName;
-            document.getElementById('configCode').textContent =
-                'Код двиг: ' + data.engine.engineCode + ' | КПП: ' + data.gearbox.gearboxCode + ' | ×' + data
-                .gearbox.multiplier.toFixed(2);
-            document.getElementById('configBadge').textContent = data.gearbox.badge;
-            document.getElementById('totalCarLabel').textContent =
-                data.car.carName + ' ' + data.engine.engineName;
-            document.querySelector('.selected-config-icon').textContent = data.car.carIcon;
+        function updateConfig() {
+            const d = getData();
+            if (!d) return;
+            document.getElementById('configName').textContent = d.car.carIcon + ' ' + d.car.carName;
+            document.getElementById('configDetail').textContent = d.engine.engineName + ' • ' + d.gearbox
+            .gearboxName;
+            document.getElementById('configCode').textContent = 'Двиг: ' + d.engine.engineCode + ' | КПП: ' + d
+                .gearbox.gearboxCode + ' | ×' + d.gearbox.multiplier.toFixed(2);
+            document.getElementById('configBadge').textContent = d.gearbox.badge;
+            document.getElementById('totalCarLabel').textContent = d.car.carName + ' ' + d.engine.engineName;
         }
 
         function renderServices() {
-            const container = document.getElementById('servicesList');
-            container.innerHTML = '';
-            const multiplier = getMultiplier();
-            let list = services;
-            if (currentFilter !== 'all') list = list.filter(s => s.cat === currentFilter);
+            const el = document.getElementById('servicesList');
+            el.innerHTML = '';
+            const m = mult();
+            let list = services.filter(s => currentFilter === 'all' || s.cat === currentFilter);
             if (searchQuery.trim()) {
-                const q = searchQuery.toLowerCase().trim();
+                const q = searchQuery.toLowerCase();
                 list = list.filter(s => s.name.toLowerCase().includes(q));
             }
-            const grouped = {};
-            list.forEach(s => {
-                if (!grouped[s.cat]) grouped[s.cat] = { catName: s.catName, items: [] };
-                grouped[s.cat].items.push(s);
-            });
-            Object.keys(grouped).forEach(key => {
-                const g = grouped[key];
-                const title = document.createElement('div');
-                title.className = 'category-title';
-                title.textContent = g.catName;
-                container.appendChild(title);
+            const grp = {};
+            list.forEach(s => { if (!grp[s.cat]) grp[s.cat] = { n: s.catName, items: [] };
+                grp[s.cat].items.push(s); });
+            Object.keys(grp).forEach(k => {
+                const g = grp[k];
+                const t = document.createElement('div');
+                t.className = 'category-title';
+                t.textContent = g.n;
+                el.appendChild(t);
                 g.items.forEach(s => {
-                    const price = getServicePrice(s);
-                    const row = document.createElement('div');
-                    row.className = 'service-row';
-                    if (selectedIds.has(s.id)) row.classList.add('selected');
-                    let note = '';
-                    if (multiplier !== 1.0) {
-                        const diff = price - s.basePrice;
-                        if (diff !== 0) note =
-                            `<span class="price-note">(${diff > 0 ? '+' : ''}${diff} ₽)</span>`;
-                    }
-                    row.innerHTML = `
-                    <div class="service-left">
-                        <div class="check-box">${selectedIds.has(s.id) ? '✓' : ''}</div>
-                        <span class="service-name">${s.name}</span>
-                    </div>
-                    <div class="service-right">
-                        <span class="service-price">${formatPrice(price)} ${note}</span>
-                        <button class="detail-btn">📋 Подробнее</button>
-                    </div>`;
-                    row.querySelector('.service-left').addEventListener('click', () => {
-                        if (selectedIds.has(s.id)) selectedIds.delete(s.id);
-                        else selectedIds.add(s.id);
-                        renderServices();
-                    });
-                    row.querySelector('.detail-btn').addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        openModal(s.id);
-                    });
-                    container.appendChild(row);
+                    const p = price(s);
+                    const r = document.createElement('div');
+                    r.className = 'service-row' + (selectedIds.has(s.id) ? ' selected' : '');
+                    const diff = p - s.basePrice;
+                    const note = diff !== 0 ? '<span class="price-note">(' + (diff > 0 ? '+' :
+                        '') + diff + ' ₽)</span>' : '';
+                    r.innerHTML = '<div class="service-left"><div class="check-box">' + (
+                        selectedIds.has(s.id) ? '✓' : '') + '</div><span class="service-name">' + s
+                        .name + '</span></div><div class="service-right"><span class="service-price">' +
+                        fmt(p) + ' ' + note +
+                        '</span><button class="detail-btn">📋 Подробнее</button></div>';
+                    r.querySelector('.service-left').onclick = () => { selectedIds.has(s.id) ?
+                        selectedIds.delete(s.id) : selectedIds.add(s.id);
+                        renderServices(); };
+                    r.querySelector('.detail-btn').onclick = (e) => { e.stopPropagation();
+                        openModal(s.id); };
+                    el.appendChild(r);
                 });
             });
-            if (!list.length) container.innerHTML =
+            if (!list.length) el.innerHTML =
                 '<div style="text-align:center;padding:30px;color:#777;">Ничего не найдено</div>';
             updateTotal();
         }
 
         function updateTotal() {
-            let total = 0;
-            selectedIds.forEach(id => {
-                const s = services.find(x => x.id === id);
-                if (s) total += getServicePrice(s);
-            });
-            document.getElementById('totalPrice').textContent = formatPrice(total);
+            let t = 0;
+            selectedIds.forEach(id => { const s = services.find(x => x.id === id); if (s) t += price(s); });
+            document.getElementById('totalPrice').textContent = fmt(t);
             document.getElementById('totalCount').textContent = selectedIds.size + ' шт.';
         }
 
-        function renderAll() {
-            renderCarButtons();
-            renderEngineButtons();
-            renderGearboxButtons();
-            updateSelectedConfig();
-            renderServices();
-        }
+        function renderAll() { renderCars();
+            renderEngines();
+            renderGearboxes();
+            updateConfig();
+            renderServices(); }
 
-        // Модальное окно
-        function openModal(serviceId) {
-            const instr = instructions[serviceId];
-            document.getElementById('modalTitle').textContent = '📋 ' + instr.title;
-            let html = '';
-
-            // Спецификации / регламент
-            if (instr.specs && instr.specs.length > 0) {
-                html += '<h3>📅 Регламент и спецификации</h3>';
-                html += '<table class="modal-info-table">';
-                instr.specs.forEach(spec => {
-                    html +=
-                        `<tr><td>${spec.label}</td><td>${spec.value}</td></tr>`;
-                });
-                html += '</table>';
+        function openModal(id) {
+            const i = instructions[id];
+            document.getElementById('modalTitle').textContent = '📋 ' + i.title;
+            let h = '';
+            if (i.specs) {
+                h += '<h3>📅 Регламент и спецификации</h3><table class="modal-info-table">';
+                i.specs.forEach(s => h += '<tr><td>' + s.label + '</td><td>' + s.value + '</td></tr>');
+                h += '</table>';
             }
-
-            // Инструменты
-            html += '<h3>🔧 Инструменты</h3><div class="modal-tools">';
-            instr.tools.forEach(t => html += `<span class="tool-tag">${t}</span>`);
-            html += '</div>';
-
-            // Пошаговая инструкция
-            html += '<h3>📝 Пошаговая инструкция</h3>';
-            if (instr.stepsWithImages) {
-                instr.stepsWithImages.forEach(sd => {
-                    html += '<div class="step-block">';
-                    html +=
-                        `<div class="step-header"><span class="step-number">${sd.step}</span> ${sd.title}</div>`;
-                    html += `<div class="step-text">${sd.text}</div>`;
-                    if (sd.image) html +=
-                        `<img src="${sd.image}" class="step-image" loading="lazy">`;
-                    html += '</div>';
-                });
-            }
-
-            if (instr.warning) html +=
-                '<h3>⚠️ Предупреждение</h3><div class="modal-warning">' + instr.warning + '</div>';
-
-            if (instr.video) {
-                html += '<h3>🎬 Видео</h3><div class="modal-video-wrapper"><iframe src="' + instr.video +
-                    '" allowfullscreen></iframe></div>';
-            }
-
-            document.getElementById('modalBody').innerHTML = html;
+            h += '<h3>🔧 Инструменты</h3><div class="modal-tools">';
+            i.tools.forEach(t => h += '<span class="tool-tag">' + t + '</span>');
+            h += '</div><h3>📝 Пошаговая инструкция</h3>';
+            i.steps.forEach((s, n) => h += '<div class="step-block"><div class="step-header"><span class="step-number">' +
+                (n + 1) + '</span> Шаг ' + (n + 1) + '</div><div class="step-text">' + s + '</div></div>');
+            if (i.warning) h += '<h3>⚠️ Предупреждение</h3><div class="modal-warning">' + i.warning + '</div>';
+            document.getElementById('modalBody').innerHTML = h;
             document.getElementById('modalOverlay').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
 
-        function closeModal() {
-            document.getElementById('modalOverlay').classList.add('hidden');
-            document.body.style.overflow = '';
-        }
-
-        document.getElementById('modalClose').addEventListener('click', closeModal);
-        document.getElementById('modalOverlay').addEventListener('click', function(e) {
-            if (e.target === this) closeModal();
-        });
-        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
-        document.getElementById('clearBtn').addEventListener('click', () => { selectedIds.clear();
-            renderServices(); });
-        document.getElementById('searchInput').addEventListener('input', e => { searchQuery = e.target.value;
-            renderServices(); });
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                currentFilter = btn.dataset.filter;
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                renderServices();
-            });
+        function closeModal() { document.getElementById('modalOverlay').classList.add('hidden');
+            document.body.style.overflow = ''; }
+        document.getElementById('modalClose').onclick = closeModal;
+        document.getElementById('modalOverlay').onclick = function(e) { if (e.target === this) closeModal(); };
+        document.onkeydown = function(e) { if (e.key === 'Escape') closeModal(); };
+        document.getElementById('clearBtn').onclick = () => { selectedIds.clear();
+            renderServices(); };
+        document.getElementById('searchInput').oninput = e => { searchQuery = e.target.value;
+            renderServices(); };
+        document.querySelectorAll('.filter-btn').forEach(b => b.onclick = () => {
+            currentFilter = b.dataset.filter;
+            document.querySelectorAll('.filter-btn').forEach(x => x.classList.remove('active'));
+            b.classList.add('active');
+            renderServices();
         });
 
         renderAll();
-        console.log('✅ Прайс-лист с полным регламентом ТО загружен!');
     </script>
 </body>
 </html>
