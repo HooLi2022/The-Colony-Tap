@@ -81,6 +81,7 @@
         .admin-content { display:none; }
         .admin-content.active { display:block; }
         .booking-card { background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:14px; margin-bottom:10px; }
+        .booking-total { background:var(--accent); color:#000; padding:6px 12px; border-radius:8px; font-weight:800; font-size:13px; display:inline-block; margin-top:6px; }
         .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
         .form-grid .full { grid-column:1/-1; }
         .form-group label { display:block; font-size:9px; font-weight:700; color:var(--muted); text-transform:uppercase; margin-bottom:4px; }
@@ -91,8 +92,6 @@
         .del-opt { flex:1; padding:10px; border-radius:8px; border:2px solid rgba(255,255,255,0.15); text-align:center; cursor:pointer; font-size:10px; font-weight:600; }
         .del-opt.active { border-color:var(--accent); background:rgba(255,152,0,0.12); }
         .del-opt span { font-size:20px; display:block; }
-
-        /* Календарь */
         .calendar-popup { position:absolute; background:var(--surface); border:2px solid var(--accent); border-radius:12px; padding:10px; z-index:100; display:none; width:280px; box-shadow:0 10px 30px rgba(0,0,0,0.8); }
         .calendar-popup.show { display:block; }
         .cal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
@@ -105,7 +104,6 @@
         .cal-day.active { background:var(--accent); color:#000; font-weight:700; }
         .cal-day.other { color:#444; }
         .cal-day.today { border:1px solid var(--accent); }
-
         .empty { text-align:center; padding:30px; color:#555; }
         .footer { text-align:center; margin-top:20px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.05); color:#555; font-size:10px; }
         @media(max-width:768px) { .form-grid{grid-template-columns:1fr} .container{padding:12px} .svc-row{flex-wrap:wrap} }
@@ -120,7 +118,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script>
         firebase.initializeApp({ databaseURL:'https://the-colony-tap-default-rtdb.firebaseio.com/' });
-        const db=firebase.database(), P='admin123', KA='as_v10';
+        const db=firebase.database(), P='admin123', KA='as_v11';
         let A=localStorage.getItem(KA)==='1', C=[], S=[], B=[], sc='almera_g15', se, sg, pk=new Set, fl='all', tb='price', at='bookings', dm='self', ac, ae, onl=!1;
         let calDate=null, calYear, calMonth;
 
@@ -129,6 +127,7 @@
         const G=()=>{let c=C.find(x=>x.id===sc);if(!c)return null;let e=c.engines.find(x=>x.id===se);if(!e)return null;let g=e.gearboxes.find(x=>x.id===sg);return g?{car:c,engine:e,gearbox:g}:null;};
         const M=()=>{let d=G();return d?d.gearbox.mult:1;};
         const Pc=s=>Math.round(s.price*M());
+        const calcTotal=(svcIds)=>{let t=0;svcIds.forEach(id=>{let s=S.find(x=>x.id===id);if(s)t+=s.price;});return t;};
 
         function DC(){return [
             {id:'vaz2107',name:'ВАЗ 2107',icon:'🚗',cat:'Отечественные',engines:[{id:'v16',name:'1.6',code:'21067',power:'74 л.с.',fuel:'Бензин',gearboxes:[{id:'m5',name:'МКПП-5',code:'2107',drive:'Задний',mult:0.7,badge:'Эконом'}]}]},
@@ -331,12 +330,12 @@
                 if(!n||!ph)return alert('Имя и телефон обязательны!');
                 let svc=[],sel=document.getElementById('bookService');
                 for(let i=0;i<sel.options.length;i++)if(sel.options[i].selected)svc.push(parseInt(sel.options[i].value));
-                let b={carId:document.getElementById('bookCar').value,name:n,phone:ph,email:document.getElementById('bookEmail').value.trim(),services:svc,problem:document.getElementById('bookProblem').value.trim(),date:dateInput.value,time:document.getElementById('bookTime').value,delivery:dm,address:document.getElementById('bookAddress')?.value?.trim()||'',status:'new',createdAt:firebase.database.ServerValue.TIMESTAMP};
+                let total=calcTotal(svc);
+                let b={carId:document.getElementById('bookCar').value,name:n,phone:ph,email:document.getElementById('bookEmail').value.trim(),services:svc,problem:document.getElementById('bookProblem').value.trim(),date:dateInput.value,time:document.getElementById('bookTime').value,delivery:dm,address:document.getElementById('bookAddress')?.value?.trim()||'',total:total,status:'new',createdAt:firebase.database.ServerValue.TIMESTAMP};
                 db.ref('bookings').push().set(b).then(()=>{document.getElementById('successMsg').style.display='block';document.getElementById('submitBooking').disabled=!0;document.getElementById('submitBooking').textContent='✅ Отправлено!';}).catch(e=>alert('Ошибка: '+e.message));
             };
         }
 
-        // КАЛЕНДАРЬ
         function openCalendar(input){
             let popup=document.getElementById('calendarPopup');
             let today=new Date();
@@ -388,11 +387,13 @@
                 let b=B[k],car=C.find(c=>c.id===b.carId)||{icon:'🚗',name:'Не указан'};
                 let scs=b.status==='confirmed'?'color:#4caf50;':b.status==='done'?'color:#9e9e9e;':'color:var(--accent);';
                 let st=b.status==='confirmed'?'Подтверждена':b.status==='done'?'Выполнена':'Новая';
+                let bookingTotal=b.total||calcTotal(b.services||[]);
                 h+=`<div class="booking-card"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;"><div><strong>${E(b.name)}</strong><br><span style="color:var(--accent);">📞 ${E(b.phone)}</span></div><span style="${scs}font-weight:700;font-size:10px;">${st}</span></div>`;
                 h+=`<div style="margin-top:6px;font-size:12px;">🚗 ${car.icon} ${E(car.name)} | 📅 ${b.date||'—'} ${b.time||''}${b.email?` | 📧 ${E(b.email)}`:''}</div>`;
                 h+=`<div style="margin-top:4px;font-size:11px;">${b.delivery==='evacuator'?'🛻 Эвакуатор':b.delivery==='pickup'?`🏠 Забрать: ${b.address||'—'}`:'🚗 Сам'}</div>`;
-                if(b.services&&b.services.length)h+=`<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:3px;">${b.services.map(sid=>{let s=S.find(x=>x.id===sid);return s?`<span class="badge" style="background:rgba(255,152,0,0.15);color:var(--accent);">${E(s.name)}</span>`:'';}).join('')}</div>`;
+                if(b.services&&b.services.length){h+=`<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:3px;">${b.services.map(sid=>{let s=S.find(x=>x.id===sid);return s?`<span class="badge" style="background:rgba(255,152,0,0.15);color:var(--accent);">${E(s.name)} (${F(s.price)})</span>`:'';}).join('')}</div>`;}
                 if(b.problem)h+=`<div style="margin-top:8px;padding:8px;background:rgba(0,0,0,0.2);border-radius:6px;font-size:11px;">📝 ${E(b.problem)}</div>`;
+                h+=`<div class="booking-total">💰 Сумма: ${F(bookingTotal)}</div>`;
                 h+=`<div style="margin-top:8px;display:flex;gap:5px;flex-wrap:wrap;">${b.status==='new'?`<button class="btn btn-success btn-sm" data-confirm="${k}">✅ Подтвердить</button>`:''}${b.status!=='done'?`<button class="btn btn-accent btn-sm" data-done="${k}">✔️ Выполнено</button>`:''}<button class="btn btn-danger btn-sm" data-del="${k}">🗑️</button></div></div>`;
             });
             return h;
