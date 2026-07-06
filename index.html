@@ -3,1069 +3,1272 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VAG Подборщик — двигатели и КПП</title>
+    <title>Автосервис - Админ-панель и Прайс-лист</title>
     <style>
-        /* ========== БАЗОВЫЕ СТИЛИ ========== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --bg-card: #1e293b;
-            --bg-input: #0f172a;
-            --bg-hover: #334155;
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --text-muted: #64748b;
-            --border-color: #334155;
-            --accent: #3b82f6;
-            --accent-hover: #2563eb;
-            --accent-glow: rgba(59, 130, 246, 0.3);
-            --success: #22c55e;
-            --radius: 16px;
-            --shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
             min-height: 100vh;
             padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
+            color: #e0e0e0;
         }
-
         .container {
-            max-width: 900px;
-            width: 100%;
-            background: var(--bg-secondary);
-            border-radius: var(--radius);
-            padding: 32px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border-color);
-            margin: 20px auto;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #1e1e32;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
         }
-
-        /* ========== ШАПКА ========== */
         .header {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: 8px;
-            flex-wrap: wrap;
-        }
-
-        .header-icon {
-            font-size: 32px;
-            background: var(--accent);
-            padding: 10px;
-            border-radius: 12px;
-            line-height: 1;
-        }
-
-        .header h1 {
-            font-size: 26px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #60a5fa, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .header .version {
-            font-size: 12px;
-            background: var(--border-color);
-            padding: 2px 12px;
-            border-radius: 20px;
-            color: var(--text-secondary);
-            -webkit-text-fill-color: var(--text-secondary);
-        }
-
-        .subtitle {
-            color: var(--text-secondary);
-            font-size: 14px;
-            margin-bottom: 28px;
-            padding-left: 4px;
-        }
-
-        /* ========== КАРТОЧКИ БЛОКОВ ========== */
-        .block {
-            margin-bottom: 24px;
-            background: var(--bg-primary);
-            border-radius: 12px;
-            padding: 18px 20px;
-            border: 1px solid var(--border-color);
-            transition: border-color 0.2s;
-        }
-
-        .block:focus-within {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px var(--accent-glow);
-        }
-
-        .block label {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 600;
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .block label .label-icon {
-            font-size: 18px;
-        }
-
-        .block label .badge-count {
-            background: var(--border-color);
-            padding: 0 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            color: var(--text-muted);
-            font-weight: 400;
-            margin-left: auto;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 12px 16px;
-            background: var(--bg-input);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            font-size: 16px;
-            color: var(--text-primary);
-            transition: 0.2s;
-            outline: none;
-        }
-
-        .search-input:focus {
-            border-color: var(--accent);
-        }
-
-        .search-input::placeholder {
-            color: var(--text-muted);
-        }
-
-        .search-input:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* ========== ВЫПАДАЮЩИЙ СПИСОК ========== */
-        .options-list {
-            margin-top: 8px;
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            max-height: 200px;
-            overflow-y: auto;
-            display: none;
-        }
-
-        .options-list.active {
-            display: block;
-        }
-
-        .options-list .item {
-            padding: 10px 16px;
-            cursor: pointer;
-            border-bottom: 1px solid var(--border-color);
-            transition: 0.15s;
-            font-size: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .options-list .item:last-child {
-            border-bottom: none;
-        }
-
-        .options-list .item:hover {
-            background: var(--bg-hover);
-            color: var(--accent);
-        }
-
-        .options-list .item .highlight {
-            background: rgba(59, 130, 246, 0.3);
-            padding: 0 4px;
-            border-radius: 4px;
-            font-weight: 700;
-        }
-
-        .options-list .item .meta {
-            font-size: 11px;
-            color: var(--text-muted);
-            background: var(--border-color);
-            padding: 2px 10px;
-            border-radius: 20px;
-            flex-shrink: 0;
-            margin-left: 12px;
-        }
-
-        .options-list .empty-state {
-            padding: 20px;
             text-align: center;
-            color: var(--text-muted);
-            font-size: 14px;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(255, 165, 0, 0.3);
         }
+        .logo {
+            font-size: 36px;
+            font-weight: 900;
+            color: #ff9800;
+            letter-spacing: 3px;
+        }
+        .logo span { color: #fff; font-weight: 300; }
+        .subtitle { font-size: 14px; color: #aaa; letter-spacing: 2px; margin-top: 5px; }
 
-        /* ========== ТЕГИ ВЫБРАННОГО ========== */
-        .selected-tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: var(--accent);
-            color: white;
-            padding: 6px 16px 6px 20px;
+        /* Табы */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .tab-btn {
+            padding: 12px 24px;
             border-radius: 30px;
-            font-size: 14px;
-            font-weight: 500;
-            margin-top: 8px;
-        }
-
-        .selected-tag .clear {
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: #ccc;
             cursor: pointer;
-            font-size: 18px;
-            line-height: 1;
-            opacity: 0.7;
-            transition: 0.2s;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+            white-space: nowrap;
         }
-
-        .selected-tag .clear:hover {
-            opacity: 1;
-            transform: scale(1.2);
+        .tab-btn:hover {
+            border-color: #ff9800;
+            color: #fff;
         }
-
-        /* ========== РЕЗУЛЬТАТ ========== */
-        .result-block {
-            margin-top: 28px;
-            padding: 20px 24px;
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(167, 139, 250, 0.1));
-            border-radius: 12px;
-            border: 1px solid var(--accent);
-            display: none;
+        .tab-btn.active {
+            background: #ff9800;
+            color: #000;
+            border-color: #ff9800;
+            font-weight: 700;
         }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
-        .result-block.active {
-            display: block;
+        /* Админ-панель */
+        .admin-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-
-        .result-block .label {
-            font-size: 12px;
+        .admin-section h3 {
+            font-size: 16px;
+            color: #ff9800;
+            margin-bottom: 15px;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: var(--text-muted);
-            font-weight: 600;
         }
-
-        .result-block .value {
-            margin-top: 8px;
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
         }
-
-        .result-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid var(--border-color);
+        .admin-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
         }
-
-        .result-item:last-child {
-            border-bottom: none;
-        }
-
-        .result-item .key {
-            color: var(--text-secondary);
+        .admin-card h4 {
             font-size: 14px;
+            color: #fff;
+            margin-bottom: 8px;
         }
-
-        .result-item .val {
-            font-weight: 600;
-            font-size: 15px;
-            text-align: right;
+        .admin-card p {
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 4px;
         }
-
-        .result-item .val .code {
-            font-weight: 400;
+        .admin-card .card-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 10px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
             font-size: 12px;
-            color: var(--text-muted);
-            margin-left: 8px;
+            font-weight: 600;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .btn-sm { padding: 5px 10px; font-size: 10px; }
+        .btn-primary { background: #ff9800; color: #000; }
+        .btn-primary:hover { background: #ffb74d; }
+        .btn-danger { background: #e53935; color: #fff; }
+        .btn-danger:hover { background: #ef5350; }
+        .btn-outline { background: transparent; border: 1px solid #ff9800; color: #ff9800; }
+        .btn-outline:hover { background: #ff9800; color: #000; }
+        .btn-success { background: #43a047; color: #fff; }
+        .btn-success:hover { background: #66bb6a; }
+
+        /* Формы */
+        .form-group { margin-bottom: 12px; }
+        .form-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: #999;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+            font-family: inherit;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            border-color: #ff9800;
+        }
+        .form-group textarea { min-height: 80px; resize: vertical; }
+        .form-row { display: flex; gap: 10px; }
+        .form-row .form-group { flex: 1; }
+        .image-preview {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 8px;
+            margin-top: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .result-status {
+        /* Прайс-лист */
+        .selector-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .selector-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #ff9800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 14px;
+            text-align: center;
+        }
+        .selector-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; }
+        .selector-row:last-child { margin-bottom: 0; }
+        .selector-group { flex: 1; min-width: 200px; }
+        .selector-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+        .selector-buttons { display: flex; flex-wrap: wrap; gap: 5px; }
+        .sel-btn {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.04);
+            color: #ccc;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: nowrap;
+            text-align: left;
+        }
+        .sel-btn:hover { background: rgba(255, 152, 0, 0.15); border-color: rgba(255, 152, 0, 0.5); color: #fff; }
+        .sel-btn.active { background: #ff9800; color: #000; border-color: #ff9800; font-weight: 700; }
+        .sel-btn .btn-code { font-size: 9px; color: #999; display: block; }
+        .sel-btn.active .btn-code { color: rgba(0, 0, 0, 0.7); }
+        .selected-config {
+            background: rgba(255, 152, 0, 0.12);
+            border: 1px solid #ff9800;
+            border-radius: 10px;
+            padding: 12px 16px;
             margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid var(--border-color);
-            color: var(--success);
-            font-weight: 600;
-            font-size: 15px;
             display: flex;
             align-items: center;
             gap: 10px;
-        }
-
-        /* ========== КНОПКИ ========== */
-        .actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 24px;
             flex-wrap: wrap;
         }
+        .selected-config-icon { font-size: 32px; }
+        .selected-config-info { flex: 1; }
+        .selected-config-name { font-size: 15px; font-weight: 700; color: #fff; }
+        .selected-config-detail { font-size: 11px; color: #ccc; }
+        .selected-config-code { font-size: 10px; color: #ff9800; margin-top: 2px; }
+        .selected-config-badge {
+            background: #ff9800;
+            color: #000;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 12px;
+        }
 
-        .btn {
-            padding: 10px 28px;
-            border: none;
+        .search-box { margin-bottom: 15px; position: relative; }
+        .search-box input {
+            width: 100%;
+            padding: 12px 45px 12px 18px;
             border-radius: 30px;
-            font-weight: 600;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
             font-size: 14px;
+            outline: none;
+        }
+        .search-box input:focus { border-color: #ff9800; }
+        .search-icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 18px; }
+        .filter-buttons { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; justify-content: center; }
+        .filter-btn {
+            padding: 8px 14px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: #ccc;
             cursor: pointer;
-            transition: 0.2s;
-            display: inline-flex;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .filter-btn:hover { background: rgba(255, 152, 0, 0.2); border-color: #ff9800; color: #fff; }
+        .filter-btn.active { background: #ff9800; color: #000; border-color: #ff9800; font-weight: 700; }
+        .total-panel {
+            background: #ff9800;
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 8px;
+            position: sticky;
+            top: 10px;
+            z-index: 10;
+        }
+        .total-label { font-size: 12px; font-weight: 600; color: #000; text-transform: uppercase; }
+        .total-price { font-size: 28px; font-weight: 900; color: #000; }
+        .clear-btn {
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 2px solid #000;
+            background: transparent;
+            color: #000;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        .clear-btn:hover { background: #000; color: #ff9800; }
+        .category-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #ff9800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 15px 0 8px 5px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .category-title:first-child { border-top: none; margin-top: 0; padding-top: 0; }
+        .service-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            margin-bottom: 4px;
+            border: 1px solid transparent;
+            gap: 10px;
+        }
+        .service-row:hover { background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 152, 0, 0.3); }
+        .service-row.selected { background: rgba(255, 152, 0, 0.2); border-color: #ff9800; }
+        .service-left { display: flex; align-items: center; gap: 10px; flex: 1; cursor: pointer; min-width: 150px; }
+        .check-box {
+            width: 24px;
+            height: 24px;
+            border-radius: 5px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: #000;
+        }
+        .service-row.selected .check-box { background: #ff9800; border-color: #ff9800; }
+        .service-name { font-size: 13px; color: #ddd; }
+        .service-row.selected .service-name { color: #fff; font-weight: 600; }
+        .service-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+        .service-price { font-size: 15px; font-weight: 700; color: #ff9800; white-space: nowrap; }
+        .service-row.selected .service-price { color: #fff; }
+        .price-note { font-size: 10px; color: #888; margin-left: 3px; }
+        .detail-btn {
+            padding: 7px 14px;
+            border-radius: 20px;
+            border: 2px solid #ff9800;
+            background: rgba(255, 152, 0, 0.1);
+            color: #ff9800;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+        }
+        .detail-btn:hover { background: #ff9800; color: #000; box-shadow: 0 0 15px rgba(255, 152, 0, 0.5); }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.hidden { display: none; }
+        .modal {
+            background: #1e1e32;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 850px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+            border: 2px solid #ff9800;
+        }
+        .modal-header {
+            background: #ff9800;
+            padding: 16px 20px;
+            border-radius: 14px 14px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+        .modal-title { font-size: 18px; font-weight: 800; color: #000; }
+        .modal-close {
+            width: 34px; height: 34px;
+            border-radius: 50%;
+            border: 2px solid #000;
+            background: transparent;
+            color: #000;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-close:hover { background: #000; color: #ff9800; }
+        .modal-body { padding: 20px; }
+        .modal-body h3 { font-size: 15px; color: #ff9800; margin: 20px 0 10px 0; text-transform: uppercase; }
+        .modal-body h3:first-child { margin-top: 0; }
+        .modal-tools { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+        .tool-tag {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            color: #ddd;
+        }
+        .modal-warning {
+            background: rgba(255, 152, 0, 0.12);
+            border-left: 4px solid #ff9800;
+            padding: 12px 14px;
+            border-radius: 0 8px 8px 0;
+            margin: 10px 0;
+            font-size: 13px;
+            color: #ffa726;
+        }
+        .modal-info-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 12px; }
+        .modal-info-table td { padding: 6px 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); color: #ccc; }
+        .modal-info-table td:first-child { font-weight: 600; color: #ff9800; white-space: nowrap; width: 40%; }
+        .step-block {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .step-header {
+            font-weight: 700;
+            color: #ff9800;
+            font-size: 14px;
+            margin-bottom: 8px;
+            display: flex;
             align-items: center;
             gap: 8px;
         }
-
-        .btn-reset {
-            background: var(--border-color);
-            color: var(--text-secondary);
+        .step-number {
+            background: #ff9800;
+            color: #000;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 13px;
         }
-
-        .btn-reset:hover {
-            background: #475569;
-            color: var(--text-primary);
+        .step-text { font-size: 13px; color: #ccc; line-height: 1.6; }
+        .step-image {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 8px;
+            cursor: pointer;
         }
-
-        .btn-primary {
-            background: var(--accent);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--accent-hover);
-            transform: translateY(-1px);
-            box-shadow: 0 8px 25px var(--accent-glow);
-        }
-
-        /* ========== СКРОЛЛ ========== */
-        .options-list::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .options-list::-webkit-scrollbar-track {
-            background: var(--bg-primary);
+        .footer { text-align: center; margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.08); color: #666; font-size: 11px; }
+        .empty-state { text-align: center; padding: 40px; color: #666; }
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
             border-radius: 10px;
+            font-size: 9px;
+            font-weight: 700;
+            margin-left: 4px;
         }
+        .badge-engine { background: rgba(66, 165, 245, 0.2); color: #42a5f5; }
+        .badge-gearbox { background: rgba(171, 71, 188, 0.2); color: #ab47bc; }
 
-        .options-list::-webkit-scrollbar-thumb {
-            background: var(--border-color);
-            border-radius: 10px;
-        }
-
-        .options-list::-webkit-scrollbar-thumb:hover {
-            background: var(--text-muted);
-        }
-
-        /* ========== АДАПТИВ ========== */
-        @media (max-width: 600px) {
-            .container {
-                padding: 16px;
-            }
-
-            .header h1 {
-                font-size: 20px;
-            }
-
-            .header-icon {
-                font-size: 24px;
-                padding: 8px;
-            }
-
-            .block {
-                padding: 14px 16px;
-            }
-
-            .search-input {
-                font-size: 15px;
-                padding: 10px 14px;
-            }
-
-            .result-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 2px;
-            }
-
-            .result-item .val {
-                text-align: left;
-            }
-
-            .actions {
-                flex-direction: column;
-            }
-
-            .btn {
-                justify-content: center;
-            }
-        }
-
-        @media (max-width: 400px) {
-            .container {
-                padding: 12px;
-            }
-
-            .header h1 {
-                font-size: 17px;
-            }
-
-            .selected-tag {
-                font-size: 12px;
-                padding: 4px 12px 4px 16px;
-            }
+        @media (max-width: 768px) {
+            .container { padding: 12px; }
+            .admin-grid { grid-template-columns: 1fr; }
+            .form-row { flex-direction: column; }
+            .service-row { flex-wrap: wrap; padding: 10px; }
+            .service-right { width: 100%; justify-content: space-between; }
         }
     </style>
 </head>
 <body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">AUTO<span>SERVICE</span></div>
+            <div class="subtitle">Админ-панель и Прайс-лист</div>
+        </div>
 
-<div class="container" id="app">
-    <!-- ШАПКА -->
-    <div class="header">
-        <div class="header-icon">🚗</div>
-        <h1>VAG Подборщик</h1>
-        <span class="version">v2.0</span>
+        <!-- Табы -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="tab-price">📋 Прайс-лист</button>
+            <button class="tab-btn" data-tab="tab-cars">🚗 Автомобили</button>
+            <button class="tab-btn" data-tab="tab-services">🔧 Услуги</button>
+        </div>
+
+        <!-- ==================== ПРАЙС-ЛИСТ ==================== -->
+        <div class="tab-content active" id="tab-price">
+            <div class="selector-section">
+                <div class="selector-title">🚗 Выберите автомобиль</div>
+                <div class="selector-row">
+                    <div class="selector-group">
+                        <div class="selector-label">Марка / Модель</div>
+                        <div class="selector-buttons" id="carButtons"></div>
+                    </div>
+                </div>
+                <div class="selector-row">
+                    <div class="selector-group">
+                        <div class="selector-label">Двигатель</div>
+                        <div class="selector-buttons" id="engineButtons"></div>
+                    </div>
+                </div>
+                <div class="selector-row">
+                    <div class="selector-group">
+                        <div class="selector-label">Коробка передач</div>
+                        <div class="selector-buttons" id="gearboxButtons"></div>
+                    </div>
+                </div>
+                <div class="selected-config" id="selectedConfig">
+                    <span class="selected-config-icon">🚗</span>
+                    <div class="selected-config-info">
+                        <div class="selected-config-name" id="configName">Выберите авто</div>
+                        <div class="selected-config-detail" id="configDetail"></div>
+                        <div class="selected-config-code" id="configCode"></div>
+                    </div>
+                    <span class="selected-config-badge" id="configBadge"></span>
+                </div>
+            </div>
+
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Поиск услуги...">
+                <span class="search-icon">🔍</span>
+            </div>
+
+            <div class="filter-buttons" id="filterButtons"></div>
+
+            <div class="total-panel">
+                <div>
+                    <div class="total-label">Выбрано: <span id="totalCount">0</span></div>
+                    <div class="total-label" id="totalCarLabel"></div>
+                </div>
+                <div class="total-price" id="totalPrice">0 ₽</div>
+                <button class="clear-btn" id="clearBtn">Сбросить</button>
+            </div>
+
+            <div id="servicesList"></div>
+            <div class="footer">© 2026 AutoService. Нажмите «Подробнее» для инструкции.</div>
+        </div>
+
+        <!-- ==================== АДМИН: АВТОМОБИЛИ ==================== -->
+        <div class="tab-content" id="tab-cars">
+            <div class="admin-section">
+                <h3>➕ Добавить автомобиль</h3>
+                <div class="form-row">
+                    <div class="form-group"><label>Марка / Модель</label><input type="text" id="newCarName" placeholder="Например: VW Passat B5"></div>
+                    <div class="form-group"><label>Иконка (эмодзи)</label><input type="text" id="newCarIcon" placeholder="🚙" maxlength="4"></div>
+                    <div class="form-group"><label>Категория</label><input type="text" id="newCarCategory" placeholder="Бизнес / Эконом / Премиум"></div>
+                </div>
+                <button class="btn btn-primary" onclick="addCar()">➕ Добавить автомобиль</button>
+            </div>
+
+            <div class="admin-section">
+                <h3>📋 Список автомобилей</h3>
+                <div id="carsListAdmin" class="admin-grid"></div>
+            </div>
+
+            <!-- Форма добавления двигателя -->
+            <div class="admin-section" id="engineFormSection" style="display:none;">
+                <h3>➕ Добавить двигатель для: <span id="selectedCarForEngine"></span></h3>
+                <div class="form-row">
+                    <div class="form-group"><label>Название двигателя</label><input type="text" id="newEngineName" placeholder="1.8T 20V Turbo"></div>
+                    <div class="form-group"><label>Код двигателя</label><input type="text" id="newEngineCode" placeholder="AEB"></div>
+                    <div class="form-group"><label>Мощность</label><input type="text" id="newEnginePower" placeholder="150 л.с."></div>
+                    <div class="form-group"><label>Тип топлива</label><select id="newEngineFuel"><option>Бензин</option><option>Дизель</option><option>Гибрид</option><option>Электро</option></select></div>
+                </div>
+                <button class="btn btn-primary" onclick="addEngine()">➕ Добавить двигатель</button>
+                <div id="enginesListAdmin" style="margin-top:15px;"></div>
+            </div>
+
+            <!-- Форма добавления КПП -->
+            <div class="admin-section" id="gearboxFormSection" style="display:none;">
+                <h3>➕ Добавить КПП для двигателя: <span id="selectedEngineForGearbox"></span></h3>
+                <div class="form-row">
+                    <div class="form-group"><label>Название КПП</label><input type="text" id="newGearboxName" placeholder="МКПП-5 (012)"></div>
+                    <div class="form-group"><label>Код КПП</label><input type="text" id="newGearboxCode" placeholder="012"></div>
+                    <div class="form-group"><label>Привод</label><select id="newGearboxDrive"><option>Передний</option><option>Задний</option><option>Полный</option></select></div>
+                    <div class="form-group"><label>Коэффициент</label><input type="number" id="newGearboxMult" value="1.0" step="0.05" min="0.5" max="3.0"></div>
+                    <div class="form-group"><label>Метка сложности</label><input type="text" id="newGearboxBadge" placeholder="Средне"></div>
+                </div>
+                <button class="btn btn-primary" onclick="addGearbox()">➕ Добавить КПП</button>
+                <div id="gearboxesListAdmin" style="margin-top:15px;"></div>
+            </div>
+        </div>
+
+        <!-- ==================== АДМИН: УСЛУГИ ==================== -->
+        <div class="tab-content" id="tab-services">
+            <div class="admin-section">
+                <h3>➕ Добавить / Редактировать услугу</h3>
+                <div class="form-row">
+                    <div class="form-group"><label>Название услуги</label><input type="text" id="svcName" placeholder="Замена масла"></div>
+                    <div class="form-group"><label>Базовая цена (₽)</label><input type="number" id="svcPrice" value="1000"></div>
+                    <div class="form-group"><label>Категория</label>
+                        <select id="svcCat">
+                            <option value="maintenance">🛠️ ТО</option>
+                            <option value="engine">⚡ Двигатель</option>
+                            <option value="exhaust">💨 Выхлоп</option>
+                            <option value="transmission">⚙️ Трансмиссия</option>
+                            <option value="brakes">🛑 Тормоза</option>
+                            <option value="suspension">🔧 Подвеска</option>
+                            <option value="welding">🔥 Сварка</option>
+                            <option value="diagnostics">🔍 Диагностика</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group"><label>Инструменты (через запятую)</label><input type="text" id="svcTools" placeholder="Ключ на 12, Отвёртка, Ветошь"></div>
+                <div class="form-group"><label>Регламент / Спецификации (каждая строка: label|value)</label><textarea id="svcSpecs" placeholder="Интервал замены|Каждые 15 000 км&#10;Объём масла|4.0 л&#10;Спецификация|VW 502.00"></textarea></div>
+                <div class="form-group"><label>Пошаговая инструкция (каждая строка — один шаг)</label><textarea id="svcSteps" placeholder="Прогрейте двигатель 5-7 минут.&#10;Открутите сливную пробку.&#10;Слейте масло в ёмкость."></textarea></div>
+                <div class="form-group"><label>Предупреждение</label><input type="text" id="svcWarning" placeholder="Не перетягивайте фильтр!"></div>
+                <div class="form-group"><label>Ссылка на изображение (URL)</label><input type="text" id="svcImage" placeholder="https://example.com/image.jpg"></div>
+                <input type="hidden" id="svcEditId" value="">
+                <button class="btn btn-primary" onclick="saveService()">💾 Сохранить услугу</button>
+                <button class="btn btn-outline" onclick="clearServiceForm()" style="margin-left:8px;">✕ Очистить форму</button>
+            </div>
+
+            <div class="admin-section">
+                <h3>📋 Список услуг</h3>
+                <div id="servicesListAdmin" class="admin-grid"></div>
+            </div>
+        </div>
     </div>
-    <div class="subtitle">Выберите марку → модель → двигатель → коробку передач</div>
 
-    <!-- МАРКА -->
-    <div class="block" id="brandBlock">
-        <label>
-            <span class="label-icon">🏷️</span> Марка
-            <span class="badge-count" id="brandCount">4</span>
-        </label>
-        <input class="search-input" id="brandInput" placeholder="Начните вводить: Volkswagen, Audi..." autocomplete="off">
-        <div class="options-list" id="brandOptions"></div>
-        <div id="brandSelected"></div>
+    <!-- Модальное окно для инструкции -->
+    <div class="modal-overlay hidden" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title" id="modalTitle"></span>
+                <button class="modal-close" id="modalClose">✕</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
     </div>
 
-    <!-- МОДЕЛЬ -->
-    <div class="block" id="modelBlock">
-        <label>
-            <span class="label-icon">📐</span> Модель
-            <span class="badge-count" id="modelCount">0</span>
-        </label>
-        <input class="search-input" id="modelInput" placeholder="Сначала выберите марку" autocomplete="off" disabled>
-        <div class="options-list" id="modelOptions"></div>
-        <div id="modelSelected"></div>
-    </div>
+    <script>
+        // ==================== ХРАНИЛИЩЕ ДАННЫХ (localStorage) ====================
+        const STORAGE_KEY_CARS = 'autoservice_cars';
+        const STORAGE_KEY_SERVICES = 'autoservice_services';
 
-    <!-- ДВИГАТЕЛЬ -->
-    <div class="block" id="engineBlock">
-        <label>
-            <span class="label-icon">⚡</span> Двигатель
-            <span class="badge-count" id="engineCount">0</span>
-        </label>
-        <input class="search-input" id="engineInput" placeholder="Сначала выберите модель" autocomplete="off" disabled>
-        <div class="options-list" id="engineOptions"></div>
-        <div id="engineSelected"></div>
-    </div>
+        function loadData() {
+            let cars = localStorage.getItem(STORAGE_KEY_CARS);
+            let services = localStorage.getItem(STORAGE_KEY_SERVICES);
+            if (!cars) {
+                cars = getDefaultCars();
+                saveCars(cars);
+            } else {
+                cars = JSON.parse(cars);
+            }
+            if (!services) {
+                services = getDefaultServices();
+                saveServices(services);
+            } else {
+                services = JSON.parse(services);
+            }
+            return { cars, services };
+        }
 
-    <!-- КОРОБКА -->
-    <div class="block" id="gearBlock">
-        <label>
-            <span class="label-icon">⚙️</span> Коробка передач
-            <span class="badge-count" id="gearCount">0</span>
-        </label>
-        <input class="search-input" id="gearInput" placeholder="Сначала выберите двигатель" autocomplete="off" disabled>
-        <div class="options-list" id="gearOptions"></div>
-        <div id="gearSelected"></div>
-    </div>
+        function saveCars(cars) { localStorage.setItem(STORAGE_KEY_CARS, JSON.stringify(cars)); }
+        function saveServices(services) { localStorage.setItem(STORAGE_KEY_SERVICES, JSON.stringify(services)); }
 
-    <!-- РЕЗУЛЬТАТ -->
-    <div class="result-block" id="resultBlock">
-        <div class="label">✅ Ваша конфигурация</div>
-        <div class="value" id="resultText"></div>
-    </div>
+        function getDefaultCars() {
+            return [{
+                id: 'vaz2107',
+                name: 'ВАЗ 2107',
+                icon: '🚗',
+                category: 'Эконом',
+                engines: [{
+                    id: 'vaz16carb',
+                    name: '1.6 карбюратор',
+                    code: '2106',
+                    power: '74 л.с.',
+                    fuel: 'Бензин',
+                    gearboxes: [{ id: 'vaz_m5', name: 'МКПП-5', code: '2107', drive: 'Задний',
+                        multiplier: 0.70, badge: 'Эконом' }]
+                }, {
+                    id: 'vaz16inj',
+                    name: '1.6 инжектор',
+                    code: '21067',
+                    power: '74 л.с.',
+                    fuel: 'Бензин',
+                    gearboxes: [{ id: 'vaz_m5', name: 'МКПП-5', code: '2107', drive: 'Задний',
+                        multiplier: 0.75, badge: 'Эконом' }]
+                }]
+            }, {
+                id: 'passatb5',
+                name: 'VW Passat B5/B5.5',
+                icon: '🚙',
+                category: 'Бизнес',
+                engines: [{
+                    id: '18t_aeb',
+                    name: '1.8T 20V Turbo',
+                    code: 'AEB',
+                    power: '150 л.с.',
+                    fuel: 'Бензин',
+                    gearboxes: [
+                        { id: '012', name: 'МКПП-5 (012)', code: '012', drive: 'Передний',
+                            multiplier: 1.20, badge: 'Средне' },
+                        { id: '01v_fwd', name: 'АКПП-5 Tiptronic (01V)', code: '01V',
+                            drive: 'Передний', multiplier: 1.40, badge: 'Сложно' }
+                    ]
+                }, {
+                    id: '19tdi_110',
+                    name: '1.9 TDI',
+                    code: 'AFN',
+                    power: '110 л.с.',
+                    fuel: 'Дизель',
+                    gearboxes: [
+                        { id: '012', name: 'МКПП-5 (012)', code: '012', drive: 'Передний',
+                            multiplier: 1.15, badge: 'Средне' },
+                        { id: '01v_fwd', name: 'АКПП-5 Tiptronic (01V)', code: '01V',
+                            drive: 'Передний', multiplier: 1.35, badge: 'Сложно' }
+                    ]
+                }]
+            }];
+        }
 
-    <!-- КНОПКИ -->
-    <div class="actions">
-        <button class="btn btn-reset" id="resetBtn">🔄 Сбросить всё</button>
-        <button class="btn btn-primary" id="shareBtn">📋 Показать комбинацию</button>
-    </div>
-</div>
+        function getDefaultServices() {
+            return [
+                { id: 1, name: 'Замена масла и масляного фильтра', basePrice: 800, cat: 'maintenance',
+                    tools: 'Ключ для пробки, Съёмник фильтра, Ёмкость 5л, Воронка',
+                    specs: 'Интервал замены|Каждые 15 000 км\nОбъём (1.8T)|4.0 л\nСпецификация|VW 502.00',
+                    steps: 'Прогрейте двигатель 5-7 минут.\nОткрутите сливную пробку.\nСлейте масло (10-15 мин).\nЗамените фильтр.\nЗалейте новое масло.',
+                    warning: 'Не перетягивайте фильтр!', image: '' },
+                { id: 2, name: 'Замена свечей зажигания (4 шт)', basePrice: 600, cat: 'maintenance',
+                    tools: 'Свечной ключ 16 мм, Динамометрический ключ',
+                    specs: 'Интервал|Каждые 60 000 км\nМомент затяжки|30 Нм',
+                    steps: 'Дайте двигателю остыть.\nСнимите катушки.\nВыкрутите старые свечи.\nУстановите новые (30 Нм).',
+                    warning: 'Аккуратно с катушками!', image: '' },
+                { id: 3, name: 'Замена ремня ГРМ + ролик', basePrice: 4000, cat: 'engine',
+                    tools: 'Набор ключей, Фиксаторы, Динамометрический ключ',
+                    specs: 'Интервал|Каждые 90 000 км\nКритичность|ОЧЕНЬ ВАЖНО для 1.8T!',
+                    steps: 'Выставьте метки ГРМ.\nСнимите старый ремень.\nУстановите новый с роликом.\nПроверните 2 оборота.',
+                    warning: 'Обрыв ремня = загиб клапанов!', image: '' },
+                { id: 4, name: 'Замена передних колодок', basePrice: 1200, cat: 'brakes',
+                    tools: 'Домкрат, Ключ на 13-15, Струбцина, Медная смазка',
+                    specs: 'Интервал проверки|Каждые 15 000 км',
+                    steps: 'Снимите колесо.\nОткрутите суппорт.\nИзвлеките старые колодки.\nУтопите поршень.\nУстановите новые колодки.',
+                    warning: 'Прокачайте педаль перед поездкой!', image: '' },
+                { id: 5, name: 'Замена масла в АКПП (01V)', basePrice: 2500, cat: 'transmission',
+                    tools: 'Шестигранник, Шприц, Фильтр АКПП, Прокладка',
+                    specs: 'Тип масла|ATF ESSO 71141 / G052 162\nОбъём|3.5 л',
+                    steps: 'Снимите поддон АКПП.\nЗамените фильтр.\nУстановите поддон с новой прокладкой.\nЗалейте масло.',
+                    warning: 'Только оригинальное масло VW!', image: '' },
+            ];
+        }
 
-<script>
-    // ================================================================
-    //  БАЗА ДАННЫХ — ВСЕ МАРКИ VAG, МОДЕЛИ, ДВИГАТЕЛИ, КОРОБКИ
-    // ================================================================
+        let { cars: carDatabase, services: servicesData } = loadData();
+        let selectedCarId = carDatabase[0]?.id || null;
+        let selectedEngineId = carDatabase[0]?.engines[0]?.id || null;
+        let selectedGearboxId = carDatabase[0]?.engines[0]?.gearboxes[0]?.id || null;
+        let selectedIds = new Set();
+        let currentFilter = 'all';
+        let searchQuery = '';
+        let adminSelectedCarId = null;
+        let adminSelectedEngineId = null;
 
-    const DATA = {
-        brands: [
-            { id: 'vw', name: 'Volkswagen', icon: 'VW' },
-            { id: 'audi', name: 'Audi', icon: 'A' },
-            { id: 'skoda', name: 'Škoda', icon: 'Š' },
-            { id: 'seat', name: 'Seat', icon: 'S' }
-        ],
+        function getSelectedCarData() {
+            const car = carDatabase.find(c => c.id === selectedCarId);
+            if (!car) return null;
+            const engine = car.engines.find(e => e.id === selectedEngineId);
+            if (!engine) return null;
+            const gearbox = engine.gearboxes.find(g => g.id === selectedGearboxId);
+            if (!gearbox) return null;
+            return { car, engine, gearbox };
+        }
 
-        models: [
-            // ===== VW =====
-            { id: 'vw_passat_b5', name: 'Passat B5 (1996–2005)', brand: 'vw' },
-            { id: 'vw_passat_b6', name: 'Passat B6 (2005–2010)', brand: 'vw' },
-            { id: 'vw_golf_4', name: 'Golf 4 (1997–2004)', brand: 'vw' },
-            { id: 'vw_golf_5', name: 'Golf 5 (2003–2009)', brand: 'vw' },
-            { id: 'vw_golf_6', name: 'Golf 6 (2008–2013)', brand: 'vw' },
-            { id: 'vw_tiguan_1', name: 'Tiguan I (2007–2017)', brand: 'vw' },
-            { id: 'vw_touareg_1', name: 'Touareg I (2002–2010)', brand: 'vw' },
-            { id: 'vw_polo_4', name: 'Polo IV (2001–2009)', brand: 'vw' },
-            { id: 'vw_jetta_5', name: 'Jetta V (2005–2010)', brand: 'vw' },
-            // ===== Audi =====
-            { id: 'audi_a4_b5', name: 'A4 B5 (1994–2001)', brand: 'audi' },
-            { id: 'audi_a4_b6', name: 'A4 B6 (2000–2005)', brand: 'audi' },
-            { id: 'audi_a6_c5', name: 'A6 C5 (1997–2004)', brand: 'audi' },
-            { id: 'audi_a6_c6', name: 'A6 C6 (2004–2011)', brand: 'audi' },
-            { id: 'audi_a3_8l', name: 'A3 8L (1996–2003)', brand: 'audi' },
-            { id: 'audi_a3_8p', name: 'A3 8P (2003–2012)', brand: 'audi' },
-            { id: 'audi_q7_4l', name: 'Q7 4L (2005–2015)', brand: 'audi' },
-            { id: 'audi_tt_8n', name: 'TT 8N (1998–2006)', brand: 'audi' },
-            // ===== Skoda =====
-            { id: 'skoda_octavia_1', name: 'Octavia I (1996–2004)', brand: 'skoda' },
-            { id: 'skoda_octavia_2', name: 'Octavia II (2004–2012)', brand: 'skoda' },
-            { id: 'skoda_superb_1', name: 'Superb I (2001–2008)', brand: 'skoda' },
-            { id: 'skoda_superb_2', name: 'Superb II (2008–2015)', brand: 'skoda' },
-            { id: 'skoda_fabia_1', name: 'Fabia I (1999–2007)', brand: 'skoda' },
-            // ===== Seat =====
-            { id: 'seat_leon_1', name: 'Leon I (1999–2005)', brand: 'seat' },
-            { id: 'seat_leon_2', name: 'Leon II (2005–2012)', brand: 'seat' },
-            { id: 'seat_ibiza_3', name: 'Ibiza III (2002–2008)', brand: 'seat' },
-            { id: 'seat_altea', name: 'Altea (2004–2015)', brand: 'seat' },
-            { id: 'seat_toledo_2', name: 'Toledo II (1998–2004)', brand: 'seat' }
-        ],
+        function getMultiplier() {
+            const d = getSelectedCarData();
+            return d ? d.gearbox.multiplier : 1;
+        }
 
-        engines: [
-            // ===== VW Passat B5 =====
-            { id: 'vw_18t_150', name: '1.8 20V Turbo (150 л.с.)', codes: 'AEB, ATW, AUG', models: ['vw_passat_b5'] },
-            { id: 'vw_20_115', name: '2.0 (115 л.с.)', codes: '—', models: ['vw_passat_b5'] },
-            { id: 'vw_28_vr6_190', name: '2.8 VR6 (190 л.с.)', codes: 'AHA, ATQ', models: ['vw_passat_b5'] },
-            { id: 'vw_40_w8_275', name: '4.0 W8 (275 л.с.)', codes: 'BDP', models: ['vw_passat_b5'] },
-            { id: 'vw_19_tdi_90', name: '1.9 TDI (90 л.с.)', codes: 'AFN', models: ['vw_passat_b5'] },
-            { id: 'vw_19_tdi_110', name: '1.9 TDI (110 л.с.)', codes: 'AFN', models: ['vw_passat_b5'] },
-            { id: 'vw_19_tdi_130', name: '1.9 TDI (130 л.с.)', codes: '—', models: ['vw_passat_b5'] },
-            // ===== VW Passat B6 =====
-            { id: 'vw_16_fsi_115', name: '1.6 FSI (115 л.с.)', codes: '—', models: ['vw_passat_b6'] },
-            { id: 'vw_18_tsi_160', name: '1.8 TSI (160 л.с.)', codes: '—', models: ['vw_passat_b6'] },
-            { id: 'vw_20_tsi_200', name: '2.0 TSI (200 л.с.)', codes: '—', models: ['vw_passat_b6'] },
-            { id: 'vw_20_tdi_140', name: '2.0 TDI (140 л.с.)', codes: '—', models: ['vw_passat_b6'] },
-            { id: 'vw_20_tdi_170', name: '2.0 TDI (170 л.с.)', codes: '—', models: ['vw_passat_b6'] },
-            // ===== VW Golf 4 =====
-            { id: 'vw_14_75', name: '1.4 (75 л.с.)', codes: '—', models: ['vw_golf_4'] },
-            { id: 'vw_16_100', name: '1.6 (100 л.с.)', codes: '—', models: ['vw_golf_4'] },
-            { id: 'vw_18t_150_g4', name: '1.8 20V Turbo (150 л.с.)', codes: '—', models: ['vw_golf_4'] },
-            { id: 'vw_28_vr6_204', name: '2.8 VR6 (204 л.с.)', codes: '—', models: ['vw_golf_4'] },
-            { id: 'vw_19_tdi_90_g4', name: '1.9 TDI (90 л.с.)', codes: '—', models: ['vw_golf_4'] },
-            { id: 'vw_19_tdi_110_g4', name: '1.9 TDI (110 л.с.)', codes: '—', models: ['vw_golf_4'] },
-            { id: 'vw_19_tdi_130_g4', name: '1.9 TDI (130 л.с.)', codes: '—', models: ['vw_golf_4'] },
-            // ===== VW Golf 5 =====
-            { id: 'vw_14_80', name: '1.4 (80 л.с.)', codes: '—', models: ['vw_golf_5'] },
-            { id: 'vw_16_fsi_115_g5', name: '1.6 FSI (115 л.с.)', codes: '—', models: ['vw_golf_5'] },
-            { id: 'vw_20_tsi_200_g5', name: '2.0 TSI (200 л.с.)', codes: '—', models: ['vw_golf_5'] },
-            { id: 'vw_19_tdi_105', name: '1.9 TDI (105 л.с.)', codes: '—', models: ['vw_golf_5'] },
-            { id: 'vw_20_tdi_140_g5', name: '2.0 TDI (140 л.с.)', codes: '—', models: ['vw_golf_5'] },
-            // ===== VW Golf 6 =====
-            { id: 'vw_12_tsi_105', name: '1.2 TSI (105 л.с.)', codes: '—', models: ['vw_golf_6'] },
-            { id: 'vw_14_tsi_122', name: '1.4 TSI (122 л.с.)', codes: '—', models: ['vw_golf_6'] },
-            { id: 'vw_20_tsi_210', name: '2.0 TSI (210 л.с.)', codes: '—', models: ['vw_golf_6'] },
-            { id: 'vw_20_tdi_110', name: '2.0 TDI (110 л.с.)', codes: '—', models: ['vw_golf_6'] },
-            // ===== VW Tiguan I =====
-            { id: 'vw_14_tsi_150', name: '1.4 TSI (150 л.с.)', codes: '—', models: ['vw_tiguan_1'] },
-            { id: 'vw_20_tsi_200_tig', name: '2.0 TSI (200 л.с.)', codes: '—', models: ['vw_tiguan_1'] },
-            { id: 'vw_20_tdi_140_tig', name: '2.0 TDI (140 л.с.)', codes: '—', models: ['vw_tiguan_1'] },
-            // ===== VW Touareg I =====
-            { id: 'vw_32_v6_220', name: '3.2 V6 (220 л.с.)', codes: '—', models: ['vw_touareg_1'] },
-            { id: 'vw_42_v8_310', name: '4.2 V8 (310 л.с.)', codes: '—', models: ['vw_touareg_1'] },
-            { id: 'vw_50_tdi_313', name: '5.0 TDI (313 л.с.)', codes: '—', models: ['vw_touareg_1'] },
-            // ===== VW Polo IV =====
-            { id: 'vw_12_64', name: '1.2 (64 л.с.)', codes: '—', models: ['vw_polo_4'] },
-            { id: 'vw_14_75_polo', name: '1.4 (75 л.с.)', codes: '—', models: ['vw_polo_4'] },
-            { id: 'vw_16_105', name: '1.6 (105 л.с.)', codes: '—', models: ['vw_polo_4'] },
-            // ===== VW Jetta V =====
-            { id: 'vw_16_102', name: '1.6 (102 л.с.)', codes: '—', models: ['vw_jetta_5'] },
-            { id: 'vw_18_tsi_160_jetta', name: '1.8 TSI (160 л.с.)', codes: '—', models: ['vw_jetta_5'] },
-            { id: 'vw_20_tdi_140_jetta', name: '2.0 TDI (140 л.с.)', codes: '—', models: ['vw_jetta_5'] },
+        function getServicePrice(s) { return Math.round(s.basePrice * getMultiplier()); }
+        function fmt(p) { return p.toLocaleString('ru-RU') + ' ₽'; }
 
-            // ===== AUDI =====
-            { id: 'aud_18t_150_a4', name: '1.8 20V Turbo (150 л.с.)', codes: '—', models: ['audi_a4_b5'] },
-            { id: 'aud_28_v6_180', name: '2.8 V6 (180 л.с.)', codes: '—', models: ['audi_a4_b5'] },
-            { id: 'aud_19_tdi_110_a4', name: '1.9 TDI (110 л.с.)', codes: '—', models: ['audi_a4_b5'] },
-            { id: 'aud_20_tdi_170_a4', name: '2.0 TDI (170 л.с.)', codes: '—', models: ['audi_a4_b6'] },
-            { id: 'aud_20_tsi_200_a4', name: '2.0 TSI (200 л.с.)', codes: '—', models: ['audi_a4_b6'] },
-            { id: 'aud_24_v6_177', name: '2.4 V6 (177 л.с.)', codes: '—', models: ['audi_a6_c5'] },
-            { id: 'aud_27_tdi_180', name: '2.7 TDI (180 л.с.)', codes: '—', models: ['audi_a6_c6'] },
-            { id: 'aud_30_tdi_233', name: '3.0 TDI (233 л.с.)', codes: '—', models: ['audi_a6_c6'] },
-            { id: 'aud_18t_150_a3', name: '1.8 20V Turbo (150 л.с.)', codes: '—', models: ['audi_a3_8l'] },
-            { id: 'aud_20_tdi_140_a3', name: '2.0 TDI (140 л.с.)', codes: '—', models: ['audi_a3_8p'] },
-            { id: 'aud_32_fsi_260', name: '3.2 FSI (260 л.с.)', codes: '—', models: ['audi_q7_4l'] },
-            { id: 'aud_18t_180_tt', name: '1.8 20V Turbo (180 л.с.)', codes: '—', models: ['audi_tt_8n'] },
+        // ==================== ПРАЙС-ЛИСТ ====================
+        function renderCarButtons() {
+            const el = document.getElementById('carButtons');
+            el.innerHTML = '';
+            if (!carDatabase.length) { el.innerHTML = '<span style="color:#666;">Нет авто. Добавьте в админке.</span>'; return; }
+            carDatabase.forEach(c => {
+                const b = document.createElement('button');
+                b.className = 'sel-btn' + (c.id === selectedCarId ? ' active' : '');
+                b.innerHTML = c.icon + ' ' + c.name + '<span class="btn-code">' + c.category + '</span>';
+                b.onclick = () => {
+                    selectedCarId = c.id;
+                    selectedEngineId = c.engines[0]?.id || null;
+                    selectedGearboxId = c.engines[0]?.gearboxes[0]?.id || null;
+                    selectedIds.clear();
+                    renderPriceList();
+                };
+                el.appendChild(b);
+            });
+        }
 
-            // ===== SKODA =====
-            { id: 'sk_16_75', name: '1.6 (75 л.с.)', codes: '—', models: ['skoda_octavia_1'] },
-            { id: 'sk_18t_150_oct', name: '1.8 20V Turbo (150 л.с.)', codes: '—', models: ['skoda_octavia_1'] },
-            { id: 'sk_19_tdi_90_oct', name: '1.9 TDI (90 л.с.)', codes: '—', models: ['skoda_octavia_1'] },
-            { id: 'sk_16_fsi_115_oct2', name: '1.6 FSI (115 л.с.)', codes: '—', models: ['skoda_octavia_2'] },
-            { id: 'sk_20_tdi_140_oct2', name: '2.0 TDI (140 л.с.)', codes: '—', models: ['skoda_octavia_2'] },
-            { id: 'sk_18t_150_sup', name: '1.8 20V Turbo (150 л.с.)', codes: '—', models: ['skoda_superb_1'] },
-            { id: 'sk_20_tdi_170_sup', name: '2.0 TDI (170 л.с.)', codes: '—', models: ['skoda_superb_2'] },
-            { id: 'sk_12_64_fab', name: '1.2 (64 л.с.)', codes: '—', models: ['skoda_fabia_1'] },
+        function renderEngineButtons() {
+            const el = document.getElementById('engineButtons');
+            el.innerHTML = '';
+            const car = carDatabase.find(c => c.id === selectedCarId);
+            if (!car) return;
+            car.engines.forEach(e => {
+                const b = document.createElement('button');
+                b.className = 'sel-btn' + (e.id === selectedEngineId ? ' active' : '');
+                b.innerHTML = e.name + ' (' + e.power + ')<span class="btn-code">Код: ' + e.code + '</span>';
+                b.onclick = () => {
+                    selectedEngineId = e.id;
+                    selectedGearboxId = e.gearboxes[0]?.id || null;
+                    selectedIds.clear();
+                    renderPriceList();
+                };
+                el.appendChild(b);
+            });
+        }
 
-            // ===== SEAT =====
-            { id: 'se_18t_180_leon', name: '1.8 20V Turbo (180 л.с.)', codes: '—', models: ['seat_leon_1'] },
-            { id: 'se_19_tdi_110_leon', name: '1.9 TDI (110 л.с.)', codes: '—', models: ['seat_leon_1'] },
-            { id: 'se_20_tsi_240', name: '2.0 TSI (240 л.с.)', codes: '—', models: ['seat_leon_2'] },
-            { id: 'se_20_tdi_170_leon', name: '2.0 TDI (170 л.с.)', codes: '—', models: ['seat_leon_2'] },
-            { id: 'se_16_100_ib', name: '1.6 (100 л.с.)', codes: '—', models: ['seat_ibiza_3'] },
-            { id: 'se_19_tdi_130_ib', name: '1.9 TDI (130 л.с.)', codes: '—', models: ['seat_ibiza_3'] },
-            { id: 'se_16_102_altea', name: '1.6 (102 л.с.)', codes: '—', models: ['seat_altea'] },
-            { id: 'se_18t_150_tol', name: '1.8 20V Turbo (150 л.с.)', codes: '—', models: ['seat_toledo_2'] }
-        ],
+        function renderGearboxButtons() {
+            const el = document.getElementById('gearboxButtons');
+            el.innerHTML = '';
+            const d = getSelectedCarData();
+            if (!d) return;
+            d.engine.gearboxes.forEach(g => {
+                const b = document.createElement('button');
+                b.className = 'sel-btn' + (g.id === selectedGearboxId ? ' active' : '');
+                b.innerHTML = g.name + '<span class="btn-code">' + g.drive + ' • ' + g.code + '</span>';
+                b.onclick = () => { selectedGearboxId = g.id;
+                    selectedIds.clear();
+                    renderPriceList(); };
+                el.appendChild(b);
+            });
+        }
 
-        gearboxes: [
-            // ===== VW Passat B5 =====
-            { id: 'vw_mq250_5f', name: 'МКПП 5-ступ. (передний)', codes: '012, 01W', models: ['vw_passat_b5'], engines: ['vw_18t_150','vw_20_115','vw_19_tdi_90','vw_19_tdi_110','vw_19_tdi_130'] },
-            { id: 'vw_mq250_5f_4m', name: 'МКПП 5-ступ. (4Motion)', codes: '01A', models: ['vw_passat_b5'], engines: ['vw_18t_150','vw_28_vr6_190','vw_40_w8_275'] },
-            { id: 'vw_mq350_6f_4m', name: 'МКПП 6-ступ. (4Motion)', codes: '01E', models: ['vw_passat_b5'], engines: ['vw_28_vr6_190','vw_40_w8_275'] },
-            { id: 'vw_zf_5hp19', name: 'АКПП 5-ступ. (типтроник)', codes: '01V', models: ['vw_passat_b5'], engines: ['vw_18t_150','vw_20_115','vw_28_vr6_190'] },
-            // ===== VW Passat B6 =====
-            { id: 'vw_mq250_6f', name: 'МКПП 6-ступ.', codes: '—', models: ['vw_passat_b6'], engines: ['vw_16_fsi_115','vw_18_tsi_160','vw_20_tsi_200'] },
-            { id: 'vw_dsg_6f', name: 'DSG 6-ступ.', codes: '—', models: ['vw_passat_b6'], engines: ['vw_20_tsi_200','vw_20_tdi_140','vw_20_tdi_170'] },
-            // ===== VW Golf 4 =====
-            { id: 'vw_mq200_5f_g4', name: 'МКПП 5-ступ.', codes: '—', models: ['vw_golf_4'], engines: ['vw_14_75','vw_16_100','vw_18t_150_g4','vw_19_tdi_90_g4','vw_19_tdi_110_g4','vw_19_tdi_130_g4'] },
-            { id: 'vw_mq250_5f_g4_4m', name: 'МКПП 5-ступ. (4Motion)', codes: '—', models: ['vw_golf_4'], engines: ['vw_18t_150_g4','vw_28_vr6_204'] },
-            { id: 'vw_zf_5hp19_g4', name: 'АКПП 5-ступ.', codes: '—', models: ['vw_golf_4'], engines: ['vw_18t_150_g4','vw_28_vr6_204'] },
-            // ===== VW Golf 5 =====
-            { id: 'vw_mq200_5f_g5', name: 'МКПП 5-ступ.', codes: '—', models: ['vw_golf_5'], engines: ['vw_14_80','vw_16_fsi_115_g5'] },
-            { id: 'vw_mq350_6f_g5', name: 'МКПП 6-ступ.', codes: '—', models: ['vw_golf_5'], engines: ['vw_20_tsi_200_g5'] },
-            { id: 'vw_dsg_6f_g5', name: 'DSG 6-ступ.', codes: '—', models: ['vw_golf_5'], engines: ['vw_20_tsi_200_g5','vw_19_tdi_105','vw_20_tdi_140_g5'] },
-            // ===== VW Golf 6 =====
-            { id: 'vw_mq200_5f_g6', name: 'МКПП 5-ступ.', codes: '—', models: ['vw_golf_6'], engines: ['vw_12_tsi_105','vw_14_tsi_122'] },
-            { id: 'vw_dsg_7f', name: 'DSG 7-ступ.', codes: '—', models: ['vw_golf_6'], engines: ['vw_12_tsi_105','vw_14_tsi_122','vw_20_tsi_210'] },
-            // ===== VW Tiguan I =====
-            { id: 'vw_mq350_6f_tig', name: 'МКПП 6-ступ.', codes: '—', models: ['vw_tiguan_1'], engines: ['vw_14_tsi_150'] },
-            { id: 'vw_dsg_6f_tig', name: 'DSG 6-ступ.', codes: '—', models: ['vw_tiguan_1'], engines: ['vw_20_tsi_200_tig','vw_20_tdi_140_tig'] },
-            // ===== VW Touareg I =====
-            { id: 'vw_mq350_6f_tou', name: 'МКПП 6-ступ.', codes: '—', models: ['vw_touareg_1'], engines: ['vw_32_v6_220'] },
-            { id: 'vw_zf_6hp', name: 'АКПП 6-ступ.', codes: '—', models: ['vw_touareg_1'], engines: ['vw_32_v6_220','vw_42_v8_310','vw_50_tdi_313'] },
-            // ===== VW Polo IV =====
-            { id: 'vw_mq200_5f_polo', name: 'МКПП 5-ступ.', codes: '—', models: ['vw_polo_4'], engines: ['vw_12_64','vw_14_75_polo','vw_16_105'] },
-            // ===== VW Jetta V =====
-            { id: 'vw_mq200_5f_jetta', name: 'МКПП 5-ступ.', codes: '—', models: ['vw_jetta_5'], engines: ['vw_16_102','vw_18_tsi_160_jetta'] },
-            { id: 'vw_dsg_6f_jetta', name: 'DSG 6-ступ.', codes: '—', models: ['vw_jetta_5'], engines: ['vw_20_tdi_140_jetta'] },
+        function updateConfig() {
+            const d = getSelectedCarData();
+            if (!d) {
+                document.getElementById('configName').textContent = 'Выберите автомобиль';
+                document.getElementById('configDetail').textContent = '';
+                document.getElementById('configCode').textContent = '';
+                document.getElementById('configBadge').textContent = '';
+                return;
+            }
+            document.getElementById('configName').textContent = d.car.icon + ' ' + d.car.name;
+            document.getElementById('configDetail').textContent = d.engine.name + ' • ' + d.gearbox.name;
+            document.getElementById('configCode').textContent = 'Двиг: ' + d.engine.code + ' | КПП: ' + d.gearbox
+            .code + ' | ×' + d.gearbox.multiplier.toFixed(2);
+            document.getElementById('configBadge').textContent = d.gearbox.badge;
+            document.getElementById('totalCarLabel').textContent = d.car.name + ' ' + d.engine.name;
+        }
 
-            // ===== AUDI =====
-            { id: 'aud_mq250_5f_a4', name: 'МКПП 5-ступ.', codes: '—', models: ['audi_a4_b5'], engines: ['aud_18t_150_a4','aud_28_v6_180','aud_19_tdi_110_a4'] },
-            { id: 'aud_mq350_6f_a4', name: 'МКПП 6-ступ.', codes: '—', models: ['audi_a4_b6'], engines: ['aud_20_tsi_200_a4','aud_20_tdi_170_a4'] },
-            { id: 'aud_multitronic', name: 'CVT Multitronic', codes: '—', models: ['audi_a4_b6','audi_a6_c6'], engines: ['aud_20_tsi_200_a4','aud_27_tdi_180','aud_30_tdi_233'] },
-            { id: 'aud_zf_5hp19_a6', name: 'АКПП 5-ступ.', codes: '—', models: ['audi_a6_c5'], engines: ['aud_24_v6_177'] },
-            { id: 'aud_dsg_6f_a3', name: 'DSG 6-ступ.', codes: '—', models: ['audi_a3_8p','audi_tt_8n'], engines: ['aud_20_tdi_140_a3','aud_18t_180_tt'] },
-
-            // ===== SKODA =====
-            { id: 'sk_mq200_5f_oct', name: 'МКПП 5-ступ.', codes: '—', models: ['skoda_octavia_1','skoda_fabia_1'], engines: ['sk_16_75','sk_18t_150_oct','sk_19_tdi_90_oct','sk_12_64_fab'] },
-            { id: 'sk_mq350_6f_oct', name: 'МКПП 6-ступ.', codes: '—', models: ['skoda_octavia_2','skoda_superb_2'], engines: ['sk_16_fsi_115_oct2','sk_20_tdi_140_oct2','sk_20_tdi_170_sup'] },
-            { id: 'sk_dsg_6f_oct', name: 'DSG 6-ступ.', codes: '—', models: ['skoda_octavia_2','skoda_superb_2'], engines: ['sk_20_tdi_140_oct2','sk_20_tdi_170_sup'] },
-            { id: 'sk_mq250_5f_sup', name: 'МКПП 5-ступ.', codes: '—', models: ['skoda_superb_1'], engines: ['sk_18t_150_sup'] },
-
-            // ===== SEAT =====
-            { id: 'se_mq250_5f_leon', name: 'МКПП 5-ступ.', codes: '—', models: ['seat_leon_1','seat_toledo_2'], engines: ['se_18t_180_leon','se_19_tdi_110_leon','se_18t_150_tol'] },
-            { id: 'se_mq350_6f_leon', name: 'МКПП 6-ступ.', codes: '—', models: ['seat_leon_2'], engines: ['se_20_tsi_240','se_20_tdi_170_leon'] },
-            { id: 'se_dsg_6f_leon', name: 'DSG 6-ступ.', codes: '—', models: ['seat_leon_2','seat_altea'], engines: ['se_20_tsi_240','se_20_tdi_170_leon'] },
-            { id: 'se_mq200_5f_ib', name: 'МКПП 5-ступ.', codes: '—', models: ['seat_ibiza_3'], engines: ['se_16_100_ib','se_19_tdi_130_ib'] }
-        ]
-    };
-
-    // ================================================================
-    //  КЛАСС ПРИЛОЖЕНИЯ
-    // ================================================================
-
-    class VAGPicker {
-        constructor() {
-            this.state = {
-                brand: null,
-                model: null,
-                engine: null,
-                gear: null
+        function renderFilterButtons() {
+            const el = document.getElementById('filterButtons');
+            const cats = [...new Set(servicesData.map(s => s.cat))];
+            const catNames = {
+                maintenance: '🛠️ ТО',
+                engine: '⚡ Двигатель',
+                exhaust: '💨 Выхлоп',
+                transmission: '⚙️ Трансмиссия',
+                brakes: '🛑 Тормоза',
+                suspension: '🔧 Подвеска',
+                welding: '🔥 Сварка',
+                diagnostics: '🔍 Диагностика'
             };
-
-            // DOM
-            this.brandInput = document.getElementById('brandInput');
-            this.modelInput = document.getElementById('modelInput');
-            this.engineInput = document.getElementById('engineInput');
-            this.gearInput = document.getElementById('gearInput');
-
-            this.brandOptions = document.getElementById('brandOptions');
-            this.modelOptions = document.getElementById('modelOptions');
-            this.engineOptions = document.getElementById('engineOptions');
-            this.gearOptions = document.getElementById('gearOptions');
-
-            this.brandSelected = document.getElementById('brandSelected');
-            this.modelSelected = document.getElementById('modelSelected');
-            this.engineSelected = document.getElementById('engineSelected');
-            this.gearSelected = document.getElementById('gearSelected');
-
-            this.brandCount = document.getElementById('brandCount');
-            this.modelCount = document.getElementById('modelCount');
-            this.engineCount = document.getElementById('engineCount');
-            this.gearCount = document.getElementById('gearCount');
-
-            this.resultBlock = document.getElementById('resultBlock');
-            this.resultText = document.getElementById('resultText');
-
-            // Events
-            this.brandInput.addEventListener('input', () => this.updateBrandList());
-            this.modelInput.addEventListener('input', () => this.updateModelList());
-            this.engineInput.addEventListener('input', () => this.updateEngineList());
-            this.gearInput.addEventListener('input', () => this.updateGearList());
-
-            document.addEventListener('click', (e) => {
-                if (!e.target.closest('.block')) {
-                    this.brandOptions.classList.remove('active');
-                    this.modelOptions.classList.remove('active');
-                    this.engineOptions.classList.remove('active');
-                    this.gearOptions.classList.remove('active');
-                }
+            el.innerHTML = '<button class="filter-btn' + (currentFilter === 'all' ? ' active' : '') +
+                '" data-filter="all">Все</button>';
+            cats.forEach(cat => {
+                const b = document.createElement('button');
+                b.className = 'filter-btn' + (currentFilter === cat ? ' active' : '');
+                b.dataset.filter = cat;
+                b.textContent = catNames[cat] || cat;
+                b.onclick = () => { currentFilter = cat;
+                    renderPriceList(); };
+                el.appendChild(b);
             });
-
-            document.getElementById('resetBtn').addEventListener('click', () => this.resetAll());
-            document.getElementById('shareBtn').addEventListener('click', () => this.showResult());
-
-            // Старт
-            this.updateAll();
         }
 
-        // ----- ГЕТТЕРЫ ДАННЫХ -----
-
-        getBrands() { return DATA.brands; }
-        getModels() {
-            const { brand } = this.state;
-            if (!brand) return DATA.models;
-            return DATA.models.filter(m => m.brand === brand);
-        }
-        getEngines() {
-            const { model } = this.state;
-            if (!model) return DATA.engines;
-            return DATA.engines.filter(e => e.models.includes(model));
-        }
-        getGearboxes() {
-            const { model, engine } = this.state;
-            let list = DATA.gearboxes;
-            if (model) list = list.filter(g => g.models.includes(model));
-            if (engine) list = list.filter(g => g.engines.includes(engine));
-            return list;
-        }
-
-        // ----- ОБНОВЛЕНИЕ СПИСКОВ -----
-
-        updateBrandList() {
-            const q = this.brandInput.value.trim().toLowerCase();
-            const items = this.getBrands().filter(b => b.name.toLowerCase().includes(q));
-            this.renderOptions(this.brandOptions, items, q, 'name', (item) => this.selectBrand(item.id));
-            this.brandCount.textContent = items.length;
-        }
-
-        updateModelList() {
-            if (!this.state.brand) {
-                this.modelOptions.classList.remove('active');
-                this.modelCount.textContent = '0';
-                return;
+        function renderServices() {
+            const el = document.getElementById('servicesList');
+            el.innerHTML = '';
+            const m = getMultiplier();
+            let list = servicesData.filter(s => currentFilter === 'all' || s.cat === currentFilter);
+            if (searchQuery.trim()) {
+                const q = searchQuery.toLowerCase();
+                list = list.filter(s => s.name.toLowerCase().includes(q));
             }
-            const q = this.modelInput.value.trim().toLowerCase();
-            const items = this.getModels().filter(m => m.name.toLowerCase().includes(q));
-            this.renderOptions(this.modelOptions, items, q, 'name', (item) => this.selectModel(item.id));
-            this.modelCount.textContent = items.length;
-        }
-
-        updateEngineList() {
-            if (!this.state.model) {
-                this.engineOptions.classList.remove('active');
-                this.engineCount.textContent = '0';
-                return;
-            }
-            const q = this.engineInput.value.trim().toLowerCase();
-            const items = this.getEngines().filter(e => e.name.toLowerCase().includes(q));
-            this.renderOptions(this.engineOptions, items, q, 'name', (item) => this.selectEngine(item.id), true);
-            this.engineCount.textContent = items.length;
-        }
-
-        updateGearList() {
-            if (!this.state.model || !this.state.engine) {
-                this.gearOptions.classList.remove('active');
-                this.gearCount.textContent = '0';
-                return;
-            }
-            const q = this.gearInput.value.trim().toLowerCase();
-            const items = this.getGearboxes().filter(g => g.name.toLowerCase().includes(q));
-            this.renderOptions(this.gearOptions, items, q, 'name', (item) => this.selectGear(item.id), true);
-            this.gearCount.textContent = items.length;
-        }
-
-        // ----- ОТРИСОВКА ОПЦИЙ -----
-
-        renderOptions(container, items, query, labelKey, onClick, showMeta = false) {
-            container.innerHTML = '';
-            if (items.length === 0) {
-                container.innerHTML = `<div class="empty-state">🔍 Ничего не найдено</div>`;
-                container.classList.add('active');
-                return;
-            }
-
-            items.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'item';
-
-                const name = item[labelKey] || item.name;
-                const lower = name.toLowerCase();
-                const idx = lower.indexOf(query);
-                if (idx !== -1 && query.length > 0) {
-                    const before = name.slice(0, idx);
-                    const match = name.slice(idx, idx + query.length);
-                    const after = name.slice(idx + query.length);
-                    div.innerHTML = `<span>${before}<span class="highlight">${match}</span>${after}</span>`;
-                } else {
-                    div.innerHTML = `<span>${name}</span>`;
-                }
-
-                if (showMeta && item.codes && item.codes !== '—') {
-                    const meta = document.createElement('span');
-                    meta.className = 'meta';
-                    meta.textContent = item.codes;
-                    div.appendChild(meta);
-                }
-
-                div.addEventListener('mousedown', (e) => {
-                    e.preventDefault();
-                    onClick(item);
+            const grp = {};
+            list.forEach(s => { if (!grp[s.cat]) grp[s.cat] = []; grp[s.cat].push(s); });
+            const catNames = {
+                maintenance: '🛠️ ТО',
+                engine: '⚡ Двигатель',
+                exhaust: '💨 Выхлоп',
+                transmission: '⚙️ Трансмиссия',
+                brakes: '🛑 Тормоза',
+                suspension: '🔧 Подвеска',
+                welding: '🔥 Сварка',
+                diagnostics: '🔍 Диагностика'
+            };
+            Object.keys(grp).forEach(k => {
+                const t = document.createElement('div');
+                t.className = 'category-title';
+                t.textContent = catNames[k] || k;
+                el.appendChild(t);
+                grp[k].forEach(s => {
+                    const p = getServicePrice(s);
+                    const r = document.createElement('div');
+                    r.className = 'service-row' + (selectedIds.has(s.id) ? ' selected' : '');
+                    const diff = p - s.basePrice;
+                    const note = diff !== 0 ? '<span class="price-note">(' + (diff > 0 ? '+' : '') +
+                        diff + ' ₽)</span>' : '';
+                    r.innerHTML = '<div class="service-left"><div class="check-box">' + (selectedIds
+                        .has(s.id) ? '✓' : '') + '</div><span class="service-name">' + s.name +
+                        '</span></div><div class="service-right"><span class="service-price">' + fmt(p) +
+                        ' ' + note +
+                        '</span><button class="detail-btn">📋 Подробнее</button></div>';
+                    r.querySelector('.service-left').onclick = () => { selectedIds.has(s.id) ? selectedIds
+                            .delete(s.id) : selectedIds.add(s.id);
+                        renderServices(); };
+                    r.querySelector('.detail-btn').onclick = (e) => { e.stopPropagation();
+                        openModal(s); };
+                    el.appendChild(r);
                 });
-                container.appendChild(div);
             });
-            container.classList.add('active');
+            if (!list.length) el.innerHTML =
+                '<div class="empty-state">😕 Ничего не найдено</div>';
+            updateTotal();
         }
 
-        // ----- ВЫБОР -----
-
-        selectBrand(id) {
-            const brand = DATA.brands.find(b => b.id === id);
-            if (!brand) return;
-            this.state.brand = id;
-            this.brandInput.value = brand.name;
-            this.brandOptions.classList.remove('active');
-            this.renderTag(this.brandSelected, brand.name, () => this.selectBrand(null));
-
-            // Сброс зависимых
-            this.state.model = null;
-            this.state.engine = null;
-            this.state.gear = null;
-            this.modelInput.value = '';
-            this.engineInput.value = '';
-            this.gearInput.value = '';
-            this.modelSelected.innerHTML = '';
-            this.engineSelected.innerHTML = '';
-            this.gearSelected.innerHTML = '';
-
-            this.modelInput.disabled = false;
-            this.modelInput.placeholder = 'Начните вводить модель...';
-            this.engineInput.disabled = true;
-            this.engineInput.placeholder = 'Сначала выберите модель';
-            this.gearInput.disabled = true;
-            this.gearInput.placeholder = 'Сначала выберите двигатель';
-
-            this.updateAll();
+        function updateTotal() {
+            let t = 0;
+            selectedIds.forEach(id => { const s = servicesData.find(x => x.id === id); if (s) t += getServicePrice(
+                s); });
+            document.getElementById('totalPrice').textContent = fmt(t);
+            document.getElementById('totalCount').textContent = selectedIds.size + ' шт.';
         }
 
-        selectModel(id) {
-            if (!this.state.brand) { alert('Сначала выберите марку!'); return; }
-            const model = DATA.models.find(m => m.id === id);
-            if (!model) return;
-            this.state.model = id;
-            this.modelInput.value = model.name;
-            this.modelOptions.classList.remove('active');
-            this.renderTag(this.modelSelected, model.name, () => this.selectModel(null));
-
-            this.state.engine = null;
-            this.state.gear = null;
-            this.engineInput.value = '';
-            this.gearInput.value = '';
-            this.engineSelected.innerHTML = '';
-            this.gearSelected.innerHTML = '';
-
-            this.engineInput.disabled = false;
-            this.engineInput.placeholder = 'Начните вводить двигатель...';
-            this.gearInput.disabled = true;
-            this.gearInput.placeholder = 'Сначала выберите двигатель';
-
-            this.updateAll();
+        function renderPriceList() {
+            renderCarButtons();
+            renderEngineButtons();
+            renderGearboxButtons();
+            updateConfig();
+            renderFilterButtons();
+            renderServices();
         }
 
-        selectEngine(id) {
-            if (!this.state.model) { alert('Сначала выберите модель!'); return; }
-            const engine = DATA.engines.find(e => e.id === id);
+        // Модальное окно
+        function openModal(s) {
+            document.getElementById('modalTitle').textContent = '📋 ' + s.name;
+            let h = '';
+            if (s.specs && s.specs.trim()) {
+                h += '<h3>📅 Регламент и спецификации</h3><table class="modal-info-table">';
+                s.specs.split('\n').forEach(line => {
+                    const parts = line.split('|');
+                    if (parts.length >= 2) h += '<tr><td>' + parts[0].trim() + '</td><td>' + parts[1].trim() +
+                        '</td></tr>';
+                });
+                h += '</table>';
+            }
+            if (s.tools && s.tools.trim()) {
+                h += '<h3>🔧 Инструменты</h3><div class="modal-tools">';
+                s.tools.split(',').forEach(t => h += '<span class="tool-tag">' + t.trim() + '</span>');
+                h += '</div>';
+            }
+            if (s.steps && s.steps.trim()) {
+                h += '<h3>📝 Пошаговая инструкция</h3>';
+                s.steps.split('\n').forEach((step, i) => {
+                    h += '<div class="step-block"><div class="step-header"><span class="step-number">' + (
+                        i + 1) + '</span> Шаг ' + (i + 1) + '</div><div class="step-text">' + step +
+                        '</div></div>';
+                });
+            }
+            if (s.image && s.image.trim()) {
+                h += '<h3>🖼️ Изображение</h3><img src="' + s.image +
+                    '" class="step-image" onerror="this.style.display=\'none\'">';
+            }
+            if (s.warning && s.warning.trim()) h += '<h3>⚠️ Предупреждение</h3><div class="modal-warning">' + s
+                .warning + '</div>';
+            document.getElementById('modalBody').innerHTML = h;
+            document.getElementById('modalOverlay').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() { document.getElementById('modalOverlay').classList.add('hidden');
+            document.body.style.overflow = ''; }
+
+        // ==================== АДМИН: АВТОМОБИЛИ ====================
+        function renderCarsAdmin() {
+            const el = document.getElementById('carsListAdmin');
+            el.innerHTML = '';
+            if (!carDatabase.length) { el.innerHTML = '<div class="empty-state">Нет автомобилей</div>'; return; }
+            carDatabase.forEach(car => {
+                const card = document.createElement('div');
+                card.className = 'admin-card';
+                card.innerHTML = '<h4>' + car.icon + ' ' + car.name + '</h4><p>Категория: ' + car.category +
+                    '</p><p>Двигателей: ' + car.engines.length + '</p><div class="card-actions"><button class="btn btn-sm btn-outline" onclick="selectCarForEngine(\'' +
+                    car.id + '\')">⚙️ Двигатели</button><button class="btn btn-sm btn-danger" onclick="deleteCar(\'' +
+                    car.id + '\')">🗑️ Удалить</button></div>';
+                el.appendChild(card);
+            });
+        }
+
+        function addCar() {
+            const name = document.getElementById('newCarName').value.trim();
+            const icon = document.getElementById('newCarIcon').value.trim() || '🚗';
+            const category = document.getElementById('newCarCategory').value.trim() || 'Стандарт';
+            if (!name) return alert('Введите название автомобиля!');
+            const id = 'car_' + Date.now();
+            carDatabase.push({ id, name, icon, category, engines: [] });
+            saveCars(carDatabase);
+            document.getElementById('newCarName').value = '';
+            document.getElementById('newCarIcon').value = '';
+            document.getElementById('newCarCategory').value = '';
+            renderCarsAdmin();
+            renderPriceList();
+            alert('Автомобиль добавлен!');
+        }
+
+        function deleteCar(id) {
+            if (!confirm('Удалить автомобиль и все его модификации?')) return;
+            carDatabase = carDatabase.filter(c => c.id !== id);
+            if (selectedCarId === id) { selectedCarId = carDatabase[0]?.id || null;
+                selectedEngineId = carDatabase[0]?.engines[0]?.id || null;
+                selectedGearboxId = carDatabase[0]?.engines[0]?.gearboxes[0]?.id || null; }
+            saveCars(carDatabase);
+            renderCarsAdmin();
+            renderPriceList();
+        }
+
+        function selectCarForEngine(carId) {
+            adminSelectedCarId = carId;
+            const car = carDatabase.find(c => c.id === carId);
+            if (!car) return;
+            document.getElementById('selectedCarForEngine').textContent = car.icon + ' ' + car.name;
+            document.getElementById('engineFormSection').style.display = 'block';
+            document.getElementById('gearboxFormSection').style.display = 'none';
+            adminSelectedEngineId = null;
+            renderEnginesAdmin();
+        }
+
+        function renderEnginesAdmin() {
+            const el = document.getElementById('enginesListAdmin');
+            el.innerHTML = '';
+            const car = carDatabase.find(c => c.id === adminSelectedCarId);
+            if (!car) return;
+            car.engines.forEach(engine => {
+                const div = document.createElement('div');
+                div.style.cssText =
+                    'background:rgba(255,255,255,0.03);padding:10px;border-radius:8px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;';
+                div.innerHTML = '<span><strong>' + engine.name + '</strong> <span class="badge badge-engine">' +
+                    engine.code + '</span> (' + engine.power + ', ' + engine.fuel +
+                    ') | КПП: ' + engine.gearboxes.length + '</span><div><button class="btn btn-sm btn-outline" onclick="selectEngineForGearbox(\'' +
+                    engine.id + '\')">⚙️ КПП</button><button class="btn btn-sm btn-danger" onclick="deleteEngine(\'' +
+                    engine.id + '\')">🗑️</button></div>';
+                el.appendChild(div);
+            });
+        }
+
+        function addEngine() {
+            if (!adminSelectedCarId) return alert('Выберите автомобиль!');
+            const car = carDatabase.find(c => c.id === adminSelectedCarId);
+            if (!car) return;
+            const name = document.getElementById('newEngineName').value.trim();
+            const code = document.getElementById('newEngineCode').value.trim();
+            const power = document.getElementById('newEnginePower').value.trim();
+            const fuel = document.getElementById('newEngineFuel').value;
+            if (!name || !code) return alert('Заполните название и код двигателя!');
+            const id = 'eng_' + Date.now();
+            car.engines.push({ id, name, code, power, fuel, gearboxes: [] });
+            saveCars(carDatabase);
+            document.getElementById('newEngineName').value = '';
+            document.getElementById('newEngineCode').value = '';
+            document.getElementById('newEnginePower').value = '';
+            renderEnginesAdmin();
+            renderPriceList();
+        }
+
+        function deleteEngine(engineId) {
+            if (!confirm('Удалить двигатель и все его КПП?')) return;
+            const car = carDatabase.find(c => c.id === adminSelectedCarId);
+            if (!car) return;
+            car.engines = car.engines.filter(e => e.id !== engineId);
+            saveCars(carDatabase);
+            renderEnginesAdmin();
+            renderPriceList();
+        }
+
+        function selectEngineForGearbox(engineId) {
+            adminSelectedEngineId = engineId;
+            const car = carDatabase.find(c => c.id === adminSelectedCarId);
+            if (!car) return;
+            const engine = car.engines.find(e => e.id === engineId);
             if (!engine) return;
-            this.state.engine = id;
-            this.engineInput.value = engine.name;
-            this.engineOptions.classList.remove('active');
-            this.renderTag(this.engineSelected, engine.name, () => this.selectEngine(null));
-
-            this.state.gear = null;
-            this.gearInput.value = '';
-            this.gearSelected.innerHTML = '';
-
-            this.gearInput.disabled = false;
-            this.gearInput.placeholder = 'Начните вводить коробку...';
-
-            this.updateAll();
+            document.getElementById('selectedEngineForGearbox').textContent = engine.name + ' (' + engine.code +
+            ')';
+            document.getElementById('gearboxFormSection').style.display = 'block';
+            renderGearboxesAdmin();
         }
 
-        selectGear(id) {
-            if (!this.state.model || !this.state.engine) {
-                alert('Сначала выберите модель и двигатель!');
-                return;
-            }
-            const gear = DATA.gearboxes.find(g => g.id === id);
-            if (!gear) return;
-            this.state.gear = id;
-            this.gearInput.value = gear.name;
-            this.gearOptions.classList.remove('active');
-            this.renderTag(this.gearSelected, gear.name, () => this.selectGear(null));
-
-            this.updateAll();
+        function renderGearboxesAdmin() {
+            const el = document.getElementById('gearboxesListAdmin');
+            el.innerHTML = '';
+            const car = carDatabase.find(c => c.id === adminSelectedCarId);
+            if (!car) return;
+            const engine = car.engines.find(e => e.id === adminSelectedEngineId);
+            if (!engine) return;
+            engine.gearboxes.forEach(g => {
+                const div = document.createElement('div');
+                div.style.cssText =
+                    'background:rgba(255,255,255,0.03);padding:10px;border-radius:8px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;';
+                div.innerHTML = '<span><strong>' + g.name + '</strong> <span class="badge badge-gearbox">' + g
+                    .code + '</span> (' + g.drive + ', ×' + g.multiplier.toFixed(2) + ') <em>' + g.badge +
+                    '</em></span><button class="btn btn-sm btn-danger" onclick="deleteGearbox(\'' + g.id +
+                    '\')">🗑️</button>';
+                el.appendChild(div);
+            });
         }
 
-        // ----- ТЕГ -----
-
-        renderTag(container, text, onClear) {
-            container.innerHTML = `
-                <div class="selected-tag">
-                    ${text}
-                    <span class="clear" data-action="clear">✕</span>
-                </div>
-            `;
-            container.querySelector('[data-action="clear"]').addEventListener('click', onClear);
+        function addGearbox() {
+            if (!adminSelectedCarId || !adminSelectedEngineId) return alert('Выберите двигатель!');
+            const car = carDatabase.find(c => c.id === adminSelectedCarId);
+            if (!car) return;
+            const engine = car.engines.find(e => e.id === adminSelectedEngineId);
+            if (!engine) return;
+            const name = document.getElementById('newGearboxName').value.trim();
+            const code = document.getElementById('newGearboxCode').value.trim();
+            const drive = document.getElementById('newGearboxDrive').value;
+            const multiplier = parseFloat(document.getElementById('newGearboxMult').value) || 1;
+            const badge = document.getElementById('newGearboxBadge').value.trim() || 'Средне';
+            if (!name || !code) return alert('Заполните название и код КПП!');
+            const id = 'gb_' + Date.now();
+            engine.gearboxes.push({ id, name, code, drive, multiplier, badge });
+            saveCars(carDatabase);
+            document.getElementById('newGearboxName').value = '';
+            document.getElementById('newGearboxCode').value = '';
+            document.getElementById('newGearboxMult').value = '1.0';
+            document.getElementById('newGearboxBadge').value = '';
+            renderGearboxesAdmin();
+            renderPriceList();
         }
 
-        // ----- ОБНОВЛЕНИЕ ВСЕГО -----
+        function deleteGearbox(gearboxId) {
+            if (!confirm('Удалить КПП?')) return;
+            const car = carDatabase.find(c => c.id === adminSelectedCarId);
+            if (!car) return;
+            const engine = car.engines.find(e => e.id === adminSelectedEngineId);
+            if (!engine) return;
+            engine.gearboxes = engine.gearboxes.filter(g => g.id !== gearboxId);
+            saveCars(carDatabase);
+            renderGearboxesAdmin();
+            renderPriceList();
+        }
 
-        updateAll() {
-            if (this.state.brand) {
-                this.updateModelList();
-                if (this.state.model) {
-                    this.updateEngineList();
-                    if (this.state.engine) {
-                        this.updateGearList();
-                    }
+        // ==================== АДМИН: УСЛУГИ ====================
+        function renderServicesAdmin() {
+            const el = document.getElementById('servicesListAdmin');
+            el.innerHTML = '';
+            if (!servicesData.length) { el.innerHTML = '<div class="empty-state">Нет услуг</div>'; return; }
+            servicesData.forEach(s => {
+                const card = document.createElement('div');
+                card.className = 'admin-card';
+                card.innerHTML = '<h4>' + s.name + '</h4><p>Цена: ' + fmt(s.basePrice) + ' | Категория: ' + s
+                    .cat + '</p><p>Инструменты: ' + (s.tools || '—') + '</p><div class="card-actions"><button class="btn btn-sm btn-outline" onclick="editService(' +
+                    s.id + ')">✏️ Ред.</button><button class="btn btn-sm btn-danger" onclick="deleteService(' + s
+                    .id + ')">🗑️</button></div>';
+                el.appendChild(card);
+            });
+        }
+
+        function saveService() {
+            const name = document.getElementById('svcName').value.trim();
+            const price = parseInt(document.getElementById('svcPrice').value) || 0;
+            const cat = document.getElementById('svcCat').value;
+            const tools = document.getElementById('svcTools').value.trim();
+            const specs = document.getElementById('svcSpecs').value.trim();
+            const steps = document.getElementById('svcSteps').value.trim();
+            const warning = document.getElementById('svcWarning').value.trim();
+            const image = document.getElementById('svcImage').value.trim();
+            const editId = document.getElementById('svcEditId').value;
+
+            if (!name) return alert('Введите название услуги!');
+            if (!price) return alert('Введите цену!');
+
+            if (editId) {
+                const idx = servicesData.findIndex(s => s.id == editId);
+                if (idx >= 0) {
+                    servicesData[idx] = { ...servicesData[idx], name, basePrice: price, cat, tools, specs, steps,
+                        warning, image };
                 }
+            } else {
+                const id = Date.now();
+                servicesData.push({ id, name, basePrice: price, cat, tools, specs, steps, warning, image });
             }
-            this.showResult();
+            saveServices(servicesData);
+            clearServiceForm();
+            renderServicesAdmin();
+            renderPriceList();
+            alert('Услуга сохранена!');
         }
 
-        // ----- РЕЗУЛЬТАТ -----
-
-        showResult() {
-            const { brand, model, engine, gear } = this.state;
-
-            if (!brand && !model && !engine && !gear) {
-                this.resultBlock.classList.remove('active');
-                return;
-            }
-
-            const brandName = brand ? DATA.brands.find(b => b.id === brand)?.name || '—' : '—';
-            const modelName = model ? DATA.models.find(m => m.id === model)?.name || '—' : '—';
-            const engineName = engine ? DATA.engines.find(e => e.id === engine)?.name || '—' : '—';
-            const engineCodes = engine ? DATA.engines.find(e => e.id === engine)?.codes || '' : '';
-            const gearName = gear ? DATA.gearboxes.find(g => g.id === gear)?.name || '—' : '—';
-            const gearCodes = gear ? DATA.gearboxes.find(g => g.id === gear)?.codes || '' : '';
-
-            let html = `
-                <div class="result-item">
-                    <span class="key">🏷️ Марка</span>
-                    <span class="val">${brandName}</span>
-                </div>
-                <div class="result-item">
-                    <span class="key">📐 Модель</span>
-                    <span class="val">${modelName}</span>
-                </div>
-                <div class="result-item">
-                    <span class="key">⚡ Двигатель</span>
-                    <span class="val">${engineName} ${engineCodes ? `<span class="code">[${engineCodes}]</span>` : ''}</span>
-                </div>
-                <div class="result-item">
-                    <span class="key">⚙️ Коробка</span>
-                    <span class="val">${gearName} ${gearCodes ? `<span class="code">[${gearCodes}]</span>` : ''}</span>
-                </div>
-            `;
-
-            if (gear) {
-                html += `
-                    <div class="result-status">
-                        ✅ Полная совместимость: все компоненты подходят друг к другу
-                    </div>
-                `;
-            } else if (engine && !gear) {
-                html += `
-                    <div class="result-status" style="color: #f59e0b;">
-                        ⏳ Выберите коробку передач для завершения подбора
-                    </div>
-                `;
-            }
-
-            this.resultText.innerHTML = html;
-            this.resultBlock.classList.add('active');
+        function editService(id) {
+            const s = servicesData.find(x => x.id === id);
+            if (!s) return;
+            document.getElementById('svcEditId').value = s.id;
+            document.getElementById('svcName').value = s.name;
+            document.getElementById('svcPrice').value = s.basePrice;
+            document.getElementById('svcCat').value = s.cat;
+            document.getElementById('svcTools').value = s.tools || '';
+            document.getElementById('svcSpecs').value = s.specs || '';
+            document.getElementById('svcSteps').value = s.steps || '';
+            document.getElementById('svcWarning').value = s.warning || '';
+            document.getElementById('svcImage').value = s.image || '';
+            document.getElementById('tab-services').scrollIntoView({ behavior: 'smooth' });
+            document.querySelector('.tab-btn[data-tab="tab-services"]').click();
         }
 
-        // ----- СБРОС -----
-
-        resetAll() {
-            this.state = { brand: null, model: null, engine: null, gear: null };
-            this.brandInput.value = '';
-            this.modelInput.value = '';
-            this.engineInput.value = '';
-            this.gearInput.value = '';
-            this.brandSelected.innerHTML = '';
-            this.modelSelected.innerHTML = '';
-            this.engineSelected.innerHTML = '';
-            this.gearSelected.innerHTML = '';
-            this.brandOptions.classList.remove('active');
-            this.modelOptions.classList.remove('active');
-            this.engineOptions.classList.remove('active');
-            this.gearOptions.classList.remove('active');
-            this.resultBlock.classList.remove('active');
-
-            this.modelInput.disabled = true;
-            this.modelInput.placeholder = 'Сначала выберите марку';
-            this.engineInput.disabled = true;
-            this.engineInput.placeholder = 'Сначала выберите модель';
-            this.gearInput.disabled = true;
-            this.gearInput.placeholder = 'Сначала выберите двигатель';
-
-            this.modelCount.textContent = '0';
-            this.engineCount.textContent = '0';
-            this.gearCount.textContent = '0';
-            this.brandCount.textContent = DATA.brands.length;
-
-            this.updateAll();
+        function deleteService(id) {
+            if (!confirm('Удалить услугу?')) return;
+            servicesData = servicesData.filter(s => s.id !== id);
+            saveServices(servicesData);
+            renderServicesAdmin();
+            renderPriceList();
         }
-    }
 
-    // ================================================================
-    //  ЗАПУСК
-    // ================================================================
+        function clearServiceForm() {
+            document.getElementById('svcEditId').value = '';
+            document.getElementById('svcName').value = '';
+            document.getElementById('svcPrice').value = '1000';
+            document.getElementById('svcCat').value = 'maintenance';
+            document.getElementById('svcTools').value = '';
+            document.getElementById('svcSpecs').value = '';
+            document.getElementById('svcSteps').value = '';
+            document.getElementById('svcWarning').value = '';
+            document.getElementById('svcImage').value = '';
+        }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        window.app = new VAGPicker();
-    });
-</script>
+        // ==================== ТАБЫ ====================
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+                if (btn.dataset.tab === 'tab-cars') { renderCarsAdmin(); }
+                if (btn.dataset.tab === 'tab-services') { renderServicesAdmin(); }
+                if (btn.dataset.tab === 'tab-price') { renderPriceList(); }
+            });
+        });
 
+        // ==================== ОБРАБОТЧИКИ ====================
+        document.getElementById('modalClose').onclick = closeModal;
+        document.getElementById('modalOverlay').onclick = function(e) { if (e.target === this) closeModal(); };
+        document.onkeydown = function(e) { if (e.key === 'Escape') closeModal(); };
+        document.getElementById('clearBtn').onclick = () => { selectedIds.clear();
+            renderServices(); };
+        document.getElementById('searchInput').oninput = e => { searchQuery = e.target.value;
+            renderServices(); };
+
+        // ==================== ИНИЦИАЛИЗАЦИЯ ====================
+        if (carDatabase.length > 0) {
+            selectedCarId = carDatabase[0].id;
+            selectedEngineId = carDatabase[0].engines[0]?.id || null;
+            selectedGearboxId = carDatabase[0].engines[0]?.gearboxes[0]?.id || null;
+        }
+        renderPriceList();
+        console.log('✅ Админ-панель и прайс-лист загружены!');
+        console.log('📦 Данные сохраняются в localStorage браузера.');
+        console.log('🚗 Автомобилей: ' + carDatabase.length);
+        console.log('🔧 Услуг: ' + servicesData.length);
+    </script>
 </body>
 </html>
