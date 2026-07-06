@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Автосервис - Прайс-лист с выбором авто</title>
+    <title>Автосервис - Прайс-лист с регламентом ТО</title>
     <style>
         * {
             margin: 0;
@@ -47,8 +47,6 @@
             letter-spacing: 2px;
             margin-top: 5px;
         }
-
-        /* Выбор авто */
         .selector-section {
             background: rgba(0, 0, 0, 0.3);
             border-radius: 16px;
@@ -164,8 +162,6 @@
             border-radius: 12px;
             white-space: nowrap;
         }
-
-        /* Поиск и фильтры */
         .search-box {
             margin-bottom: 15px;
             position: relative;
@@ -479,6 +475,23 @@
             font-size: 13px;
             color: #ffa726;
         }
+        .modal-info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 12px;
+        }
+        .modal-info-table td {
+            padding: 6px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            color: #ccc;
+        }
+        .modal-info-table td:first-child {
+            font-weight: 600;
+            color: #ff9800;
+            white-space: nowrap;
+            width: 40%;
+        }
         .step-block {
             background: rgba(255, 255, 255, 0.03);
             border-radius: 12px;
@@ -593,7 +606,7 @@
     <div class="container">
         <div class="header">
             <div class="logo">AUTO<span>SERVICE</span></div>
-            <div class="subtitle">Прайс-лист с выбором модификации</div>
+            <div class="subtitle">Прайс-лист с регламентом ТО</div>
         </div>
 
         <!-- Выбор автомобиля -->
@@ -658,7 +671,7 @@
 
         <!-- Список услуг -->
         <div id="servicesList"></div>
-        <div class="footer">© 2026 AutoService. Цены без учёта запчастей. Нажмите «Подробнее» для инструкции.</div>
+        <div class="footer">© 2026 AutoService. Цены без учёта запчастей. Нажмите «Подробнее» для регламента ТО.</div>
     </div>
 
     <!-- Модальное окно -->
@@ -673,147 +686,88 @@
     </div>
 
     <script>
-        // ==================== БАЗА АВТОМОБИЛЕЙ (реальные коды) ====================
-        const carDatabase = [
-            // ВАЗ 2107
-            {
-                carId: 'vaz2107',
-                carName: 'ВАЗ 2107',
-                carIcon: '🚗',
-                category: 'Эконом',
-                engines: [
-                    {
-                        engineId: 'vaz16carb',
-                        engineName: '1.6 карбюратор',
-                        engineCode: '2106',
-                        power: '74 л.с.',
-                        fuel: 'Бензин',
-                        gearboxes: [
-                            { gearboxId: 'vaz_m5', gearboxName: 'МКПП-5', gearboxCode: '2107',
-                                drive: 'Задний', multiplier: 0.70, badge: 'Эконом' },
-                        ]
-                    },
-                    {
-                        engineId: 'vaz16inj',
-                        engineName: '1.6 инжектор',
-                        engineCode: '21067',
-                        power: '74 л.с.',
-                        fuel: 'Бензин',
-                        gearboxes: [
-                            { gearboxId: 'vaz_m5', gearboxName: 'МКПП-5', gearboxCode: '2107',
-                                drive: 'Задний', multiplier: 0.75, badge: 'Эконом' },
-                        ]
-                    },
+        // ==================== БАЗА АВТОМОБИЛЕЙ ====================
+        const carDatabase = [{
+            carId: 'vaz2107',
+            carName: 'ВАЗ 2107',
+            carIcon: '🚗',
+            category: 'Эконом',
+            engines: [{
+                engineId: 'vaz16carb',
+                engineName: '1.6 карбюратор',
+                engineCode: '2106',
+                power: '74 л.с.',
+                fuel: 'Бензин',
+                gearboxes: [{ gearboxId: 'vaz_m5', gearboxName: 'МКПП-5', gearboxCode: '2107',
+                    drive: 'Задний', multiplier: 0.70, badge: 'Эконом' }]
+            }, {
+                engineId: 'vaz16inj',
+                engineName: '1.6 инжектор',
+                engineCode: '21067',
+                power: '74 л.с.',
+                fuel: 'Бензин',
+                gearboxes: [{ gearboxId: 'vaz_m5', gearboxName: 'МКПП-5', gearboxCode: '2107',
+                    drive: 'Задний', multiplier: 0.75, badge: 'Эконом' }]
+            }]
+        }, {
+            carId: 'passatb5',
+            carName: 'VW Passat B5/B5.5',
+            carIcon: '🚙',
+            category: 'Бизнес',
+            engines: [{
+                engineId: '18t_aeb',
+                engineName: '1.8T 20V Turbo',
+                engineCode: 'AEB/ATW/AUG/AWM',
+                power: '150 л.с.',
+                fuel: 'Бензин',
+                gearboxes: [
+                    { gearboxId: '012', gearboxName: 'МКПП-5 (012)', gearboxCode: '012',
+                    drive: 'Передний',
+                        multiplier: 1.20, badge: 'Средне' },
+                    { gearboxId: '01v_fwd', gearboxName: 'АКПП-5 Tiptronic (01V)', gearboxCode: '01V',
+                        drive: 'Передний', multiplier: 1.40, badge: 'Сложно' }
                 ]
-            },
-            // Volkswagen Passat B5 / B5.5 (1996-2005)
-            {
-                carId: 'passatb5',
-                carName: 'VW Passat B5/B5.5',
-                carIcon: '🚙',
-                category: 'Бизнес',
-                engines: [
-                    // Бензиновые
-                    {
-                        engineId: '18t_aeb',
-                        engineName: '1.8T 20V Turbo',
-                        engineCode: 'AEB / ATW / AUG / AWM',
-                        power: '150 л.с.',
-                        fuel: 'Бензин',
-                        gearboxes: [
-                            { gearboxId: '012', gearboxName: 'МКПП-5 (012)', gearboxCode: '012',
-                                drive: 'Передний', multiplier: 1.20, badge: 'Средне' },
-                            { gearboxId: '01v_fwd', gearboxName: 'АКПП-5 Tiptronic (01V)',
-                                gearboxCode: '01V', drive: 'Передний', multiplier: 1.40, badge: 'Сложно' },
-                        ]
-                    },
-                    {
-                        engineId: '20_alt',
-                        engineName: '2.0',
-                        engineCode: 'ALT / APK / AQY',
-                        power: '115-130 л.с.',
-                        fuel: 'Бензин',
-                        gearboxes: [
-                            { gearboxId: '012', gearboxName: 'МКПП-5 (012)', gearboxCode: '012',
-                                drive: 'Передний', multiplier: 1.10, badge: 'Средне' },
-                            { gearboxId: '01v_fwd', gearboxName: 'АКПП-5 Tiptronic (01V)',
-                                gearboxCode: '01V', drive: 'Передний', multiplier: 1.30, badge: 'Средне' },
-                        ]
-                    },
-                    {
-                        engineId: '28_vr6',
-                        engineName: '2.8 VR6 5V',
-                        engineCode: 'AHA / ATQ',
-                        power: '190 л.с.',
-                        fuel: 'Бензин',
-                        gearboxes: [
-                            { gearboxId: '01a_quattro', gearboxName: 'МКПП-5 (01A) 4Motion',
-                                gearboxCode: '01A', drive: 'Полный', multiplier: 1.50, badge: 'Сложно' },
-                            { gearboxId: '01v_quattro', gearboxName: 'АКПП-5 Tiptronic (01V) 4Motion',
-                                gearboxCode: '01V', drive: 'Полный', multiplier: 1.65,
-                            badge: 'Очень сложно' },
-                        ]
-                    },
-                    {
-                        engineId: '40_w8',
-                        engineName: '4.0 W8 32V',
-                        engineCode: 'BDP',
-                        power: '275 л.с.',
-                        fuel: 'Бензин',
-                        gearboxes: [
-                            { gearboxId: '01e_6', gearboxName: 'МКПП-6 (01E) 4Motion',
-                            gearboxCode: '01E',
-                                drive: 'Полный', multiplier: 1.80, badge: 'Очень сложно' },
-                            { gearboxId: '01v_w8', gearboxName: 'АКПП-5 Tiptronic (01V) 4Motion',
-                                gearboxCode: '01V', drive: 'Полный', multiplier: 1.90,
-                            badge: 'Макс. сложность' },
-                        ]
-                    },
-                    // Дизельные
-                    {
-                        engineId: '19tdi_110',
-                        engineName: '1.9 TDI',
-                        engineCode: 'AFN',
-                        power: '110 л.с.',
-                        fuel: 'Дизель',
-                        gearboxes: [
-                            { gearboxId: '012', gearboxName: 'МКПП-5 (012)', gearboxCode: '012',
-                                drive: 'Передний', multiplier: 1.15, badge: 'Средне' },
-                            { gearboxId: '01v_fwd', gearboxName: 'АКПП-5 Tiptronic (01V)',
-                                gearboxCode: '01V', drive: 'Передний', multiplier: 1.35, badge: 'Сложно' },
-                        ]
-                    },
-                    {
-                        engineId: '19tdi_130',
-                        engineName: '1.9 TDI PD',
-                        engineCode: 'AVF / AWX',
-                        power: '130 л.с.',
-                        fuel: 'Дизель',
-                        gearboxes: [
-                            { gearboxId: '012', gearboxName: 'МКПП-5 (012)', gearboxCode: '012',
-                                drive: 'Передний', multiplier: 1.20, badge: 'Средне' },
-                            { gearboxId: '01v_fwd', gearboxName: 'АКПП-5 Tiptronic (01V)',
-                                gearboxCode: '01V', drive: 'Передний', multiplier: 1.40, badge: 'Сложно' },
-                            { gearboxId: '01a_quattro', gearboxName: 'МКПП-5 (01A) 4Motion',
-                                gearboxCode: '01A', drive: 'Полный', multiplier: 1.50, badge: 'Сложно' },
-                        ]
-                    },
-                    {
-                        engineId: '20tdi_bhw',
-                        engineName: '2.0 TDI PD',
-                        engineCode: 'BHW',
-                        power: '136 л.с.',
-                        fuel: 'Дизель',
-                        gearboxes: [
-                            { gearboxId: '012', gearboxName: 'МКПП-5 (012)', gearboxCode: '012',
-                                drive: 'Передний', multiplier: 1.25, badge: 'Средне' },
-                            { gearboxId: '01v_fwd', gearboxName: 'АКПП-5 Tiptronic (01V)',
-                                gearboxCode: '01V', drive: 'Передний', multiplier: 1.45, badge: 'Сложно' },
-                        ]
-                    },
+            }, {
+                engineId: '28_vr6',
+                engineName: '2.8 VR6 5V',
+                engineCode: 'AHA/ATQ',
+                power: '190 л.с.',
+                fuel: 'Бензин',
+                gearboxes: [
+                    { gearboxId: '01a_quattro', gearboxName: 'МКПП-5 (01A) 4Motion',
+                    gearboxCode: '01A',
+                        drive: 'Полный', multiplier: 1.50, badge: 'Сложно' },
+                    { gearboxId: '01v_quattro', gearboxName: 'АКПП-5 (01V) 4Motion', gearboxCode: '01V',
+                        drive: 'Полный', multiplier: 1.65, badge: 'Очень сложно' }
                 ]
-            },
-        ];
+            }, {
+                engineId: '19tdi_110',
+                engineName: '1.9 TDI',
+                engineCode: 'AFN',
+                power: '110 л.с.',
+                fuel: 'Дизель',
+                gearboxes: [
+                    { gearboxId: '012', gearboxName: 'МКПП-5 (012)', gearboxCode: '012',
+                    drive: 'Передний',
+                        multiplier: 1.15, badge: 'Средне' },
+                    { gearboxId: '01v_fwd', gearboxName: 'АКПП-5 Tiptronic (01V)', gearboxCode: '01V',
+                        drive: 'Передний', multiplier: 1.35, badge: 'Сложно' }
+                ]
+            }, {
+                engineId: '19tdi_130',
+                engineName: '1.9 TDI PD',
+                engineCode: 'AVF/AWX',
+                power: '130 л.с.',
+                fuel: 'Дизель',
+                gearboxes: [
+                    { gearboxId: '012', gearboxName: 'МКПП-5 (012)', gearboxCode: '012',
+                    drive: 'Передний',
+                        multiplier: 1.20, badge: 'Средне' },
+                    { gearboxId: '01v_fwd', gearboxName: 'АКПП-5 Tiptronic (01V)', gearboxCode: '01V',
+                        drive: 'Передний', multiplier: 1.40, badge: 'Сложно' }
+                ]
+            }]
+        }];
 
         // ==================== УСЛУГИ С БАЗОВЫМИ ЦЕНАМИ ====================
         const services = [
@@ -821,115 +775,231 @@
                 catName: '🛠️ ТО' },
             { id: 2, name: 'Замена воздушного фильтра', basePrice: 300, cat: 'maintenance', catName: '🛠️ ТО' },
             { id: 3, name: 'Замена топливного фильтра', basePrice: 500, cat: 'maintenance', catName: '🛠️ ТО' },
-            { id: 4, name: 'Замена свечей зажигания (4 шт)', basePrice: 600, cat: 'maintenance', catName: '🛠️ ТО' },
-            { id: 5, name: 'Замена ремня ГРМ', basePrice: 3500, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
-            { id: 6, name: 'Замена цепи ГРМ', basePrice: 7000, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
-            { id: 7, name: 'Замена прокладки ГБЦ', basePrice: 8000, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
-            { id: 8, name: 'Замена турбины', basePrice: 12000, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
-            { id: 9, name: 'Регулировка клапанов', basePrice: 2000, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
+            { id: 4, name: 'Замена салонного фильтра', basePrice: 400, cat: 'maintenance', catName: '🛠️ ТО' },
+            { id: 5, name: 'Замена свечей зажигания (4 шт)', basePrice: 600, cat: 'maintenance', catName: '🛠️ ТО' },
+            { id: 6, name: 'Замена ремня ГРМ + ролик', basePrice: 4000, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
+            { id: 7, name: 'Замена цепи ГРМ', basePrice: 7000, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
+            { id: 8, name: 'Замена прокладки ГБЦ', basePrice: 8000, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
+            { id: 9, name: 'Замена турбины', basePrice: 12000, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
             { id: 10, name: 'Замена помпы', basePrice: 2500, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
-            { id: 11, name: 'Замена радиатора охлаждения', basePrice: 2000, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
+            { id: 11, name: 'Замена поликлинового ремня', basePrice: 1500, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
             { id: 12, name: 'Снятие/установка выпускного коллектора', basePrice: 3500, cat: 'exhaust',
                 catName: '💨 ВЫПУСК' },
             { id: 13, name: 'Замена глушителя', basePrice: 1500, cat: 'exhaust', catName: '💨 ВЫПУСК' },
             { id: 14, name: 'Замена гофры', basePrice: 2000, cat: 'exhaust', catName: '💨 ВЫПУСК' },
-            { id: 15, name: 'Замена сцепления (комплект)', basePrice: 7000, cat: 'transmission',
+            { id: 15, name: 'Замена масла в МКПП', basePrice: 800, cat: 'transmission', catName: '⚙️ ТРАНСМИССИЯ' },
+            { id: 16, name: 'Замена масла в АКПП', basePrice: 2500, cat: 'transmission',
+            catName: '⚙️ ТРАНСМИССИЯ' },
+            { id: 17, name: 'Замена сцепления (комплект)', basePrice: 7000, cat: 'transmission',
                 catName: '⚙️ ТРАНСМИССИЯ' },
-            { id: 16, name: 'Замена масла в АКПП', basePrice: 2500, cat: 'transmission', catName: '⚙️ ТРАНСМИССИЯ' },
-            { id: 17, name: 'Замена масла в МКПП', basePrice: 800, cat: 'transmission', catName: '⚙️ ТРАНСМИССИЯ' },
             { id: 18, name: 'Замена передних колодок', basePrice: 1200, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
             { id: 19, name: 'Замена задних колодок', basePrice: 1400, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
             { id: 20, name: 'Замена передних дисков', basePrice: 1800, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
-            { id: 21, name: 'Прокачка тормозов', basePrice: 1200, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
+            { id: 21, name: 'Замена тормозной жидкости', basePrice: 1200, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
             { id: 22, name: 'Замена амортизаторов перед (2 шт)', basePrice: 3000, cat: 'suspension',
                 catName: '🔧 ПОДВЕСКА' },
             { id: 23, name: 'Замена амортизаторов зад (2 шт)', basePrice: 2500, cat: 'suspension',
                 catName: '🔧 ПОДВЕСКА' },
             { id: 24, name: 'Замена шаровых опор (2 шт)', basePrice: 2000, cat: 'suspension',
             catName: '🔧 ПОДВЕСКА' },
-            { id: 25, name: 'Замена рулевых наконечников (2 шт)', basePrice: 1600, cat: 'suspension',
+            { id: 25, name: 'Регулировка развал-схождения', basePrice: 2000, cat: 'suspension',
                 catName: '🔧 ПОДВЕСКА' },
-            { id: 26, name: 'Регулировка развал-схождения', basePrice: 2000, cat: 'suspension',
-                catName: '🔧 ПОДВЕСКА' },
-            { id: 27, name: 'Сварочные работы (кузов, час)', basePrice: 3000, cat: 'welding', catName: '🔥 СВАРКА' },
+            { id: 26, name: 'Сварочные работы (кузов, час)', basePrice: 3000, cat: 'welding', catName: '🔥 СВАРКА' },
         ];
 
-        // Инструкции
+        // ==================== ИНСТРУКЦИИ С РЕГЛАМЕНТОМ ТО ====================
         const instructions = {
             1: {
                 title: 'Замена масла и масляного фильтра',
-                tools: ['Ключ для пробки', 'Съёмник фильтра', 'Ёмкость', 'Воронка', 'Ветошь'],
+                tools: ['Ключ для пробки', 'Съёмник фильтра', 'Ёмкость 5 л', 'Воронка', 'Ветошь'],
+                specs: [
+                    { label: 'Интервал замены', value: 'Каждые 15 000 км' },
+                    { label: 'Объём масла (1.8T)', value: '4.0 л (с фильтром)' },
+                    { label: 'Объём масла (2.8 VR6)', value: '5.5 л (с фильтром)' },
+                    { label: 'Объём масла (1.9 TDI)', value: '4.5 л (с фильтром)' },
+                    { label: 'Спецификация', value: 'VW 502.00 / 505.00' },
+                    { label: 'Момент пробки', value: '30 Нм' },
+                ],
                 video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
                 videoTitle: 'Видео: Замена масла',
-                warning: 'Не перетягивайте фильтр! Используйте качественное масло.',
+                warning: 'На моторах 1.8T интервал замены масла лучше сократить до 10 000 км при активной езде.',
                 stepsWithImages: [
-                    { step: 1, title: 'Подготовка',
-                        text: 'Подготовьте масло, фильтр, инструменты и ёмкость для отработки.', image: null,
-                        caption: '' },
-                    { step: 2, title: 'Прогрев двигателя',
-                        text: 'Прогрейте двигатель 5-7 минут. Заглушите.', image: null, caption: '' },
-                    { step: 3, title: 'Слив отработанного масла',
-                        text: 'Открутите сливную пробку. Слейте масло в ёмкость (10-15 мин).', image: null,
-                        caption: '' },
-                    { step: 4, title: 'Замена фильтра',
-                        text: 'Снимите старый фильтр. Смажьте уплотнитель нового маслом, закрутите от руки.',
+                    { step: 1, title: 'Прогрев', text: 'Прогрейте двигатель 5-7 минут.',
+                image: null, caption: '' },
+                    { step: 2, title: 'Слив', text: 'Открутите пробку, слейте масло (10-15 мин).',
                         image: null, caption: '' },
-                    { step: 5, title: 'Заливка свежего масла',
-                        text: 'Залейте новое масло. Проверьте уровень щупом.', image: null, caption: '' },
+                    { step: 3, title: 'Замена фильтра',
+                        text: 'Снимите старый фильтр. Смажьте уплотнитель нового, закрутите.',
+                        image: null, caption: '' },
+                    { step: 4, title: 'Заливка',
+                        text: 'Залейте масло, проверьте уровень щупом.', image: null,
+                    caption: '' },
+                ],
+            },
+            4: {
+                title: 'Замена салонного фильтра (противопыльного)',
+                tools: ['Отвёртка Torx T20', 'Новый фильтр'],
+                specs: [
+                    { label: 'Интервал замены', value: 'Каждые 30 000 км' },
+                    { label: 'Расположение', value: 'Под панелью со стороны пассажира' },
+                ],
+                video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                videoTitle: 'Видео: Замена салонного фильтра Passat B5',
+                warning: 'При эксплуатации в пыльной местности меняйте каждые 15 000 км.',
+                stepsWithImages: [
+                    { step: 1, title: 'Доступ',
+                        text: 'Снимите нижнюю облицовку со стороны пассажира.', image: null,
+                    caption: '' },
+                    { step: 2, title: 'Извлечение',
+                        text: 'Открутите винты крышки фильтра. Извлеките старый фильтр.', image: null,
+                        caption: '' },
+                    { step: 3, title: 'Установка',
+                        text: 'Установите новый фильтр (стрелка по направлению потока).', image: null,
+                        caption: '' },
                 ],
             },
             5: {
-                title: 'Замена ремня ГРМ',
-                tools: ['Набор ключей', 'Динамометрический ключ', 'Фиксаторы распредвалов'],
+                title: 'Замена свечей зажигания',
+                tools: ['Свечной ключ 16 мм', 'Динамометрический ключ', 'Съёмник катушек'],
+                specs: [
+                    { label: 'Интервал замены', value: 'Каждые 60 000 км (бензин)' },
+                    { label: 'Тип свечей (1.8T)', value: 'Bosch F7LTCR / NGK BKUR6ET' },
+                    { label: 'Тип свечей (2.8 VR6)', value: 'Bosch F7LTCR' },
+                    { label: 'Момент затяжки', value: '30 Нм' },
+                    { label: 'Зазор', value: '1.0-1.1 мм' },
+                ],
                 video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-                videoTitle: 'Видео: Замена ремня ГРМ',
-                warning: 'Неправильная установка ремня ГРМ может привести к серьёзной поломке двигателя!',
+                videoTitle: 'Видео: Замена свечей',
+                warning: 'На двигателе 1.8T будьте аккуратны с катушками — их легко повредить при снятии.',
                 stepsWithImages: [
-                    { step: 1, title: 'Подготовка',
-                        text: 'Снимите защитный кожух. Выставьте метки ГРМ.', image: null, caption: '' },
-                    { step: 2, title: 'Снятие старого ремня',
-                        text: 'Ослабьте натяжитель. Снимите ремень.', image: null, caption: '' },
-                    { step: 3, title: 'Установка нового ремня',
-                        text: 'Установите новый ремень по меткам. Натяните согласно спецификации.',
+                    { step: 1, title: 'Остывание',
+                        text: 'Дайте двигателю полностью остыть перед заменой.', image: null,
+                    caption: '' },
+                    { step: 2, title: 'Снятие катушек',
+                        text: 'Отсоедините разъёмы, извлеките катушки зажигания.', image: null,
+                        caption: '' },
+                    { step: 3, title: 'Замена свечей',
+                        text: 'Выкрутите старые свечи. Установите новые с моментом 30 Нм.',
+                        image: null, caption: '' },
+                ],
+            },
+            6: {
+                title: 'Замена ремня ГРМ + натяжной ролик',
+                tools: ['Набор ключей', 'Динамометрический ключ', 'Фиксаторы распредвалов', 'Съёмник шкива'],
+                specs: [
+                    { label: 'Интервал замены', value: 'Каждые 90 000 км' },
+                    { label: 'Критичность', value: 'ОЧЕНЬ ВАЖНО для 1.8T!' },
+                    { label: 'Дополнительно', value: 'Заменить помпу и поликлиновой ремень' },
+                ],
+                video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                videoTitle: 'Видео: Замена ремня ГРМ 1.8T',
+                warning: 'Обрыв ремня ГРМ на 1.8T приводит к загибу клапанов! Не откладывайте замену. Рекомендуется менять помпу одновременно с ремнём.',
+                stepsWithImages: [
+                    { step: 1, title: 'Подготовка', text: 'Снимите защитный кожух. Выставьте метки.',
+                        image: null, caption: '' },
+                    { step: 2, title: 'Снятие', text: 'Ослабьте натяжитель. Снимите старый ремень.',
+                        image: null, caption: '' },
+                    { step: 3, title: 'Установка',
+                        text: 'Установите новый ремень и ролик. Натяните по спецификации.',
                         image: null, caption: '' },
                     { step: 4, title: 'Проверка',
-                        text: 'Прокрутите двигатель вручную на 2 оборота. Проверьте метки.', image: null,
+                        text: 'Прокрутите двигатель вручную на 2 оборота.', image: null,
+                    caption: '' },
+                ],
+            },
+            11: {
+                title: 'Замена поликлинового ремня',
+                tools: ['Ключ на 16', 'Ключ для натяжителя'],
+                specs: [
+                    { label: 'Проверка', value: 'Каждые 30 000 км (если нет автонатяжителя)' },
+                    { label: 'Замена', value: 'По износу, обычно вместе с ГРМ' },
+                ],
+                video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                videoTitle: 'Видео: Замена поликлинового ремня',
+                warning: 'Изношенный ремень может свистеть и привести к отказу генератора или ГУРа.',
+                stepsWithImages: [
+                    { step: 1, title: 'Снятие',
+                        text: 'Ослабьте натяжитель. Снимите старый ремень.', image: null,
+                    caption: '' },
+                    { step: 2, title: 'Установка',
+                        text: 'Установите новый ремень по схеме. Проверьте натяжение.', image: null,
                         caption: '' },
                 ],
             },
-            8: {
-                title: 'Замена турбины',
-                tools: ['Набор ключей', 'Головки', 'Прокладки', 'Масло', 'Антифриз'],
+            15: {
+                title: 'Замена масла в МКПП',
+                tools: ['Ключ-шестигранник 17 мм', 'Шприц для заливки', 'Ёмкость'],
+                specs: [
+                    { label: 'Интервал проверки', value: 'Каждые 30 000 км' },
+                    { label: 'Тип масла', value: 'G052 SAE 75W90' },
+                    { label: 'Объём (передний привод)', value: '2.25 л' },
+                    { label: 'Объём (полный привод)', value: '2.75 л' },
+                ],
                 video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-                videoTitle: 'Видео: Замена турбины',
-                warning: 'После замены турбины обязательно замените масло и фильтр! Прокачайте турбину маслом перед запуском.',
+                videoTitle: 'Видео: Замена масла в МКПП',
+                warning: 'Используйте только масло спецификации G052!',
                 stepsWithImages: [
-                    { step: 1, title: 'Демонтаж',
-                        text: 'Снимите воздушный патрубок, впускной коллектор, выпускной коллектор.',
+                    { step: 1, title: 'Слив',
+                        text: 'Открутите сливную пробку. Слейте масло в ёмкость.', image: null,
+                        caption: '' },
+                    { step: 2, title: 'Заливка',
+                        text: 'Шприцом залейте новое масло через заливное отверстие до уровня.',
                         image: null, caption: '' },
-                    { step: 2, title: 'Снятие турбины',
-                        text: 'Открутите болты крепления. Отсоедините масляные и охлаждающие трубки.',
+                ],
+            },
+            16: {
+                title: 'Замена масла в АКПП (01V Tiptronic)',
+                tools: ['Ключ-шестигранник', 'Шприц', 'Новый фильтр АКПП', 'Прокладка поддона'],
+                specs: [
+                    { label: 'Интервал проверки', value: 'Каждые 60 000 км' },
+                    { label: 'Тип масла', value: 'ATF ESSO EGL 71141 / VW-ET G052 162' },
+                    { label: 'Объём', value: '3.5 л (частичная замена)' },
+                ],
+                video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                videoTitle: 'Видео: Замена масла в АКПП 01V',
+                warning: 'Используйте только оригинальное масло VW! Неправильная жидкость убьёт коробку.',
+                stepsWithImages: [
+                    { step: 1, title: 'Снятие поддона',
+                        text: 'Открутите поддон АКПП. Слейте масло.', image: null, caption: '' },
+                    { step: 2, title: 'Замена фильтра',
+                        text: 'Замените фильтр АКПП. Установите поддон с новой прокладкой.',
                         image: null, caption: '' },
-                    { step: 3, title: 'Установка новой турбины',
-                        text: 'Залейте масло в новую турбину. Установите с новыми прокладками.',
+                    { step: 3, title: 'Заливка',
+                        text: 'Залейте новое масло. Проверьте уровень при рабочей температуре.',
                         image: null, caption: '' },
-                    { step: 4, title: 'Сборка и проверка',
-                        text: 'Соберите всё в обратном порядке. Запустите двигатель, проверьте на утечки.',
-                        image: null, caption: '' },
+                ],
+            },
+            21: {
+                title: 'Замена тормозной жидкости',
+                tools: ['Ключ для штуцеров', 'Шланг', 'Ёмкость', 'Жидкость DOT-4'],
+                specs: [
+                    { label: 'Интервал', value: 'Проверка на каждом ТО, замена по необходимости' },
+                    { label: 'Тип', value: 'DOT-4' },
+                    { label: 'Объём', value: '~1.0 л' },
+                ],
+                video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                videoTitle: 'Видео: Замена тормозной жидкости',
+                warning: 'Соблюдайте порядок прокачки: заднее правое → заднее левое → переднее правое → переднее левое.',
+                stepsWithImages: [
+                    { step: 1, title: 'Подготовка',
+                        text: 'Откачайте старую жидкость из бачка. Залейте свежую.', image: null,
+                        caption: '' },
+                    { step: 2, title: 'Прокачка',
+                        text: 'Прокачайте каждое колесо до чистой жидкости.', image: null,
+                    caption: '' },
                 ],
             },
         };
 
+        // Заглушка
         services.forEach(s => {
             if (!instructions[s.id]) {
                 instructions[s.id] = {
                     title: s.name,
-                    tools: ['Набор инструментов', 'Специнструмент'],
-                    stepsWithImages: [
-                        { step: 1, title: 'Выполнение работы',
-                            text: 'Выполните необходимые операции согласно регламенту.', image: null,
-                        caption: '' },
-                    ],
+                    tools: ['Набор инструментов'],
+                    specs: [{ label: 'Интервал', value: 'По регламенту производителя' }],
+                    stepsWithImages: [{ step: 1, title: 'Выполнение',
+                        text: 'Выполните работу согласно регламенту.', image: null, caption: '' }],
                     warning: 'При отсутствии опыта обратитесь в автосервис.',
                     video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
                     videoTitle: 'Видео по ремонту',
@@ -1035,11 +1105,11 @@
             document.getElementById('configDetail').textContent =
                 data.engine.engineName + ' (' + data.engine.power + ') • ' + data.gearbox.gearboxName;
             document.getElementById('configCode').textContent =
-                'Код двигателя: ' + data.engine.engineCode + ' | КПП: ' + data.gearbox.gearboxCode +
-                ' | Коэфф: ×' + data.gearbox.multiplier.toFixed(2);
+                'Код двиг: ' + data.engine.engineCode + ' | КПП: ' + data.gearbox.gearboxCode + ' | ×' + data
+                .gearbox.multiplier.toFixed(2);
             document.getElementById('configBadge').textContent = data.gearbox.badge;
             document.getElementById('totalCarLabel').textContent =
-                data.car.carName + ' ' + data.engine.engineName + ' (' + data.gearbox.gearboxCode + ')';
+                data.car.carName + ' ' + data.engine.engineName;
             document.querySelector('.selected-config-icon').textContent = data.car.carIcon;
         }
 
@@ -1123,9 +1193,26 @@
         function openModal(serviceId) {
             const instr = instructions[serviceId];
             document.getElementById('modalTitle').textContent = '📋 ' + instr.title;
-            let html = '<h3>🔧 Инструменты</h3><div class="modal-tools">';
+            let html = '';
+
+            // Спецификации / регламент
+            if (instr.specs && instr.specs.length > 0) {
+                html += '<h3>📅 Регламент и спецификации</h3>';
+                html += '<table class="modal-info-table">';
+                instr.specs.forEach(spec => {
+                    html +=
+                        `<tr><td>${spec.label}</td><td>${spec.value}</td></tr>`;
+                });
+                html += '</table>';
+            }
+
+            // Инструменты
+            html += '<h3>🔧 Инструменты</h3><div class="modal-tools">';
             instr.tools.forEach(t => html += `<span class="tool-tag">${t}</span>`);
-            html += '</div><h3>📝 Пошаговая инструкция</h3>';
+            html += '</div>';
+
+            // Пошаговая инструкция
+            html += '<h3>📝 Пошаговая инструкция</h3>';
             if (instr.stepsWithImages) {
                 instr.stepsWithImages.forEach(sd => {
                     html += '<div class="step-block">';
@@ -1137,12 +1224,15 @@
                     html += '</div>';
                 });
             }
+
             if (instr.warning) html +=
                 '<h3>⚠️ Предупреждение</h3><div class="modal-warning">' + instr.warning + '</div>';
+
             if (instr.video) {
                 html += '<h3>🎬 Видео</h3><div class="modal-video-wrapper"><iframe src="' + instr.video +
                     '" allowfullscreen></iframe></div>';
             }
+
             document.getElementById('modalBody').innerHTML = html;
             document.getElementById('modalOverlay').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
@@ -1171,9 +1261,8 @@
             });
         });
 
-        // Инициализация
         renderAll();
-        console.log('✅ Каталог с реальными кодами двигателей и КПП загружен!');
+        console.log('✅ Прайс-лист с полным регламентом ТО загружен!');
     </script>
 </body>
 </html>
