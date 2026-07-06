@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Автосервис - Прайс-лист ВАЗ 2107</title>
+    <title>Автосервис - Прайс-лист с выбором авто</title>
     <style>
         * {
             margin: 0;
@@ -18,7 +18,7 @@
             color: #e0e0e0;
         }
         .container {
-            max-width: 950px;
+            max-width: 1000px;
             margin: 0 auto;
             background: #1e1e32;
             border-radius: 20px;
@@ -47,40 +47,121 @@
             letter-spacing: 2px;
             margin-top: 5px;
         }
-        .selected-car-display {
-            background: rgba(255, 152, 0, 0.12);
-            border: 2px solid #ff9800;
-            border-radius: 14px;
-            padding: 16px 20px;
+
+        /* Выбор авто */
+        .selector-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            padding: 20px;
             margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            box-shadow: 0 0 20px rgba(255, 152, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .selected-car-display .car-icon-big {
-            font-size: 42px;
-        }
-        .selected-car-display .car-info-block h3 {
-            font-size: 18px;
-            color: #fff;
-            font-weight: 700;
-        }
-        .selected-car-display .car-info-block p {
+        .selector-title {
             font-size: 13px;
-            color: #ccc;
-            margin-top: 2px;
+            font-weight: 700;
+            color: #ff9800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 14px;
+            text-align: center;
         }
-        .selected-car-display .car-badge-big {
-            display: inline-block;
+        .selector-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .selector-row:last-child {
+            margin-bottom: 0;
+        }
+        .selector-group {
+            flex: 1;
+            min-width: 180px;
+        }
+        .selector-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+        .selector-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        .sel-btn {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.04);
+            color: #ccc;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .sel-btn:hover {
+            background: rgba(255, 152, 0, 0.15);
+            border-color: rgba(255, 152, 0, 0.5);
+            color: #fff;
+        }
+        .sel-btn.active {
             background: #ff9800;
             color: #000;
-            font-size: 11px;
+            border-color: #ff9800;
             font-weight: 700;
-            padding: 4px 12px;
-            border-radius: 20px;
-            margin-top: 4px;
+            box-shadow: 0 0 12px rgba(255, 152, 0, 0.4);
         }
+        .sel-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .selected-config {
+            background: rgba(255, 152, 0, 0.12);
+            border: 1px solid #ff9800;
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .selected-config-icon {
+            font-size: 32px;
+        }
+        .selected-config-info {
+            flex: 1;
+        }
+        .selected-config-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .selected-config-detail {
+            font-size: 11px;
+            color: #ccc;
+        }
+        .selected-config-badge {
+            background: #ff9800;
+            color: #000;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 12px;
+            white-space: nowrap;
+        }
+        .price-multiplier {
+            font-size: 10px;
+            color: #ff9800;
+            margin-top: 3px;
+        }
+
+        /* Поиск и фильтры */
         .search-box {
             margin-bottom: 15px;
             position: relative;
@@ -254,6 +335,11 @@
         }
         .service-row.selected .service-price {
             color: #fff;
+        }
+        .price-note {
+            font-size: 10px;
+            color: #888;
+            margin-left: 3px;
         }
         .detail-btn {
             padding: 7px 14px;
@@ -472,9 +558,12 @@
             .container {
                 padding: 10px;
             }
-            .selected-car-display {
+            .selector-row {
                 flex-direction: column;
-                text-align: center;
+                gap: 8px;
+            }
+            .selector-group {
+                min-width: auto;
             }
             .service-row {
                 flex-wrap: wrap;
@@ -492,12 +581,6 @@
                 width: 95%;
                 max-height: 80vh;
             }
-            .step-block {
-                padding: 10px;
-            }
-            .step-image {
-                max-width: 100%;
-            }
         }
     </style>
 </head>
@@ -506,26 +589,50 @@
     <div class="container">
         <div class="header">
             <div class="logo">AUTO<span>SERVICE</span></div>
-            <div class="subtitle">Прайс-лист на слесарные работы • ВАЗ 2107</div>
+            <div class="subtitle">Прайс-лист с выбором модификации</div>
         </div>
 
-        <div class="selected-car-display">
-            <span class="car-icon-big">🚗</span>
-            <div class="car-info-block">
-                <h3>ВАЗ 2107</h3>
-                <p>Двигатель: 1.6 (2106) • Классика • Цены 2026</p>
-                <span class="car-badge-big">Категория: эконом</span>
+        <!-- Выбор автомобиля -->
+        <div class="selector-section">
+            <div class="selector-title">🚗 Выберите автомобиль</div>
+            <div class="selector-row">
+                <div class="selector-group">
+                    <div class="selector-label">Марка / Модель</div>
+                    <div class="selector-buttons" id="carButtons"></div>
+                </div>
+            </div>
+            <div class="selector-row">
+                <div class="selector-group">
+                    <div class="selector-label">Двигатель</div>
+                    <div class="selector-buttons" id="engineButtons"></div>
+                </div>
+            </div>
+            <div class="selector-row">
+                <div class="selector-group">
+                    <div class="selector-label">Коробка передач</div>
+                    <div class="selector-buttons" id="gearboxButtons"></div>
+                </div>
+            </div>
+            <div class="selected-config" id="selectedConfig">
+                <span class="selected-config-icon">🚗</span>
+                <div class="selected-config-info">
+                    <div class="selected-config-name" id="configName">ВАЗ 2107</div>
+                    <div class="selected-config-detail" id="configDetail">1.6, механика</div>
+                    <div class="price-multiplier" id="configMultiplier">Коэффициент: ×1.0</div>
+                </div>
+                <span class="selected-config-badge" id="configBadge">Эконом</span>
             </div>
         </div>
 
+        <!-- Поиск -->
         <div class="search-box">
             <input type="text" id="searchInput" placeholder="Поиск услуги...">
             <span class="search-icon">🔍</span>
         </div>
 
+        <!-- Фильтры -->
         <div class="filter-buttons" id="filterButtons">
             <button class="filter-btn active" data-filter="all">Все</button>
-            <button class="filter-btn" data-filter="diagnostics">Диагностика</button>
             <button class="filter-btn" data-filter="maintenance">ТО</button>
             <button class="filter-btn" data-filter="engine">Двигатель</button>
             <button class="filter-btn" data-filter="exhaust">Выхлоп</button>
@@ -535,19 +642,22 @@
             <button class="filter-btn" data-filter="welding">Сварка</button>
         </div>
 
+        <!-- Итог -->
         <div class="total-panel">
             <div>
                 <div class="total-label">Выбрано: <span id="totalCount">0</span></div>
-                <div class="total-label">ВАЗ 2107</div>
+                <div class="total-label" id="totalCarLabel">ВАЗ 2107</div>
             </div>
             <div class="total-price" id="totalPrice">0 ₽</div>
             <button class="clear-btn" id="clearBtn">Сбросить</button>
         </div>
 
+        <!-- Список услуг -->
         <div id="servicesList"></div>
         <div class="footer">© 2026 AutoService. Цены без учёта запчастей. Нажмите «Подробнее» для инструкции.</div>
     </div>
 
+    <!-- Модальное окно -->
     <div class="modal-overlay hidden" id="modalOverlay">
         <div class="modal">
             <div class="modal-header">
@@ -559,237 +669,263 @@
     </div>
 
     <script>
-        // Актуальные цены на работы для ВАЗ 2107 (2026 год, средние по рынку РФ)
-        const services = [
-            // Диагностика
-            { id: 1, name: 'Компьютерная диагностика', price: 1000, cat: 'diagnostics', catName: '🔍 ДИАГНОСТИКА' },
-            { id: 2, name: 'Диагностика ходовой части', price: 600, cat: 'diagnostics', catName: '🔍 ДИАГНОСТИКА' },
-            { id: 3, name: 'Диагностика тормозной системы', price: 500, cat: 'diagnostics',
-            catName: '🔍 ДИАГНОСТИКА' },
-
-            // ТО
-            { id: 10, name: 'Замена масла и масляного фильтра', price: 800, cat: 'maintenance', catName: '🛠️ ТО' },
-            { id: 11, name: 'Замена воздушного фильтра', price: 250, cat: 'maintenance', catName: '🛠️ ТО' },
-            { id: 12, name: 'Замена топливного фильтра', price: 400, cat: 'maintenance', catName: '🛠️ ТО' },
-            { id: 13, name: 'Замена свечей зажигания (4 шт)', price: 500, cat: 'maintenance', catName: '🛠️ ТО' },
-            { id: 14, name: 'Замена ремня генератора', price: 700, cat: 'maintenance', catName: '🛠️ ТО' },
-            { id: 15, name: 'Замена охлаждающей жидкости', price: 900, cat: 'maintenance', catName: '🛠️ ТО' },
-            { id: 16, name: 'Замена тормозной жидкости', price: 1000, cat: 'maintenance', catName: '🛠️ ТО' },
-            { id: 17, name: 'Замена масла в КПП', price: 600, cat: 'maintenance', catName: '🛠️ ТО' },
-            { id: 18, name: 'Замена масла в редукторе заднего моста', price: 500, cat: 'maintenance',
-            catName: '🛠️ ТО' },
-
-            // Двигатель
-            { id: 20, name: 'Регулировка клапанов', price: 1800, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
-            { id: 21, name: 'Замена прокладки клапанной крышки', price: 800, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
-            { id: 22, name: 'Замена прокладки ГБЦ', price: 7000, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
-            { id: 23, name: 'Замена цепи ГРМ с натяжителем', price: 4500, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
-            { id: 24, name: 'Замена сальников клапанов (маслосъёмных)', price: 3500, cat: 'engine',
-            catName: '⚡ ДВИГАТЕЛЬ' },
-            { id: 25, name: 'Снятие/установка карбюратора', price: 1800, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
-            { id: 26, name: 'Чистка и регулировка карбюратора', price: 2500, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
-            { id: 27, name: 'Замена трамблёра / выставление зажигания', price: 1000, cat: 'engine',
-            catName: '⚡ ДВИГАТЕЛЬ' },
-            { id: 28, name: 'Замена помпы (водяного насоса)', price: 2000, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
-            { id: 29, name: 'Замена радиатора охлаждения', price: 1800, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
-
-            // Выхлоп
-            { id: 30, name: 'Замена приёмной трубы', price: 1800, cat: 'exhaust', catName: '💨 ВЫПУСК' },
-            { id: 31, name: 'Замена глушителя', price: 1200, cat: 'exhaust', catName: '💨 ВЫПУСК' },
-            { id: 32, name: 'Замена резонатора', price: 1000, cat: 'exhaust', catName: '💨 ВЫПУСК' },
-            { id: 33, name: 'Снятие/установка выпускного коллектора', price: 3000, cat: 'exhaust',
-            catName: '💨 ВЫПУСК' },
-            { id: 34, name: 'Замена прокладки выпускного коллектора', price: 1500, cat: 'exhaust',
-            catName: '💨 ВЫПУСК' },
-
-            // Трансмиссия
-            { id: 40, name: 'Замена сцепления (комплект)', price: 6000, cat: 'transmission',
-            catName: '⚙️ ТРАНСМИССИЯ' },
-            { id: 41, name: 'Регулировка сцепления', price: 700, cat: 'transmission', catName: '⚙️ ТРАНСМИССИЯ' },
-            { id: 42, name: 'Замена крестовины кардана (1 шт)', price: 1500, cat: 'transmission',
-            catName: '⚙️ ТРАНСМИССИЯ' },
-            { id: 43, name: 'Замена подвесного подшипника кардана', price: 2000, cat: 'transmission',
-            catName: '⚙️ ТРАНСМИССИЯ' },
-            { id: 44, name: 'Замена сальника КПП', price: 2500, cat: 'transmission', catName: '⚙️ ТРАНСМИССИЯ' },
-            { id: 45, name: 'Замена сальника редуктора', price: 2000, cat: 'transmission',
-            catName: '⚙️ ТРАНСМИССИЯ' },
-
-            // Тормоза
-            { id: 50, name: 'Замена передних тормозных колодок', price: 1000, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
-            { id: 51, name: 'Замена задних тормозных колодок', price: 1200, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
-            { id: 52, name: 'Замена передних тормозных дисков', price: 1500, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
-            { id: 53, name: 'Замена задних тормозных барабанов', price: 1400, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
-            { id: 54, name: 'Прокачка тормозов', price: 1000, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
-            { id: 55, name: 'Замена главного тормозного цилиндра', price: 2000, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
-            { id: 56, name: 'Замена тормозных шлангов (комплект)', price: 2500, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
-
-            // Подвеска
-            { id: 60, name: 'Замена амортизаторов передних (2 шт)', price: 2500, cat: 'suspension',
-            catName: '🔧 ПОДВЕСКА' },
-            { id: 61, name: 'Замена амортизаторов задних (2 шт)', price: 2000, cat: 'suspension',
-            catName: '🔧 ПОДВЕСКА' },
-            { id: 62, name: 'Замена шаровых опор (2 шт)', price: 1800, cat: 'suspension', catName: '🔧 ПОДВЕСКА' },
-            { id: 63, name: 'Замена рулевых наконечников (2 шт)', price: 1400, cat: 'suspension',
-            catName: '🔧 ПОДВЕСКА' },
-            { id: 64, name: 'Замена сайлентблоков передних рычагов (4 шт)', price: 3500, cat: 'suspension',
-            catName: '🔧 ПОДВЕСКА' },
-            { id: 65, name: 'Замена пружин передних (2 шт)', price: 2500, cat: 'suspension', catName: '🔧 ПОДВЕСКА' },
-            { id: 66, name: 'Замена пружин задних (2 шт)', price: 2000, cat: 'suspension', catName: '🔧 ПОДВЕСКА' },
-            { id: 67, name: 'Замена ступичного подшипника (перед, 1 шт)', price: 2000, cat: 'suspension',
-            catName: '🔧 ПОДВЕСКА' },
-            { id: 68, name: 'Замена полуоси заднего моста', price: 2500, cat: 'suspension', catName: '🔧 ПОДВЕСКА' },
-            { id: 69, name: 'Регулировка развал-схождения', price: 1800, cat: 'suspension',
-            catName: '🔧 ПОДВЕСКА' },
-
-            // Сварка
-            { id: 80, name: 'Сварочные работы (кузов, за 1 час)', price: 2500, cat: 'welding', catName: '🔥 СВАРКА' },
-            { id: 81, name: 'Заварка глушителя (латка)', price: 1000, cat: 'welding', catName: '🔥 СВАРКА' },
+        // ==================== БАЗА АВТОМОБИЛЕЙ ====================
+        const carDatabase = [
+            // ВАЗ 2107
+            {
+                carId: 'vaz2107',
+                carName: 'ВАЗ 2107',
+                carIcon: '🚗',
+                category: 'Эконом',
+                engines: [
+                    { engineId: 'vaz16carb', engineName: '1.6 карбюратор (2106)', power: '74 л.с.',
+                        gearboxes: [
+                            { gearboxId: 'manual5', gearboxName: 'МКПП-5', multiplier: 0.7, badge: 'Эконом' }
+                        ] },
+                    { engineId: 'vaz16inj', engineName: '1.6 инжектор (21067)', power: '74 л.с.',
+                        gearboxes: [
+                            { gearboxId: 'manual5', gearboxName: 'МКПП-5', multiplier: 0.75, badge: 'Эконом' }
+                        ] },
+                ]
+            },
+            // Volkswagen Passat B5
+            {
+                carId: 'passatb5',
+                carName: 'VW Passat B5',
+                carIcon: '🚙',
+                category: 'Бизнес',
+                engines: [
+                    { engineId: '18t_aeb', engineName: '1.8 Turbo AEB', power: '150 л.с.',
+                        gearboxes: [
+                            { gearboxId: 'manual5', gearboxName: 'МКПП-5', multiplier: 1.2, badge: 'Средне' },
+                            { gearboxId: 'auto4', gearboxName: 'АКПП-4 (01V)', multiplier: 1.35,
+                            badge: 'Сложно' },
+                        ] },
+                    { engineId: '20_alt', engineName: '2.0 ALT', power: '130 л.с.',
+                        gearboxes: [
+                            { gearboxId: 'manual5', gearboxName: 'МКПП-5', multiplier: 1.1, badge: 'Средне' },
+                            { gearboxId: 'auto4', gearboxName: 'АКПП-4', multiplier: 1.25, badge: 'Средне' },
+                        ] },
+                    { engineId: '28_v6', engineName: '2.8 V6', power: '193 л.с.',
+                        gearboxes: [
+                            { gearboxId: 'manual5', gearboxName: 'МКПП-5', multiplier: 1.4, badge: 'Сложно' },
+                            { gearboxId: 'auto5', gearboxName: 'АКПП-5 (TipTronic)', multiplier: 1.55,
+                                badge: 'Очень сложно' },
+                        ] },
+                ]
+            },
         ];
 
-        // Инструкции (только для ключевых услуг)
+        // ==================== УСЛУГИ С БАЗОВЫМИ ЦЕНАМИ ====================
+        const services = [
+            { id: 1, name: 'Замена масла и масляного фильтра', basePrice: 800, cat: 'maintenance',
+                catName: '🛠️ ТО' },
+            { id: 2, name: 'Замена воздушного фильтра', basePrice: 300, cat: 'maintenance', catName: '🛠️ ТО' },
+            { id: 3, name: 'Замена топливного фильтра', basePrice: 500, cat: 'maintenance', catName: '🛠️ ТО' },
+            { id: 4, name: 'Замена свечей зажигания (4 шт)', basePrice: 600, cat: 'maintenance', catName: '🛠️ ТО' },
+            { id: 5, name: 'Замена ремня ГРМ', basePrice: 3500, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
+            { id: 6, name: 'Замена цепи ГРМ', basePrice: 6000, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
+            { id: 7, name: 'Замена прокладки ГБЦ', basePrice: 8000, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
+            { id: 8, name: 'Замена турбины', basePrice: 12000, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
+            { id: 9, name: 'Регулировка клапанов', basePrice: 2000, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
+            { id: 10, name: 'Замена помпы', basePrice: 2500, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
+            { id: 11, name: 'Замена радиатора охлаждения', basePrice: 2000, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
+            { id: 12, name: 'Снятие/установка выпускного коллектора', basePrice: 3500, cat: 'exhaust',
+                catName: '💨 ВЫПУСК' },
+            { id: 13, name: 'Замена глушителя', basePrice: 1500, cat: 'exhaust', catName: '💨 ВЫПУСК' },
+            { id: 14, name: 'Замена гофры', basePrice: 2000, cat: 'exhaust', catName: '💨 ВЫПУСК' },
+            { id: 15, name: 'Замена сцепления (комплект)', basePrice: 7000, cat: 'transmission',
+                catName: '⚙️ ТРАНСМИССИЯ' },
+            { id: 16, name: 'Замена масла в АКПП', basePrice: 2500, cat: 'transmission', catName: '⚙️ ТРАНСМИССИЯ' },
+            { id: 17, name: 'Замена масла в МКПП', basePrice: 800, cat: 'transmission', catName: '⚙️ ТРАНСМИССИЯ' },
+            { id: 18, name: 'Замена передних колодок', basePrice: 1200, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
+            { id: 19, name: 'Замена задних колодок', basePrice: 1400, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
+            { id: 20, name: 'Замена передних дисков', basePrice: 1800, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
+            { id: 21, name: 'Замена задних барабанов', basePrice: 1600, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
+            { id: 22, name: 'Прокачка тормозов', basePrice: 1200, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
+            { id: 23, name: 'Замена амортизаторов перед (2 шт)', basePrice: 3000, cat: 'suspension',
+                catName: '🔧 ПОДВЕСКА' },
+            { id: 24, name: 'Замена амортизаторов зад (2 шт)', basePrice: 2500, cat: 'suspension',
+                catName: '🔧 ПОДВЕСКА' },
+            { id: 25, name: 'Замена шаровых опор (2 шт)', basePrice: 2000, cat: 'suspension',
+            catName: '🔧 ПОДВЕСКА' },
+            { id: 26, name: 'Замена рулевых наконечников (2 шт)', basePrice: 1600, cat: 'suspension',
+                catName: '🔧 ПОДВЕСКА' },
+            { id: 27, name: 'Регулировка развал-схождения', basePrice: 2000, cat: 'suspension',
+                catName: '🔧 ПОДВЕСКА' },
+            { id: 28, name: 'Сварочные работы (кузов, час)', basePrice: 3000, cat: 'welding', catName: '🔥 СВАРКА' },
+        ];
+
+        // Инструкции
         const instructions = {
-            10: {
-                title: 'Замена масла и фильтра на ВАЗ 2107',
-                tools: ['Ключ на 12', 'Шестигранник на 12', 'Съёмник фильтра', 'Ёмкость 4-5 л', 'Воронка', 'Ветошь',
-                    'Перчатки'
-                ],
+            1: {
+                title: 'Замена масла и масляного фильтра',
+                tools: ['Ключ для пробки', 'Съёмник фильтра', 'Ёмкость', 'Воронка', 'Ветошь'],
                 video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-                videoTitle: 'Видео: Замена масла ВАЗ 2107 (полный процесс)',
-                warning: 'Не перетягивайте фильтр — потом будет сложно открутить. Используйте масло 10W-40 (полусинтетика). При переходе на другое масло обязательно используйте промывку!',
+                videoTitle: 'Видео: Замена масла',
+                warning: 'Не перетягивайте фильтр! Используйте качественное масло.',
                 stepsWithImages: [
-                    { step: 1, title: 'Подготовка инструментов и материалов',
-                        text: 'Подготовьте всё необходимое: масло, промывку, новый масляный фильтр, ключи и ёмкость.',
-                        image: 'https://a1.drive-data.ru/d40a5bu-960.jpg',
-                        caption: 'Набор для замены: масло, промывка и фильтр' },
-                    { step: 2, title: 'Слив отработанного масла',
-                        text: 'Прогрейте двигатель. Загоните машину на яму. Подставьте ёмкость и шестигранником открутите сливную пробку.',
-                        image: 'https://a1.drive-data.ru/340a5bu-960.jpg', caption: 'Сливная пробка в поддоне' },
-                    { step: 3, title: 'Откручиваем пробку',
-                        text: 'Используйте шестигранник на 12. Будьте осторожны — масло горячее!',
-                        image: 'https://a1.drive-data.ru/b40a5bu-960.jpg',
-                    caption: 'Откручиваем пробку шестигранником' },
-                    { step: 4, title: 'Сливаем отработку',
-                        text: 'Дождитесь полного слива масла (10-15 минут).',
-                        image: 'https://a1.drive-data.ru/740a5bu-960.jpg', caption: 'Сливаем отработанное масло' },
-                    { step: 5, title: 'Отработанное масло',
-                        text: 'Вот такое масло было слито. Утилизируйте правильно!',
-                        image: 'https://a1.drive-data.ru/f40a5bu-960.jpg', caption: 'Отработанное масло' },
-                    { step: 6, title: 'Заливка промывочного масла',
-                        text: 'Закрутите пробку. Залейте промывочное масло (около 3.7 л).',
-                        image: 'https://a1.drive-data.ru/c0a5bu-960.jpg',
-                        caption: 'Промывочное масло — жидкое и прозрачное' },
-                    { step: 7, title: 'Промывка в двигателе',
-                        text: 'Залейте промывку через маслозаливную горловину.',
-                        image: 'https://a1.drive-data.ru/8c0a5bu-960.jpg', caption: 'Заливаем промывку' },
-                    { step: 8, title: 'Слив промывки',
-                        text: 'Дайте двигателю поработать 12-15 минут. Слейте промывку.',
-                        image: 'https://a1.drive-data.ru/4c0a5bu-960.jpg', caption: 'Слитая промывка' },
-                    { step: 9, title: 'Снятие старого фильтра',
-                        text: 'Открутите защиту двигателя. Снимите старый масляный фильтр.',
-                        image: 'https://a1.drive-data.ru/cc0a5bu-960.jpg', caption: 'Откручиваем старый фильтр' },
-                    { step: 10, title: 'Очистка посадочного места',
-                        text: 'Протрите посадочное место насухо.',
-                        image: 'https://a1.drive-data.ru/2c0a5bu-960.jpg',
-                    caption: 'Протираем посадочное место' },
-                    { step: 11, title: 'Подготовка нового фильтра',
-                        text: 'Залейте немного масла в новый фильтр. Смажьте уплотнительное кольцо.',
-                        image: 'https://a1.drive-data.ru/ac0a5bu-960.jpg',
-                        caption: 'Заливаем масло в новый фильтр' },
-                    { step: 12, title: 'Установка нового фильтра',
-                        text: 'Закрутите новый фильтр от руки.',
-                        image: 'https://a1.drive-data.ru/6c0a5bu-960.jpg', caption: 'Закручиваем новый фильтр' },
-                    { step: 13, title: 'Заливка свежего масла',
-                        text: 'Залейте свежее масло (около 3.5 л).',
-                        image: 'https://a1.drive-data.ru/ec0a5bu-960.jpg', caption: 'Заливаем свежее масло' },
-                    { step: 14, title: 'Проверка уровня',
-                        text: 'Проверьте уровень щупом — чуть ниже Max.',
-                        image: 'https://a1.drive-data.ru/1c0a5bu-960.jpg', caption: 'Проверяем уровень масла' },
-                ],
-            },
-            20: {
-                title: 'Регулировка клапанов ВАЗ 2107',
-                tools: ['Ключ на 13', 'Щуп 0.15 мм', 'Отвёртка', 'Ключ для коленвала'],
-                video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-                videoTitle: 'Видео: Регулировка клапанов ВАЗ 2107',
-                warning: 'Зазор: 0.15 мм для всех клапанов (на холодном двигателе).',
-                stepsWithImages: [
-                    { step: 1, title: 'Снятие клапанной крышки',
-                        text: 'Снимите клапанную крышку. Очистите поверхность от старой прокладки.', image: null,
+                    { step: 1, title: 'Подготовка',
+                        text: 'Подготовьте масло, фильтр, инструменты и ёмкость.', image: null,
+                    caption: '' },
+                    { step: 2, title: 'Прогрев',
+                        text: 'Прогрейте двигатель 5-7 минут. Заглушите.', image: null, caption: '' },
+                    { step: 3, title: 'Слив отработки',
+                        text: 'Открутите сливную пробку. Слейте масло в ёмкость (10-15 мин).', image: null,
                         caption: '' },
-                    { step: 2, title: 'ВМТ 1-го цилиндра',
-                        text: 'Прокрутите коленвал до совпадения меток ВМТ 1-го цилиндра.', image: null,
-                    caption: '' },
-                    { step: 3, title: 'Проверка 1-й группы',
-                        text: 'Проверьте зазоры на 1,3 (выпуск) и 2,5 (впуск) клапанах.', image: null,
-                    caption: '' },
-                    { step: 4, title: 'ВМТ 4-го цилиндра',
-                        text: 'Проверните коленвал на 360°. Проверьте 4,6 (выпуск) и 7,8 (впуск) клапаны.',
+                    { step: 4, title: 'Замена фильтра',
+                        text: 'Снимите старый фильтр. Смажьте уплотнитель нового, закрутите от руки.',
                         image: null, caption: '' },
-                    { step: 5, title: 'Сборка',
-                        text: 'Установите клапанную крышку с новой прокладкой.', image: null, caption: '' },
+                    { step: 5, title: 'Заливка',
+                        text: 'Залейте новое масло. Проверьте уровень щупом.', image: null, caption: '' },
                 ],
             },
-            40: {
-                title: 'Замена сцепления на ВАЗ 2107',
-                tools: ['Яма/подъёмник', 'Набор ключей', 'Центратор диска', 'Съёмник кардана'],
+            5: {
+                title: 'Замена ремня ГРМ',
+                tools: ['Набор ключей', 'Динамометрический ключ', 'Фиксаторы'],
                 video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-                videoTitle: 'Видео: Замена сцепления ВАЗ 2107',
-                warning: 'Тяжёлая работа! Коробка весит ~30 кг. Работайте с помощником.',
+                videoTitle: 'Видео: Замена ремня ГРМ',
+                warning: 'Неправильная установка ремня ГРМ может привести к серьёзной поломке двигателя!',
                 stepsWithImages: [
-                    { step: 1, title: 'Демонтаж', text: 'Отсоедините кардан, стартер, тросик сцепления.',
+                    { step: 1, title: 'Подготовка',
+                        text: 'Снимите защитный кожух ремня ГРМ. Выставьте метки.', image: null,
+                    caption: '' },
+                    { step: 2, title: 'Снятие ремня',
+                        text: 'Ослабьте натяжитель. Снимите старый ремень.', image: null, caption: '' },
+                    { step: 3, title: 'Установка',
+                        text: 'Установите новый ремень по меткам. Натяните согласно спецификации.',
                         image: null, caption: '' },
-                    { step: 2, title: 'Снятие КПП', text: 'Открутите болты крепления КПП и снимите коробку.',
-                        image: null, caption: '' },
-                    { step: 3, title: 'Замена диска и корзины',
-                        text: 'Снимите старую корзину и диск. Центратором установите новый диск, затем корзину.',
-                        image: null, caption: '' },
-                    { step: 4, title: 'Установка КПП', text: 'Установите КПП на место. Подсоедините всё обратно.',
-                        image: null, caption: '' },
+                    { step: 4, title: 'Проверка',
+                        text: 'Прокрутите двигатель вручную на 2 оборота. Проверьте метки.', image: null,
+                        caption: '' },
                 ],
             },
         };
 
-        // Заглушка для услуг без подробной инструкции
         services.forEach(s => {
             if (!instructions[s.id]) {
                 instructions[s.id] = {
-                    title: s.name + ' (ВАЗ 2107)',
-                    tools: ['Стандартный набор ключей', 'Отвёртки', 'Ветошь'],
+                    title: s.name,
+                    tools: ['Набор инструментов', 'Специнструмент'],
                     stepsWithImages: [
-                        { step: 1, title: 'Подготовка',
-                            text: 'Подготовьте автомобиль и необходимые инструменты.', image: null,
-                            caption: '' },
-                        { step: 2, title: 'Демонтаж',
-                            text: 'Выполните демонтаж необходимых узлов для доступа.', image: null,
-                            caption: '' },
-                        { step: 3, title: 'Ремонт', text: 'Проведите требуемые работы согласно регламенту.',
-                            image: null, caption: '' },
-                        { step: 4, title: 'Сборка',
-                            text: 'Соберите всё в обратной последовательности.', image: null, caption: '' },
-                        { step: 5, title: 'Проверка',
-                            text: 'Проверьте работоспособность узла после ремонта.', image: null, caption: '' },
+                        { step: 1, title: 'Выполнение работы',
+                            text: 'Выполните необходимые операции согласно регламенту.', image: null,
+                        caption: '' },
                     ],
                     warning: 'При отсутствии опыта обратитесь в автосервис.',
                     video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-                    videoTitle: 'Видео по ремонту ВАЗ 2107',
+                    videoTitle: 'Видео по ремонту',
                 };
             }
         });
 
+        // ==================== СОСТОЯНИЕ ====================
+        let selectedCarId = 'vaz2107';
+        let selectedEngineId = 'vaz16carb';
+        let selectedGearboxId = 'manual5';
         let selectedIds = new Set();
         let currentFilter = 'all';
         let searchQuery = '';
 
-        function getPrice(s) {
-            // Для ВАЗ 2107 используем прямые цены без коэффициента
-            return s.price;
+        function getSelectedCarData() {
+            const car = carDatabase.find(c => c.carId === selectedCarId);
+            if (!car) return null;
+            const engine = car.engines.find(e => e.engineId === selectedEngineId);
+            if (!engine) return null;
+            const gearbox = engine.gearboxes.find(g => g.gearboxId === selectedGearboxId);
+            if (!gearbox) return null;
+            return { car, engine, gearbox };
+        }
+
+        function getMultiplier() {
+            const data = getSelectedCarData();
+            return data ? data.gearbox.multiplier : 1.0;
+        }
+
+        function getServicePrice(service) {
+            return Math.round(service.basePrice * getMultiplier());
         }
 
         function formatPrice(p) { return p.toLocaleString('ru-RU') + ' ₽'; }
 
+        function renderCarButtons() {
+            const container = document.getElementById('carButtons');
+            container.innerHTML = '';
+            carDatabase.forEach(car => {
+                const btn = document.createElement('button');
+                btn.className = 'sel-btn';
+                if (car.carId === selectedCarId) btn.classList.add('active');
+                btn.textContent = car.carIcon + ' ' + car.carName;
+                btn.addEventListener('click', () => {
+                    selectedCarId = car.carId;
+                    selectedEngineId = car.engines[0].engineId;
+                    selectedGearboxId = car.engines[0].gearboxes[0].gearboxId;
+                    selectedIds.clear();
+                    renderAll();
+                });
+                container.appendChild(btn);
+            });
+        }
+
+        function renderEngineButtons() {
+            const container = document.getElementById('engineButtons');
+            container.innerHTML = '';
+            const car = carDatabase.find(c => c.carId === selectedCarId);
+            if (!car) return;
+            car.engines.forEach(engine => {
+                const btn = document.createElement('button');
+                btn.className = 'sel-btn';
+                if (engine.engineId === selectedEngineId) btn.classList.add('active');
+                btn.textContent = engine.engineName + ' (' + engine.power + ')';
+                btn.addEventListener('click', () => {
+                    selectedEngineId = engine.engineId;
+                    selectedGearboxId = engine.gearboxes[0].gearboxId;
+                    selectedIds.clear();
+                    renderAll();
+                });
+                container.appendChild(btn);
+            });
+        }
+
+        function renderGearboxButtons() {
+            const container = document.getElementById('gearboxButtons');
+            container.innerHTML = '';
+            const car = carDatabase.find(c => c.carId === selectedCarId);
+            if (!car) return;
+            const engine = car.engines.find(e => e.engineId === selectedEngineId);
+            if (!engine) return;
+            engine.gearboxes.forEach(gearbox => {
+                const btn = document.createElement('button');
+                btn.className = 'sel-btn';
+                if (gearbox.gearboxId === selectedGearboxId) btn.classList.add('active');
+                btn.textContent = gearbox.gearboxName;
+                btn.addEventListener('click', () => {
+                    selectedGearboxId = gearbox.gearboxId;
+                    selectedIds.clear();
+                    renderAll();
+                });
+                container.appendChild(btn);
+            });
+        }
+
+        function updateSelectedConfig() {
+            const data = getSelectedCarData();
+            if (!data) return;
+            document.getElementById('configName').textContent = data.car.carIcon + ' ' + data.car.carName;
+            document.getElementById('configDetail').textContent =
+                data.engine.engineName + ', ' + data.gearbox.gearboxName;
+            document.getElementById('configMultiplier').textContent =
+                'Коэффициент сложности: ×' + data.gearbox.multiplier.toFixed(2);
+            document.getElementById('configBadge').textContent = data.gearbox.badge;
+            document.getElementById('totalCarLabel').textContent =
+                data.car.carName + ' ' + data.engine.engineName;
+            document.querySelector('.selected-config-icon').textContent = data.car.carIcon;
+        }
+
         function renderServices() {
             const container = document.getElementById('servicesList');
             container.innerHTML = '';
+            const multiplier = getMultiplier();
             let list = services;
             if (currentFilter !== 'all') list = list.filter(s => s.cat === currentFilter);
             if (searchQuery.trim()) {
@@ -808,17 +944,23 @@
                 title.textContent = g.catName;
                 container.appendChild(title);
                 g.items.forEach(s => {
-                    const price = getPrice(s);
+                    const price = getServicePrice(s);
                     const row = document.createElement('div');
                     row.className = 'service-row';
                     if (selectedIds.has(s.id)) row.classList.add('selected');
+                    let note = '';
+                    if (multiplier !== 1.0) {
+                        const diff = price - s.basePrice;
+                        if (diff !== 0) note =
+                            `<span class="price-note">(${diff > 0 ? '+' : ''}${diff} ₽)</span>`;
+                    }
                     row.innerHTML = `
                     <div class="service-left">
                         <div class="check-box">${selectedIds.has(s.id) ? '✓' : ''}</div>
                         <span class="service-name">${s.name}</span>
                     </div>
                     <div class="service-right">
-                        <span class="service-price">${formatPrice(price)}</span>
+                        <span class="service-price">${formatPrice(price)} ${note}</span>
                         <button class="detail-btn">📋 Подробнее</button>
                     </div>`;
                     row.querySelector('.service-left').addEventListener('click', () => {
@@ -842,51 +984,44 @@
             let total = 0;
             selectedIds.forEach(id => {
                 const s = services.find(x => x.id === id);
-                if (s) total += getPrice(s);
+                if (s) total += getServicePrice(s);
             });
             document.getElementById('totalPrice').textContent = formatPrice(total);
             document.getElementById('totalCount').textContent = selectedIds.size + ' шт.';
         }
 
+        function renderAll() {
+            renderCarButtons();
+            renderEngineButtons();
+            renderGearboxButtons();
+            updateSelectedConfig();
+            renderServices();
+        }
+
+        // Модальное окно
         function openModal(serviceId) {
             const instr = instructions[serviceId];
             document.getElementById('modalTitle').textContent = '📋 ' + instr.title;
-            let html = '';
-
-            html += '<h3>🔧 Инструменты</h3><div class="modal-tools">';
+            let html = '<h3>🔧 Инструменты</h3><div class="modal-tools">';
             instr.tools.forEach(t => html += `<span class="tool-tag">${t}</span>`);
-            html += '</div>';
-
-            html += '<h3>📝 Пошаговая инструкция</h3>';
-
-            if (instr.stepsWithImages && instr.stepsWithImages.length > 0) {
-                instr.stepsWithImages.forEach(stepData => {
+            html += '</div><h3>📝 Пошаговая инструкция</h3>';
+            if (instr.stepsWithImages) {
+                instr.stepsWithImages.forEach(sd => {
                     html += '<div class="step-block">';
                     html +=
-                        `<div class="step-header"><span class="step-number">${stepData.step}</span> ${stepData.title}</div>`;
-                    html += `<div class="step-text">${stepData.text}</div>`;
-                    if (stepData.image) {
-                        html +=
-                            `<img src="${stepData.image}" alt="${stepData.caption}" class="step-image" loading="lazy">`;
-                        if (stepData.caption) html +=
-                            `<div class="image-caption">${stepData.caption}</div>`;
-                    }
+                        `<div class="step-header"><span class="step-number">${sd.step}</span> ${sd.title}</div>`;
+                    html += `<div class="step-text">${sd.text}</div>`;
+                    if (sd.image) html +=
+                        `<img src="${sd.image}" class="step-image" loading="lazy">`;
                     html += '</div>';
                 });
             }
-
-            if (instr.warning) {
-                html += '<h3>⚠️ Предупреждение</h3>';
-                html += '<div class="modal-warning">' + instr.warning + '</div>';
-            }
-
+            if (instr.warning) html +=
+                '<h3>⚠️ Предупреждение</h3><div class="modal-warning">' + instr.warning + '</div>';
             if (instr.video) {
-                html += '<h3>🎬 Видеоинструкция</h3>';
-                html += '<p style="color:#ccc;font-size:13px;margin-bottom:8px;">' + instr.videoTitle + '</p>';
-                html += '<div class="modal-video-wrapper"><iframe src="' + instr.video +
-                    '" frameborder="0" allowfullscreen></iframe></div>';
+                html += '<h3>🎬 Видео</h3><div class="modal-video-wrapper"><iframe src="' + instr.video +
+                    '" allowfullscreen></iframe></div>';
             }
-
             document.getElementById('modalBody').innerHTML = html;
             document.getElementById('modalOverlay').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
@@ -914,8 +1049,10 @@
                 renderServices();
             });
         });
-        renderServices();
-        console.log('✅ Прайс-лист с актуальными ценами загружен!');
+
+        // Инициализация
+        renderAll();
+        console.log('✅ Каталог с выбором модификаций загружен!');
     </script>
 </body>
 </html>
