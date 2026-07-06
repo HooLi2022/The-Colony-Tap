@@ -76,7 +76,7 @@
         }
         .selector-group {
             flex: 1;
-            min-width: 180px;
+            min-width: 200px;
         }
         .selector-label {
             font-size: 10px;
@@ -102,6 +102,7 @@
             font-weight: 500;
             transition: all 0.2s ease;
             white-space: nowrap;
+            text-align: left;
         }
         .sel-btn:hover {
             background: rgba(255, 152, 0, 0.15);
@@ -115,10 +116,13 @@
             font-weight: 700;
             box-shadow: 0 0 12px rgba(255, 152, 0, 0.4);
         }
-        .sel-btn:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-            pointer-events: none;
+        .sel-btn .btn-code {
+            font-size: 9px;
+            color: #999;
+            display: block;
+        }
+        .sel-btn.active .btn-code {
+            color: rgba(0, 0, 0, 0.7);
         }
         .selected-config {
             background: rgba(255, 152, 0, 0.12);
@@ -146,6 +150,11 @@
             font-size: 11px;
             color: #ccc;
         }
+        .selected-config-code {
+            font-size: 10px;
+            color: #ff9800;
+            margin-top: 2px;
+        }
         .selected-config-badge {
             background: #ff9800;
             color: #000;
@@ -154,11 +163,6 @@
             padding: 3px 10px;
             border-radius: 12px;
             white-space: nowrap;
-        }
-        .price-multiplier {
-            font-size: 10px;
-            color: #ff9800;
-            margin-top: 3px;
         }
 
         /* Поиск и фильтры */
@@ -617,8 +621,8 @@
                 <span class="selected-config-icon">🚗</span>
                 <div class="selected-config-info">
                     <div class="selected-config-name" id="configName">ВАЗ 2107</div>
-                    <div class="selected-config-detail" id="configDetail">1.6, механика</div>
-                    <div class="price-multiplier" id="configMultiplier">Коэффициент: ×1.0</div>
+                    <div class="selected-config-detail" id="configDetail">1.6 карбюратор, МКПП-5</div>
+                    <div class="selected-config-code" id="configCode">Коэффициент: ×0.70</div>
                 </div>
                 <span class="selected-config-badge" id="configBadge">Эконом</span>
             </div>
@@ -669,7 +673,7 @@
     </div>
 
     <script>
-        // ==================== БАЗА АВТОМОБИЛЕЙ ====================
+        // ==================== БАЗА АВТОМОБИЛЕЙ (реальные коды) ====================
         const carDatabase = [
             // ВАЗ 2107
             {
@@ -678,40 +682,135 @@
                 carIcon: '🚗',
                 category: 'Эконом',
                 engines: [
-                    { engineId: 'vaz16carb', engineName: '1.6 карбюратор (2106)', power: '74 л.с.',
+                    {
+                        engineId: 'vaz16carb',
+                        engineName: '1.6 карбюратор',
+                        engineCode: '2106',
+                        power: '74 л.с.',
+                        fuel: 'Бензин',
                         gearboxes: [
-                            { gearboxId: 'manual5', gearboxName: 'МКПП-5', multiplier: 0.7, badge: 'Эконом' }
-                        ] },
-                    { engineId: 'vaz16inj', engineName: '1.6 инжектор (21067)', power: '74 л.с.',
+                            { gearboxId: 'vaz_m5', gearboxName: 'МКПП-5', gearboxCode: '2107',
+                                drive: 'Задний', multiplier: 0.70, badge: 'Эконом' },
+                        ]
+                    },
+                    {
+                        engineId: 'vaz16inj',
+                        engineName: '1.6 инжектор',
+                        engineCode: '21067',
+                        power: '74 л.с.',
+                        fuel: 'Бензин',
                         gearboxes: [
-                            { gearboxId: 'manual5', gearboxName: 'МКПП-5', multiplier: 0.75, badge: 'Эконом' }
-                        ] },
+                            { gearboxId: 'vaz_m5', gearboxName: 'МКПП-5', gearboxCode: '2107',
+                                drive: 'Задний', multiplier: 0.75, badge: 'Эконом' },
+                        ]
+                    },
                 ]
             },
-            // Volkswagen Passat B5
+            // Volkswagen Passat B5 / B5.5 (1996-2005)
             {
                 carId: 'passatb5',
-                carName: 'VW Passat B5',
+                carName: 'VW Passat B5/B5.5',
                 carIcon: '🚙',
                 category: 'Бизнес',
                 engines: [
-                    { engineId: '18t_aeb', engineName: '1.8 Turbo AEB', power: '150 л.с.',
+                    // Бензиновые
+                    {
+                        engineId: '18t_aeb',
+                        engineName: '1.8T 20V Turbo',
+                        engineCode: 'AEB / ATW / AUG / AWM',
+                        power: '150 л.с.',
+                        fuel: 'Бензин',
                         gearboxes: [
-                            { gearboxId: 'manual5', gearboxName: 'МКПП-5', multiplier: 1.2, badge: 'Средне' },
-                            { gearboxId: 'auto4', gearboxName: 'АКПП-4 (01V)', multiplier: 1.35,
-                            badge: 'Сложно' },
-                        ] },
-                    { engineId: '20_alt', engineName: '2.0 ALT', power: '130 л.с.',
+                            { gearboxId: '012', gearboxName: 'МКПП-5 (012)', gearboxCode: '012',
+                                drive: 'Передний', multiplier: 1.20, badge: 'Средне' },
+                            { gearboxId: '01v_fwd', gearboxName: 'АКПП-5 Tiptronic (01V)',
+                                gearboxCode: '01V', drive: 'Передний', multiplier: 1.40, badge: 'Сложно' },
+                        ]
+                    },
+                    {
+                        engineId: '20_alt',
+                        engineName: '2.0',
+                        engineCode: 'ALT / APK / AQY',
+                        power: '115-130 л.с.',
+                        fuel: 'Бензин',
                         gearboxes: [
-                            { gearboxId: 'manual5', gearboxName: 'МКПП-5', multiplier: 1.1, badge: 'Средне' },
-                            { gearboxId: 'auto4', gearboxName: 'АКПП-4', multiplier: 1.25, badge: 'Средне' },
-                        ] },
-                    { engineId: '28_v6', engineName: '2.8 V6', power: '193 л.с.',
+                            { gearboxId: '012', gearboxName: 'МКПП-5 (012)', gearboxCode: '012',
+                                drive: 'Передний', multiplier: 1.10, badge: 'Средне' },
+                            { gearboxId: '01v_fwd', gearboxName: 'АКПП-5 Tiptronic (01V)',
+                                gearboxCode: '01V', drive: 'Передний', multiplier: 1.30, badge: 'Средне' },
+                        ]
+                    },
+                    {
+                        engineId: '28_vr6',
+                        engineName: '2.8 VR6 5V',
+                        engineCode: 'AHA / ATQ',
+                        power: '190 л.с.',
+                        fuel: 'Бензин',
                         gearboxes: [
-                            { gearboxId: 'manual5', gearboxName: 'МКПП-5', multiplier: 1.4, badge: 'Сложно' },
-                            { gearboxId: 'auto5', gearboxName: 'АКПП-5 (TipTronic)', multiplier: 1.55,
-                                badge: 'Очень сложно' },
-                        ] },
+                            { gearboxId: '01a_quattro', gearboxName: 'МКПП-5 (01A) 4Motion',
+                                gearboxCode: '01A', drive: 'Полный', multiplier: 1.50, badge: 'Сложно' },
+                            { gearboxId: '01v_quattro', gearboxName: 'АКПП-5 Tiptronic (01V) 4Motion',
+                                gearboxCode: '01V', drive: 'Полный', multiplier: 1.65,
+                            badge: 'Очень сложно' },
+                        ]
+                    },
+                    {
+                        engineId: '40_w8',
+                        engineName: '4.0 W8 32V',
+                        engineCode: 'BDP',
+                        power: '275 л.с.',
+                        fuel: 'Бензин',
+                        gearboxes: [
+                            { gearboxId: '01e_6', gearboxName: 'МКПП-6 (01E) 4Motion',
+                            gearboxCode: '01E',
+                                drive: 'Полный', multiplier: 1.80, badge: 'Очень сложно' },
+                            { gearboxId: '01v_w8', gearboxName: 'АКПП-5 Tiptronic (01V) 4Motion',
+                                gearboxCode: '01V', drive: 'Полный', multiplier: 1.90,
+                            badge: 'Макс. сложность' },
+                        ]
+                    },
+                    // Дизельные
+                    {
+                        engineId: '19tdi_110',
+                        engineName: '1.9 TDI',
+                        engineCode: 'AFN',
+                        power: '110 л.с.',
+                        fuel: 'Дизель',
+                        gearboxes: [
+                            { gearboxId: '012', gearboxName: 'МКПП-5 (012)', gearboxCode: '012',
+                                drive: 'Передний', multiplier: 1.15, badge: 'Средне' },
+                            { gearboxId: '01v_fwd', gearboxName: 'АКПП-5 Tiptronic (01V)',
+                                gearboxCode: '01V', drive: 'Передний', multiplier: 1.35, badge: 'Сложно' },
+                        ]
+                    },
+                    {
+                        engineId: '19tdi_130',
+                        engineName: '1.9 TDI PD',
+                        engineCode: 'AVF / AWX',
+                        power: '130 л.с.',
+                        fuel: 'Дизель',
+                        gearboxes: [
+                            { gearboxId: '012', gearboxName: 'МКПП-5 (012)', gearboxCode: '012',
+                                drive: 'Передний', multiplier: 1.20, badge: 'Средне' },
+                            { gearboxId: '01v_fwd', gearboxName: 'АКПП-5 Tiptronic (01V)',
+                                gearboxCode: '01V', drive: 'Передний', multiplier: 1.40, badge: 'Сложно' },
+                            { gearboxId: '01a_quattro', gearboxName: 'МКПП-5 (01A) 4Motion',
+                                gearboxCode: '01A', drive: 'Полный', multiplier: 1.50, badge: 'Сложно' },
+                        ]
+                    },
+                    {
+                        engineId: '20tdi_bhw',
+                        engineName: '2.0 TDI PD',
+                        engineCode: 'BHW',
+                        power: '136 л.с.',
+                        fuel: 'Дизель',
+                        gearboxes: [
+                            { gearboxId: '012', gearboxName: 'МКПП-5 (012)', gearboxCode: '012',
+                                drive: 'Передний', multiplier: 1.25, badge: 'Средне' },
+                            { gearboxId: '01v_fwd', gearboxName: 'АКПП-5 Tiptronic (01V)',
+                                gearboxCode: '01V', drive: 'Передний', multiplier: 1.45, badge: 'Сложно' },
+                        ]
+                    },
                 ]
             },
         ];
@@ -724,7 +823,7 @@
             { id: 3, name: 'Замена топливного фильтра', basePrice: 500, cat: 'maintenance', catName: '🛠️ ТО' },
             { id: 4, name: 'Замена свечей зажигания (4 шт)', basePrice: 600, cat: 'maintenance', catName: '🛠️ ТО' },
             { id: 5, name: 'Замена ремня ГРМ', basePrice: 3500, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
-            { id: 6, name: 'Замена цепи ГРМ', basePrice: 6000, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
+            { id: 6, name: 'Замена цепи ГРМ', basePrice: 7000, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
             { id: 7, name: 'Замена прокладки ГБЦ', basePrice: 8000, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
             { id: 8, name: 'Замена турбины', basePrice: 12000, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
             { id: 9, name: 'Регулировка клапанов', basePrice: 2000, cat: 'engine', catName: '⚡ ДВИГАТЕЛЬ' },
@@ -741,19 +840,18 @@
             { id: 18, name: 'Замена передних колодок', basePrice: 1200, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
             { id: 19, name: 'Замена задних колодок', basePrice: 1400, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
             { id: 20, name: 'Замена передних дисков', basePrice: 1800, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
-            { id: 21, name: 'Замена задних барабанов', basePrice: 1600, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
-            { id: 22, name: 'Прокачка тормозов', basePrice: 1200, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
-            { id: 23, name: 'Замена амортизаторов перед (2 шт)', basePrice: 3000, cat: 'suspension',
+            { id: 21, name: 'Прокачка тормозов', basePrice: 1200, cat: 'brakes', catName: '🛑 ТОРМОЗА' },
+            { id: 22, name: 'Замена амортизаторов перед (2 шт)', basePrice: 3000, cat: 'suspension',
                 catName: '🔧 ПОДВЕСКА' },
-            { id: 24, name: 'Замена амортизаторов зад (2 шт)', basePrice: 2500, cat: 'suspension',
+            { id: 23, name: 'Замена амортизаторов зад (2 шт)', basePrice: 2500, cat: 'suspension',
                 catName: '🔧 ПОДВЕСКА' },
-            { id: 25, name: 'Замена шаровых опор (2 шт)', basePrice: 2000, cat: 'suspension',
+            { id: 24, name: 'Замена шаровых опор (2 шт)', basePrice: 2000, cat: 'suspension',
             catName: '🔧 ПОДВЕСКА' },
-            { id: 26, name: 'Замена рулевых наконечников (2 шт)', basePrice: 1600, cat: 'suspension',
+            { id: 25, name: 'Замена рулевых наконечников (2 шт)', basePrice: 1600, cat: 'suspension',
                 catName: '🔧 ПОДВЕСКА' },
-            { id: 27, name: 'Регулировка развал-схождения', basePrice: 2000, cat: 'suspension',
+            { id: 26, name: 'Регулировка развал-схождения', basePrice: 2000, cat: 'suspension',
                 catName: '🔧 ПОДВЕСКА' },
-            { id: 28, name: 'Сварочные работы (кузов, час)', basePrice: 3000, cat: 'welding', catName: '🔥 СВАРКА' },
+            { id: 27, name: 'Сварочные работы (кузов, час)', basePrice: 3000, cat: 'welding', catName: '🔥 СВАРКА' },
         ];
 
         // Инструкции
@@ -766,38 +864,58 @@
                 warning: 'Не перетягивайте фильтр! Используйте качественное масло.',
                 stepsWithImages: [
                     { step: 1, title: 'Подготовка',
-                        text: 'Подготовьте масло, фильтр, инструменты и ёмкость.', image: null,
-                    caption: '' },
-                    { step: 2, title: 'Прогрев',
+                        text: 'Подготовьте масло, фильтр, инструменты и ёмкость для отработки.', image: null,
+                        caption: '' },
+                    { step: 2, title: 'Прогрев двигателя',
                         text: 'Прогрейте двигатель 5-7 минут. Заглушите.', image: null, caption: '' },
-                    { step: 3, title: 'Слив отработки',
+                    { step: 3, title: 'Слив отработанного масла',
                         text: 'Открутите сливную пробку. Слейте масло в ёмкость (10-15 мин).', image: null,
                         caption: '' },
                     { step: 4, title: 'Замена фильтра',
-                        text: 'Снимите старый фильтр. Смажьте уплотнитель нового, закрутите от руки.',
+                        text: 'Снимите старый фильтр. Смажьте уплотнитель нового маслом, закрутите от руки.',
                         image: null, caption: '' },
-                    { step: 5, title: 'Заливка',
+                    { step: 5, title: 'Заливка свежего масла',
                         text: 'Залейте новое масло. Проверьте уровень щупом.', image: null, caption: '' },
                 ],
             },
             5: {
                 title: 'Замена ремня ГРМ',
-                tools: ['Набор ключей', 'Динамометрический ключ', 'Фиксаторы'],
+                tools: ['Набор ключей', 'Динамометрический ключ', 'Фиксаторы распредвалов'],
                 video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
                 videoTitle: 'Видео: Замена ремня ГРМ',
                 warning: 'Неправильная установка ремня ГРМ может привести к серьёзной поломке двигателя!',
                 stepsWithImages: [
                     { step: 1, title: 'Подготовка',
-                        text: 'Снимите защитный кожух ремня ГРМ. Выставьте метки.', image: null,
-                    caption: '' },
-                    { step: 2, title: 'Снятие ремня',
-                        text: 'Ослабьте натяжитель. Снимите старый ремень.', image: null, caption: '' },
-                    { step: 3, title: 'Установка',
+                        text: 'Снимите защитный кожух. Выставьте метки ГРМ.', image: null, caption: '' },
+                    { step: 2, title: 'Снятие старого ремня',
+                        text: 'Ослабьте натяжитель. Снимите ремень.', image: null, caption: '' },
+                    { step: 3, title: 'Установка нового ремня',
                         text: 'Установите новый ремень по меткам. Натяните согласно спецификации.',
                         image: null, caption: '' },
                     { step: 4, title: 'Проверка',
                         text: 'Прокрутите двигатель вручную на 2 оборота. Проверьте метки.', image: null,
                         caption: '' },
+                ],
+            },
+            8: {
+                title: 'Замена турбины',
+                tools: ['Набор ключей', 'Головки', 'Прокладки', 'Масло', 'Антифриз'],
+                video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                videoTitle: 'Видео: Замена турбины',
+                warning: 'После замены турбины обязательно замените масло и фильтр! Прокачайте турбину маслом перед запуском.',
+                stepsWithImages: [
+                    { step: 1, title: 'Демонтаж',
+                        text: 'Снимите воздушный патрубок, впускной коллектор, выпускной коллектор.',
+                        image: null, caption: '' },
+                    { step: 2, title: 'Снятие турбины',
+                        text: 'Открутите болты крепления. Отсоедините масляные и охлаждающие трубки.',
+                        image: null, caption: '' },
+                    { step: 3, title: 'Установка новой турбины',
+                        text: 'Залейте масло в новую турбину. Установите с новыми прокладками.',
+                        image: null, caption: '' },
+                    { step: 4, title: 'Сборка и проверка',
+                        text: 'Соберите всё в обратном порядке. Запустите двигатель, проверьте на утечки.',
+                        image: null, caption: '' },
                 ],
             },
         };
@@ -822,7 +940,7 @@
         // ==================== СОСТОЯНИЕ ====================
         let selectedCarId = 'vaz2107';
         let selectedEngineId = 'vaz16carb';
-        let selectedGearboxId = 'manual5';
+        let selectedGearboxId = 'vaz_m5';
         let selectedIds = new Set();
         let currentFilter = 'all';
         let searchQuery = '';
@@ -855,7 +973,7 @@
                 const btn = document.createElement('button');
                 btn.className = 'sel-btn';
                 if (car.carId === selectedCarId) btn.classList.add('active');
-                btn.textContent = car.carIcon + ' ' + car.carName;
+                btn.innerHTML = `${car.carIcon} ${car.carName}<span class="btn-code">${car.category}</span>`;
                 btn.addEventListener('click', () => {
                     selectedCarId = car.carId;
                     selectedEngineId = car.engines[0].engineId;
@@ -876,7 +994,8 @@
                 const btn = document.createElement('button');
                 btn.className = 'sel-btn';
                 if (engine.engineId === selectedEngineId) btn.classList.add('active');
-                btn.textContent = engine.engineName + ' (' + engine.power + ')';
+                btn.innerHTML =
+                    `${engine.engineName} (${engine.power})<span class="btn-code">Код: ${engine.engineCode}</span>`;
                 btn.addEventListener('click', () => {
                     selectedEngineId = engine.engineId;
                     selectedGearboxId = engine.gearboxes[0].gearboxId;
@@ -898,7 +1017,8 @@
                 const btn = document.createElement('button');
                 btn.className = 'sel-btn';
                 if (gearbox.gearboxId === selectedGearboxId) btn.classList.add('active');
-                btn.textContent = gearbox.gearboxName;
+                btn.innerHTML =
+                    `${gearbox.gearboxName}<span class="btn-code">${gearbox.drive} привод • Код: ${gearbox.gearboxCode}</span>`;
                 btn.addEventListener('click', () => {
                     selectedGearboxId = gearbox.gearboxId;
                     selectedIds.clear();
@@ -913,12 +1033,13 @@
             if (!data) return;
             document.getElementById('configName').textContent = data.car.carIcon + ' ' + data.car.carName;
             document.getElementById('configDetail').textContent =
-                data.engine.engineName + ', ' + data.gearbox.gearboxName;
-            document.getElementById('configMultiplier').textContent =
-                'Коэффициент сложности: ×' + data.gearbox.multiplier.toFixed(2);
+                data.engine.engineName + ' (' + data.engine.power + ') • ' + data.gearbox.gearboxName;
+            document.getElementById('configCode').textContent =
+                'Код двигателя: ' + data.engine.engineCode + ' | КПП: ' + data.gearbox.gearboxCode +
+                ' | Коэфф: ×' + data.gearbox.multiplier.toFixed(2);
             document.getElementById('configBadge').textContent = data.gearbox.badge;
             document.getElementById('totalCarLabel').textContent =
-                data.car.carName + ' ' + data.engine.engineName;
+                data.car.carName + ' ' + data.engine.engineName + ' (' + data.gearbox.gearboxCode + ')';
             document.querySelector('.selected-config-icon').textContent = data.car.carIcon;
         }
 
@@ -1052,7 +1173,7 @@
 
         // Инициализация
         renderAll();
-        console.log('✅ Каталог с выбором модификаций загружен!');
+        console.log('✅ Каталог с реальными кодами двигателей и КПП загружен!');
     </script>
 </body>
 </html>
