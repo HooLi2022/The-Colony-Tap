@@ -15,7 +15,6 @@
         .status-bar { text-align: center; padding: 8px; margin-bottom: 15px; border-radius: 8px; font-size: 11px; font-weight: 600; }
         .status-bar.online { background: rgba(76,175,80,0.2); color: #4caf50; }
         .status-bar.offline { background: rgba(244,67,54,0.2); color: #f44336; }
-        .status-bar.connecting { background: rgba(255,152,0,0.2); color: #ff9800; }
         .smart-search { background: rgba(0,0,0,0.4); border-radius: 16px; padding: 20px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.1); }
         .smart-search input { width: 100%; padding: 14px 20px; border-radius: 30px; border: 2px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: #fff; font-size: 15px; outline: none; }
         .smart-search input:focus { border-color: #ff9800; }
@@ -74,7 +73,6 @@
         .modal-close:hover { background:#000; color:#ff9800; }
         .modal-body { padding:20px; }
         .modal-body h3 { font-size:15px; color:#ff9800; margin:20px 0 10px 0; text-transform:uppercase; }
-        .modal-body h3:first-child { margin-top:0; }
         .modal-tools { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0; }
         .tool-tag { background:rgba(255,255,255,0.08); padding:5px 10px; border-radius:15px; font-size:11px; color:#ddd; }
         .modal-warning { background:rgba(255,152,0,0.12); border-left:4px solid #ff9800; padding:12px 14px; border-radius:0 8px 8px 0; margin:10px 0; font-size:13px; color:#ffa726; }
@@ -92,9 +90,7 @@
         .admin-link a:hover { color:#ff9800; }
         .btn { padding:10px 18px; border-radius:25px; border:none; cursor:pointer; font-size:12px; font-weight:700; }
         .btn-primary { background:#ff9800; color:#000; }
-        .btn-primary:hover { background:#ffb74d; }
         .btn-danger { background:#e53935; color:#fff; }
-        .btn-danger:hover { background:#ef5350; }
         .btn-outline { background:transparent; border:2px solid #ff9800; color:#ff9800; }
         .btn-outline:hover { background:#ff9800; color:#000; }
         .btn-sm { padding:5px 10px; font-size:10px; border-radius:15px; }
@@ -108,7 +104,6 @@
         .form-group { margin-bottom:10px; }
         .form-group label { display:block; font-size:10px; font-weight:700; color:#999; text-transform:uppercase; margin-bottom:4px; }
         .form-group input,.form-group textarea,.form-group select { width:100%; padding:8px 12px; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background:rgba(0,0,0,0.3); color:#fff; font-size:12px; outline:none; font-family:inherit; }
-        .form-group input:focus,.form-group textarea:focus,.form-group select:focus { border-color:#ff9800; }
         .form-group textarea { min-height:60px; resize:vertical; }
         .form-row { display:flex; gap:10px; flex-wrap:wrap; }
         .form-row .form-group { flex:1; min-width:160px; }
@@ -118,7 +113,6 @@
         .empty-state { text-align:center; padding:30px; color:#666; }
         .tabs-admin { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
         .tab-admin { padding:10px 18px; border-radius:25px; border:2px solid rgba(255,255,255,0.2); background:transparent; color:#ccc; cursor:pointer; font-size:12px; font-weight:600; }
-        .tab-admin:hover { border-color:#ff9800; color:#fff; }
         .tab-admin.active { background:#ff9800; color:#000; border-color:#ff9800; }
         .tab-content-admin { display:none; }
         .tab-content-admin.active { display:block; }
@@ -128,15 +122,11 @@
 <body>
     <div class="container" id="appContainer">
         <div class="header"><div class="logo">AUTO<span>SERVICE</span></div><div class="subtitle">Загрузка...</div></div>
-        <div class="status-bar connecting" id="statusBar">⏳ Подключение к Firebase...</div>
         <div class="empty-state" style="padding:60px;">🔄 Загрузка данных...</div>
     </div>
 
     <div class="modal-overlay hidden" id="modalOverlay">
-        <div class="modal">
-            <div class="modal-header"><span class="modal-title" id="modalTitle"></span><button class="modal-close" id="modalClose">✕</button></div>
-            <div class="modal-body" id="modalBody"></div>
-        </div>
+        <div class="modal"><div class="modal-header"><span class="modal-title" id="modalTitle"></span><button class="modal-close" id="modalClose">✕</button></div><div class="modal-body" id="modalBody"></div></div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -146,7 +136,7 @@
         firebase.initializeApp({ databaseURL: 'https://the-colony-tap-default-rtdb.firebaseio.com/' });
         const db = firebase.database();
         const ADMIN_PASS = 'admin123';
-        const KEY_AUTH = 'as_auth_v3';
+        const KEY_AUTH = 'as_auth_v4';
 
         let isAdmin = localStorage.getItem(KEY_AUTH) === '1';
         let cars = [];
@@ -163,187 +153,166 @@
 
         function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
         function fmt(p) { return p.toLocaleString('ru-RU') + ' ₽'; }
-
-        function getSel() {
-            var c = cars.find(function(x) { return x.id === selCar; });
-            if (!c) return null;
-            var e = c.engines.find(function(x) { return x.id === selEng; });
-            if (!e) return null;
-            var g = e.gearboxes.find(function(x) { return x.id === selGb; });
-            return g ? { car: c, engine: e, gearbox: g } : null;
-        }
+        function getSel() { var c = cars.find(function(x) { return x.id === selCar; }); if (!c) return null; var e = c.engines.find(function(x) { return x.id === selEng; }); if (!e) return null; var g = e.gearboxes.find(function(x) { return x.id === selGb; }); return g ? { car: c, engine: e, gearbox: g } : null; }
         function mult() { var d = getSel(); return d ? d.gearbox.mult : 1; }
         function prc(s) { return Math.round(s.price * mult()); }
 
-        function updateStatus(state) {
-            var bar = document.getElementById('statusBar');
-            if (!bar) return;
-            bar.className = 'status-bar ' + state;
-            if (state === 'online') bar.innerHTML = '🟢 Онлайн • Firebase • ' + cars.length + ' авто / ' + services.length + ' услуг';
-            else if (state === 'offline') bar.innerHTML = '🔴 Офлайн • Локальные данные';
-            else bar.textContent = '🟡 Подключение...';
+        function getDefaultCars() { return [{ id: 'vaz2107', name: 'ВАЗ 2107', icon: '🚗', cat: 'Эконом', engines: [{ id: 'vaz16carb', name: '1.6 карбюратор', code: '2106', power: '74 л.с.', fuel: 'Бензин', gearboxes: [{ id: 'vaz_m5', name: 'МКПП-5', code: '2107', drive: 'Задний', mult: 0.7, badge: 'Эконом' }] }, { id: 'vaz16inj', name: '1.6 инжектор', code: '21067', power: '74 л.с.', fuel: 'Бензин', gearboxes: [{ id: 'vaz_m5', name: 'МКПП-5', code: '2107', drive: 'Задний', mult: 0.75, badge: 'Эконом' }] }] }, { id: 'passatb5', name: 'VW Passat B5', icon: '🚙', cat: 'Бизнес', engines: [{ id: '18t_aeb', name: '1.8T Turbo', code: 'AEB', power: '150 л.с.', fuel: 'Бензин', gearboxes: [{ id: '012', name: 'МКПП-5 (012)', code: '012', drive: 'Передний', mult: 1.2, badge: 'Средне' }, { id: '01v', name: 'АКПП-5 (01V)', code: '01V', drive: 'Передний', mult: 1.4, badge: 'Сложно' }] }, { id: '19tdi', name: '1.9 TDI', code: 'AFN', power: '110 л.с.', fuel: 'Дизель', gearboxes: [{ id: '012', name: 'МКПП-5 (012)', code: '012', drive: 'Передний', mult: 1.15, badge: 'Средне' }, { id: '01v', name: 'АКПП-5 (01V)', code: '01V', drive: 'Передний', mult: 1.35, badge: 'Сложно' }] }] }]; }
+
+        function getDefaultServices() {
+            return [
+                { id:1, name:'Диагностика двигателя (компьютерная)', price:1500, cat:'diagnostics', tools:'Сканер OBD2, Ноутбук', specs:'Время|30-60 мин\nРекомендация|При горящем Check Engine', steps:'Подключите сканер к разъёму OBD2.\nСчитайте коды ошибок.\nПроверьте параметры в реальном времени.\nСбросьте ошибки после устранения.', warning:'Не стирайте ошибки до выяснения причины!', image:'' },
+                { id:2, name:'Диагностика ходовой части', price:800, cat:'diagnostics', tools:'Подъёмник, Люфтомер', specs:'Время|20-30 мин', steps:'Поднимите авто на подъёмнике.\nПроверьте люфты в шаровых опорах.\nПроверьте рулевые наконечники.\nОсмотрите сайлентблоки.', warning:'', image:'' },
+                { id:3, name:'Диагностика тормозной системы', price:600, cat:'diagnostics', tools:'Тестер тормозной жидкости, Штангенциркуль', specs:'Время|15-20 мин', steps:'Проверьте толщину колодок.\nИзмерьте биение дисков.\nПроверьте уровень жидкости.\nПроверьте герметичность.', warning:'', image:'' },
+                { id:10, name:'Замена масла и масляного фильтра', price:1000, cat:'maintenance', tools:'Ключ для пробки, Съёмник фильтра, Ёмкость 5л', specs:'Интервал|Каждые 10 000 км\nОбъём (легковые)|3.5-5.0 л\nОбъём (внедорожники)|5.0-8.0 л', steps:'Прогрейте двигатель 5-7 минут.\nОткрутите сливную пробку.\nСлейте масло (10-15 мин).\nЗамените масляный фильтр.\nЗалейте новое масло.\nПроверьте уровень щупом.', warning:'Не перетягивайте фильтр! Используйте масло рекомендованной вязкости.', image:'' },
+                { id:11, name:'Замена воздушного фильтра', price:400, cat:'maintenance', tools:'Отвёртка', specs:'Интервал|Каждые 15 000 км', steps:'Откройте корпус воздушного фильтра.\nИзвлеките старый фильтр.\nУстановите новый.\nЗакройте корпус.', warning:'', image:'' },
+                { id:12, name:'Замена салонного фильтра', price:500, cat:'maintenance', tools:'Отвёртка Torx', specs:'Интервал|Каждые 15 000 км', steps:'Найдите отсек фильтра (под бардачком).\nСнимите крышку.\nИзвлеките старый фильтр.\nУстановите новый (стрелка по потоку).', warning:'В пыльных условиях меняйте чаще.', image:'' },
+                { id:13, name:'Замена топливного фильтра', price:600, cat:'maintenance', tools:'Ключи, Ёмкость', specs:'Интервал|Каждые 30 000 км\nДизель|Каждые 15 000 км', steps:'Сбросьте давление в топливной системе.\nОтсоедините шланги.\nСнимите старый фильтр.\nУстановите новый (стрелка по потоку).\nЗапустите двигатель, проверьте герметичность.', warning:'Осторожно — топливо под давлением!', image:'' },
+                { id:14, name:'Замена свечей зажигания (4 шт)', price:800, cat:'maintenance', tools:'Свечной ключ, Динамометрический ключ', specs:'Интервал|Каждые 30 000 км\nИридиевые|Каждые 60 000 км\nМомент затяжки|25-30 Нм', steps:'Дайте двигателю остыть.\nСнимите катушки зажигания.\nВыкрутите старые свечи.\nПроверьте зазор новых свечей.\nВкрутите новые свечи.\nЗатяните динамометрическим ключом.', warning:'Не перетяните — можно повредить резьбу в ГБЦ!', image:'' },
+                { id:15, name:'Замена охлаждающей жидкости', price:1200, cat:'maintenance', tools:'Ёмкость, Воронка', specs:'Интервал|Каждые 2 года', steps:'Дайте двигателю остыть.\nОткройте крышку расширительного бачка.\nСлейте старую жидкость.\nПромойте систему.\nЗалейте новую жидкость.\nУдалите воздушные пробки.', warning:'Не открывайте крышку на горячем двигателе!', image:'' },
+                { id:16, name:'Замена тормозной жидкости', price:1000, cat:'maintenance', tools:'Ключ для штуцеров, Шланг, DOT-4', specs:'Интервал|Каждые 2 года\nТип|DOT-4\nПорядок прокачки|ПЗ→ЛЗ→ПП→ЛП', steps:'Откачайте старую жидкость из бачка.\nЗалейте свежую.\nПрокачайте каждое колесо.\nСледите за уровнем в бачке.', warning:'Не допускайте осушения бачка — попадёт воздух!', image:'' },
+                { id:17, name:'Замена ремня генератора', price:700, cat:'maintenance', tools:'Ключ для натяжителя', specs:'Интервал|Каждые 60 000 км', steps:'Ослабьте натяжитель.\nСнимите старый ремень.\nУстановите новый по схеме.\nНатяните ремень.', warning:'Проверьте состояние шкивов.', image:'' },
+                { id:20, name:'Замена ремня ГРМ + ролики', price:5000, cat:'engine', tools:'Набор ключей, Фиксаторы, Динамометрический ключ', specs:'Интервал|Каждые 60 000-90 000 км\nКритичность|ОЧЕНЬ ВАЖНО!', steps:'Снимите защитный кожух.\nВыставьте метки ГРМ.\nОслабьте натяжитель.\nСнимите старый ремень.\nУстановите новый ремень и ролики.\nПроверьте метки.\nПрокрутите двигатель вручную.', warning:'Обрыв ремня ГРМ = капитальный ремонт двигателя!', image:'' },
+                { id:21, name:'Замена цепи ГРМ', price:12000, cat:'engine', tools:'Специнструмент, Набор ключей', specs:'Интервал|Каждые 150 000 км', steps:'Снимите крышку ГРМ.\nВыставьте метки.\nСнимите старую цепь.\nУстановите новую цепь и натяжитель.\nПроверьте фазы ГРМ.', warning:'Сложная операция. Требует опыта.', image:'' },
+                { id:22, name:'Замена прокладки ГБЦ', price:10000, cat:'engine', tools:'Динамометрический ключ, Прокладка ГБЦ', specs:'Время|6-12 часов', steps:'Слейте жидкости.\nСнимите ГБЦ.\nОчистите поверхности.\nУстановите новую прокладку.\nЗатяните болты по схеме.\nСоберите всё обратно.', warning:'Строго соблюдайте момент и порядок затяжки болтов!', image:'' },
+                { id:23, name:'Замена турбины', price:8000, cat:'engine', tools:'Набор ключей, Прокладки', specs:'Время|4-8 часов', steps:'Снимите старую турбину.\nОчистите магистрали.\nУстановите новую турбину.\nЗалейте масло в турбину.\nЗапустите двигатель.', warning:'После замены обязательно замените масло!', image:'' },
+                { id:24, name:'Регулировка клапанов', price:2500, cat:'engine', tools:'Щуп, Ключи, Отвёртка', specs:'Интервал|Каждые 30 000 км (для регулируемых)', steps:'Снимите клапанную крышку.\nВыставьте ВМТ.\nПроверьте зазоры щупом.\nОтрегулируйте при необходимости.\nУстановите крышку с новой прокладкой.', warning:'Зазоры разные для впускных и выпускных клапанов!', image:'' },
+                { id:25, name:'Замена помпы (водяного насоса)', price:3000, cat:'engine', tools:'Ключи, Прокладка, Антифриз', specs:'Рекомендация|Менять вместе с ГРМ', steps:'Слейте антифриз.\nСнимите ремень ГРМ.\nОткрутите старую помпу.\nУстановите новую с прокладкой.\nЗалейте антифриз.', warning:'', image:'' },
+                { id:26, name:'Замена радиатора охлаждения', price:2500, cat:'engine', tools:'Ключи, Ёмкость для антифриза', specs:'Время|2-3 часа', steps:'Слейте антифриз.\nОтсоедините патрубки.\nСнимите старый радиатор.\nУстановите новый.\nЗалейте антифриз.', warning:'', image:'' },
+                { id:27, name:'Чистка форсунок (ультразвук)', price:1500, cat:'engine', tools:'Ультразвуковая ванна, Стенд', specs:'Рекомендация|Каждые 60 000 км', steps:'Снимите форсунки.\nПоместите в ультразвуковую ванну.\nПроверьте распыл на стенде.\nУстановите форсунки с новыми уплотнениями.', warning:'', image:'' },
+                { id:28, name:'Замена маслосъёмных колпачков', price:5000, cat:'engine', tools:'Рассухариватель, Специнструмент', specs:'Признак|Синий дым при запуске', steps:'Снимите клапанную крышку.\nСнимите распредвалы.\nЗамените колпачки.\nСоберите всё обратно.', warning:'', image:'' },
+                { id:30, name:'Замена приёмной трубы', price:2500, cat:'exhaust', tools:'Головки, Болгарка (если прикипело)', specs:'Время|1-2 часа', steps:'Открутите крепления.\nСнимите старую трубу.\nУстановите новую с прокладками.', warning:'Болты часто прикипают — используйте WD-40.', image:'' },
+                { id:31, name:'Замена глушителя', price:1500, cat:'exhaust', tools:'Головки, Резиновые подвесы', specs:'Время|30-60 мин', steps:'Открутите хомуты.\nСнимите старый глушитель.\nУстановите новый на резиновые подвесы.\nЗатяните хомуты.', warning:'', image:'' },
+                { id:32, name:'Замена гофры', price:2500, cat:'exhaust', tools:'Болгарка, Сварка', specs:'Время|1-2 часа', steps:'Вырежьте старую гофру.\nПодгоните новую.\nПриварите.\nПроверьте герметичность.', warning:'', image:'' },
+                { id:33, name:'Замена прокладки выпускного коллектора', price:2000, cat:'exhaust', tools:'Головки, Прокладка', specs:'Время|1-2 часа', steps:'Открутите коллектор.\nОчистите поверхность.\nУстановите новую прокладку.\nЗатяните болты.', warning:'', image:'' },
+                { id:40, name:'Замена сцепления (комплект)', price:8000, cat:'transmission', tools:'Трансмиссионная стойка, Центратор диска', specs:'Время|4-8 часов', steps:'Снимите КПП.\nСнимите корзину и диск.\nУстановите новый диск центратором.\nУстановите корзину.\nУстановите КПП.', warning:'Тяжёлая работа. Требует опыта и оборудования.', image:'' },
+                { id:41, name:'Замена масла в МКПП', price:800, cat:'transmission', tools:'Шестигранник, Шприц', specs:'Интервал|Каждые 60 000 км\nОбъём|2.0-3.0 л', steps:'Открутите сливную пробку.\nСлейте масло.\nЗалейте новое масло до уровня.', warning:'Используйте рекомендованное масло!', image:'' },
+                { id:42, name:'Замена масла в АКПП (частичная)', price:2500, cat:'transmission', tools:'Шестигранник, Шприц, Фильтр', specs:'Интервал|Каждые 60 000 км\nОбъём|3.0-5.0 л', steps:'Снимите поддон.\nЗамените фильтр.\nУстановите поддон.\nЗалейте масло.', warning:'Используйте только оригинальное масло!', image:'' },
+                { id:43, name:'Замена масла в редукторе', price:700, cat:'transmission', tools:'Шестигранник, Шприц', specs:'Интервал|Каждые 60 000 км', steps:'Открутите пробки.\nСлейте масло.\nЗалейте новое.', warning:'', image:'' },
+                { id:44, name:'Замена ШРУСа (гранаты)', price:2500, cat:'transmission', tools:'Съёмник, Стопорные кольца', specs:'Время|1-2 часа', steps:'Снимите колесо.\nОткрутите ступичную гайку.\nИзвлеките ШРУС.\nУстановите новый.\nСоберите всё обратно.', warning:'', image:'' },
+                { id:45, name:'Замена пыльника ШРУСа', price:1500, cat:'transmission', tools:'Съёмник, Хомуты', specs:'Время|1 час', steps:'Снимите ШРУС.\nСнимите старый пыльник.\nНабейте смазку.\nУстановите новый пыльник.\nЗакрепите хомутами.', warning:'', image:'' },
+                { id:50, name:'Замена передних тормозных колодок', price:1200, cat:'brakes', tools:'Домкрат, Ключ 13-15, Струбцина', specs:'Интервал|По износу (мин. 2 мм)', steps:'Снимите колесо.\nОткрутите суппорт.\nИзвлеките старые колодки.\nУтопите поршень.\nУстановите новые колодки.\nПрокачайте педаль.', warning:'Обязательно прокачайте педаль перед поездкой!', image:'' },
+                { id:51, name:'Замена задних тормозных колодок', price:1400, cat:'brakes', tools:'Домкрат, Ключи, Специнструмент', specs:'Интервал|По износу', steps:'Снимите колесо.\nСнимите суппорт.\nЗамените колодки.\nДля ручника — вкрутите поршень.', warning:'Задний поршень часто вкручивается, а не вдавливается!', image:'' },
+                { id:52, name:'Замена передних тормозных дисков', price:2000, cat:'brakes', tools:'Домкрат, Головки, Очиститель', specs:'Интервал|По износу / биению', steps:'Снимите суппорт.\nСнимите старый диск.\nОчистите ступицу.\nУстановите новый диск.\nУстановите суппорт.', warning:'Удалите консервационную смазку с новых дисков!', image:'' },
+                { id:53, name:'Замена задних тормозных барабанов', price:1800, cat:'brakes', tools:'Домкрат, Ключи', specs:'Интервал|По износу', steps:'Снимите колесо.\nСнимите барабан.\nУстановите новый.\nОтрегулируйте зазор.', warning:'', image:'' },
+                { id:54, name:'Замена тормозных шлангов', price:1500, cat:'brakes', tools:'Ключи, Тормозная жидкость', specs:'Интервал|При повреждении', steps:'Отсоедините старый шланг.\nУстановите новый.\nПрокачайте тормоза.', warning:'', image:'' },
+                { id:55, name:'Замена главного тормозного цилиндра', price:2500, cat:'brakes', tools:'Ключи, Тормозная жидкость', specs:'Время|2-3 часа', steps:'Снимите старый ГТЦ.\nУстановите новый.\nПрокачайте тормоза.', warning:'', image:'' },
+                { id:60, name:'Замена амортизаторов передних (2 шт)', price:3500, cat:'suspension', tools:'Домкрат, Съёмник пружин, Ключи', specs:'Интервал|Каждые 80 000 км', steps:'Снимите колесо.\nОткрутите стойку.\nСнимите пружину съёмником.\nЗамените амортизатор.\nУстановите стойку.', warning:'Меняйте парой!', image:'' },
+                { id:61, name:'Замена амортизаторов задних (2 шт)', price:2800, cat:'suspension', tools:'Домкрат, Ключи', specs:'Интервал|Каждые 80 000 км', steps:'Снимите колесо.\nОткрутите амортизатор.\nУстановите новый.', warning:'Меняйте парой!', image:'' },
+                { id:62, name:'Замена шаровых опор (2 шт)', price:2200, cat:'suspension', tools:'Съёмник, Домкрат, Ключи', specs:'Интервал|По люфту', steps:'Снимите колесо.\nОткрутите шаровую.\nВыпрессуйте старую.\nЗапрессуйте новую.\nЗатяните.', warning:'', image:'' },
+                { id:63, name:'Замена рулевых наконечников (2 шт)', price:1800, cat:'suspension', tools:'Съёмник, Ключи', specs:'Интервал|По люфту', steps:'Открутите наконечник.\nУстановите новый.\nОтрегулируйте схождение.', warning:'После замены обязателен сход-развал!', image:'' },
+                { id:64, name:'Замена сайлентблоков передних рычагов (4 шт)', price:4000, cat:'suspension', tools:'Пресс, Съёмник', specs:'Интервал|По износу', steps:'Снимите рычаги.\nВыпрессуйте старые сайлентблоки.\nЗапрессуйте новые.\nУстановите рычаги.', warning:'', image:'' },
+                { id:65, name:'Замена пружин передних (2 шт)', price:3000, cat:'suspension', tools:'Съёмник пружин, Ключи', specs:'Интервал|При проседании / поломке', steps:'Снимите стойку.\nСожмите пружину.\nЗамените пружину.\nУстановите стойку.', warning:'Осторожно — пружина под нагрузкой!', image:'' },
+                { id:66, name:'Замена ступичного подшипника (1 шт)', price:2500, cat:'suspension', tools:'Пресс, Съёмник', specs:'Признак|Гул при движении', steps:'Снимите ступицу.\nВыпрессуйте старый подшипник.\nЗапрессуйте новый.\nУстановите ступицу.', warning:'', image:'' },
+                { id:67, name:'Замена рулевой рейки', price:5000, cat:'suspension', tools:'Ключи, Специнструмент', specs:'Время|3-5 часов', steps:'Снимите старую рейку.\nУстановите новую.\nЗалейте жидкость ГУР.\nПрокачайте систему.', warning:'', image:'' },
+                { id:68, name:'Регулировка развал-схождения', price:2000, cat:'suspension', tools:'Стенд развал-схождения', specs:'Рекомендация|После ремонта подвески', steps:'Установите авто на стенд.\nПроверьте углы.\nОтрегулируйте схождение.\nОтрегулируйте развал.', warning:'', image:'' },
+                { id:70, name:'Заправка кондиционера', price:2000, cat:'ac', tools:'Станция заправки, Фреон R134a', specs:'Интервал|Каждые 2 года', steps:'Подключите станцию.\nВакуумируйте систему.\nЗаправьте фреон.\nПроверьте давление.', warning:'', image:'' },
+                { id:71, name:'Замена компрессора кондиционера', price:6000, cat:'ac', tools:'Ключи, Станция заправки', specs:'Время|3-4 часа', steps:'Спустите фреон.\nСнимите старый компрессор.\nУстановите новый.\nЗаправьте систему.', warning:'', image:'' },
+                { id:72, name:'Чистка испарителя кондиционера', price:1500, cat:'ac', tools:'Очиститель, Распылитель', specs:'Рекомендация|Каждые 30 000 км', steps:'Найдите дренажное отверстие.\nРаспылите очиститель.\nВключите кондиционер на 10 мин.', warning:'', image:'' },
+                { id:80, name:'Замена стартера', price:2000, cat:'electrical', tools:'Ключи', specs:'Время|1-2 часа', steps:'Отсоедините АКБ.\nОткрутите стартер.\nУстановите новый.\nПодсоедините провода.', warning:'', image:'' },
+                { id:81, name:'Замена генератора', price:2500, cat:'electrical', tools:'Ключи', specs:'Время|1-3 часа', steps:'Отсоедините АКБ.\nСнимите ремень.\nОткрутите генератор.\nУстановите новый.', warning:'', image:'' },
+                { id:82, name:'Замена аккумулятора', price:300, cat:'electrical', tools:'Ключ на 10', specs:'Срок службы|3-5 лет', steps:'Отсоедините клеммы (минус первой).\nСнимите старый АКБ.\nУстановите новый.\nПодсоедините клеммы.', warning:'Не перепутайте полярность!', image:'' },
+                { id:83, name:'Замена ламп (фара / задний фонарь)', price:200, cat:'electrical', tools:'Руки', specs:'Время|5-10 мин', steps:'Откройте доступ к лампе.\nИзвлеките старую.\nУстановите новую (не касайтесь пальцами стекла).', warning:'Не касайтесь галогенных ламп пальцами!', image:'' },
+                { id:84, name:'Замена катушек зажигания (1 шт)', price:500, cat:'electrical', tools:'Отвёртка', specs:'Признак|Пропуски зажигания', steps:'Отсоедините разъём.\nИзвлеките старую катушку.\nУстановите новую.', warning:'', image:'' },
+                { id:90, name:'Кузовные работы (за 1 час)', price:3000, cat:'body', tools:'Сварочный аппарат, Шпаклёвка', specs:'Время|По объёму работ', steps:'Оцените повреждения.\nВыровняйте металл.\nЗашпаклюйте.\nПодготовьте к покраске.', warning:'', image:'' },
+                { id:91, name:'Покраска детали (1 элемент)', price:5000, cat:'body', tools:'Краскопульт, Краска, Лак', specs:'Время|1-2 дня', steps:'Зачистите деталь.\nЗагрунтуйте.\nНанесите краску.\nНанесите лак.\nПолируйте.', warning:'', image:'' },
+                { id:92, name:'Полировка кузова', price:4000, cat:'body', tools:'Полировальная машинка, Паста', specs:'Время|3-5 часов', steps:'Вымойте авто.\nНанесите пасту.\nПолируйте машинкой.\nНанесите защитный состав.', warning:'', image:'' },
+                { id:93, name:'Замена лобового стекла', price:3000, cat:'body', tools:'Струна, Герметик', specs:'Время|2-3 часа', steps:'Срежьте старое стекло.\nОчистите проём.\nНанесите герметик.\nУстановите новое стекло.', warning:'Не эксплуатируйте авто 24 часа.', image:'' },
+                { id:100, name:'Шиномонтаж (4 колеса)', price:2000, cat:'tires', tools:'Шиномонтажный станок, Балансир', specs:'Рекомендация|2 раза в год', steps:'Снимите колёса.\nРазбортируйте шины.\nУстановите новые / переставьте.\nОтбалансируйте.\nУстановите колёса.', warning:'', image:'' },
+                { id:101, name:'Ремонт прокола шины', price:500, cat:'tires', tools:'Жгут, Инструмент', specs:'Время|15-20 мин', steps:'Найдите прокол.\nВставьте жгут.\nНакачайте колесо.', warning:'Временное решение. Рекомендуется полноценный ремонт.', image:'' }
+            ];
         }
 
         function loadData() {
-            updateStatus('connecting');
-            db.ref('cars').once('value').then(function(snap) {
-                if (snap.exists()) { cars = snap.val(); console.log('✅ Авто загружено:', cars.length); }
-                else { cars = []; console.log('⚠️ Нет авто в БД'); }
-                if (!selCar && cars.length > 0) { selCar = cars[0].id;
+            db.ref('cars').once('value').then(function(snap) { if (snap.exists()) { cars = snap.val(); } else { cars = getDefaultCars();
+                    db.ref('cars').set(cars); } if (!selCar && cars.length > 0) { selCar = cars[0].id;
                     selEng = cars[0].engines?.[0]?.id || null;
                     selGb = cars[0].engines?.[0]?.gearboxes?.[0]?.id || null; }
                 dbOnline = true;
-                updateStatus('online');
-                render();
-            }).catch(function(err) {
-                console.error('❌ Ошибка авто:', err);
-                loadLocal();
-                render();
-            });
-            db.ref('services').once('value').then(function(snap) {
-                if (snap.exists()) { services = snap.val(); console.log('✅ Услуг загружено:', services.length); }
-                else { services = []; console.log('⚠️ Нет услуг в БД'); }
+                render(); }).catch(function() { cars = getDefaultCars();
+                dbOnline = false;
+                render(); });
+            db.ref('services').once('value').then(function(snap) { if (snap.exists()) { services = snap.val(); } else { services = getDefaultServices();
+                    db.ref('services').set(services); }
                 dbOnline = true;
-                updateStatus('online');
-                render();
-            }).catch(function(err) {
-                console.error('❌ Ошибка услуг:', err);
-                loadLocal();
-                render();
-            });
+                render(); }).catch(function() { services = getDefaultServices();
+                dbOnline = false;
+                render(); });
             db.ref('cars').on('value', function(snap) { if (snap.exists()) { cars = snap.val();
                     dbOnline = true;
-                    updateStatus('online');
                     render(); } });
             db.ref('services').on('value', function(snap) { if (snap.exists()) { services = snap.val();
                     dbOnline = true;
-                    updateStatus('online');
                     render(); } });
-            db.ref('.info/connected').on('value', function(snap) { dbOnline = snap.val() === true;
-                updateStatus(dbOnline ? 'online' : 'offline'); });
+            db.ref('.info/connected').on('value', function(snap) { dbOnline = snap.val() === true; });
         }
 
-        function loadLocal() {
-            var lc = localStorage.getItem('as_cars_local_v3');
-            var ls = localStorage.getItem('as_svc_local_v3');
-            if (lc && cars.length === 0) { cars = JSON.parse(lc); if (!selCar && cars.length > 0) { selCar = cars[0].id;
-                    selEng = cars[0].engines?.[0]?.id || null;
-                    selGb = cars[0].engines?.[0]?.gearboxes?.[0]?.id || null; } }
-            if (ls && services.length === 0) services = JSON.parse(ls);
-            updateStatus('offline');
-        }
+        function saveData() { if (dbOnline) { db.ref('cars').set(cars);
+                db.ref('services').set(services); } }
 
-        function saveData() {
-            if (dbOnline) { db.ref('cars').set(cars);
-                db.ref('services').set(services); } else { localStorage.setItem('as_cars_local_v3', JSON.stringify(
-                    cars));
-                localStorage.setItem('as_svc_local_v3', JSON.stringify(services));
-                updateStatus('offline'); }
-        }
+        function render() { document.getElementById('appContainer').innerHTML = isAdmin ? renderAdmin() : renderClient(); if (isAdmin) bindAdmin(); else bindClient(); }
 
-        function render() { document.getElementById('appContainer').innerHTML = isAdmin ? renderAdmin() : renderClient(); if (
-                isAdmin) bindAdmin(); else bindClient();
-            updateStatus(dbOnline ? 'online' : 'offline'); }
-
-        // КЛИЕНТ
         function renderClient() {
             var h = '';
-            h += '<div class="header"><div class="logo">AUTO<span>SERVICE</span></div><div class="subtitle">Прайс-лист</div></div>';
-            h += '<div class="status-bar ' + (dbOnline ? 'online' : 'offline') + '" id="statusBar">' + (dbOnline ?
-                '🟢 Онлайн' : '🔴 Офлайн') + '</div>';
+            h += '<div class="header"><div class="logo">AUTO<span>SERVICE</span></div><div class="subtitle">Полный каталог услуг • ' + services.length + ' позиций</div></div>';
+            h += '<div class="status-bar ' + (dbOnline ? 'online' : 'offline') + '" id="statusBar">' + (dbOnline ? '🟢 Онлайн' : '🔴 Офлайн') + '</div>';
             h += '<div class="admin-link"><a href="#" id="loginLink">🔐 Админ</a></div>';
-            h +=
-            '<div class="smart-search"><input type="text" id="smartSearch" placeholder="🔍 Поиск услуги..." autocomplete="off"><div class="search-results" id="searchResults"></div></div>';
+            h += '<div class="smart-search"><input type="text" id="smartSearch" placeholder="🔍 Поиск услуги..." autocomplete="off"><div class="search-results" id="searchResults"></div></div>';
             h += '<div class="selector-section"><div class="selector-title">🚗 Выберите авто</div>';
-            h +=
-            '<div class="selector-row"><div class="selector-group"><div class="selector-label">Модель</div><div class="selector-buttons" id="carBtns">';
-            cars.forEach(function(c) { h += '<button class="sel-btn' + (c.id === selCar ? ' active' : '') +
-                    '" data-car="' + c.id + '">' + c.icon + ' ' + esc(c.name) + '<span class="btn-code">' + esc(c
-                        .cat) + '</span></button>'; });
+            h += '<div class="selector-row"><div class="selector-group"><div class="selector-label">Модель</div><div class="selector-buttons" id="carBtns">';
+            cars.forEach(function(c) { h += '<button class="sel-btn' + (c.id === selCar ? ' active' : '') + '" data-car="' + c.id + '">' + c.icon + ' ' + esc(c.name) + '<span class="btn-code">' + esc(c.cat) + '</span></button>'; });
             h += '</div></div></div>';
             var car = cars.find(function(c) { return c.id === selCar; });
-            h +=
-            '<div class="selector-row"><div class="selector-group"><div class="selector-label">Двигатель</div><div class="selector-buttons" id="engBtns">';
-            if (car) car.engines.forEach(function(e) { h += '<button class="sel-btn' + (e.id === selEng ? ' active' :
-                    '') + '" data-eng="' + e.id + '">' + esc(e.name) + ' (' + esc(e.power) +
-                    ')<span class="btn-code">' + esc(e.code) + '</span></button>'; });
+            h += '<div class="selector-row"><div class="selector-group"><div class="selector-label">Двигатель</div><div class="selector-buttons" id="engBtns">';
+            if (car) car.engines.forEach(function(e) { h += '<button class="sel-btn' + (e.id === selEng ? ' active' : '') + '" data-eng="' + e.id + '">' + esc(e.name) + ' (' + esc(e.power) + ')<span class="btn-code">' + esc(e.code) + '</span></button>'; });
             h += '</div></div></div>';
-            h +=
-            '<div class="selector-row"><div class="selector-group"><div class="selector-label">КПП</div><div class="selector-buttons" id="gbBtns">';
-            if (car) { var eng = car.engines.find(function(e) { return e.id === selEng; }); if (eng) eng.gearboxes
-                .forEach(function(g) { h += '<button class="sel-btn' + (g.id === selGb ? ' active' : '') +
-                        '" data-gb="' + g.id + '">' + esc(g.name) + '<span class="btn-code">' + esc(g.drive) +
-                        ' • ' + esc(g.code) + '</span></button>'; }); }
+            h += '<div class="selector-row"><div class="selector-group"><div class="selector-label">КПП</div><div class="selector-buttons" id="gbBtns">';
+            if (car) { var eng = car.engines.find(function(e) { return e.id === selEng; }); if (eng) eng.gearboxes.forEach(function(g) { h += '<button class="sel-btn' + (g.id === selGb ? ' active' : '') + '" data-gb="' + g.id + '">' + esc(g.name) + '<span class="btn-code">' + esc(g.drive) + ' • ' + esc(g.code) + '</span></button>'; }); }
             h += '</div></div></div>';
             var d = getSel();
-            if (d) h += '<div class="selected-config"><span class="selected-config-icon">' + d.car.icon +
-                '</span><div class="selected-config-info"><div class="selected-config-name">' + esc(d.car.name) +
-                '</div><div class="selected-config-detail">' + esc(d.engine.name) + ' • ' + esc(d.gearbox.name) +
-                '</div></div><span class="selected-config-badge">' + esc(d.gearbox.badge) + '</span></div>';
+            if (d) h += '<div class="selected-config"><span class="selected-config-icon">' + d.car.icon + '</span><div class="selected-config-info"><div class="selected-config-name">' + esc(d.car.name) + '</div><div class="selected-config-detail">' + esc(d.engine.name) + ' • ' + esc(d.gearbox.name) + '</div></div><span class="selected-config-badge">×' + d.gearbox.mult.toFixed(2) + ' • ' + esc(d.gearbox.badge) + '</span></div>';
             h += '</div>';
-            var cats = ['maintenance', 'engine', 'exhaust', 'transmission', 'brakes', 'suspension', 'welding',
-            'diagnostics'];
-            var catNames = { maintenance: '🛠️ ТО', engine: '⚡ Двигатель', exhaust: '💨 Выхлоп',
-                transmission: '⚙️ Трансмиссия', brakes: '🛑 Тормоза', suspension: '🔧 Подвеска', welding: '🔥 Сварка',
-                diagnostics: '🔍 Диагностика' };
-            h += '<div class="filter-buttons" id="filtBtns"><button class="filter-btn' + (filt === 'all' ? ' active' :
-                '') + '" data-filt="all">Все</button>';
-            cats.forEach(function(c) { h += '<button class="filter-btn' + (filt === c ? ' active' : '') +
-                    '" data-filt="' + c + '">' + (catNames[c] || c) + '</button>'; });
+            var catNames = { diagnostics:'🔍 Диагностика', maintenance:'🛠️ ТО', engine:'⚡ Двигатель', exhaust:'💨 Выхлоп', transmission:'⚙️ Трансмиссия', brakes:'🛑 Тормоза', suspension:'🔧 Подвеска', ac:'❄️ Кондиционер', electrical:'🔌 Электрика', body:'🎨 Кузов', tires:'🛞 Шины' };
+            h += '<div class="filter-buttons" id="filtBtns"><button class="filter-btn' + (filt === 'all' ? ' active' : '') + '" data-filt="all">Все</button>';
+            Object.keys(catNames).forEach(function(c) { h += '<button class="filter-btn' + (filt === c ? ' active' : '') + '" data-filt="' + c + '">' + catNames[c] + '</button>'; });
             h += '</div>';
             var total = 0;
-            picks.forEach(function(id) { var s = services.find(function(x) { return x.id === id; }); if (s) total +=
-                    prc(s); });
-            h += '<div class="total-panel"><div><div class="total-label">Выбрано: ' + picks.size +
-                ' шт.</div></div><div class="total-price">' + fmt(total) +
-                '</div><button class="clear-btn" id="clearBtn">Сбросить</button></div>';
+            picks.forEach(function(id) { var s = services.find(function(x) { return x.id === id; }); if (s) total += prc(s); });
+            h += '<div class="total-panel"><div><div class="total-label">Выбрано: ' + picks.size + ' услуг</div></div><div class="total-price">' + fmt(total) + '</div><button class="clear-btn" id="clearBtn">Сбросить</button></div>';
             var list = services.filter(function(s) { return filt === 'all' || s.cat === filt; });
             var grp = {};
             list.forEach(function(s) { if (!grp[s.cat]) grp[s.cat] = [];
                 grp[s.cat].push(s); });
             h += '<div id="svcList">';
-            Object.keys(grp).forEach(function(k) { h += '<div class="category-title">' + (catNames[k] || k) + '</div>';
-                grp[k].forEach(function(s) { var p = prc(s); var diff = p - s.price; var note = diff !== 0 ?
-                        '<span class="price-note">(' + (diff > 0 ? '+' : '') + diff + ' ₽)</span>' : '';
-                    h += '<div class="service-row' + (picks.has(s.id) ? ' selected' : '') + '" data-sid="' + s.id +
-                        '"><div class="service-left"><div class="check-box">' + (picks.has(s.id) ? '✓' : '') +
-                        '</div><span class="service-name">' + esc(s.name) +
-                        '</span></div><div class="service-right"><span class="service-price">' + fmt(p) + ' ' +
-                        note + '</span><button class="detail-btn" data-det="' + s.id +
-                        '">📋 Подробнее</button></div></div>'; }); });
+            Object.keys(grp).forEach(function(k) { h += '<div class="category-title">' + (catNames[k] || k) + ' (' + grp[k].length + ')</div>';
+                grp[k].forEach(function(s) { var p = prc(s); var diff = p - s.price; var note = diff !== 0 ? '<span class="price-note">(' + (diff > 0 ? '+' : '') + diff + ' ₽)</span>' : '';
+                    h += '<div class="service-row' + (picks.has(s.id) ? ' selected' : '') + '" data-sid="' + s.id + '"><div class="service-left"><div class="check-box">' + (picks.has(s.id) ? '✓' : '') + '</div><span class="service-name">' + esc(s.name) + '</span></div><div class="service-right"><span class="service-price">' + fmt(p) + ' ' + note + '</span><button class="detail-btn" data-det="' + s.id + '">📋 Подробнее</button></div></div>'; }); });
             if (!list.length) h += '<div class="empty-state">Ничего не найдено</div>';
-            h += '</div><div class="footer">© 2026 AutoService</div>';
+            h += '</div><div class="footer">© 2026 AutoService • ' + services.length + ' услуг в каталоге</div>';
             return h;
         }
 
         function bindClient() {
-            document.getElementById('loginLink').onclick = function(e) { e.preventDefault(); var p = prompt(
-                    'Пароль администратора:'); if (p === ADMIN_PASS) { localStorage.setItem(KEY_AUTH, '1');
+            document.getElementById('loginLink').onclick = function(e) { e.preventDefault(); var p = prompt('Пароль:'); if (p === ADMIN_PASS) { localStorage.setItem(KEY_AUTH, '1');
                     isAdmin = true;
-                    render(); } else if (p !== null) alert('Неверный пароль!'); };
-            document.querySelectorAll('#carBtns .sel-btn').forEach(function(b) { b.onclick = function() { selCar = b
-                    .dataset.car; var c = cars.find(function(x) { return x.id === selCar; });
+                    render(); } else if (p !== null) alert('Неверно!'); };
+            document.querySelectorAll('#carBtns .sel-btn').forEach(function(b) { b.onclick = function() { selCar = b.dataset.car; var c = cars.find(function(x) { return x.id === selCar; });
                     selEng = c?.engines?.[0]?.id || null;
                     selGb = c?.engines?.[0]?.gearboxes?.[0]?.id || null;
                     picks.clear();
                     render(); }; });
-            document.querySelectorAll('#engBtns .sel-btn').forEach(function(b) { b.onclick = function() { selEng = b
-                    .dataset.eng; var c = cars.find(function(x) { return x.id === selCar; }); if (c) { var e = c
-                        .engines.find(function(x) { return x.id === selEng; });
+            document.querySelectorAll('#engBtns .sel-btn').forEach(function(b) { b.onclick = function() { selEng = b.dataset.eng; var c = cars.find(function(x) { return x.id === selCar; }); if (c) { var e = c.engines.find(function(x) { return x.id === selEng; });
                     selGb = e?.gearboxes?.[0]?.id || null; }
                 picks.clear();
                 render(); }; });
-            document.querySelectorAll('#gbBtns .sel-btn').forEach(function(b) { b.onclick = function() { selGb = b.dataset
-                    .gb;
+            document.querySelectorAll('#gbBtns .sel-btn').forEach(function(b) { b.onclick = function() { selGb = b.dataset.gb;
                 picks.clear();
                 render(); }; });
-            document.querySelectorAll('#filtBtns .filter-btn').forEach(function(b) { b.onclick = function() { filt = b.dataset
-                    .filt;
+            document.querySelectorAll('#filtBtns .filter-btn').forEach(function(b) { b.onclick = function() { filt = b.dataset.filt;
                 render(); }; });
             document.getElementById('clearBtn').onclick = function() { picks.clear();
                 render(); };
-            document.querySelectorAll('.service-row').forEach(function(r) { r.querySelector('.service-left').onclick =
-                function() { var sid = parseInt(r.dataset.sid);
+            document.querySelectorAll('.service-row').forEach(function(r) { r.querySelector('.service-left').onclick = function() { var sid = parseInt(r.dataset.sid);
                     picks.has(sid) ? picks.delete(sid) : picks.add(sid);
                     render(); };
                 r.querySelector('.detail-btn').onclick = function(e) { e.stopPropagation();
@@ -351,14 +320,9 @@
             var ss = document.getElementById('smartSearch');
             var sr = document.getElementById('searchResults');
             ss.oninput = function() { var q = ss.value.toLowerCase().trim(); if (!q) { sr.classList.remove('active');
-                    sr.innerHTML = ''; return; } var results = services.filter(function(s) { return s.name.toLowerCase()
-                        .indexOf(q) >= 0 || (s.tools && s.tools.toLowerCase().indexOf(q) >= 0) || s.cat.toLowerCase()
-                        .indexOf(q) >= 0; }); if (results.length) { sr.classList.add('active');
-                    sr.innerHTML = results.map(function(s) { return '<div class="search-result-item" data-ssid="' + s
-                            .id + '"><div class="search-result-name">' + esc(s.name) +
-                            '</div><div class="search-result-price">' + fmt(prc(s)) + '</div></div>'; }).join('');
-                    sr.querySelectorAll('.search-result-item').forEach(function(item) { item.onclick = function() { var
-                                sid = parseInt(item.dataset.ssid);
+                    sr.innerHTML = ''; return; } var results = services.filter(function(s) { return s.name.toLowerCase().indexOf(q) >= 0 || (s.tools && s.tools.toLowerCase().indexOf(q) >= 0) || s.cat.toLowerCase().indexOf(q) >= 0; }); if (results.length) { sr.classList.add('active');
+                    sr.innerHTML = results.map(function(s) { return '<div class="search-result-item" data-ssid="' + s.id + '"><div class="search-result-name">' + esc(s.name) + '</div><div class="search-result-price">' + fmt(prc(s)) + '</div></div>'; }).join('');
+                    sr.querySelectorAll('.search-result-item').forEach(function(item) { item.onclick = function() { var sid = parseInt(item.dataset.ssid);
                             picks.has(sid) ? picks.delete(sid) : picks.add(sid);
                             ss.value = '';
                             sr.classList.remove('active');
@@ -366,65 +330,21 @@
                     sr.innerHTML = '<div class="empty-state" style="padding:15px;">Ничего не найдено</div>'; } };
         }
 
-        // АДМИН
         function renderAdmin() {
             var h = '';
-            h += '<div class="header"><div class="logo">AUTO<span>SERVICE</span></div><div class="subtitle">⚙️ Админ-панель</div></div>';
-            h += '<div class="status-bar ' + (dbOnline ? 'online' : 'offline') + '" id="statusBar">' + (dbOnline ?
-                '🟢 Онлайн • ' + cars.length + ' авто / ' + services.length + ' услуг' : '🔴 Офлайн') + '</div>';
-            h +=
-                '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;"><div class="tabs-admin"><button class="tab-admin' +
-                (admTab === 'cars' ? ' active' : '') + '" data-atab="cars">🚗 Авто</button><button class="tab-admin' +
-                (admTab === 'svc' ? ' active' : '') +
-                '" data-atab="svc">🔧 Услуги</button></div><button class="btn btn-outline btn-sm" id="logoutBtn">🚪 Выйти</button></div>';
+            h += '<div class="header"><div class="logo">AUTO<span>SERVICE</span></div><div class="subtitle">⚙️ Админ-панель • ' + services.length + ' услуг</div></div>';
+            h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;"><div class="tabs-admin"><button class="tab-admin' + (admTab === 'cars' ? ' active' : '') + '" data-atab="cars">🚗 Авто</button><button class="tab-admin' + (admTab === 'svc' ? ' active' : '') + '" data-atab="svc">🔧 Услуги</button></div><button class="btn btn-outline btn-sm" id="logoutBtn">🚪 Выйти</button></div>';
             h += '<div class="tab-content-admin' + (admTab === 'cars' ? ' active' : '') + '">';
-            h +=
-                '<div class="admin-section"><h3>➕ Добавить авто</h3><div class="form-row"><div class="form-group"><label>Модель</label><input type="text" id="acName" placeholder="VW Passat B5"></div><div class="form-group"><label>Иконка</label><input type="text" id="acIcon" placeholder="🚙"></div><div class="form-group"><label>Категория</label><input type="text" id="acCat" placeholder="Бизнес"></div></div><button class="btn btn-primary" id="btnAddCar">➕ Добавить</button></div>';
-            h += '<div class="admin-section"><h3>📋 Список авто</h3><div class="admin-grid">';
-            cars.forEach(function(c) { h += '<div class="admin-card"><h4>' + c.icon + ' ' + esc(c.name) + '</h4><p>' +
-                    esc(c.cat) + ' | Двигателей: ' + c.engines.length +
-                    '</p><div class="card-actions"><button class="btn btn-sm btn-outline" data-engs="' + c.id +
-                    '">⚙️ Двигатели</button><button class="btn btn-sm btn-danger" data-delcar="' + c.id +
-                    '">🗑️</button></div></div>'; });
-            if (!cars.length) h += '<div class="empty-state">Нет авто. Добавьте первый автомобиль.</div>';
+            h += '<div class="admin-section"><h3>➕ Добавить авто</h3><div class="form-row"><div class="form-group"><label>Модель</label><input type="text" id="acName" placeholder="VW Passat B5"></div><div class="form-group"><label>Иконка</label><input type="text" id="acIcon" placeholder="🚙"></div><div class="form-group"><label>Категория</label><input type="text" id="acCat" placeholder="Бизнес"></div></div><button class="btn btn-primary" id="btnAddCar">➕ Добавить</button></div>';
+            h += '<div class="admin-section"><h3>📋 Авто (' + cars.length + ')</h3><div class="admin-grid">';
+            cars.forEach(function(c) { h += '<div class="admin-card"><h4>' + c.icon + ' ' + esc(c.name) + '</h4><p>' + esc(c.cat) + ' | Двигателей: ' + c.engines.length + '</p><div class="card-actions"><button class="btn btn-sm btn-outline" data-engs="' + c.id + '">⚙️ Двигатели</button><button class="btn btn-sm btn-danger" data-delcar="' + c.id + '">🗑️</button></div></div>'; });
             h += '</div></div>';
-            if (admCar) { var ac = cars.find(function(c) { return c.id === admCar; }); if (ac) { h +=
-                        '<div class="admin-section"><h3>⚙️ Двигатели: ' + ac.icon + ' ' + esc(ac.name) +
-                        '</h3><div class="form-row"><div class="form-group"><label>Название</label><input type="text" id="aeName" placeholder="1.8T Turbo"></div><div class="form-group"><label>Код</label><input type="text" id="aeCode" placeholder="AEB"></div><div class="form-group"><label>Мощность</label><input type="text" id="aePower" placeholder="150 л.с."></div><div class="form-group"><label>Топливо</label><select id="aeFuel"><option>Бензин</option><option>Дизель</option></select></div></div><button class="btn btn-primary" id="btnAddEng">➕ Добавить двигатель</button><div style="margin-top:12px;">';
-                    ac.engines.forEach(function(e) { h +=
-                            '<div style="background:rgba(255,255,255,0.03);padding:10px;border-radius:8px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;"><span><strong>' +
-                            esc(e.name) + '</strong> <span class="badge badge-engine">' + esc(e.code) +
-                            '</span> ' + esc(e.power) + ' ' + esc(e.fuel) + ' | КПП: ' + e.gearboxes.length +
-                            '</span><div><button class="btn btn-sm btn-outline" data-gbs="' + e.id +
-                            '">⚙️ КПП</button><button class="btn btn-sm btn-danger" data-deleng="' + e.id +
-                            '">🗑️</button></div></div>'; }); if (!ac.engines.length) h +=
-                        '<div class="empty-state">Нет двигателей</div>';
-                    h += '</div></div>'; } }
-            if (admCar && admEng) { var ac2 = cars.find(function(c) { return c.id === admCar; }); if (ac2) { var eng2 =
-                        ac2.engines.find(function(e) { return e.id === admEng; }); if (eng2) { h +=
-                            '<div class="admin-section"><h3>⚙️ КПП для: ' + esc(eng2.name) + ' (' + esc(eng2.code) +
-                            ')</h3><div class="form-row"><div class="form-group"><label>Название</label><input type="text" id="agName" placeholder="МКПП-5 (012)"></div><div class="form-group"><label>Код</label><input type="text" id="agCode" placeholder="012"></div><div class="form-group"><label>Привод</label><select id="agDrive"><option>Передний</option><option>Задний</option><option>Полный</option></select></div><div class="form-group"><label>Коэфф.</label><input type="number" id="agMult" value="1" step="0.05"></div><div class="form-group"><label>Сложность</label><input type="text" id="agBadge" placeholder="Средне"></div></div><button class="btn btn-primary" id="btnAddGb">➕ Добавить КПП</button><div style="margin-top:12px;">';
-                        eng2.gearboxes.forEach(function(g) { h +=
-                                '<div style="background:rgba(255,255,255,0.03);padding:10px;border-radius:8px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;"><span><strong>' +
-                                esc(g.name) + '</strong> <span class="badge badge-gearbox">' + esc(g.code) +
-                                '</span> ' + esc(g.drive) + ' ×' + g.mult.toFixed(2) + ' <em>' + esc(g.badge) +
-                                '</em></span><button class="btn btn-sm btn-danger" data-delgb="' + g.id +
-                                '">🗑️</button></div>'; }); if (!eng2.gearboxes.length) h +=
-                            '<div class="empty-state">Нет КПП</div>';
-                        h += '</div></div>'; } } }
             h += '</div>';
             h += '<div class="tab-content-admin' + (admTab === 'svc' ? ' active' : '') + '">';
-            h +=
-                '<div class="admin-section"><h3>➕ Услуга</h3><input type="hidden" id="svcEditId"><div class="form-row"><div class="form-group"><label>Название</label><input type="text" id="svcName" placeholder="Замена масла"></div><div class="form-group"><label>Цена (₽)</label><input type="number" id="svcPrice" value="1000"></div><div class="form-group"><label>Категория</label><select id="svcCat"><option value="maintenance">🛠️ ТО</option><option value="engine">⚡ Двигатель</option><option value="exhaust">💨 Выхлоп</option><option value="transmission">⚙️ Трансмиссия</option><option value="brakes">🛑 Тормоза</option><option value="suspension">🔧 Подвеска</option><option value="welding">🔥 Сварка</option><option value="diagnostics">🔍 Диагностика</option></select></div></div><div class="form-group"><label>Инструменты (через запятую)</label><input type="text" id="svcTools"></div><div class="form-group"><label>Регламент (строка: метка|значение)</label><textarea id="svcSpecs"></textarea></div><div class="form-group"><label>Инструкция (каждая строка = шаг)</label><textarea id="svcSteps"></textarea></div><div class="form-group"><label>Предупреждение</label><input type="text" id="svcWarning"></div><div class="form-group"><label>URL картинки</label><input type="text" id="svcImage"></div><button class="btn btn-primary" id="btnSaveSvc">💾 Сохранить</button><button class="btn btn-outline btn-sm" id="btnClearSvc">✕ Очистить</button></div>';
-            h += '<div class="admin-section"><h3>📋 Список услуг</h3><div class="admin-grid">';
-            services.forEach(function(s) { h += '<div class="admin-card"><h4>' + esc(s.name) + '</h4><p>' + fmt(s.price) +
-                    ' | ' + s.cat + '</p><p>' + (s.tools || '—') +
-                    '</p><div class="card-actions"><button class="btn btn-sm btn-outline" data-editsvc="' + s.id +
-                    '">✏️</button><button class="btn btn-sm btn-danger" data-delsvc="' + s.id +
-                    '">🗑️</button></div></div>'; });
-            if (!services.length) h += '<div class="empty-state">Нет услуг</div>';
+            h += '<div class="admin-section"><h3>➕ Услуга</h3><input type="hidden" id="svcEditId"><div class="form-row"><div class="form-group"><label>Название</label><input type="text" id="svcName"></div><div class="form-group"><label>Цена (₽)</label><input type="number" id="svcPrice" value="1000"></div><div class="form-group"><label>Категория</label><select id="svcCat"><option value="diagnostics">🔍 Диагностика</option><option value="maintenance">🛠️ ТО</option><option value="engine">⚡ Двигатель</option><option value="exhaust">💨 Выхлоп</option><option value="transmission">⚙️ Трансмиссия</option><option value="brakes">🛑 Тормоза</option><option value="suspension">🔧 Подвеска</option><option value="ac">❄️ Кондиционер</option><option value="electrical">🔌 Электрика</option><option value="body">🎨 Кузов</option><option value="tires">🛞 Шины</option></select></div></div><div class="form-group"><label>Инструменты</label><input type="text" id="svcTools"></div><div class="form-group"><label>Регламент</label><textarea id="svcSpecs"></textarea></div><div class="form-group"><label>Инструкция</label><textarea id="svcSteps"></textarea></div><div class="form-group"><label>Предупреждение</label><input type="text" id="svcWarning"></div><div class="form-group"><label>URL картинки</label><input type="text" id="svcImage"></div><button class="btn btn-primary" id="btnSaveSvc">💾 Сохранить</button><button class="btn btn-outline btn-sm" id="btnClearSvc">✕ Очистить</button></div>';
+            h += '<div class="admin-section"><h3>📋 Услуги (' + services.length + ')</h3><div class="admin-grid">';
+            services.forEach(function(s) { h += '<div class="admin-card"><h4>' + esc(s.name) + '</h4><p>' + fmt(s.price) + ' | ' + s.cat + '</p><div class="card-actions"><button class="btn btn-sm btn-outline" data-editsvc="' + s.id + '">✏️</button><button class="btn btn-sm btn-danger" data-delsvc="' + s.id + '">🗑️</button></div></div>'; });
             h += '</div></div></div>';
-            h += '<div class="footer">Админ-панель • Firebase Realtime Database</div>';
             return h;
         }
 
@@ -432,93 +352,29 @@
             document.getElementById('logoutBtn').onclick = function() { localStorage.removeItem(KEY_AUTH);
                 isAdmin = false;
                 render(); };
-            document.querySelectorAll('.tab-admin').forEach(function(b) { b.onclick = function() { admTab = b.dataset
-                    .atab;
-                admCar = null;
-                admEng = null;
+            document.querySelectorAll('.tab-admin').forEach(function(b) { b.onclick = function() { admTab = b.dataset.atab;
                 render(); }; });
-            document.getElementById('btnAddCar').onclick = function() { var n = document.getElementById('acName').value
-                    .trim(); var i = document.getElementById('acIcon').value.trim() || '🚗'; var c = document
-                    .getElementById('acCat').value.trim() || 'Стандарт'; if (!n) return alert(
-                    'Введите название!');
+            document.getElementById('btnAddCar').onclick = function() { var n = document.getElementById('acName').value.trim(); var i = document.getElementById('acIcon').value.trim() || '🚗'; var c = document.getElementById('acCat').value.trim() || 'Стандарт'; if (!n) return alert('Название!');
                 cars.push({ id: 'c' + Date.now(), name: n, icon: i, cat: c, engines: [] });
                 saveData();
                 render(); };
-            document.querySelectorAll('[data-delcar]').forEach(function(b) { b.onclick = function() { if (!confirm(
-                        'Удалить авто и модификации?')) return;
-                    cars = cars.filter(function(c) { return c.id !== b.dataset.delcar; }); if (selCar === b.dataset
-                        .delcar) { selCar = cars[0]?.id || null;
-                        selEng = cars[0]?.engines?.[0]?.id || null;
-                        selGb = cars[0]?.engines?.[0]?.gearboxes?.[0]?.id || null; }
+            document.querySelectorAll('[data-delcar]').forEach(function(b) { b.onclick = function() { if (!confirm('Удалить?')) return;
+                    cars = cars.filter(function(c) { return c.id !== b.dataset.delcar; });
                     saveData();
-                    admCar = null;
-                    admEng = null;
                     render(); }; });
-            document.querySelectorAll('[data-engs]').forEach(function(b) { b.onclick = function() { admCar = b.dataset
-                    .engs;
+            document.querySelectorAll('[data-engs]').forEach(function(b) { b.onclick = function() { admCar = b.dataset.engs;
                 admEng = null;
                 render(); }; });
-            var btnAddEng = document.getElementById('btnAddEng'); if (btnAddEng) btnAddEng.onclick = function() { var ac =
-                    cars.find(function(c) { return c.id === admCar; }); if (!ac) return; var n = document.getElementById(
-                        'aeName').value.trim(); var cd = document.getElementById('aeCode').value.trim(); var p = document
-                    .getElementById('aePower').value.trim(); var f = document.getElementById('aeFuel').value; if (!n ||
-                    !cd) return alert('Заполните!');
-                ac.engines.push({ id: 'e' + Date.now(), name: n, code: cd, power: p, fuel: f, gearboxes: [] });
-                saveData();
-                render(); };
-            document.querySelectorAll('[data-deleng]').forEach(function(b) { b.onclick = function() { if (!confirm(
-                        'Удалить?')) return; var ac = cars.find(function(c) { return c.id === admCar; }); if (ac) ac
-                    .engines = ac.engines.filter(function(e) { return e.id !== b.dataset.deleng; });
-                saveData();
-                render(); }; });
-            document.querySelectorAll('[data-gbs]').forEach(function(b) { b.onclick = function() { admEng = b.dataset.gbs;
-                render(); }; });
-            var btnAddGb = document.getElementById('btnAddGb'); if (btnAddGb) btnAddGb.onclick = function() { var ac = cars
-                    .find(function(c) { return c.id === admCar; }); if (!ac) return; var eng = ac.engines.find(function(
-                        e) { return e.id === admEng; }); if (!eng) return; var n = document.getElementById('agName').value
-                    .trim(); var cd = document.getElementById('agCode').value.trim(); var d = document.getElementById(
-                        'agDrive').value; var m = parseFloat(document.getElementById('agMult').value) || 1; var bd =
-                    document.getElementById('agBadge').value.trim() || 'Средне'; if (!n || !cd) return alert(
-                    'Заполните!');
-                eng.gearboxes.push({ id: 'g' + Date.now(), name: n, code: cd, drive: d, mult: m, badge: bd });
-                saveData();
-                render(); };
-            document.querySelectorAll('[data-delgb]').forEach(function(b) { b.onclick = function() { if (!confirm(
-                        'Удалить?')) return; var ac = cars.find(function(c) { return c.id === admCar; }); if (!ac)
-                    return; var eng = ac.engines.find(function(e) { return e.id === admEng; }); if (eng) eng.gearboxes =
-                    eng.gearboxes.filter(function(g) { return g.id !== b.dataset.delgb; });
-                saveData();
-                render(); }; });
-            document.getElementById('btnSaveSvc').onclick = function() { var eid = document.getElementById('svcEditId')
-                    .value; var n = document.getElementById('svcName').value.trim(); var p = parseInt(document
-                        .getElementById('svcPrice').value) || 0; var c = document.getElementById('svcCat').value; var t =
-                    document.getElementById('svcTools').value.trim(); var sp = document.getElementById('svcSpecs').value
-                    .trim(); var st = document.getElementById('svcSteps').value.trim(); var w = document.getElementById(
-                        'svcWarning').value.trim(); var im = document.getElementById('svcImage').value.trim(); if (!n || !
-                    p) return alert('Название и цена!'); if (eid) { var idx = services.findIndex(function(s) { return s
-                        .id == eid; }); if (idx >= 0) services[idx] = { id: services[idx].id, name: n, price: p, cat: c,
-                        tools: t, specs: sp, steps: st, warning: w, image: im }; } else { services.push({ id: Date.now(),
-                        name: n, price: p, cat: c, tools: t, specs: sp, steps: st, warning: w, image: im }); }
+            document.getElementById('btnSaveSvc').onclick = function() { var eid = document.getElementById('svcEditId').value; var n = document.getElementById('svcName').value.trim(); var p = parseInt(document.getElementById('svcPrice').value) || 0; var c = document.getElementById('svcCat').value; var t = document.getElementById('svcTools').value.trim(); var sp = document.getElementById('svcSpecs').value.trim(); var st = document.getElementById('svcSteps').value.trim(); var w = document.getElementById('svcWarning').value.trim(); var im = document.getElementById('svcImage').value.trim(); if (!n || !p) return alert('Название и цена!'); if (eid) { var idx = services.findIndex(function(s) { return s.id == eid; }); if (idx >= 0) services[idx] = { id: services[idx].id, name: n, price: p, cat: c, tools: t, specs: sp, steps: st, warning: w, image: im }; } else { services.push({ id: Date.now(), name: n, price: p, cat: c, tools: t, specs: sp, steps: st, warning: w, image: im }); }
                 saveData();
                 document.getElementById('svcEditId').value = '';
                 document.getElementById('svcName').value = '';
                 document.getElementById('svcPrice').value = '1000';
-                document.getElementById('svcTools').value = '';
-                document.getElementById('svcSpecs').value = '';
-                document.getElementById('svcSteps').value = '';
-                document.getElementById('svcWarning').value = '';
-                document.getElementById('svcImage').value = '';
                 render(); };
             document.getElementById('btnClearSvc').onclick = function() { document.getElementById('svcEditId').value = '';
                 document.getElementById('svcName').value = '';
-                document.getElementById('svcPrice').value = '1000';
-                document.getElementById('svcTools').value = '';
-                document.getElementById('svcSpecs').value = '';
-                document.getElementById('svcSteps').value = '';
-                document.getElementById('svcWarning').value = '';
-                document.getElementById('svcImage').value = ''; };
-            document.querySelectorAll('[data-editsvc]').forEach(function(b) { b.onclick = function() { var s = services.find(
-                        function(x) { return x.id == b.dataset.editsvc; }); if (!s) return;
+                document.getElementById('svcPrice').value = '1000'; };
+            document.querySelectorAll('[data-editsvc]').forEach(function(b) { b.onclick = function() { var s = services.find(function(x) { return x.id == b.dataset.editsvc; }); if (!s) return;
                     document.getElementById('svcEditId').value = s.id;
                     document.getElementById('svcName').value = s.name;
                     document.getElementById('svcPrice').value = s.price;
@@ -530,27 +386,19 @@
                     document.getElementById('svcImage').value = s.image || '';
                     admTab = 'svc';
                     render(); }; });
-            document.querySelectorAll('[data-delsvc]').forEach(function(b) { b.onclick = function() { if (!confirm(
-                        'Удалить услугу?')) return;
+            document.querySelectorAll('[data-delsvc]').forEach(function(b) { b.onclick = function() { if (!confirm('Удалить?')) return;
                     services = services.filter(function(s) { return s.id != b.dataset.delsvc; });
                     saveData();
                     render(); }; });
         }
 
         function openModal(sid) { var s = services.find(function(x) { return x.id === sid; }); if (!s) return;
-            document.getElementById('modalTitle').textContent = '📋 ' + s.name; var h = ''; if (s.specs?.trim()) { h +=
-                    '<h3>📅 Регламент</h3><table class="modal-info-table">';
-                s.specs.split('\n').forEach(function(l) { var p = l.split('|'); if (p.length >= 2) h += '<tr><td>' + esc(p[
-                        0].trim()) + '</td><td>' + esc(p[1].trim()) + '</td></tr>'; });
+            document.getElementById('modalTitle').textContent = s.name; var h = ''; if (s.specs?.trim()) { h += '<h3>📅 Регламент</h3><table class="modal-info-table">';
+                s.specs.split('\n').forEach(function(l) { var p = l.split('|'); if (p.length >= 2) h += '<tr><td>' + esc(p[0].trim()) + '</td><td>' + esc(p[1].trim()) + '</td></tr>'; });
                 h += '</table>'; } if (s.tools?.trim()) { h += '<h3>🔧 Инструменты</h3><div class="modal-tools">';
                 s.tools.split(',').forEach(function(t) { h += '<span class="tool-tag">' + esc(t.trim()) + '</span>'; });
                 h += '</div>'; } if (s.steps?.trim()) { h += '<h3>📝 Инструкция</h3>';
-                s.steps.split('\n').forEach(function(st, i) { h +=
-                        '<div class="step-block"><div class="step-header"><span class="step-number">' + (i + 1) +
-                        '</span> Шаг ' + (i + 1) + '</div><div class="step-text">' + esc(st) + '</div></div>'; }); } if (
-                s.image?.trim()) h += '<h3>🖼️ Фото</h3><img src="' + esc(s.image) +
-                '" class="step-image" onerror="this.style.display=\'none\'">'; if (s.warning?.trim()) h +=
-                '<h3>⚠️ Предупреждение</h3><div class="modal-warning">' + esc(s.warning) + '</div>';
+                s.steps.split('\n').forEach(function(st, i) { h += '<div class="step-block"><div class="step-header"><span class="step-number">' + (i + 1) + '</span> Шаг ' + (i + 1) + '</div><div class="step-text">' + esc(st) + '</div></div>'; }); } if (s.image?.trim()) h += '<h3>🖼️ Фото</h3><img src="' + esc(s.image) + '" class="step-image" onerror="this.style.display=\'none\'">'; if (s.warning?.trim()) h += '<h3>⚠️ Предупреждение</h3><div class="modal-warning">' + esc(s.warning) + '</div>';
             document.getElementById('modalBody').innerHTML = h;
             document.getElementById('modalOverlay').classList.remove('hidden');
             document.body.style.overflow = 'hidden'; }
@@ -562,7 +410,6 @@
         document.onkeydown = function(e) { if (e.key === 'Escape') closeModal(); };
 
         loadData();
-        console.log('🚀 Приложение запущено. Firebase подключён.');
     </script>
 </body>
 </html>
