@@ -7,7 +7,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a2e; min-height: 100vh; padding: 20px; color: #e0e0e0; }
-        .container { max-width: 1100px; margin: 0 auto; background: #1e1e32; border-radius: 20px; padding: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+        .container { max-width: 1200px; margin: 0 auto; background: #1e1e32; border-radius: 20px; padding: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
         .header { text-align: center; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 2px solid rgba(255,165,0,0.3); }
         .logo { font-size: 36px; font-weight: 900; color: #ff9800; letter-spacing: 3px; }
         .logo span { color: #fff; font-weight: 300; }
@@ -16,7 +16,6 @@
         .status-bar.online { background: rgba(76,175,80,0.2); color: #4caf50; }
         .status-bar.offline { background: rgba(244,67,54,0.2); color: #f44336; }
 
-        /* ТАБЫ */
         .main-tabs { display: flex; gap: 8px; margin-bottom: 25px; flex-wrap: wrap; justify-content: center; }
         .main-tab { padding: 14px 28px; border-radius: 30px; border: 2px solid rgba(255,255,255,0.2); background: transparent; color: #ccc; cursor: pointer; font-size: 14px; font-weight: 700; transition: all 0.3s; white-space: nowrap; letter-spacing: 0.5px; }
         .main-tab:hover { border-color: #ff9800; color: #fff; background: rgba(255,152,0,0.1); }
@@ -24,6 +23,10 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .admin-link { text-align: right; margin-bottom: 10px; }
+        .admin-link a { color: #666; font-size: 11px; text-decoration: none; }
+        .admin-link a:hover { color: #ff9800; }
 
         .smart-search { background: rgba(0,0,0,0.4); border-radius: 16px; padding: 20px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.1); }
         .smart-search input { width: 100%; padding: 14px 20px; border-radius: 30px; border: 2px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: #fff; font-size: 15px; outline: none; }
@@ -44,14 +47,11 @@
         .sel-btn { padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); color: #ccc; cursor: pointer; font-size: 11px; font-weight: 500; transition: all 0.2s; white-space: nowrap; }
         .sel-btn:hover { background: rgba(255,152,0,0.15); border-color: rgba(255,152,0,0.5); color: #fff; }
         .sel-btn.active { background: #ff9800; color: #000; border-color: #ff9800; font-weight: 700; }
-        .sel-btn .btn-code { font-size: 9px; color: #999; display: block; }
-        .sel-btn.active .btn-code { color: rgba(0,0,0,0.7); }
         .selected-config { background: rgba(255,152,0,0.12); border: 1px solid #ff9800; border-radius: 10px; padding: 12px 16px; margin-top: 12px; display: flex; align-items: center; gap: 10px; }
         .selected-config-icon { font-size: 32px; }
         .selected-config-info { flex: 1; }
         .selected-config-name { font-size: 15px; font-weight: 700; color: #fff; }
         .selected-config-detail { font-size: 11px; color: #ccc; }
-        .selected-config-badge { background: #ff9800; color: #000; font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 12px; }
 
         .filter-buttons { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; justify-content: center; }
         .filter-btn { padding: 8px 14px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #ccc; cursor: pointer; font-size: 11px; }
@@ -79,7 +79,6 @@
         .detail-btn { padding: 7px 14px; border-radius: 20px; border: 2px solid #ff9800; background: rgba(255,152,0,0.1); color: #ff9800; cursor: pointer; font-size: 11px; font-weight: 700; text-transform: uppercase; }
         .detail-btn:hover { background: #ff9800; color: #000; }
 
-        /* ЗАПИСЬ */
         .booking-section { background: rgba(0,0,0,0.3); border-radius: 16px; padding: 25px; border: 1px solid rgba(255,255,255,0.1); }
         .booking-title { font-size: 20px; font-weight: 800; color: #ff9800; text-align: center; margin-bottom: 20px; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
@@ -92,24 +91,61 @@
         .form-group select option { background: #1e1e32; color: #fff; }
 
         .delivery-options { display: flex; gap: 8px; flex-wrap: wrap; }
-        .delivery-option { flex: 1; min-width: 120px; padding: 12px; border-radius: 10px; border: 2px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.03); color: #ccc; cursor: pointer; text-align: center; font-size: 12px; font-weight: 600; transition: all 0.2s; }
+        .delivery-option { flex: 1; min-width: 100px; padding: 12px; border-radius: 10px; border: 2px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.03); color: #ccc; cursor: pointer; text-align: center; font-size: 12px; font-weight: 600; transition: all 0.2s; }
         .delivery-option:hover { border-color: #ff9800; background: rgba(255,152,0,0.1); }
         .delivery-option.active { border-color: #ff9800; background: rgba(255,152,0,0.2); color: #fff; }
         .delivery-option .option-icon { font-size: 24px; display: block; margin-bottom: 4px; }
-        .delivery-option .option-title { font-weight: 700; }
-        .delivery-option .option-desc { font-size: 9px; color: #999; margin-top: 2px; }
 
         .submit-btn { width: 100%; padding: 16px; border-radius: 30px; border: none; background: #ff9800; color: #000; font-size: 16px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s; margin-top: 10px; }
-        .submit-btn:hover { background: #ffb74d; transform: scale(1.02); box-shadow: 0 8px 25px rgba(255,152,0,0.4); }
+        .submit-btn:hover { background: #ffb74d; transform: scale(1.02); }
         .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .success-msg { display: none; text-align: center; padding: 30px; background: rgba(76,175,80,0.15); border: 1px solid #4caf50; border-radius: 12px; margin-top: 15px; }
         .success-msg h3 { color: #4caf50; font-size: 18px; margin-bottom: 8px; }
         .success-msg p { color: #ccc; font-size: 13px; }
 
+        /* АДМИНКА */
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+        .admin-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+        .admin-tab { padding: 10px 18px; border-radius: 25px; border: 2px solid rgba(255,255,255,0.2); background: transparent; color: #ccc; cursor: pointer; font-size: 12px; font-weight: 600; }
+        .admin-tab:hover { border-color: #ff9800; color: #fff; }
+        .admin-tab.active { background: #ff9800; color: #000; border-color: #ff9800; }
+        .admin-content { display: none; }
+        .admin-content.active { display: block; }
+
+        .booking-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 18px; margin-bottom: 12px; }
+        .booking-card-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+        .booking-card-id { font-size: 10px; color: #666; font-family: monospace; }
+        .booking-card-name { font-size: 16px; font-weight: 700; color: #fff; }
+        .booking-card-phone { font-size: 14px; color: #ff9800; font-weight: 600; }
+        .booking-card-car { font-size: 13px; color: #ccc; }
+        .booking-card-datetime { font-size: 12px; color: #aaa; }
+        .booking-card-delivery { display: inline-block; padding: 4px 10px; border-radius: 15px; font-size: 10px; font-weight: 700; margin-top: 4px; }
+        .delivery-self { background: rgba(76,175,80,0.2); color: #4caf50; }
+        .delivery-evacuator { background: rgba(255,152,0,0.2); color: #ff9800; }
+        .delivery-pickup { background: rgba(66,165,245,0.2); color: #42a5f5; }
+        .booking-card-services { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+        .booking-service-tag { background: rgba(255,152,0,0.15); padding: 4px 8px; border-radius: 10px; font-size: 10px; color: #ff9800; }
+        .booking-card-problem { margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px; font-size: 12px; color: #ccc; line-height: 1.5; }
+        .booking-card-actions { margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap; }
+        .btn { padding: 8px 16px; border-radius: 20px; border: none; cursor: pointer; font-size: 11px; font-weight: 700; transition: all 0.2s; }
+        .btn-sm { padding: 5px 10px; font-size: 10px; border-radius: 15px; }
+        .btn-primary { background: #ff9800; color: #000; }
+        .btn-primary:hover { background: #ffb74d; }
+        .btn-success { background: #4caf50; color: #fff; }
+        .btn-success:hover { background: #66bb6a; }
+        .btn-danger { background: #e53935; color: #fff; }
+        .btn-danger:hover { background: #ef5350; }
+        .btn-outline { background: transparent; border: 2px solid #ff9800; color: #ff9800; }
+        .btn-outline:hover { background: #ff9800; color: #000; }
+        .booking-status { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; }
+        .status-new { background: rgba(255,152,0,0.2); color: #ff9800; }
+        .status-confirmed { background: rgba(76,175,80,0.2); color: #4caf50; }
+        .status-done { background: rgba(158,158,158,0.2); color: #9e9e9e; }
+        .empty-state { text-align: center; padding: 40px; color: #666; }
         .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; align-items:center; justify-content:center; }
         .modal-overlay.hidden { display:none; }
-        .modal { background:#1e1e32; border-radius:16px; width:90%; max-width:800px; max-height:85vh; overflow-y:auto; border:2px solid #ff9800; }
+        .modal { background:#1e1e32; border-radius:16px; width:90%; max-width:700px; max-height:85vh; overflow-y:auto; border:2px solid #ff9800; }
         .modal-header { background:#ff9800; padding:16px 20px; border-radius:14px 14px 0 0; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; }
         .modal-title { font-size:18px; font-weight:800; color:#000; }
         .modal-close { width:34px; height:34px; border-radius:50%; border:2px solid #000; background:transparent; color:#000; cursor:pointer; font-size:18px; font-weight:bold; display:flex; align-items:center; justify-content:center; }
@@ -126,7 +162,6 @@
         .step-header { font-weight:700; color:#ff9800; font-size:14px; margin-bottom:8px; display:flex; align-items:center; gap:8px; }
         .step-number { background:#ff9800; color:#000; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:13px; }
         .step-text { font-size:13px; color:#ccc; line-height:1.6; }
-
         .footer { text-align:center; margin-top:25px; padding-top:15px; border-top:1px solid rgba(255,255,255,0.08); color:#666; font-size:11px; }
 
         @media(max-width:768px) {
@@ -135,6 +170,7 @@
             .service-row { flex-wrap:wrap; }
             .service-right { width:100%; justify-content:space-between; }
             .delivery-options { flex-direction: column; }
+            .booking-card-header { flex-direction: column; }
         }
     </style>
 </head>
@@ -154,15 +190,20 @@
     <script>
         firebase.initializeApp({ databaseURL: 'https://the-colony-tap-default-rtdb.firebaseio.com/' });
         const db = firebase.database();
+        const ADMIN_PASS = 'admin123';
+        const KEY_AUTH = 'as_auth_v6';
 
+        let isAdmin = localStorage.getItem(KEY_AUTH) === '1';
         let cars = [];
         let services = [];
+        let bookings = [];
         let selCar = 'almera_g15';
         let selEng = 'qg16de';
         let selGb = 'rs5f51a';
         let picks = new Set();
         let filt = 'all';
         let activeTab = 'price';
+        let adminTab = 'bookings';
         let deliveryMethod = 'self';
         let dbOnline = false;
 
@@ -176,8 +217,7 @@
             return [
                 { id: 'vaz2107', name: 'ВАЗ 2107', icon: '🚗', cat: 'Эконом', engines: [{ id: 'vaz16inj', name: '1.6 инжектор', code: '21067', power: '74 л.с.', fuel: 'Бензин', gearboxes: [{ id: 'vaz_m5', name: 'МКПП-5', code: '2107', drive: 'Задний', mult: 0.75, badge: 'Эконом' }] }] },
                 { id: 'passatb5', name: 'VW Passat B5', icon: '🚙', cat: 'Бизнес', engines: [{ id: '18t_aeb', name: '1.8T Turbo', code: 'AEB', power: '150 л.с.', fuel: 'Бензин', gearboxes: [{ id: '012', name: 'МКПП-5', code: '012', drive: 'Передний', mult: 1.2, badge: 'Средне' }, { id: '01v', name: 'АКПП-5', code: '01V', drive: 'Передний', mult: 1.4, badge: 'Сложно' }] }] },
-                { id: 'almera_g15', name: 'Nissan Almera Classic', icon: '🚕', cat: 'Эконом', engines: [{ id: 'qg16de', name: '1.6 QG16DE', code: 'QG16DE', power: '107 л.с.', fuel: 'Бензин', gearboxes: [{ id: 'rs5f51a', name: 'МКПП-5', code: 'RS5F51A', drive: 'Передний', mult: 0.85, badge: 'Эконом' }, { id: 're4f03b', name: 'АКПП-4', code: 'RE4F03B', drive: 'Передний', mult: 1.0, badge: 'Средне' }] }] },
-                { id: 'almera_g11', name: 'Nissan Almera G11', icon: '🚕', cat: 'Бюджет', engines: [{ id: 'k4m', name: '1.6 K4M', code: 'K4M', power: '102 л.с.', fuel: 'Бензин', gearboxes: [{ id: 'jr5', name: 'МКПП-5', code: 'JR5', drive: 'Передний', mult: 0.9, badge: 'Средне' }] }] }
+                { id: 'almera_g15', name: 'Nissan Almera Classic', icon: '🚕', cat: 'Эконом', engines: [{ id: 'qg16de', name: '1.6 QG16DE', code: 'QG16DE', power: '107 л.с.', fuel: 'Бензин', gearboxes: [{ id: 'rs5f51a', name: 'МКПП-5', code: 'RS5F51A', drive: 'Передний', mult: 0.85, badge: 'Эконом' }, { id: 're4f03b', name: 'АКПП-4', code: 'RE4F03B', drive: 'Передний', mult: 1.0, badge: 'Средне' }] }] }
             ];
         }
 
@@ -186,10 +226,8 @@
                 { id:1, name:'Диагностика двигателя', price:1500, cat:'diagnostics' },
                 { id:2, name:'Диагностика ходовой', price:800, cat:'diagnostics' },
                 { id:10, name:'Замена масла и фильтра', price:1000, cat:'maintenance' },
-                { id:11, name:'Замена воздушного фильтра', price:400, cat:'maintenance' },
                 { id:14, name:'Замена свечей зажигания', price:800, cat:'maintenance' },
                 { id:20, name:'Замена ремня ГРМ', price:5000, cat:'engine' },
-                { id:30, name:'Замена глушителя', price:1500, cat:'exhaust' },
                 { id:40, name:'Замена сцепления', price:8000, cat:'transmission' },
                 { id:41, name:'Замена масла в МКПП', price:800, cat:'transmission' },
                 { id:42, name:'Замена масла в АКПП', price:2500, cat:'transmission' },
@@ -198,7 +236,6 @@
                 { id:60, name:'Замена амортизаторов перед', price:3500, cat:'suspension' },
                 { id:61, name:'Замена амортизаторов зад', price:2800, cat:'suspension' },
                 { id:62, name:'Замена сайлентблоков задней балки', price:7000, cat:'suspension', tools:'Пресс, Болгарка', specs:'Запчасти|800-3500 ₽\nРабота|6500-12000 ₽', steps:'Снимите балку.\nВыпрессуйте сайлентблоки.\nЗапрессуйте новые.\nУстановите балку.', warning:'На Almera Classic балка неразборная!' },
-                { id:63, name:'Замена сайлентблоков рычагов', price:4000, cat:'suspension' },
                 { id:65, name:'Развал-схождение', price:2000, cat:'suspension' },
                 { id:70, name:'Заправка кондиционера', price:2000, cat:'ac' },
                 { id:80, name:'Замена стартера', price:2000, cat:'electrical' },
@@ -207,35 +244,38 @@
         }
 
         function loadData() {
-            db.ref('cars').once('value').then(function(snap) { cars = snap.exists() ? snap.val() : getDefaultCars(); initAfterLoad(); }).catch(function() { cars = getDefaultCars();
-                initAfterLoad(); });
-            db.ref('services').once('value').then(function(snap) { services = snap.exists() ? snap.val() : getDefaultServices(); initAfterLoad(); }).catch(function() { services = getDefaultServices();
-                initAfterLoad(); });
+            db.ref('cars').once('value').then(function(snap) { cars = snap.exists() ? snap.val() : getDefaultCars(); checkInit(); }).catch(function() { cars = getDefaultCars();
+                checkInit(); });
+            db.ref('services').once('value').then(function(snap) { services = snap.exists() ? snap.val() : getDefaultServices(); checkInit(); }).catch(function() { services = getDefaultServices();
+                checkInit(); });
+            db.ref('bookings').on('value', function(snap) { bookings = snap.exists() ? snap.val() : []; if (isAdmin) render(); });
             db.ref('.info/connected').on('value', function(snap) { dbOnline = snap.val() === true; });
+            loadBookingsOnce();
         }
 
-        function initAfterLoad() { if (!cars.length) cars = getDefaultCars(); if (!services.length) services = getDefaultServices();
-            selCar = cars[0].id;
-            selEng = cars[0].engines[0].id;
-            selGb = cars[0].engines[0].gearboxes[0].id;
-            dbOnline = true;
-            render(); }
+        function loadBookingsOnce() { db.ref('bookings').once('value').then(function(snap) { bookings = snap.exists() ? snap.val() : []; }).catch(function() { bookings = []; }); }
 
-        function render() { document.getElementById('appContainer').innerHTML = renderAll();
-            bindAll(); }
+        function checkInit() { if (cars.length && services.length) { if (!selCar || !cars.find(function(c) { return c.id === selCar; })) { selCar = cars[0].id;
+                    selEng = cars[0].engines[0].id;
+                    selGb = cars[0].engines[0].gearboxes[0].id; }
+                dbOnline = true;
+                render(); } }
 
-        function renderAll() {
+        function render() { document.getElementById('appContainer').innerHTML = isAdmin ? renderAdmin() : renderClient(); if (isAdmin) bindAdmin(); else bindClient(); }
+
+        function renderClient() {
             var h = '';
             h += '<div class="header"><div class="logo">AUTO<span>SERVICE</span></div><div class="subtitle">Прайс-лист и запись на сервис</div></div>';
             h += '<div class="status-bar ' + (dbOnline ? 'online' : 'offline') + '">' + (dbOnline ? '🟢 Онлайн' : '🔴 Офлайн') + '</div>';
+            h += '<div class="admin-link"><a href="#" id="loginLink">🔐 Админ</a></div>';
             h += '<div class="main-tabs"><button class="main-tab' + (activeTab === 'price' ? ' active' : '') + '" data-tab="price">📋 Прайс-лист</button><button class="main-tab' + (activeTab === 'booking' ? ' active' : '') + '" data-tab="booking">📅 Запись на сервис</button></div>';
-            h += '<div class="tab-content' + (activeTab === 'price' ? ' active' : '') + '" id="tab-price">' + renderPriceTab() + '</div>';
-            h += '<div class="tab-content' + (activeTab === 'booking' ? ' active' : '') + '" id="tab-booking">' + renderBookingTab() + '</div>';
-            h += '<div class="footer">© 2026 AutoService • ' + services.length + ' услуг • ' + cars.length + ' авто</div>';
+            h += '<div class="tab-content' + (activeTab === 'price' ? ' active' : '') + '">' + renderPrice() + '</div>';
+            h += '<div class="tab-content' + (activeTab === 'booking' ? ' active' : '') + '">' + renderBooking() + '</div>';
+            h += '<div class="footer">© 2026 AutoService</div>';
             return h;
         }
 
-        function renderPriceTab() {
+        function renderPrice() {
             var h = '';
             h += '<div class="smart-search"><input type="text" id="smartSearch" placeholder="🔍 Поиск услуги..." autocomplete="off"><div class="search-results" id="searchResults"></div></div>';
             h += '<div class="selector-section"><div class="selector-title">🚗 Выберите авто</div>';
@@ -268,105 +308,158 @@
             return h;
         }
 
-        function renderBookingTab() {
+        function renderBooking() {
             var h = '';
             h += '<div class="booking-section"><div class="booking-title">📅 Запись на сервис</div>';
             h += '<div class="form-grid">';
             h += '<div class="form-group"><label>🚗 Автомобиль</label><select id="bookCar">';
             cars.forEach(function(c) { h += '<option value="' + c.id + '">' + c.icon + ' ' + esc(c.name) + '</option>'; });
             h += '</select></div>';
-            h += '<div class="form-group"><label>👤 Ваше имя</label><input type="text" id="bookName" placeholder="Иван Петров"></div>';
+            h += '<div class="form-group"><label>👤 Имя</label><input type="text" id="bookName" placeholder="Иван Петров"></div>';
             h += '<div class="form-group"><label>📞 Телефон</label><input type="tel" id="bookPhone" placeholder="+7 (999) 123-45-67"></div>';
-            h += '<div class="form-group"><label>📧 Email (необязательно)</label><input type="email" id="bookEmail" placeholder="mail@example.com"></div>';
-            h += '<div class="form-group"><label>🛠️ Желаемые услуги</label><select id="bookService" multiple style="min-height:100px;">';
+            h += '<div class="form-group"><label>📧 Email</label><input type="email" id="bookEmail" placeholder="mail@example.com"></div>';
+            h += '<div class="form-group"><label>🛠️ Услуги (Ctrl+клик)</label><select id="bookService" multiple style="min-height:100px;">';
             services.forEach(function(s) { h += '<option value="' + s.id + '">' + esc(s.name) + ' (' + fmt(s.price) + ')</option>'; });
-            h += '</select><small style="color:#999;font-size:10px;">Зажмите Ctrl для выбора нескольких</small></div>';
-            h += '<div class="form-group"><label>📝 Описание проблемы</label><textarea id="bookProblem" placeholder="Опишите, что беспокоит..."></textarea></div>';
-            h += '<div class="form-group"><label>📅 Удобная дата</label><input type="date" id="bookDate"></div>';
-            h += '<div class="form-group"><label>⏰ Удобное время</label><select id="bookTime"><option value="09:00">09:00</option><option value="10:00">10:00</option><option value="11:00">11:00</option><option value="12:00">12:00</option><option value="13:00">13:00</option><option value="14:00">14:00</option><option value="15:00">15:00</option><option value="16:00">16:00</option><option value="17:00">17:00</option></select></div>';
-            h += '<div class="form-group full"><label>🚚 Способ доставки автомобиля</label><div class="delivery-options" id="deliveryOptions">';
-            h += '<div class="delivery-option active" data-delivery="self"><span class="option-icon">🚗</span><span class="option-title">Приеду сам</span><span class="option-desc">На своём ходу</span></div>';
-            h += '<div class="delivery-option" data-delivery="evacuator"><span class="option-icon">🛻</span><span class="option-title">Эвакуатор</span><span class="option-desc">Не на ходу</span></div>';
-            h += '<div class="delivery-option" data-delivery="pickup"><span class="option-icon">🏠</span><span class="option-title">Заберите сами</span><span class="option-desc">Хозяин дома</span></div>';
+            h += '</select></div>';
+            h += '<div class="form-group full"><label>📝 Описание проблемы</label><textarea id="bookProblem" placeholder="Что случилось?"></textarea></div>';
+            h += '<div class="form-group"><label>📅 Дата</label><input type="date" id="bookDate"></div>';
+            h += '<div class="form-group"><label>⏰ Время</label><select id="bookTime"><option value="09:00">09:00</option><option value="10:00">10:00</option><option value="11:00">11:00</option><option value="12:00">12:00</option><option value="13:00">13:00</option><option value="14:00">14:00</option><option value="15:00">15:00</option><option value="16:00">16:00</option><option value="17:00">17:00</option></select></div>';
+            h += '<div class="form-group full"><label>🚚 Доставка</label><div class="delivery-options" id="deliveryOptions">';
+            h += '<div class="delivery-option active" data-delivery="self"><span class="option-icon">🚗</span>Приеду сам</div>';
+            h += '<div class="delivery-option" data-delivery="evacuator"><span class="option-icon">🛻</span>Эвакуатор</div>';
+            h += '<div class="delivery-option" data-delivery="pickup"><span class="option-icon">🏠</span>Заберите</div>';
             h += '</div></div>';
-            h += '<div class="form-group full" id="pickupAddressGroup" style="display:none;"><label>📍 Адрес для забора авто</label><input type="text" id="bookAddress" placeholder="Улица, дом, подъезд"></div>';
-            h += '<div class="form-group full"><button class="submit-btn" id="submitBooking">📅 Записаться на сервис</button></div>';
-            h += '</div>';
-            h += '<div class="success-msg" id="successMsg"><h3>✅ Заявка принята!</h3><p>Мы свяжемся с вами в ближайшее время для подтверждения записи.</p><p style="margin-top:10px;color:#ff9800;">Номер заявки: <strong id="bookingId"></strong></p></div>';
-            h += '</div>';
+            h += '<div class="form-group full" id="pickupGroup" style="display:none;"><label>📍 Адрес</label><input type="text" id="bookAddress" placeholder="Улица, дом"></div>';
+            h += '<div class="form-group full"><button class="submit-btn" id="submitBooking">📅 Записаться</button></div>';
+            h += '</div><div class="success-msg" id="successMsg"><h3>✅ Заявка принята!</h3><p>Мы свяжемся с вами.</p><p style="color:#ff9800;">Номер: <strong id="bookingId"></strong></p></div></div>';
             return h;
         }
 
-        function bindAll() {
-            // ТАБЫ
+        function bindClient() {
+            document.getElementById('loginLink').onclick = function(e) { e.preventDefault(); var p = prompt('Пароль:'); if (p === ADMIN_PASS) { localStorage.setItem(KEY_AUTH, '1');
+                    isAdmin = true;
+                    render(); } else if (p !== null) alert('Неверно!'); };
             document.querySelectorAll('.main-tab').forEach(function(b) { b.onclick = function() { activeTab = b.dataset.tab;
                 render(); }; });
-            // Ценовые события (только если вкладка прайса активна)
-            if (activeTab === 'price') {
-                document.querySelectorAll('#carBtns .sel-btn').forEach(function(b) { b.onclick = function() { selCar = b.dataset.car; var c = cars.find(function(x) { return x.id === selCar; });
-                        selEng = c?.engines?.[0]?.id || null;
-                        selGb = c?.engines?.[0]?.gearboxes?.[0]?.id || null;
-                        picks.clear();
-                        render(); }; });
-                document.querySelectorAll('#engBtns .sel-btn').forEach(function(b) { b.onclick = function() { selEng = b.dataset.eng; var c = cars.find(function(x) { return x.id === selCar; }); if (c) { var e = c.engines.find(function(x) { return x.id === selEng; });
-                        selGb = e?.gearboxes?.[0]?.id || null; }
+            if (activeTab === 'price') bindPriceEvents();
+            if (activeTab === 'booking') bindBookingEvents();
+        }
+
+        function bindPriceEvents() {
+            document.querySelectorAll('#carBtns .sel-btn').forEach(function(b) { b.onclick = function() { selCar = b.dataset.car; var c = cars.find(function(x) { return x.id === selCar; });
+                    selEng = c?.engines?.[0]?.id || null;
+                    selGb = c?.engines?.[0]?.gearboxes?.[0]?.id || null;
                     picks.clear();
                     render(); }; });
-                document.querySelectorAll('#gbBtns .sel-btn').forEach(function(b) { b.onclick = function() { selGb = b.dataset.gb;
-                    picks.clear();
-                    render(); }; });
-                document.querySelectorAll('#filtBtns .filter-btn').forEach(function(b) { b.onclick = function() { filt = b.dataset.filt;
-                    render(); }; });
-                document.getElementById('clearBtn').onclick = function() { picks.clear();
+            document.querySelectorAll('#engBtns .sel-btn').forEach(function(b) { b.onclick = function() { selEng = b.dataset.eng; var c = cars.find(function(x) { return x.id === selCar; }); if (c) { var e = c.engines.find(function(x) { return x.id === selEng; });
+                    selGb = e?.gearboxes?.[0]?.id || null; }
+                picks.clear();
+                render(); }; });
+            document.querySelectorAll('#gbBtns .sel-btn').forEach(function(b) { b.onclick = function() { selGb = b.dataset.gb;
+                picks.clear();
+                render(); }; });
+            document.querySelectorAll('#filtBtns .filter-btn').forEach(function(b) { b.onclick = function() { filt = b.dataset.filt;
+                render(); }; });
+            document.getElementById('clearBtn').onclick = function() { picks.clear();
+                render(); };
+            document.querySelectorAll('.service-row').forEach(function(r) { r.querySelector('.service-left').onclick = function() { var sid = parseInt(r.dataset.sid);
+                    picks.has(sid) ? picks.delete(sid) : picks.add(sid);
                     render(); };
-                document.querySelectorAll('.service-row').forEach(function(r) { r.querySelector('.service-left').onclick = function() { var sid = parseInt(r.dataset.sid);
-                        picks.has(sid) ? picks.delete(sid) : picks.add(sid);
-                        render(); };
-                    r.querySelector('.detail-btn').onclick = function(e) { e.stopPropagation();
-                        openModal(parseInt(r.querySelector('.detail-btn').dataset.det)); }; });
-                var ss = document.getElementById('smartSearch'); if (ss) { var sr = document.getElementById('searchResults');
-                    ss.oninput = function() { var q = ss.value.toLowerCase().trim(); if (!q) { sr.classList.remove('active');
-                            sr.innerHTML = ''; return; } var results = services.filter(function(s) { return s.name.toLowerCase().indexOf(q) >= 0; }); if (results.length) { sr.classList.add('active');
-                            sr.innerHTML = results.map(function(s) { return '<div class="search-result-item" data-ssid="' + s.id + '"><div class="search-result-name">' + esc(s.name) + '</div><div class="search-result-price">' + fmt(prc(s)) + '</div></div>'; }).join('');
-                            sr.querySelectorAll('.search-result-item').forEach(function(item) { item.onclick = function() { var sid = parseInt(item.dataset.ssid);
-                                    picks.has(sid) ? picks.delete(sid) : picks.add(sid);
-                                    ss.value = '';
-                                    sr.classList.remove('active');
-                                    render(); }; }); } else { sr.classList.add('active');
-                            sr.innerHTML = '<div class="empty-state" style="padding:15px;">Ничего не найдено</div>'; } }; }
-            }
-            // СОБЫТИЯ ЗАПИСИ
-            if (activeTab === 'booking') {
-                document.querySelectorAll('.delivery-option').forEach(function(o) { o.onclick = function() { deliveryMethod = o.dataset.delivery;
-                        document.querySelectorAll('.delivery-option').forEach(function(x) { x.classList.remove('active'); });
-                        o.classList.add('active');
-                        document.getElementById('pickupAddressGroup').style.display = deliveryMethod === 'pickup' ? 'block' : 'none'; }; });
-                document.getElementById('submitBooking').onclick = function() {
-                    var carId = document.getElementById('bookCar').value;
-                    var name = document.getElementById('bookName').value.trim();
-                    var phone = document.getElementById('bookPhone').value.trim();
-                    var email = document.getElementById('bookEmail').value.trim();
-                    var problem = document.getElementById('bookProblem').value.trim();
-                    var date = document.getElementById('bookDate').value;
-                    var time = document.getElementById('bookTime').value;
-                    var address = document.getElementById('bookAddress')?.value?.trim() || '';
-                    var svcSelect = document.getElementById('bookService');
-                    var selectedSvcs = [];
-                    for (var i = 0; i < svcSelect.options.length; i++) { if (svcSelect.options[i].selected) selectedSvcs.push(parseInt(svcSelect.options[i].value)); }
-                    if (!name) return alert('Введите имя!');
-                    if (!phone) return alert('Введите телефон!');
-                    if (!date) return alert('Выберите дату!');
-                    if (deliveryMethod === 'pickup' && !address) return alert('Введите адрес для забора авто!');
-                    var booking = { carId: carId, name: name, phone: phone, email: email, services: selectedSvcs, problem: problem, date: date, time: time, delivery: deliveryMethod, address: address, createdAt: firebase.database.ServerValue.TIMESTAMP };
-                    var newRef = db.ref('bookings').push();
-                    newRef.set(booking).then(function() {
-                        document.getElementById('successMsg').style.display = 'block';
-                        document.getElementById('bookingId').textContent = newRef.key;
-                        document.getElementById('submitBooking').disabled = true;
-                        document.getElementById('submitBooking').textContent = '✅ Заявка отправлена!';
-                    }).catch(function(err) { alert('Ошибка: ' + err.message); });
-                };
-            }
+                r.querySelector('.detail-btn').onclick = function(e) { e.stopPropagation();
+                    openModal(parseInt(r.querySelector('.detail-btn').dataset.det)); }; });
+            var ss = document.getElementById('smartSearch'); if (ss) { var sr = document.getElementById('searchResults');
+                ss.oninput = function() { var q = ss.value.toLowerCase().trim(); if (!q) { sr.classList.remove('active');
+                        sr.innerHTML = ''; return; } var results = services.filter(function(s) { return s.name.toLowerCase().indexOf(q) >= 0; }); if (results.length) { sr.classList.add('active');
+                        sr.innerHTML = results.map(function(s) { return '<div class="search-result-item" data-ssid="' + s.id + '"><div class="search-result-name">' + esc(s.name) + '</div><div class="search-result-price">' + fmt(prc(s)) + '</div></div>'; }).join('');
+                        sr.querySelectorAll('.search-result-item').forEach(function(item) { item.onclick = function() { var sid = parseInt(item.dataset.ssid);
+                                picks.has(sid) ? picks.delete(sid) : picks.add(sid);
+                                ss.value = '';
+                                sr.classList.remove('active');
+                                render(); }; }); } else { sr.classList.add('active');
+                        sr.innerHTML = '<div class="empty-state" style="padding:15px;">Ничего не найдено</div>'; } }; }
+        }
+
+        function bindBookingEvents() {
+            document.querySelectorAll('.delivery-option').forEach(function(o) { o.onclick = function() { deliveryMethod = o.dataset.delivery;
+                    document.querySelectorAll('.delivery-option').forEach(function(x) { x.classList.remove('active'); });
+                    o.classList.add('active');
+                    document.getElementById('pickupGroup').style.display = deliveryMethod === 'pickup' ? 'block' : 'none'; }; });
+            document.getElementById('submitBooking').onclick = function() {
+                var name = document.getElementById('bookName').value.trim();
+                var phone = document.getElementById('bookPhone').value.trim();
+                if (!name || !phone) return alert('Заполните имя и телефон!');
+                var svcSel = document.getElementById('bookService');
+                var selSvcs = [];
+                for (var i = 0; i < svcSel.options.length; i++) { if (svcSel.options[i].selected) selSvcs.push(parseInt(svcSel.options[i].value)); }
+                var b = { carId: document.getElementById('bookCar').value, name: name, phone: phone, email: document.getElementById('bookEmail').value.trim(), services: selSvcs, problem: document.getElementById('bookProblem').value.trim(), date: document.getElementById('bookDate').value, time: document.getElementById('bookTime').value, delivery: deliveryMethod, address: document.getElementById('bookAddress')?.value?.trim() || '', status: 'new', createdAt: firebase.database.ServerValue.TIMESTAMP };
+                var ref = db.ref('bookings').push();
+                ref.set(b).then(function() { document.getElementById('successMsg').style.display = 'block';
+                    document.getElementById('bookingId').textContent = ref.key;
+                    document.getElementById('submitBooking').disabled = true;
+                    document.getElementById('submitBooking').textContent = '✅ Отправлено!'; }).catch(function(e) { alert('Ошибка: ' + e.message); });
+            };
+        }
+
+        // ==================== АДМИН ====================
+        function renderAdmin() {
+            var h = '';
+            h += '<div class="header"><div class="logo">AUTO<span>SERVICE</span></div><div class="subtitle">⚙️ Админ-панель</div></div>';
+            h += '<div class="status-bar ' + (dbOnline ? 'online' : 'offline') + '">' + (dbOnline ? '🟢 Онлайн' : '🔴 Офлайн') + '</div>';
+            h += '<div class="admin-header"><div class="admin-tabs"><button class="admin-tab' + (adminTab === 'bookings' ? ' active' : '') + '" data-atab="bookings">📅 Заявки (' + (bookings ? Object.keys(bookings).length : 0) + ')</button><button class="admin-tab' + (adminTab === 'cars' ? ' active' : '') + '" data-atab="cars">🚗 Авто</button><button class="admin-tab' + (adminTab === 'services' ? ' active' : '') + '" data-atab="services">🔧 Услуги</button></div><button class="btn btn-outline btn-sm" id="logoutBtn">🚪 Выйти</button></div>';
+            h += '<div class="admin-content' + (adminTab === 'bookings' ? ' active' : '') + '">' + renderAdminBookings() + '</div>';
+            h += '<div class="admin-content' + (adminTab === 'cars' ? ' active' : '') + '"><div class="empty-state" style="padding:20px;">🚗 Управление авто (добавление/удаление)</div></div>';
+            h += '<div class="admin-content' + (adminTab === 'services' ? ' active' : '') + '"><div class="empty-state" style="padding:20px;">🔧 Управление услугами (добавление/редактирование)</div></div>';
+            h += '<div class="footer">Админ-панель</div>';
+            return h;
+        }
+
+        function renderAdminBookings() {
+            var h = '';
+            if (!bookings || !Object.keys(bookings).length) { h += '<div class="empty-state">📭 Нет заявок. Клиенты ещё не записывались.</div>'; return h; }
+            var keys = Object.keys(bookings);
+            keys.reverse();
+            keys.forEach(function(key) {
+                var b = bookings[key];
+                var car = cars.find(function(c) { return c.id === b.carId; }) || { icon: '🚗', name: 'Не указан' };
+                var statusClass = 'status-new';
+                var statusText = 'Новая';
+                if (b.status === 'confirmed') { statusClass = 'status-confirmed';
+                    statusText = 'Подтверждена'; }
+                if (b.status === 'done') { statusClass = 'status-done';
+                    statusText = 'Выполнена'; }
+                var delClass = 'delivery-self';
+                var delText = '🚗 Приедет сам';
+                if (b.delivery === 'evacuator') { delClass = 'delivery-evacuator';
+                    delText = '🛻 Эвакуатор'; }
+                if (b.delivery === 'pickup') { delClass = 'delivery-pickup';
+                    delText = '🏠 Забрать: ' + (b.address || '—'); }
+                h += '<div class="booking-card">';
+                h += '<div class="booking-card-header"><div><div class="booking-card-name">' + esc(b.name) + '</div><div class="booking-card-phone">📞 ' + esc(b.phone) + '</div></div><div style="text-align:right;"><span class="booking-status ' + statusClass + '">' + statusText + '</span><div class="booking-card-id">#' + key.substring(0, 8) + '</div></div></div>';
+                h += '<div class="booking-card-car">🚗 ' + car.icon + ' ' + esc(car.name) + '</div>';
+                h += '<div class="booking-card-datetime">📅 ' + (b.date || '—') + ' в ' + (b.time || '—') + (b.email ? ' | 📧 ' + esc(b.email) : '') + '</div>';
+                h += '<div class="booking-card-delivery ' + delClass + '">' + delText + '</div>';
+                if (b.services && b.services.length) { h += '<div class="booking-card-services">';
+                    b.services.forEach(function(sid) { var s = services.find(function(x) { return x.id === sid; }); if (s) h += '<span class="booking-service-tag">' + esc(s.name) + '</span>'; });
+                    h += '</div>'; }
+                if (b.problem) h += '<div class="booking-card-problem">📝 ' + esc(b.problem) + '</div>';
+                h += '<div class="booking-card-actions">';
+                if (b.status === 'new') h += '<button class="btn btn-sm btn-success" data-confirm="' + key + '">✅ Подтвердить</button>';
+                if (b.status !== 'done') h += '<button class="btn btn-sm btn-primary" data-done="' + key + '">✔️ Выполнено</button>';
+                h += '<button class="btn btn-sm btn-danger" data-delbook="' + key + '">🗑️ Удалить</button>';
+                h += '</div></div>';
+            });
+            return h;
+        }
+
+        function bindAdmin() {
+            document.getElementById('logoutBtn').onclick = function() { localStorage.removeItem(KEY_AUTH);
+                isAdmin = false;
+                render(); };
+            document.querySelectorAll('.admin-tab').forEach(function(b) { b.onclick = function() { adminTab = b.dataset.atab;
+                render(); }; });
+            document.querySelectorAll('[data-confirm]').forEach(function(b) { b.onclick = function() { db.ref('bookings/' + b.dataset.confirm + '/status').set('confirmed'); }; });
+            document.querySelectorAll('[data-done]').forEach(function(b) { b.onclick = function() { db.ref('bookings/' + b.dataset.done + '/status').set('done'); }; });
+            document.querySelectorAll('[data-delbook]').forEach(function(b) { b.onclick = function() { if (confirm('Удалить заявку?')) db.ref('bookings/' + b.dataset.delbook).remove(); }; });
         }
 
         function openModal(sid) { var s = services.find(function(x) { return x.id === sid; }); if (!s) return;
