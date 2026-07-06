@@ -6,22 +6,9 @@
     <title>Автосервис - Прайс-лист</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #1a1a2e;
-            min-height: 100vh;
-            padding: 20px;
-            color: #e0e0e0;
-        }
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            background: #1e1e32;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-        }
-        .header { text-align: center; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 2px solid rgba(255, 165, 0, 0.3); }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a2e; min-height: 100vh; padding: 20px; color: #e0e0e0; }
+        .container { max-width: 1100px; margin: 0 auto; background: #1e1e32; border-radius: 20px; padding: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+        .header { text-align: center; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 2px solid rgba(255,165,0,0.3); }
         .logo { font-size: 36px; font-weight: 900; color: #ff9800; letter-spacing: 3px; }
         .logo span { color: #fff; font-weight: 300; }
         .subtitle { font-size: 14px; color: #aaa; letter-spacing: 2px; margin-top: 5px; }
@@ -29,48 +16,41 @@
         .status-bar.online { background: rgba(76,175,80,0.2); color: #4caf50; }
         .status-bar.offline { background: rgba(244,67,54,0.2); color: #f44336; }
         .status-bar.connecting { background: rgba(255,152,0,0.2); color: #ff9800; }
-
         .smart-search { background: rgba(0,0,0,0.4); border-radius: 16px; padding: 20px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.1); }
-        .smart-search input { width: 100%; padding: 14px 20px; border-radius: 30px; border: 2px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: #fff; font-size: 15px; outline: none; transition: all 0.3s; }
+        .smart-search input { width: 100%; padding: 14px 20px; border-radius: 30px; border: 2px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: #fff; font-size: 15px; outline: none; }
         .smart-search input:focus { border-color: #ff9800; }
-        .search-results { display: none; margin-top: 10px; background: rgba(0,0,0,0.5); border-radius: 12px; max-height: 300px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1); }
+        .search-results { display: none; margin-top: 10px; background: rgba(0,0,0,0.5); border-radius: 12px; max-height: 300px; overflow-y: auto; }
         .search-results.active { display: block; }
-        .search-result-item { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; }
+        .search-result-item { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; }
         .search-result-item:hover { background: rgba(255,152,0,0.15); }
         .search-result-name { font-size: 13px; color: #fff; }
         .search-result-price { font-size: 14px; color: #ff9800; font-weight: 700; }
-
         .selector-section { background: rgba(0,0,0,0.3); border-radius: 16px; padding: 20px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.1); }
         .selector-title { font-size: 13px; font-weight: 700; color: #ff9800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 14px; text-align: center; }
         .selector-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; }
         .selector-group { flex: 1; min-width: 200px; }
-        .selector-label { font-size: 10px; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+        .selector-label { font-size: 10px; font-weight: 700; color: #999; text-transform: uppercase; margin-bottom: 6px; }
         .selector-buttons { display: flex; flex-wrap: wrap; gap: 5px; }
         .sel-btn { padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); color: #ccc; cursor: pointer; font-size: 11px; font-weight: 500; transition: all 0.2s; white-space: nowrap; }
         .sel-btn:hover { background: rgba(255,152,0,0.15); border-color: rgba(255,152,0,0.5); color: #fff; }
         .sel-btn.active { background: #ff9800; color: #000; border-color: #ff9800; font-weight: 700; }
         .sel-btn .btn-code { font-size: 9px; color: #999; display: block; }
         .sel-btn.active .btn-code { color: rgba(0,0,0,0.7); }
-
         .selected-config { background: rgba(255,152,0,0.12); border: 1px solid #ff9800; border-radius: 10px; padding: 12px 16px; margin-top: 12px; display: flex; align-items: center; gap: 10px; }
         .selected-config-icon { font-size: 32px; }
         .selected-config-info { flex: 1; }
         .selected-config-name { font-size: 15px; font-weight: 700; color: #fff; }
         .selected-config-detail { font-size: 11px; color: #ccc; }
-        .selected-config-code { font-size: 10px; color: #ff9800; margin-top: 2px; }
         .selected-config-badge { background: #ff9800; color: #000; font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 12px; }
-
         .filter-buttons { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; justify-content: center; }
         .filter-btn { padding: 8px 14px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #ccc; cursor: pointer; font-size: 11px; }
         .filter-btn:hover { background: rgba(255,152,0,0.2); border-color: #ff9800; color: #fff; }
         .filter-btn.active { background: #ff9800; color: #000; border-color: #ff9800; font-weight: 700; }
-
         .total-panel { background: #ff9800; border-radius: 12px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 8px; position: sticky; top: 10px; z-index: 10; }
         .total-label { font-size: 12px; font-weight: 600; color: #000; text-transform: uppercase; }
         .total-price { font-size: 28px; font-weight: 900; color: #000; }
         .clear-btn { padding: 8px 16px; border-radius: 30px; border: 2px solid #000; background: transparent; color: #000; cursor: pointer; font-weight: 700; font-size: 12px; text-transform: uppercase; }
         .clear-btn:hover { background: #000; color: #ff9800; }
-
         .category-title { font-size: 13px; font-weight: 700; color: #ff9800; text-transform: uppercase; letter-spacing: 1px; margin: 15px 0 8px 5px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.08); }
         .category-title:first-child { border-top: none; margin-top: 0; padding-top: 0; }
         .service-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-radius: 10px; background: rgba(255,255,255,0.02); margin-bottom: 4px; border: 1px solid transparent; gap: 10px; }
@@ -85,75 +65,64 @@
         .price-note { font-size: 10px; color: #888; margin-left: 3px; }
         .detail-btn { padding: 7px 14px; border-radius: 20px; border: 2px solid #ff9800; background: rgba(255,152,0,0.1); color: #ff9800; cursor: pointer; font-size: 11px; font-weight: 700; text-transform: uppercase; }
         .detail-btn:hover { background: #ff9800; color: #000; }
-
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; display: flex; align-items: center; justify-content: center; }
-        .modal-overlay.hidden { display: none; }
-        .modal { background: #1e1e32; border-radius: 16px; width: 90%; max-width: 800px; max-height: 85vh; overflow-y: auto; border: 2px solid #ff9800; }
-        .modal-header { background: #ff9800; padding: 16px 20px; border-radius: 14px 14px 0 0; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; }
-        .modal-title { font-size: 18px; font-weight: 800; color: #000; }
-        .modal-close { width: 34px; height: 34px; border-radius: 50%; border: 2px solid #000; background: transparent; color: #000; cursor: pointer; font-size: 18px; font-weight: bold; display: flex; align-items: center; justify-content: center; }
-        .modal-close:hover { background: #000; color: #ff9800; }
-        .modal-body { padding: 20px; }
-        .modal-body h3 { font-size: 15px; color: #ff9800; margin: 20px 0 10px 0; text-transform: uppercase; }
-        .modal-body h3:first-child { margin-top: 0; }
-        .modal-tools { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
-        .tool-tag { background: rgba(255,255,255,0.08); padding: 5px 10px; border-radius: 15px; font-size: 11px; color: #ddd; }
-        .modal-warning { background: rgba(255,152,0,0.12); border-left: 4px solid #ff9800; padding: 12px 14px; border-radius: 0 8px 8px 0; margin: 10px 0; font-size: 13px; color: #ffa726; }
-        .modal-info-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 12px; }
-        .modal-info-table td { padding: 6px 10px; border-bottom: 1px solid rgba(255,255,255,0.08); color: #ccc; }
-        .modal-info-table td:first-child { font-weight: 600; color: #ff9800; width: 40%; }
-        .step-block { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 16px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.06); }
-        .step-header { font-weight: 700; color: #ff9800; font-size: 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-        .step-number { background: #ff9800; color: #000; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 13px; }
-        .step-text { font-size: 13px; color: #ccc; line-height: 1.6; }
-        .step-image { width: 100%; max-width: 400px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); margin-top: 8px; }
-        .footer { text-align: center; margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.08); color: #666; font-size: 11px; }
-        .admin-link { text-align: right; margin-bottom: 10px; }
-        .admin-link a { color: #666; font-size: 11px; text-decoration: none; }
-        .admin-link a:hover { color: #ff9800; }
-
-        .btn { padding: 10px 18px; border-radius: 25px; border: none; cursor: pointer; font-size: 12px; font-weight: 700; }
-        .btn-primary { background: #ff9800; color: #000; }
-        .btn-primary:hover { background: #ffb74d; }
-        .btn-danger { background: #e53935; color: #fff; }
-        .btn-danger:hover { background: #ef5350; }
-        .btn-outline { background: transparent; border: 2px solid #ff9800; color: #ff9800; }
-        .btn-outline:hover { background: #ff9800; color: #000; }
-        .btn-sm { padding: 5px 10px; font-size: 10px; border-radius: 15px; }
-
-        .admin-section { background: rgba(0,0,0,0.3); border-radius: 16px; padding: 20px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); }
-        .admin-section h3 { font-size: 16px; color: #ff9800; margin-bottom: 15px; text-transform: uppercase; }
-        .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
-        .admin-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 14px; }
-        .admin-card h4 { font-size: 13px; color: #fff; margin-bottom: 6px; }
-        .admin-card p { font-size: 10px; color: #999; }
-        .admin-card .card-actions { display: flex; gap: 5px; margin-top: 8px; flex-wrap: wrap; }
-        .form-group { margin-bottom: 10px; }
-        .form-group label { display: block; font-size: 10px; font-weight: 700; color: #999; text-transform: uppercase; margin-bottom: 4px; }
-        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: #fff; font-size: 12px; outline: none; font-family: inherit; }
-        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: #ff9800; }
-        .form-group textarea { min-height: 60px; resize: vertical; }
-        .form-row { display: flex; gap: 10px; flex-wrap: wrap; }
-        .form-row .form-group { flex: 1; min-width: 160px; }
-        .badge { display: inline-block; padding: 2px 7px; border-radius: 10px; font-size: 9px; font-weight: 700; margin-left: 4px; }
-        .badge-engine { background: rgba(66,165,245,0.2); color: #42a5f5; }
-        .badge-gearbox { background: rgba(171,71,188,0.2); color: #ab47bc; }
-        .empty-state { text-align: center; padding: 30px; color: #666; }
-        .tabs-admin { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-        .tab-admin { padding: 10px 18px; border-radius: 25px; border: 2px solid rgba(255,255,255,0.2); background: transparent; color: #ccc; cursor: pointer; font-size: 12px; font-weight: 600; }
-        .tab-admin:hover { border-color: #ff9800; color: #fff; }
-        .tab-admin.active { background: #ff9800; color: #000; border-color: #ff9800; }
-        .tab-content-admin { display: none; }
-        .tab-content-admin.active { display: block; }
-        .db-info { font-size: 10px; color: #888; margin-top: 5px; text-align: center; }
-
-        @media (max-width: 768px) {
-            .container { padding: 12px; }
-            .admin-grid { grid-template-columns: 1fr; }
-            .form-row { flex-direction: column; }
-            .service-row { flex-wrap: wrap; }
-            .service-right { width: 100%; justify-content: space-between; }
-        }
+        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; align-items:center; justify-content:center; }
+        .modal-overlay.hidden { display:none; }
+        .modal { background:#1e1e32; border-radius:16px; width:90%; max-width:800px; max-height:85vh; overflow-y:auto; border:2px solid #ff9800; }
+        .modal-header { background:#ff9800; padding:16px 20px; border-radius:14px 14px 0 0; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; }
+        .modal-title { font-size:18px; font-weight:800; color:#000; }
+        .modal-close { width:34px; height:34px; border-radius:50%; border:2px solid #000; background:transparent; color:#000; cursor:pointer; font-size:18px; font-weight:bold; display:flex; align-items:center; justify-content:center; }
+        .modal-close:hover { background:#000; color:#ff9800; }
+        .modal-body { padding:20px; }
+        .modal-body h3 { font-size:15px; color:#ff9800; margin:20px 0 10px 0; text-transform:uppercase; }
+        .modal-body h3:first-child { margin-top:0; }
+        .modal-tools { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0; }
+        .tool-tag { background:rgba(255,255,255,0.08); padding:5px 10px; border-radius:15px; font-size:11px; color:#ddd; }
+        .modal-warning { background:rgba(255,152,0,0.12); border-left:4px solid #ff9800; padding:12px 14px; border-radius:0 8px 8px 0; margin:10px 0; font-size:13px; color:#ffa726; }
+        .modal-info-table { width:100%; border-collapse:collapse; margin:10px 0; font-size:12px; }
+        .modal-info-table td { padding:6px 10px; border-bottom:1px solid rgba(255,255,255,0.08); color:#ccc; }
+        .modal-info-table td:first-child { font-weight:600; color:#ff9800; width:40%; }
+        .step-block { background:rgba(255,255,255,0.03); border-radius:12px; padding:16px; margin-bottom:12px; }
+        .step-header { font-weight:700; color:#ff9800; font-size:14px; margin-bottom:8px; display:flex; align-items:center; gap:8px; }
+        .step-number { background:#ff9800; color:#000; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:13px; }
+        .step-text { font-size:13px; color:#ccc; line-height:1.6; }
+        .step-image { width:100%; max-width:400px; border-radius:8px; margin-top:8px; }
+        .footer { text-align:center; margin-top:25px; padding-top:15px; border-top:1px solid rgba(255,255,255,0.08); color:#666; font-size:11px; }
+        .admin-link { text-align:right; margin-bottom:10px; }
+        .admin-link a { color:#666; font-size:11px; text-decoration:none; }
+        .admin-link a:hover { color:#ff9800; }
+        .btn { padding:10px 18px; border-radius:25px; border:none; cursor:pointer; font-size:12px; font-weight:700; }
+        .btn-primary { background:#ff9800; color:#000; }
+        .btn-primary:hover { background:#ffb74d; }
+        .btn-danger { background:#e53935; color:#fff; }
+        .btn-danger:hover { background:#ef5350; }
+        .btn-outline { background:transparent; border:2px solid #ff9800; color:#ff9800; }
+        .btn-outline:hover { background:#ff9800; color:#000; }
+        .btn-sm { padding:5px 10px; font-size:10px; border-radius:15px; }
+        .admin-section { background:rgba(0,0,0,0.3); border-radius:16px; padding:20px; margin-bottom:20px; border:1px solid rgba(255,255,255,0.1); }
+        .admin-section h3 { font-size:16px; color:#ff9800; margin-bottom:15px; text-transform:uppercase; }
+        .admin-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px; }
+        .admin-card { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:14px; }
+        .admin-card h4 { font-size:13px; color:#fff; margin-bottom:6px; }
+        .admin-card p { font-size:10px; color:#999; }
+        .admin-card .card-actions { display:flex; gap:5px; margin-top:8px; flex-wrap:wrap; }
+        .form-group { margin-bottom:10px; }
+        .form-group label { display:block; font-size:10px; font-weight:700; color:#999; text-transform:uppercase; margin-bottom:4px; }
+        .form-group input,.form-group textarea,.form-group select { width:100%; padding:8px 12px; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background:rgba(0,0,0,0.3); color:#fff; font-size:12px; outline:none; font-family:inherit; }
+        .form-group input:focus,.form-group textarea:focus,.form-group select:focus { border-color:#ff9800; }
+        .form-group textarea { min-height:60px; resize:vertical; }
+        .form-row { display:flex; gap:10px; flex-wrap:wrap; }
+        .form-row .form-group { flex:1; min-width:160px; }
+        .badge { display:inline-block; padding:2px 7px; border-radius:10px; font-size:9px; font-weight:700; margin-left:4px; }
+        .badge-engine { background:rgba(66,165,245,0.2); color:#42a5f5; }
+        .badge-gearbox { background:rgba(171,71,188,0.2); color:#ab47bc; }
+        .empty-state { text-align:center; padding:30px; color:#666; }
+        .tabs-admin { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+        .tab-admin { padding:10px 18px; border-radius:25px; border:2px solid rgba(255,255,255,0.2); background:transparent; color:#ccc; cursor:pointer; font-size:12px; font-weight:600; }
+        .tab-admin:hover { border-color:#ff9800; color:#fff; }
+        .tab-admin.active { background:#ff9800; color:#000; border-color:#ff9800; }
+        .tab-content-admin { display:none; }
+        .tab-content-admin.active { display:block; }
+        @media(max-width:768px) { .container{padding:12px} .admin-grid{grid-template-columns:1fr} .form-row{flex-direction:column} .service-row{flex-wrap:wrap} .service-right{width:100%;justify-content:space-between} }
     </style>
 </head>
 <body>
@@ -170,22 +139,14 @@
         </div>
     </div>
 
-    <!-- Firebase SDK через CDN -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js">
-    </script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <script>
-        // ==================== FIREBASE ====================
-        const firebaseConfig = {
-            databaseURL: 'https://the-colony-tap-default-rtdb.firebaseio.com/'
-        };
-        firebase.initializeApp(firebaseConfig);
+        firebase.initializeApp({ databaseURL: 'https://the-colony-tap-default-rtdb.firebaseio.com/' });
         const db = firebase.database();
-
         const ADMIN_PASS = 'admin123';
-        const KEY_AUTH = 'as_auth_v2';
+        const KEY_AUTH = 'as_auth_v3';
 
         let isAdmin = localStorage.getItem(KEY_AUTH) === '1';
         let cars = [];
@@ -200,413 +161,270 @@
         let admEng = null;
         let dbOnline = false;
 
-        function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(
-                /"/g, '&quot;'); }
-
+        function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
         function fmt(p) { return p.toLocaleString('ru-RU') + ' ₽'; }
 
         function getSel() {
-            let c = cars.find(x => x.id === selCar);
+            var c = cars.find(function(x) { return x.id === selCar; });
             if (!c) return null;
-            let e = c.engines.find(x => x.id === selEng);
+            var e = c.engines.find(function(x) { return x.id === selEng; });
             if (!e) return null;
-            let g = e.gearboxes.find(x => x.id === selGb);
+            var g = e.gearboxes.find(function(x) { return x.id === selGb; });
             return g ? { car: c, engine: e, gearbox: g } : null;
         }
-
-        function mult() { let d = getSel(); return d ? d.gearbox.mult : 1; }
-
+        function mult() { var d = getSel(); return d ? d.gearbox.mult : 1; }
         function prc(s) { return Math.round(s.price * mult()); }
 
         function updateStatus(state) {
-            const bar = document.getElementById('statusBar');
+            var bar = document.getElementById('statusBar');
             if (!bar) return;
             bar.className = 'status-bar ' + state;
-            if (state === 'online') bar.innerHTML = '🟢 Онлайн • Данные в Firebase • <span class="db-info">' +
-                cars.length + ' авто / ' + services.length + ' услуг</span>';
-            else if (state === 'offline') bar.innerHTML =
-                '🔴 Офлайн • Работаем с локальной копией • <span class="db-info">Изменения сохранятся при подключении</span>';
-            else bar.textContent = '🟡 Подключение к базе данных...';
+            if (state === 'online') bar.innerHTML = '🟢 Онлайн • Firebase • ' + cars.length + ' авто / ' + services.length + ' услуг';
+            else if (state === 'offline') bar.innerHTML = '🔴 Офлайн • Локальные данные';
+            else bar.textContent = '🟡 Подключение...';
         }
 
         function loadData() {
             updateStatus('connecting');
-            // Загружаем автомобили
-            db.ref('cars').once('value').then(snap => {
-                if (snap.exists()) {
-                    cars = snap.val();
-                    console.log('✅ Загружено авто:', cars.length);
-                } else {
-                    cars = [];
-                    console.log('⚠️ Авто не найдены в БД');
-                }
-                if (!selCar && cars.length > 0) {
-                    selCar = cars[0].id;
-                    selEng = cars[0].engines && cars[0].engines[0] ? cars[0].engines[0].id : null;
-                    selGb = cars[0].engines && cars[0].engines[0] && cars[0].engines[0].gearboxes && cars[0].engines[
-                        0].gearboxes[0] ? cars[0].engines[0].gearboxes[0].id : null;
-                }
-                checkAndRender();
-            }).catch(err => {
-                console.error('❌ Ошибка загрузки авто:', err);
-                loadLocalFallback();
-                checkAndRender();
-            });
-
-            // Загружаем услуги
-            db.ref('services').once('value').then(snap => {
-                if (snap.exists()) {
-                    services = snap.val();
-                    console.log('✅ Загружено услуг:', services.length);
-                } else {
-                    services = [];
-                    console.log('⚠️ Услуги не найдены в БД');
-                }
-                checkAndRender();
-            }).catch(err => {
-                console.error('❌ Ошибка загрузки услуг:', err);
-                loadLocalFallback();
-                checkAndRender();
-            });
-
-            // Реалтайм подписка на авто
-            db.ref('cars').on('value', snap => {
-                if (snap.exists()) {
-                    cars = snap.val();
-                    dbOnline = true;
-                    updateStatus('online');
-                    render();
-                }
-            });
-
-            // Реалтайм подписка на услуги
-            db.ref('services').on('value', snap => {
-                if (snap.exists()) {
-                    services = snap.val();
-                    dbOnline = true;
-                    updateStatus('online');
-                    render();
-                }
-            });
-
-            // Отслеживание подключения
-            db.ref('.info/connected').on('value', snap => {
-                dbOnline = snap.val() === true;
-                updateStatus(dbOnline ? 'online' : 'offline');
-                if (dbOnline) {
-                    // При восстановлении связи синхронизируем локальные изменения
-                    syncLocalChanges();
-                }
-            });
-        }
-
-        let dataLoaded = { cars: false, services: false };
-
-        function checkAndRender() {
-            if (!dataLoaded.cars && cars.length !== undefined) dataLoaded.cars = true;
-            if (!dataLoaded.services && services.length !== undefined) dataLoaded.services = true;
-            if (cars.length === undefined) dataLoaded.cars = false;
-            if (services.length === undefined) dataLoaded.services = false;
-            if (dataLoaded.cars || dataLoaded.services) {
+            db.ref('cars').once('value').then(function(snap) {
+                if (snap.exists()) { cars = snap.val(); console.log('✅ Авто загружено:', cars.length); }
+                else { cars = []; console.log('⚠️ Нет авто в БД'); }
+                if (!selCar && cars.length > 0) { selCar = cars[0].id;
+                    selEng = cars[0].engines?.[0]?.id || null;
+                    selGb = cars[0].engines?.[0]?.gearboxes?.[0]?.id || null; }
                 dbOnline = true;
                 updateStatus('online');
                 render();
-            }
+            }).catch(function(err) {
+                console.error('❌ Ошибка авто:', err);
+                loadLocal();
+                render();
+            });
+            db.ref('services').once('value').then(function(snap) {
+                if (snap.exists()) { services = snap.val(); console.log('✅ Услуг загружено:', services.length); }
+                else { services = []; console.log('⚠️ Нет услуг в БД'); }
+                dbOnline = true;
+                updateStatus('online');
+                render();
+            }).catch(function(err) {
+                console.error('❌ Ошибка услуг:', err);
+                loadLocal();
+                render();
+            });
+            db.ref('cars').on('value', function(snap) { if (snap.exists()) { cars = snap.val();
+                    dbOnline = true;
+                    updateStatus('online');
+                    render(); } });
+            db.ref('services').on('value', function(snap) { if (snap.exists()) { services = snap.val();
+                    dbOnline = true;
+                    updateStatus('online');
+                    render(); } });
+            db.ref('.info/connected').on('value', function(snap) { dbOnline = snap.val() === true;
+                updateStatus(dbOnline ? 'online' : 'offline'); });
         }
 
-        function loadLocalFallback() {
-            let localCars = localStorage.getItem('as_cars_local_v2');
-            let localSvc = localStorage.getItem('as_svc_local_v2');
-            if (localCars && cars.length === 0) {
-                cars = JSON.parse(localCars);
-                if (!selCar && cars.length > 0) {
-                    selCar = cars[0].id;
+        function loadLocal() {
+            var lc = localStorage.getItem('as_cars_local_v3');
+            var ls = localStorage.getItem('as_svc_local_v3');
+            if (lc && cars.length === 0) { cars = JSON.parse(lc); if (!selCar && cars.length > 0) { selCar = cars[0].id;
                     selEng = cars[0].engines?.[0]?.id || null;
-                    selGb = cars[0].engines?.[0]?.gearboxes?.[0]?.id || null;
-                }
-            }
-            if (localSvc && services.length === 0) services = JSON.parse(localSvc);
+                    selGb = cars[0].engines?.[0]?.gearboxes?.[0]?.id || null; } }
+            if (ls && services.length === 0) services = JSON.parse(ls);
             updateStatus('offline');
-        }
-
-        function syncLocalChanges() {
-            let localCars = localStorage.getItem('as_cars_local_v2');
-            let localSvc = localStorage.getItem('as_svc_local_v2');
-            if (localCars) {
-                try {
-                    let lc = JSON.parse(localCars);
-                    if (lc.length > 0) {
-                        db.ref('cars').set(lc);
-                        localStorage.removeItem('as_cars_local_v2');
-                    }
-                } catch (e) {}
-            }
-            if (localSvc) {
-                try {
-                    let ls = JSON.parse(localSvc);
-                    if (ls.length > 0) {
-                        db.ref('services').set(ls);
-                        localStorage.removeItem('as_svc_local_v2');
-                    }
-                } catch (e) {}
-            }
         }
 
         function saveData() {
-            if (dbOnline) {
-                db.ref('cars').set(cars).catch(() => saveLocal());
-                db.ref('services').set(services).catch(() => saveLocal());
-            } else {
-                saveLocal();
-            }
+            if (dbOnline) { db.ref('cars').set(cars);
+                db.ref('services').set(services); } else { localStorage.setItem('as_cars_local_v3', JSON.stringify(
+                    cars));
+                localStorage.setItem('as_svc_local_v3', JSON.stringify(services));
+                updateStatus('offline'); }
         }
 
-        function saveLocal() {
-            localStorage.setItem('as_cars_local_v2', JSON.stringify(cars));
-            localStorage.setItem('as_svc_local_v2', JSON.stringify(services));
-            updateStatus('offline');
-        }
+        function render() { document.getElementById('appContainer').innerHTML = isAdmin ? renderAdmin() : renderClient(); if (
+                isAdmin) bindAdmin(); else bindClient();
+            updateStatus(dbOnline ? 'online' : 'offline'); }
 
-        function render() {
-            let h = isAdmin ? renderAdmin() : renderClient();
-            document.getElementById('appContainer').innerHTML = h;
-            if (isAdmin) bindAdmin();
-            else bindClient();
-            updateStatus(dbOnline ? 'online' : 'offline');
-        }
-
-        // ==================== КЛИЕНТ ====================
+        // КЛИЕНТ
         function renderClient() {
-            let h = '';
+            var h = '';
             h += '<div class="header"><div class="logo">AUTO<span>SERVICE</span></div><div class="subtitle">Прайс-лист</div></div>';
-            h +=
-            '<div class="status-bar ' + (dbOnline ? 'online' : 'offline') + '" id="statusBar">' + (dbOnline ?
-                '🟢 Онлайн • Firebase' : '🔴 Офлайн') + '</div>';
+            h += '<div class="status-bar ' + (dbOnline ? 'online' : 'offline') + '" id="statusBar">' + (dbOnline ?
+                '🟢 Онлайн' : '🔴 Офлайн') + '</div>';
             h += '<div class="admin-link"><a href="#" id="loginLink">🔐 Админ</a></div>';
             h +=
-                '<div class="smart-search"><input type="text" id="smartSearch" placeholder="🔍 Поиск услуги..." autocomplete="off"><div class="search-results" id="searchResults"></div></div>';
-
-            // Селектор авто
+            '<div class="smart-search"><input type="text" id="smartSearch" placeholder="🔍 Поиск услуги..." autocomplete="off"><div class="search-results" id="searchResults"></div></div>';
             h += '<div class="selector-section"><div class="selector-title">🚗 Выберите авто</div>';
             h +=
             '<div class="selector-row"><div class="selector-group"><div class="selector-label">Модель</div><div class="selector-buttons" id="carBtns">';
-            cars.forEach(c => h += '<button class="sel-btn' + (c.id === selCar ? ' active' : '') + '" data-car="' + c
-                .id + '">' + c.icon + ' ' + esc(c.name) + '<span class="btn-code">' + esc(c.cat) + '</span></button>');
+            cars.forEach(function(c) { h += '<button class="sel-btn' + (c.id === selCar ? ' active' : '') +
+                    '" data-car="' + c.id + '">' + c.icon + ' ' + esc(c.name) + '<span class="btn-code">' + esc(c
+                        .cat) + '</span></button>'; });
             h += '</div></div></div>';
-
-            let car = cars.find(c => c.id === selCar);
+            var car = cars.find(function(c) { return c.id === selCar; });
             h +=
             '<div class="selector-row"><div class="selector-group"><div class="selector-label">Двигатель</div><div class="selector-buttons" id="engBtns">';
-            if (car) car.engines.forEach(e => h += '<button class="sel-btn' + (e.id === selEng ? ' active' : '') +
-                '" data-eng="' + e.id + '">' + esc(e.name) + ' (' + esc(e.power) + ')<span class="btn-code">' + esc(e
-                    .code) + '</span></button>');
+            if (car) car.engines.forEach(function(e) { h += '<button class="sel-btn' + (e.id === selEng ? ' active' :
+                    '') + '" data-eng="' + e.id + '">' + esc(e.name) + ' (' + esc(e.power) +
+                    ')<span class="btn-code">' + esc(e.code) + '</span></button>'; });
             h += '</div></div></div>';
-
             h +=
             '<div class="selector-row"><div class="selector-group"><div class="selector-label">КПП</div><div class="selector-buttons" id="gbBtns">';
-            if (car) {
-                let eng = car.engines.find(e => e.id === selEng);
-                if (eng) eng.gearboxes.forEach(g => h += '<button class="sel-btn' + (g.id === selGb ? ' active' : '') +
-                    '" data-gb="' + g.id + '">' + esc(g.name) + '<span class="btn-code">' + esc(g.drive) + ' • ' + esc(
-                        g.code) + '</span></button>');
-            }
+            if (car) { var eng = car.engines.find(function(e) { return e.id === selEng; }); if (eng) eng.gearboxes
+                .forEach(function(g) { h += '<button class="sel-btn' + (g.id === selGb ? ' active' : '') +
+                        '" data-gb="' + g.id + '">' + esc(g.name) + '<span class="btn-code">' + esc(g.drive) +
+                        ' • ' + esc(g.code) + '</span></button>'; }); }
             h += '</div></div></div>';
-
-            let d = getSel();
+            var d = getSel();
             if (d) h += '<div class="selected-config"><span class="selected-config-icon">' + d.car.icon +
                 '</span><div class="selected-config-info"><div class="selected-config-name">' + esc(d.car.name) +
                 '</div><div class="selected-config-detail">' + esc(d.engine.name) + ' • ' + esc(d.gearbox.name) +
-                '</div><div class="selected-config-code">×' + d.gearbox.mult.toFixed(2) +
                 '</div></div><span class="selected-config-badge">' + esc(d.gearbox.badge) + '</span></div>';
             h += '</div>';
-
-            // Фильтры
-            let cats = ['maintenance', 'engine', 'exhaust', 'transmission', 'brakes', 'suspension', 'welding',
+            var cats = ['maintenance', 'engine', 'exhaust', 'transmission', 'brakes', 'suspension', 'welding',
             'diagnostics'];
-            let catNames = { maintenance: '🛠️ ТО', engine: '⚡ Двигатель', exhaust: '💨 Выхлоп',
+            var catNames = { maintenance: '🛠️ ТО', engine: '⚡ Двигатель', exhaust: '💨 Выхлоп',
                 transmission: '⚙️ Трансмиссия', brakes: '🛑 Тормоза', suspension: '🔧 Подвеска', welding: '🔥 Сварка',
                 diagnostics: '🔍 Диагностика' };
             h += '<div class="filter-buttons" id="filtBtns"><button class="filter-btn' + (filt === 'all' ? ' active' :
                 '') + '" data-filt="all">Все</button>';
-            cats.forEach(c => h += '<button class="filter-btn' + (filt === c ? ' active' : '') + '" data-filt="' + c +
-                '">' + (catNames[c] || c) + '</button>');
+            cats.forEach(function(c) { h += '<button class="filter-btn' + (filt === c ? ' active' : '') +
+                    '" data-filt="' + c + '">' + (catNames[c] || c) + '</button>'; });
             h += '</div>';
-
-            // Итого
-            let total = 0;
-            picks.forEach(id => { let s = services.find(x => x.id === id); if (s) total += prc(s); });
+            var total = 0;
+            picks.forEach(function(id) { var s = services.find(function(x) { return x.id === id; }); if (s) total +=
+                    prc(s); });
             h += '<div class="total-panel"><div><div class="total-label">Выбрано: ' + picks.size +
                 ' шт.</div></div><div class="total-price">' + fmt(total) +
                 '</div><button class="clear-btn" id="clearBtn">Сбросить</button></div>';
-
-            // Список услуг
-            let list = services.filter(s => filt === 'all' || s.cat === filt);
-            let grp = {};
-            list.forEach(s => { if (!grp[s.cat]) grp[s.cat] = [];
+            var list = services.filter(function(s) { return filt === 'all' || s.cat === filt; });
+            var grp = {};
+            list.forEach(function(s) { if (!grp[s.cat]) grp[s.cat] = [];
                 grp[s.cat].push(s); });
             h += '<div id="svcList">';
-            Object.keys(grp).forEach(k => {
-                h += '<div class="category-title">' + (catNames[k] || k) + '</div>';
-                grp[k].forEach(s => {
-                    let p = prc(s);
-                    let diff = p - s.price;
-                    let note = diff !== 0 ? '<span class="price-note">(' + (diff > 0 ? '+' : '') + diff +
-                        ' ₽)</span>' : '';
-                    h += '<div class="service-row' + (picks.has(s.id) ? ' selected' : '') + '" data-sid="' + s
-                        .id + '"><div class="service-left"><div class="check-box">' + (picks.has(s.id) ? '✓' :
-                            '') + '</div><span class="service-name">' + esc(s.name) +
+            Object.keys(grp).forEach(function(k) { h += '<div class="category-title">' + (catNames[k] || k) + '</div>';
+                grp[k].forEach(function(s) { var p = prc(s); var diff = p - s.price; var note = diff !== 0 ?
+                        '<span class="price-note">(' + (diff > 0 ? '+' : '') + diff + ' ₽)</span>' : '';
+                    h += '<div class="service-row' + (picks.has(s.id) ? ' selected' : '') + '" data-sid="' + s.id +
+                        '"><div class="service-left"><div class="check-box">' + (picks.has(s.id) ? '✓' : '') +
+                        '</div><span class="service-name">' + esc(s.name) +
                         '</span></div><div class="service-right"><span class="service-price">' + fmt(p) + ' ' +
                         note + '</span><button class="detail-btn" data-det="' + s.id +
-                        '">📋 Подробнее</button></div></div>';
-                });
-            });
+                        '">📋 Подробнее</button></div></div>'; }); });
             if (!list.length) h += '<div class="empty-state">Ничего не найдено</div>';
             h += '</div><div class="footer">© 2026 AutoService</div>';
             return h;
         }
 
         function bindClient() {
-            document.getElementById('loginLink').onclick = function(e) {
-                e.preventDefault();
-                let p = prompt('Пароль администратора:');
-                if (p === ADMIN_PASS) { localStorage.setItem(KEY_AUTH, '1');
+            document.getElementById('loginLink').onclick = function(e) { e.preventDefault(); var p = prompt(
+                    'Пароль администратора:'); if (p === ADMIN_PASS) { localStorage.setItem(KEY_AUTH, '1');
                     isAdmin = true;
-                    render(); } else if (p !== null) alert('Неверный пароль!');
-            };
-            document.querySelectorAll('#carBtns .sel-btn').forEach(b => b.onclick = function() {
-                selCar = b.dataset.car;
-                let c = cars.find(x => x.id === selCar);
-                selEng = c?.engines?.[0]?.id || null;
-                selGb = c?.engines?.[0]?.gearboxes?.[0]?.id || null;
-                picks.clear();
-                render();
-            });
-            document.querySelectorAll('#engBtns .sel-btn').forEach(b => b.onclick = function() {
-                selEng = b.dataset.eng;
-                let c = cars.find(x => x.id === selCar);
-                if (c) { let e = c.engines.find(x => x.id === selEng);
+                    render(); } else if (p !== null) alert('Неверный пароль!'); };
+            document.querySelectorAll('#carBtns .sel-btn').forEach(function(b) { b.onclick = function() { selCar = b
+                    .dataset.car; var c = cars.find(function(x) { return x.id === selCar; });
+                    selEng = c?.engines?.[0]?.id || null;
+                    selGb = c?.engines?.[0]?.gearboxes?.[0]?.id || null;
+                    picks.clear();
+                    render(); }; });
+            document.querySelectorAll('#engBtns .sel-btn').forEach(function(b) { b.onclick = function() { selEng = b
+                    .dataset.eng; var c = cars.find(function(x) { return x.id === selCar; }); if (c) { var e = c
+                        .engines.find(function(x) { return x.id === selEng; });
                     selGb = e?.gearboxes?.[0]?.id || null; }
                 picks.clear();
-                render();
-            });
-            document.querySelectorAll('#gbBtns .sel-btn').forEach(b => b.onclick = function() { selGb = b.dataset.gb;
+                render(); }; });
+            document.querySelectorAll('#gbBtns .sel-btn').forEach(function(b) { b.onclick = function() { selGb = b.dataset
+                    .gb;
                 picks.clear();
-                render(); });
-            document.querySelectorAll('#filtBtns .filter-btn').forEach(b => b.onclick = function() { filt = b.dataset
+                render(); }; });
+            document.querySelectorAll('#filtBtns .filter-btn').forEach(function(b) { b.onclick = function() { filt = b.dataset
                     .filt;
-                render(); });
+                render(); }; });
             document.getElementById('clearBtn').onclick = function() { picks.clear();
                 render(); };
-            document.querySelectorAll('.service-row').forEach(r => {
-                r.querySelector('.service-left').onclick = function() { let sid = parseInt(r.dataset.sid);
+            document.querySelectorAll('.service-row').forEach(function(r) { r.querySelector('.service-left').onclick =
+                function() { var sid = parseInt(r.dataset.sid);
                     picks.has(sid) ? picks.delete(sid) : picks.add(sid);
                     render(); };
                 r.querySelector('.detail-btn').onclick = function(e) { e.stopPropagation();
-                    openModal(parseInt(r.querySelector('.detail-btn').dataset.det)); };
-            });
-            let ss = document.getElementById('smartSearch');
-            let sr = document.getElementById('searchResults');
-            ss.oninput = function() {
-                let q = ss.value.toLowerCase().trim();
-                if (!q) { sr.classList.remove('active');
-                    sr.innerHTML = ''; return; }
-                let results = services.filter(s => s.name.toLowerCase().indexOf(q) >= 0 || (s.tools && s.tools
-                    .toLowerCase().indexOf(q) >= 0) || s.cat.toLowerCase().indexOf(q) >= 0);
-                if (results.length) {
-                    sr.classList.add('active');
-                    sr.innerHTML = results.map(s => '<div class="search-result-item" data-ssid="' + s.id +
-                        '"><div><div class="search-result-name">' + esc(s.name) +
-                        '</div></div><div class="search-result-price">' + fmt(prc(s)) + '</div></div>').join(
-                        '');
-                    sr.querySelectorAll('.search-result-item').forEach(item => item.onclick = function() {
-                        let sid = parseInt(item.dataset.ssid);
-                        picks.has(sid) ? picks.delete(sid) : picks.add(sid);
-                        ss.value = '';
-                        sr.classList.remove('active');
-                        render();
-                    });
-                } else { sr.classList.add('active');
-                    sr.innerHTML = '<div class="empty-state" style="padding:15px;">Ничего не найдено</div>'; }
-            };
+                    openModal(parseInt(r.querySelector('.detail-btn').dataset.det)); }; });
+            var ss = document.getElementById('smartSearch');
+            var sr = document.getElementById('searchResults');
+            ss.oninput = function() { var q = ss.value.toLowerCase().trim(); if (!q) { sr.classList.remove('active');
+                    sr.innerHTML = ''; return; } var results = services.filter(function(s) { return s.name.toLowerCase()
+                        .indexOf(q) >= 0 || (s.tools && s.tools.toLowerCase().indexOf(q) >= 0) || s.cat.toLowerCase()
+                        .indexOf(q) >= 0; }); if (results.length) { sr.classList.add('active');
+                    sr.innerHTML = results.map(function(s) { return '<div class="search-result-item" data-ssid="' + s
+                            .id + '"><div class="search-result-name">' + esc(s.name) +
+                            '</div><div class="search-result-price">' + fmt(prc(s)) + '</div></div>'; }).join('');
+                    sr.querySelectorAll('.search-result-item').forEach(function(item) { item.onclick = function() { var
+                                sid = parseInt(item.dataset.ssid);
+                            picks.has(sid) ? picks.delete(sid) : picks.add(sid);
+                            ss.value = '';
+                            sr.classList.remove('active');
+                            render(); }; }); } else { sr.classList.add('active');
+                    sr.innerHTML = '<div class="empty-state" style="padding:15px;">Ничего не найдено</div>'; } };
         }
 
-        // ==================== АДМИН ====================
+        // АДМИН
         function renderAdmin() {
-            let h = '';
+            var h = '';
             h += '<div class="header"><div class="logo">AUTO<span>SERVICE</span></div><div class="subtitle">⚙️ Админ-панель</div></div>';
             h += '<div class="status-bar ' + (dbOnline ? 'online' : 'offline') + '" id="statusBar">' + (dbOnline ?
-                '🟢 Онлайн • Firebase • ' + cars.length + ' авто / ' + services.length + ' услуг' :
-                '🔴 Офлайн • Изменения сохранятся') + '</div>';
+                '🟢 Онлайн • ' + cars.length + ' авто / ' + services.length + ' услуг' : '🔴 Офлайн') + '</div>';
             h +=
                 '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;"><div class="tabs-admin"><button class="tab-admin' +
                 (admTab === 'cars' ? ' active' : '') + '" data-atab="cars">🚗 Авто</button><button class="tab-admin' +
                 (admTab === 'svc' ? ' active' : '') +
                 '" data-atab="svc">🔧 Услуги</button></div><button class="btn btn-outline btn-sm" id="logoutBtn">🚪 Выйти</button></div>';
-
-            // Вкладка авто
-            h += '<div class="tab-content-admin' + (admTab === 'cars' ? ' active' : '') + '" id="atab-cars">';
+            h += '<div class="tab-content-admin' + (admTab === 'cars' ? ' active' : '') + '">';
             h +=
                 '<div class="admin-section"><h3>➕ Добавить авто</h3><div class="form-row"><div class="form-group"><label>Модель</label><input type="text" id="acName" placeholder="VW Passat B5"></div><div class="form-group"><label>Иконка</label><input type="text" id="acIcon" placeholder="🚙"></div><div class="form-group"><label>Категория</label><input type="text" id="acCat" placeholder="Бизнес"></div></div><button class="btn btn-primary" id="btnAddCar">➕ Добавить</button></div>';
             h += '<div class="admin-section"><h3>📋 Список авто</h3><div class="admin-grid">';
-            cars.forEach(c => h += '<div class="admin-card"><h4>' + c.icon + ' ' + esc(c.name) + '</h4><p>' + esc(c
-                    .cat) + ' | Двигателей: ' + c.engines.length +
-                '</p><div class="card-actions"><button class="btn btn-sm btn-outline" data-engs="' + c.id +
-                '">⚙️ Двигатели</button><button class="btn btn-sm btn-danger" data-delcar="' + c.id +
-                '">🗑️</button></div></div>');
+            cars.forEach(function(c) { h += '<div class="admin-card"><h4>' + c.icon + ' ' + esc(c.name) + '</h4><p>' +
+                    esc(c.cat) + ' | Двигателей: ' + c.engines.length +
+                    '</p><div class="card-actions"><button class="btn btn-sm btn-outline" data-engs="' + c.id +
+                    '">⚙️ Двигатели</button><button class="btn btn-sm btn-danger" data-delcar="' + c.id +
+                    '">🗑️</button></div></div>'; });
             if (!cars.length) h += '<div class="empty-state">Нет авто. Добавьте первый автомобиль.</div>';
             h += '</div></div>';
-
-            if (admCar) {
-                let ac = cars.find(c => c.id === admCar);
-                if (ac) {
-                    h += '<div class="admin-section"><h3>⚙️ Двигатели: ' + ac.icon + ' ' + esc(ac.name) +
+            if (admCar) { var ac = cars.find(function(c) { return c.id === admCar; }); if (ac) { h +=
+                        '<div class="admin-section"><h3>⚙️ Двигатели: ' + ac.icon + ' ' + esc(ac.name) +
                         '</h3><div class="form-row"><div class="form-group"><label>Название</label><input type="text" id="aeName" placeholder="1.8T Turbo"></div><div class="form-group"><label>Код</label><input type="text" id="aeCode" placeholder="AEB"></div><div class="form-group"><label>Мощность</label><input type="text" id="aePower" placeholder="150 л.с."></div><div class="form-group"><label>Топливо</label><select id="aeFuel"><option>Бензин</option><option>Дизель</option></select></div></div><button class="btn btn-primary" id="btnAddEng">➕ Добавить двигатель</button><div style="margin-top:12px;">';
-                    ac.engines.forEach(e => h +=
-                        '<div style="background:rgba(255,255,255,0.03);padding:10px;border-radius:8px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;"><span><strong>' +
-                        esc(e.name) + '</strong> <span class="badge badge-engine">' + esc(e.code) + '</span> ' +
-                        esc(e.power) + ' ' + esc(e.fuel) + ' | КПП: ' + e.gearboxes.length +
-                        '</span><div><button class="btn btn-sm btn-outline" data-gbs="' + e.id +
-                        '">⚙️ КПП</button><button class="btn btn-sm btn-danger" data-deleng="' + e.id +
-                        '">🗑️</button></div></div>');
-                    if (!ac.engines.length) h += '<div class="empty-state">Нет двигателей</div>';
-                    h += '</div></div>';
-                }
-            }
-
-            if (admCar && admEng) {
-                let ac = cars.find(c => c.id === admCar);
-                if (ac) {
-                    let eng = ac.engines.find(e => e.id === admEng);
-                    if (eng) {
-                        h += '<div class="admin-section"><h3>⚙️ КПП для: ' + esc(eng.name) + ' (' + esc(eng.code) +
-                            ')</h3><div class="form-row"><div class="form-group"><label>Название</label><input type="text" id="agName" placeholder="МКПП-5 (012)"></div><div class="form-group"><label>Код</label><input type="text" id="agCode" placeholder="012"></div><div class="form-group"><label>Привод</label><select id="agDrive"><option>Передний</option><option>Задний</option><option>Полный</option></select></div><div class="form-group"><label>Коэфф.</label><input type="number" id="agMult" value="1" step="0.05"></div><div class="form-group"><label>Сложность</label><input type="text" id="agBadge" placeholder="Средне"></div></div><button class="btn btn-primary" id="btnAddGb">➕ Добавить КПП</button><div style="margin-top:12px;">';
-                        eng.gearboxes.forEach(g => h +=
+                    ac.engines.forEach(function(e) { h +=
                             '<div style="background:rgba(255,255,255,0.03);padding:10px;border-radius:8px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;"><span><strong>' +
-                            esc(g.name) + '</strong> <span class="badge badge-gearbox">' + esc(g.code) +
-                            '</span> ' + esc(g.drive) + ' ×' + g.mult.toFixed(2) + ' <em>' + esc(g.badge) +
-                            '</em></span><button class="btn btn-sm btn-danger" data-delgb="' + g.id +
-                            '">🗑️</button></div>');
-                        if (!eng.gearboxes.length) h += '<div class="empty-state">Нет КПП</div>';
-                        h += '</div></div>';
-                    }
-                }
-            }
+                            esc(e.name) + '</strong> <span class="badge badge-engine">' + esc(e.code) +
+                            '</span> ' + esc(e.power) + ' ' + esc(e.fuel) + ' | КПП: ' + e.gearboxes.length +
+                            '</span><div><button class="btn btn-sm btn-outline" data-gbs="' + e.id +
+                            '">⚙️ КПП</button><button class="btn btn-sm btn-danger" data-deleng="' + e.id +
+                            '">🗑️</button></div></div>'; }); if (!ac.engines.length) h +=
+                        '<div class="empty-state">Нет двигателей</div>';
+                    h += '</div></div>'; } }
+            if (admCar && admEng) { var ac2 = cars.find(function(c) { return c.id === admCar; }); if (ac2) { var eng2 =
+                        ac2.engines.find(function(e) { return e.id === admEng; }); if (eng2) { h +=
+                            '<div class="admin-section"><h3>⚙️ КПП для: ' + esc(eng2.name) + ' (' + esc(eng2.code) +
+                            ')</h3><div class="form-row"><div class="form-group"><label>Название</label><input type="text" id="agName" placeholder="МКПП-5 (012)"></div><div class="form-group"><label>Код</label><input type="text" id="agCode" placeholder="012"></div><div class="form-group"><label>Привод</label><select id="agDrive"><option>Передний</option><option>Задний</option><option>Полный</option></select></div><div class="form-group"><label>Коэфф.</label><input type="number" id="agMult" value="1" step="0.05"></div><div class="form-group"><label>Сложность</label><input type="text" id="agBadge" placeholder="Средне"></div></div><button class="btn btn-primary" id="btnAddGb">➕ Добавить КПП</button><div style="margin-top:12px;">';
+                        eng2.gearboxes.forEach(function(g) { h +=
+                                '<div style="background:rgba(255,255,255,0.03);padding:10px;border-radius:8px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;"><span><strong>' +
+                                esc(g.name) + '</strong> <span class="badge badge-gearbox">' + esc(g.code) +
+                                '</span> ' + esc(g.drive) + ' ×' + g.mult.toFixed(2) + ' <em>' + esc(g.badge) +
+                                '</em></span><button class="btn btn-sm btn-danger" data-delgb="' + g.id +
+                                '">🗑️</button></div>'; }); if (!eng2.gearboxes.length) h +=
+                            '<div class="empty-state">Нет КПП</div>';
+                        h += '</div></div>'; } } }
             h += '</div>';
-
-            // Вкладка услуги
-            h += '<div class="tab-content-admin' + (admTab === 'svc' ? ' active' : '') + '" id="atab-svc">';
+            h += '<div class="tab-content-admin' + (admTab === 'svc' ? ' active' : '') + '">';
             h +=
-                '<div class="admin-section"><h3>➕ Услуга</h3><input type="hidden" id="svcEditId"><div class="form-row"><div class="form-group"><label>Название</label><input type="text" id="svcName" placeholder="Замена масла"></div><div class="form-group"><label>Цена (₽)</label><input type="number" id="svcPrice" value="1000"></div><div class="form-group"><label>Категория</label><select id="svcCat"><option value="maintenance">🛠️ ТО</option><option value="engine">⚡ Двигатель</option><option value="exhaust">💨 Выхлоп</option><option value="transmission">⚙️ Трансмиссия</option><option value="brakes">🛑 Тормоза</option><option value="suspension">🔧 Подвеска</option><option value="welding">🔥 Сварка</option><option value="diagnostics">🔍 Диагностика</option></select></div></div><div class="form-group"><label>Инструменты (через запятую)</label><input type="text" id="svcTools" placeholder="Ключ, Отвёртка"></div><div class="form-group"><label>Регламент (строка: метка|значение)</label><textarea id="svcSpecs" placeholder="Интервал|15 000 км"></textarea></div><div class="form-group"><label>Инструкция (каждая строка = шаг)</label><textarea id="svcSteps" placeholder="Прогрейте двигатель."></textarea></div><div class="form-group"><label>Предупреждение</label><input type="text" id="svcWarning" placeholder="Не перетяните!"></div><div class="form-group"><label>URL картинки</label><input type="text" id="svcImage" placeholder="https://..."></div><button class="btn btn-primary" id="btnSaveSvc">💾 Сохранить</button><button class="btn btn-outline btn-sm" id="btnClearSvc">✕ Очистить</button></div>';
+                '<div class="admin-section"><h3>➕ Услуга</h3><input type="hidden" id="svcEditId"><div class="form-row"><div class="form-group"><label>Название</label><input type="text" id="svcName" placeholder="Замена масла"></div><div class="form-group"><label>Цена (₽)</label><input type="number" id="svcPrice" value="1000"></div><div class="form-group"><label>Категория</label><select id="svcCat"><option value="maintenance">🛠️ ТО</option><option value="engine">⚡ Двигатель</option><option value="exhaust">💨 Выхлоп</option><option value="transmission">⚙️ Трансмиссия</option><option value="brakes">🛑 Тормоза</option><option value="suspension">🔧 Подвеска</option><option value="welding">🔥 Сварка</option><option value="diagnostics">🔍 Диагностика</option></select></div></div><div class="form-group"><label>Инструменты (через запятую)</label><input type="text" id="svcTools"></div><div class="form-group"><label>Регламент (строка: метка|значение)</label><textarea id="svcSpecs"></textarea></div><div class="form-group"><label>Инструкция (каждая строка = шаг)</label><textarea id="svcSteps"></textarea></div><div class="form-group"><label>Предупреждение</label><input type="text" id="svcWarning"></div><div class="form-group"><label>URL картинки</label><input type="text" id="svcImage"></div><button class="btn btn-primary" id="btnSaveSvc">💾 Сохранить</button><button class="btn btn-outline btn-sm" id="btnClearSvc">✕ Очистить</button></div>';
             h += '<div class="admin-section"><h3>📋 Список услуг</h3><div class="admin-grid">';
-            services.forEach(s => h += '<div class="admin-card"><h4>' + esc(s.name) + '</h4><p>' + fmt(s.price) +
-                ' | Категория: ' + s.cat + '</p><p>Инструменты: ' + (s.tools || '—') +
-                '</p><div class="card-actions"><button class="btn btn-sm btn-outline" data-editsvc="' + s.id +
-                '">✏️ Ред.</button><button class="btn btn-sm btn-danger" data-delsvc="' + s.id +
-                '">🗑️</button></div></div>');
-            if (!services.length) h += '<div class="empty-state">Нет услуг. Добавьте первую услугу.</div>';
+            services.forEach(function(s) { h += '<div class="admin-card"><h4>' + esc(s.name) + '</h4><p>' + fmt(s.price) +
+                    ' | ' + s.cat + '</p><p>' + (s.tools || '—') +
+                    '</p><div class="card-actions"><button class="btn btn-sm btn-outline" data-editsvc="' + s.id +
+                    '">✏️</button><button class="btn btn-sm btn-danger" data-delsvc="' + s.id +
+                    '">🗑️</button></div></div>'; });
+            if (!services.length) h += '<div class="empty-state">Нет услуг</div>';
             h += '</div></div></div>';
-
-            h += '<div class="footer">Админ-панель • Данные в Firebase Realtime Database</div>';
+            h += '<div class="footer">Админ-панель • Firebase Realtime Database</div>';
             return h;
         }
 
@@ -614,168 +432,128 @@
             document.getElementById('logoutBtn').onclick = function() { localStorage.removeItem(KEY_AUTH);
                 isAdmin = false;
                 render(); };
-            document.querySelectorAll('.tab-admin').forEach(b => b.onclick = function() { admTab = b.dataset.atab;
+            document.querySelectorAll('.tab-admin').forEach(function(b) { b.onclick = function() { admTab = b.dataset
+                    .atab;
                 admCar = null;
                 admEng = null;
-                render(); });
-            document.getElementById('btnAddCar').onclick = function() {
-                let n = document.getElementById('acName').value.trim();
-                let i = document.getElementById('acIcon').value.trim() || '🚗';
-                let c = document.getElementById('acCat').value.trim() || 'Стандарт';
-                if (!n) return alert('Введите название автомобиля!');
+                render(); }; });
+            document.getElementById('btnAddCar').onclick = function() { var n = document.getElementById('acName').value
+                    .trim(); var i = document.getElementById('acIcon').value.trim() || '🚗'; var c = document
+                    .getElementById('acCat').value.trim() || 'Стандарт'; if (!n) return alert(
+                    'Введите название!');
                 cars.push({ id: 'c' + Date.now(), name: n, icon: i, cat: c, engines: [] });
                 saveData();
-                render();
-                console.log('✅ Авто добавлено:', n);
-            };
-            document.querySelectorAll('[data-delcar]').forEach(b => b.onclick = function() {
-                if (!confirm('Удалить автомобиль и все его модификации?')) return;
-                cars = cars.filter(c => c.id !== b.dataset.delcar);
-                if (selCar === b.dataset.delcar) { selCar = cars[0]?.id || null;
-                    selEng = cars[0]?.engines?.[0]?.id || null;
-                    selGb = cars[0]?.engines?.[0]?.gearboxes?.[0]?.id || null; }
-                saveData();
-                admCar = null;
+                render(); };
+            document.querySelectorAll('[data-delcar]').forEach(function(b) { b.onclick = function() { if (!confirm(
+                        'Удалить авто и модификации?')) return;
+                    cars = cars.filter(function(c) { return c.id !== b.dataset.delcar; }); if (selCar === b.dataset
+                        .delcar) { selCar = cars[0]?.id || null;
+                        selEng = cars[0]?.engines?.[0]?.id || null;
+                        selGb = cars[0]?.engines?.[0]?.gearboxes?.[0]?.id || null; }
+                    saveData();
+                    admCar = null;
+                    admEng = null;
+                    render(); }; });
+            document.querySelectorAll('[data-engs]').forEach(function(b) { b.onclick = function() { admCar = b.dataset
+                    .engs;
                 admEng = null;
-                render();
-            });
-            document.querySelectorAll('[data-engs]').forEach(b => b.onclick = function() { admCar = b.dataset.engs;
-                admEng = null;
-                render(); });
-            let btnAddEng = document.getElementById('btnAddEng');
-            if (btnAddEng) btnAddEng.onclick = function() {
-                let ac = cars.find(c => c.id === admCar);
-                if (!ac) return;
-                let n = document.getElementById('aeName').value.trim();
-                let cd = document.getElementById('aeCode').value.trim();
-                let p = document.getElementById('aePower').value.trim();
-                let f = document.getElementById('aeFuel').value;
-                if (!n || !cd) return alert('Заполните название и код!');
+                render(); }; });
+            var btnAddEng = document.getElementById('btnAddEng'); if (btnAddEng) btnAddEng.onclick = function() { var ac =
+                    cars.find(function(c) { return c.id === admCar; }); if (!ac) return; var n = document.getElementById(
+                        'aeName').value.trim(); var cd = document.getElementById('aeCode').value.trim(); var p = document
+                    .getElementById('aePower').value.trim(); var f = document.getElementById('aeFuel').value; if (!n ||
+                    !cd) return alert('Заполните!');
                 ac.engines.push({ id: 'e' + Date.now(), name: n, code: cd, power: p, fuel: f, gearboxes: [] });
                 saveData();
-                render();
-            };
-            document.querySelectorAll('[data-deleng]').forEach(b => b.onclick = function() {
-                if (!confirm('Удалить двигатель?')) return;
-                let ac = cars.find(c => c.id === admCar);
-                if (ac) ac.engines = ac.engines.filter(e => e.id !== b.dataset.deleng);
+                render(); };
+            document.querySelectorAll('[data-deleng]').forEach(function(b) { b.onclick = function() { if (!confirm(
+                        'Удалить?')) return; var ac = cars.find(function(c) { return c.id === admCar; }); if (ac) ac
+                    .engines = ac.engines.filter(function(e) { return e.id !== b.dataset.deleng; });
                 saveData();
-                render();
-            });
-            document.querySelectorAll('[data-gbs]').forEach(b => b.onclick = function() { admEng = b.dataset.gbs;
-                render(); });
-            let btnAddGb = document.getElementById('btnAddGb');
-            if (btnAddGb) btnAddGb.onclick = function() {
-                let ac = cars.find(c => c.id === admCar);
-                if (!ac) return;
-                let eng = ac.engines.find(e => e.id === admEng);
-                if (!eng) return;
-                let n = document.getElementById('agName').value.trim();
-                let cd = document.getElementById('agCode').value.trim();
-                let d = document.getElementById('agDrive').value;
-                let m = parseFloat(document.getElementById('agMult').value) || 1;
-                let bd = document.getElementById('agBadge').value.trim() || 'Средне';
-                if (!n || !cd) return alert('Заполните название и код!');
+                render(); }; });
+            document.querySelectorAll('[data-gbs]').forEach(function(b) { b.onclick = function() { admEng = b.dataset.gbs;
+                render(); }; });
+            var btnAddGb = document.getElementById('btnAddGb'); if (btnAddGb) btnAddGb.onclick = function() { var ac = cars
+                    .find(function(c) { return c.id === admCar; }); if (!ac) return; var eng = ac.engines.find(function(
+                        e) { return e.id === admEng; }); if (!eng) return; var n = document.getElementById('agName').value
+                    .trim(); var cd = document.getElementById('agCode').value.trim(); var d = document.getElementById(
+                        'agDrive').value; var m = parseFloat(document.getElementById('agMult').value) || 1; var bd =
+                    document.getElementById('agBadge').value.trim() || 'Средне'; if (!n || !cd) return alert(
+                    'Заполните!');
                 eng.gearboxes.push({ id: 'g' + Date.now(), name: n, code: cd, drive: d, mult: m, badge: bd });
                 saveData();
-                render();
-            };
-            document.querySelectorAll('[data-delgb]').forEach(b => b.onclick = function() {
-                if (!confirm('Удалить КПП?')) return;
-                let ac = cars.find(c => c.id === admCar);
-                if (!ac) return;
-                let eng = ac.engines.find(e => e.id === admEng);
-                if (eng) eng.gearboxes = eng.gearboxes.filter(g => g.id !== b.dataset.delgb);
+                render(); };
+            document.querySelectorAll('[data-delgb]').forEach(function(b) { b.onclick = function() { if (!confirm(
+                        'Удалить?')) return; var ac = cars.find(function(c) { return c.id === admCar; }); if (!ac)
+                    return; var eng = ac.engines.find(function(e) { return e.id === admEng; }); if (eng) eng.gearboxes =
+                    eng.gearboxes.filter(function(g) { return g.id !== b.dataset.delgb; });
                 saveData();
-                render();
-            });
-            document.getElementById('btnSaveSvc').onclick = function() {
-                let eid = document.getElementById('svcEditId').value;
-                let n = document.getElementById('svcName').value.trim();
-                let p = parseInt(document.getElementById('svcPrice').value) || 0;
-                let c = document.getElementById('svcCat').value;
-                let t = document.getElementById('svcTools').value.trim();
-                let sp = document.getElementById('svcSpecs').value.trim();
-                let st = document.getElementById('svcSteps').value.trim();
-                let w = document.getElementById('svcWarning').value.trim();
-                let im = document.getElementById('svcImage').value.trim();
-                if (!n || !p) return alert('Введите название и цену!');
-                if (eid) {
-                    let idx = services.findIndex(s => s.id == eid);
-                    if (idx >= 0) services[idx] = { id: services[idx].id, name: n, price: p, cat: c, tools: t,
-                        specs: sp, steps: st, warning: w, image: im };
-                } else {
-                    services.push({ id: Date.now(), name: n, price: p, cat: c, tools: t, specs: sp, steps: st,
-                        warning: w, image: im });
-                }
+                render(); }; });
+            document.getElementById('btnSaveSvc').onclick = function() { var eid = document.getElementById('svcEditId')
+                    .value; var n = document.getElementById('svcName').value.trim(); var p = parseInt(document
+                        .getElementById('svcPrice').value) || 0; var c = document.getElementById('svcCat').value; var t =
+                    document.getElementById('svcTools').value.trim(); var sp = document.getElementById('svcSpecs').value
+                    .trim(); var st = document.getElementById('svcSteps').value.trim(); var w = document.getElementById(
+                        'svcWarning').value.trim(); var im = document.getElementById('svcImage').value.trim(); if (!n || !
+                    p) return alert('Название и цена!'); if (eid) { var idx = services.findIndex(function(s) { return s
+                        .id == eid; }); if (idx >= 0) services[idx] = { id: services[idx].id, name: n, price: p, cat: c,
+                        tools: t, specs: sp, steps: st, warning: w, image: im }; } else { services.push({ id: Date.now(),
+                        name: n, price: p, cat: c, tools: t, specs: sp, steps: st, warning: w, image: im }); }
                 saveData();
-                clearSvcForm();
-                render();
-            };
-            document.getElementById('btnClearSvc').onclick = clearSvcForm;
-            document.querySelectorAll('[data-editsvc]').forEach(b => b.onclick = function() {
-                let s = services.find(x => x.id == b.dataset.editsvc);
-                if (!s) return;
-                document.getElementById('svcEditId').value = s.id;
-                document.getElementById('svcName').value = s.name;
-                document.getElementById('svcPrice').value = s.price;
-                document.getElementById('svcCat').value = s.cat;
-                document.getElementById('svcTools').value = s.tools || '';
-                document.getElementById('svcSpecs').value = s.specs || '';
-                document.getElementById('svcSteps').value = s.steps || '';
-                document.getElementById('svcWarning').value = s.warning || '';
-                document.getElementById('svcImage').value = s.image || '';
-                admTab = 'svc';
-                render();
-            });
-            document.querySelectorAll('[data-delsvc]').forEach(b => b.onclick = function() {
-                if (!confirm('Удалить услугу?')) return;
-                services = services.filter(s => s.id != b.dataset.delsvc);
-                saveData();
-                render();
-            });
+                document.getElementById('svcEditId').value = '';
+                document.getElementById('svcName').value = '';
+                document.getElementById('svcPrice').value = '1000';
+                document.getElementById('svcTools').value = '';
+                document.getElementById('svcSpecs').value = '';
+                document.getElementById('svcSteps').value = '';
+                document.getElementById('svcWarning').value = '';
+                document.getElementById('svcImage').value = '';
+                render(); };
+            document.getElementById('btnClearSvc').onclick = function() { document.getElementById('svcEditId').value = '';
+                document.getElementById('svcName').value = '';
+                document.getElementById('svcPrice').value = '1000';
+                document.getElementById('svcTools').value = '';
+                document.getElementById('svcSpecs').value = '';
+                document.getElementById('svcSteps').value = '';
+                document.getElementById('svcWarning').value = '';
+                document.getElementById('svcImage').value = ''; };
+            document.querySelectorAll('[data-editsvc]').forEach(function(b) { b.onclick = function() { var s = services.find(
+                        function(x) { return x.id == b.dataset.editsvc; }); if (!s) return;
+                    document.getElementById('svcEditId').value = s.id;
+                    document.getElementById('svcName').value = s.name;
+                    document.getElementById('svcPrice').value = s.price;
+                    document.getElementById('svcCat').value = s.cat;
+                    document.getElementById('svcTools').value = s.tools || '';
+                    document.getElementById('svcSpecs').value = s.specs || '';
+                    document.getElementById('svcSteps').value = s.steps || '';
+                    document.getElementById('svcWarning').value = s.warning || '';
+                    document.getElementById('svcImage').value = s.image || '';
+                    admTab = 'svc';
+                    render(); }; });
+            document.querySelectorAll('[data-delsvc]').forEach(function(b) { b.onclick = function() { if (!confirm(
+                        'Удалить услугу?')) return;
+                    services = services.filter(function(s) { return s.id != b.dataset.delsvc; });
+                    saveData();
+                    render(); }; });
         }
 
-        function clearSvcForm() {
-            document.getElementById('svcEditId').value = '';
-            document.getElementById('svcName').value = '';
-            document.getElementById('svcPrice').value = '1000';
-            document.getElementById('svcCat').value = 'maintenance';
-            document.getElementById('svcTools').value = '';
-            document.getElementById('svcSpecs').value = '';
-            document.getElementById('svcSteps').value = '';
-            document.getElementById('svcWarning').value = '';
-            document.getElementById('svcImage').value = '';
-        }
-
-        // ==================== МОДАЛКА ====================
-        function openModal(sid) {
-            let s = services.find(x => x.id === sid);
-            if (!s) return;
-            document.getElementById('modalTitle').textContent = '📋 ' + s.name;
-            let h = '';
-            if (s.specs?.trim()) {
-                h += '<h3>📅 Регламент и спецификации</h3><table class="modal-info-table">';
-                s.specs.split('\n').forEach(line => { let p = line.split('|'); if (p.length >= 2) h += '<tr><td>' +
-                        esc(p[0].trim()) + '</td><td>' + esc(p[1].trim()) + '</td></tr>'; });
-                h += '</table>';
-            }
-            if (s.tools?.trim()) { h += '<h3>🔧 Инструменты</h3><div class="modal-tools">';
-                s.tools.split(',').forEach(t => h += '<span class="tool-tag">' + esc(t.trim()) + '</span>');
-                h += '</div>'; }
-            if (s.steps?.trim()) { h += '<h3>📝 Пошаговая инструкция</h3>';
-                s.steps.split('\n').forEach((st, i) => h += '<div class="step-block"><div class="step-header"><span class="step-number">' +
-                    (i + 1) + '</span> Шаг ' + (i + 1) + '</div><div class="step-text">' + esc(st) +
-                    '</div></div>'); }
-            if (s.image?.trim()) h +=
-                '<h3>🖼️ Изображение</h3><img src="' + esc(s.image) +
-                '" class="step-image" onerror="this.style.display=\'none\'">';
-            if (s.warning?.trim()) h += '<h3>⚠️ Предупреждение</h3><div class="modal-warning">' + esc(s.warning) +
-                '</div>';
+        function openModal(sid) { var s = services.find(function(x) { return x.id === sid; }); if (!s) return;
+            document.getElementById('modalTitle').textContent = '📋 ' + s.name; var h = ''; if (s.specs?.trim()) { h +=
+                    '<h3>📅 Регламент</h3><table class="modal-info-table">';
+                s.specs.split('\n').forEach(function(l) { var p = l.split('|'); if (p.length >= 2) h += '<tr><td>' + esc(p[
+                        0].trim()) + '</td><td>' + esc(p[1].trim()) + '</td></tr>'; });
+                h += '</table>'; } if (s.tools?.trim()) { h += '<h3>🔧 Инструменты</h3><div class="modal-tools">';
+                s.tools.split(',').forEach(function(t) { h += '<span class="tool-tag">' + esc(t.trim()) + '</span>'; });
+                h += '</div>'; } if (s.steps?.trim()) { h += '<h3>📝 Инструкция</h3>';
+                s.steps.split('\n').forEach(function(st, i) { h +=
+                        '<div class="step-block"><div class="step-header"><span class="step-number">' + (i + 1) +
+                        '</span> Шаг ' + (i + 1) + '</div><div class="step-text">' + esc(st) + '</div></div>'; }); } if (
+                s.image?.trim()) h += '<h3>🖼️ Фото</h3><img src="' + esc(s.image) +
+                '" class="step-image" onerror="this.style.display=\'none\'">'; if (s.warning?.trim()) h +=
+                '<h3>⚠️ Предупреждение</h3><div class="modal-warning">' + esc(s.warning) + '</div>';
             document.getElementById('modalBody').innerHTML = h;
             document.getElementById('modalOverlay').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
+            document.body.style.overflow = 'hidden'; }
 
         function closeModal() { document.getElementById('modalOverlay').classList.add('hidden');
             document.body.style.overflow = ''; }
@@ -783,10 +561,8 @@
         document.getElementById('modalOverlay').onclick = function(e) { if (e.target === this) closeModal(); };
         document.onkeydown = function(e) { if (e.key === 'Escape') closeModal(); };
 
-        // ==================== СТАРТ ====================
-        console.log('🚀 Запуск приложения...');
-        console.log('📡 Firebase URL:', firebaseConfig.databaseURL);
         loadData();
+        console.log('🚀 Приложение запущено. Firebase подключён.');
     </script>
 </body>
 </html>
