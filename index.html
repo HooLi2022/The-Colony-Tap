@@ -99,23 +99,7 @@
         .footer { text-align:center; margin-top:20px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.05); color:#555; font-size:10px; }
         .detail-btn { padding:7px 14px; border-radius:20px; border:2px solid var(--accent); background:rgba(255,152,0,0.1); color:var(--accent); cursor:pointer; font-size:11px; font-weight:700; text-transform:uppercase; }
         .admin-car-item { background:rgba(255,255,255,0.02); padding:12px; border-radius:10px; margin-bottom:8px; border:1px solid rgba(255,255,255,0.06); }
-        .engines-list { margin-top:8px; padding-left:12px; border-left:2px solid rgba(255,152,0,0.3); }
-        .gearboxes-list { margin-top:4px; padding-left:12px; border-left:2px solid rgba(171,71,188,0.3); }
-        .add-form { display:flex; flex-wrap:wrap; gap:8px; align-items:flex-end; }
-        .add-form .form-group { flex:1; min-width:150px; margin-bottom:0; }
-        @media (max-width:768px) {
-            body { padding:8px; }
-            .container { padding:14px; border-radius:14px; }
-            .logo { font-size:24px; }
-            .main-tab { padding:10px 14px; font-size:11px; }
-            .form-grid { grid-template-columns:1fr; }
-            .sticky-bar { padding:10px 14px; }
-            .sticky-bar .price { font-size:20px; }
-            .chip { padding:8px 12px; font-size:11px; }
-            .btn { padding:12px 20px; font-size:13px; }
-            .add-form { flex-direction:column; }
-            .add-form .form-group { min-width:100%; }
-        }
+        @media (max-width:768px) { body{padding:8px} .container{padding:14px;border-radius:14px} .logo{font-size:24px} .form-grid{grid-template-columns:1fr} .sticky-bar{padding:10px 14px} .sticky-bar .price{font-size:20px} .chip{padding:8px 12px;font-size:11px} .btn{padding:12px 20px;font-size:13px} }
     </style>
 </head>
 <body>
@@ -129,7 +113,7 @@
     <script>
         (function(){
             firebase.initializeApp({ databaseURL:'https://the-colony-tap-default-rtdb.firebaseio.com/' });
-            const db=firebase.database(), P='admin123', KA='as_v18';
+            const db=firebase.database(), P='admin123', KA='as_v20';
             let A=localStorage.getItem(KA)==='1', C=[], S=[], B=[], sc='almera_g15', se, sg, pk=new Set, fl='all', tb='price', at='bookings', dm='self', onl=!1, bkPicks=new Set;
             let calDate=null, calYear, calMonth;
 
@@ -140,13 +124,7 @@
             const Pc=s=>Math.round(s.price*M());
             const calcTotal=ids=>{let t=0;ids.forEach(id=>{let s=S.find(x=>x.id===id);if(s)t+=s.price;});return t;};
 
-            // Функция для нормализации данных из Firebase (объект -> массив)
-            function toArray(data){
-                if(!data) return [];
-                if(Array.isArray(data)) return data;
-                // Firebase иногда возвращает объект с ключами вместо массива
-                return Object.keys(data).map(function(k){ var item=data[k]; item.id=item.id||k; return item; });
-            }
+            function toArray(data){if(!data)return[];if(Array.isArray(data))return data;return Object.keys(data).map(function(k){var item=data[k];item.id=item.id||k;return item;});}
 
             function DC(){return [
                 {id:'vaz2107',name:'ВАЗ 2107',icon:'🚗',cat:'Отечественные',engines:[{id:'v16',name:'1.6',code:'21067',power:'74 л.с.',fuel:'Бензин',gearboxes:[{id:'m5',name:'МКПП-5',code:'2107',drive:'Задний',mult:0.7,badge:'Эконом'}]}]},
@@ -187,51 +165,22 @@
             ];}
 
             function LD(){
-                db.ref('cars').once('value').then(function(s){
-                    C = s.exists() ? toArray(s.val()) : DC();
-                    // Нормализуем engines и gearboxes внутри каждого авто
-                    C.forEach(function(car){
-                        car.engines = toArray(car.engines);
-                        car.engines.forEach(function(eng){
-                            eng.gearboxes = toArray(eng.gearboxes);
-                        });
-                    });
-                    chk();
-                }).catch(function(){ C=DC(); chk(); });
-
-                db.ref('services').once('value').then(function(s){
-                    S = s.exists() ? toArray(s.val()) : DS();
-                    chk();
-                }).catch(function(){ S=DS(); chk(); });
-
-                db.ref('bookings').on('value',function(s){
-                    B = s.exists() ? s.val() : {};
-                    if(A) R();
-                });
-                db.ref('.info/connected').on('value',function(s){ onl=s.val()===!0; });
+                db.ref('cars').once('value').then(function(s){C=s.exists()?toArray(s.val()):DC();C.forEach(function(car){car.engines=toArray(car.engines);car.engines.forEach(function(eng){eng.gearboxes=toArray(eng.gearboxes);});});chk();}).catch(function(){C=DC();chk();});
+                db.ref('services').once('value').then(function(s){S=s.exists()?toArray(s.val()):DS();chk();}).catch(function(){S=DS();chk();});
+                db.ref('bookings').on('value',function(s){B=s.exists()?s.val():{};if(A)R();});
+                db.ref('.info/connected').on('value',function(s){onl=s.val()===!0;});
             }
+            function chk(){if(C.length&&S.length){if(!C.find(function(c){return c.id===sc;})){sc=C[0].id;se=C[0].engines[0].id;sg=C[0].engines[0].gearboxes[0].id;}onl=!0;R();}}
 
-            function chk(){
-                if(C.length && S.length){
-                    if(!C.find(function(c){return c.id===sc;})){ sc=C[0].id; se=C[0].engines[0].id; sg=C[0].engines[0].gearboxes[0].id; }
-                    onl=!0; R();
-                }
-            }
+            function R(){document.getElementById('app').innerHTML=A?RA():RC();if(A)BA();else BC();}
 
-            function sC(){ db.ref('cars').set(C); }
-            function sS(){ db.ref('services').set(S); }
-
-            function R(){ document.getElementById('app').innerHTML=A?RA():RC(); if(A)BA(); else BC(); }
-
-            // --- КЛИЕНТ ---
             function RC(){
-                var h='';
-                h+='<div class="header"><div class="logo">AUTO<span>SERVICE</span></div><div class="subtitle">Прайс-лист и запись • '+C.length+' авто • '+S.length+' услуг</div></div>';
-                h+='<div class="status-bar '+ (onl?'online':'') +'">'+ (onl?'🟢 Онлайн':'🔴 Офлайн') +'</div>';
+                var h='<div class="header"><div class="logo">AUTO<span>SERVICE</span></div><div class="subtitle">Прайс-лист и запись • '+C.length+' авто • '+S.length+' услуг</div></div>';
+                h+='<div class="status-bar '+(onl?'online':'')+'">'+(onl?'🟢 Онлайн':'🔴 Офлайн')+'</div>';
                 h+='<div style="text-align:right;margin-bottom:8px;"><a href="#" id="loginLink" style="color:#555;font-size:10px;">🔐 Админ</a></div>';
-                h+='<div class="main-tabs"><button class="main-tab'+ (tb==='price'?' active':'') +'" data-tab="price">📋 Прайс-лист</button><button class="main-tab'+ (tb==='booking'?' active':'') +'" data-tab="booking">📅 Запись</button></div>';
-                h+='<div class="tab-content'+ (tb==='price'?' active':'') +'">'+RP()+'</div>';
-                h+='<div class="tab-content'+ (tb==='booking'?' active':'') +'">'+RB()+'</div>';
+                h+='<div class="main-tabs"><button class="main-tab'+(tb==='price'?' active':'')+'" data-tab="price">📋 Прайс-лист</button><button class="main-tab'+(tb==='booking'?' active':'')+'" data-tab="booking">📅 Запись</button></div>';
+                h+='<div class="tab-content'+(tb==='price'?' active':'')+'">'+RP()+'</div>';
+                h+='<div class="tab-content'+(tb==='booking'?' active':'')+'">'+RB()+'</div>';
                 h+='<div class="footer">© 2026 AutoService</div>';
                 return h;
             }
@@ -275,8 +224,7 @@
             function BC(){
                 document.getElementById('loginLink').onclick=function(e){e.preventDefault();var p=prompt('Пароль:');if(p===P){localStorage.setItem(KA,'1');A=!0;R();}else if(p!==null)alert('Неверно!');};
                 document.querySelectorAll('.main-tab').forEach(function(b){b.onclick=function(){tb=b.dataset.tab;R();};});
-                if(tb==='price')BP();
-                if(tb==='booking')BB();
+                if(tb==='price')BP();if(tb==='booking')BB();
             }
 
             function BP(){
@@ -298,24 +246,17 @@
                 el.querySelectorAll('.svc-row').forEach(function(r){r.onclick=function(){var sid=parseInt(r.dataset.bksid);bkPicks.has(sid)?bkPicks.delete(sid):bkPicks.add(sid);updateBkTotal();renderBkServices();};});
                 updateBkTotal();
             }
-
-            function updateBkTotal(){
-                var el=document.getElementById('bkTotal'),cnt=document.getElementById('bkCount'),sum=document.getElementById('bkSum');
-                var t=calcTotal(Array.from(bkPicks));
-                if(bkPicks.size>0){el.style.display='block';cnt.textContent=bkPicks.size;sum.textContent=F(t);}else{el.style.display='none';}
-            }
+            function updateBkTotal(){var el=document.getElementById('bkTotal'),cnt=document.getElementById('bkCount'),sum=document.getElementById('bkSum');var t=calcTotal(Array.from(bkPicks));if(bkPicks.size>0){el.style.display='block';cnt.textContent=bkPicks.size;sum.textContent=F(t);}else{el.style.display='none';}}
 
             function BB(){
                 renderBkServices();
                 document.querySelectorAll('.del-opt').forEach(function(o){o.onclick=function(){dm=o.dataset.d;document.querySelectorAll('.del-opt').forEach(function(x){x.classList.remove('active');});o.classList.add('active');document.getElementById('addrGroup').style.display=dm==='pickup'?'block':'none';};});
-                var dateInput=document.getElementById('bookDate');
-                dateInput.onclick=function(e){e.stopPropagation();openCalendar(dateInput);};
+                var dateInput=document.getElementById('bookDate');dateInput.onclick=function(e){e.stopPropagation();openCalendar(dateInput);};
                 var bkSs=document.getElementById('bkSearch'),bkSr=document.getElementById('bkSr');
                 if(bkSs)bkSs.oninput=function(){var q=bkSs.value.toLowerCase().trim();if(!q){bkSr.classList.remove('active');bkSr.innerHTML='';renderBkServices();return;}var res=S.filter(function(s){return s.name.toLowerCase().indexOf(q)>=0;});if(res.length){bkSr.classList.add('active');bkSr.innerHTML=res.map(function(s){return '<div class="search-item" data-sid="'+s.id+'"><span>'+E(s.name)+'</span><span style="color:var(--accent);">'+F(s.price)+'</span></div>';}).join('');bkSr.querySelectorAll('.search-item').forEach(function(i){i.onclick=function(){var sid=parseInt(i.dataset.sid);bkPicks.has(sid)?bkPicks.delete(sid):bkPicks.add(sid);bkSs.value='';bkSr.classList.remove('active');renderBkServices();};});}else{bkSr.classList.add('active');bkSr.innerHTML='<div class="empty" style="padding:10px;">Ничего не найдено</div>';}};
                 document.getElementById('submitBooking').onclick=function(){
                     var n=document.getElementById('bookName').value.trim(),ph=document.getElementById('bookPhone').value.trim();
-                    if(!n||!ph)return alert('Имя и телефон обязательны!');
-                    if(bkPicks.size===0)return alert('Выберите хотя бы одну услугу!');
+                    if(!n||!ph)return alert('Имя и телефон обязательны!');if(bkPicks.size===0)return alert('Выберите услугу!');
                     var svc=Array.from(bkPicks),total=calcTotal(svc);
                     var b={carId:document.getElementById('bookCar').value,name:n,phone:ph,email:document.getElementById('bookEmail').value.trim(),services:svc,problem:document.getElementById('bookProblem').value.trim(),date:dateInput.value,time:document.getElementById('bookTime').value,delivery:dm,address:(document.getElementById('bookAddress')?.value||'').trim(),total:total,status:'new',createdAt:firebase.database.ServerValue.TIMESTAMP};
                     db.ref('bookings').push().set(b).then(function(){document.getElementById('successMsg').style.display='block';document.getElementById('submitBooking').disabled=!0;document.getElementById('submitBooking').textContent='✅ Отправлено!';}).catch(function(e){alert('Ошибка: '+e.message);});
@@ -327,11 +268,10 @@
             function renderCal(popup,input){var months=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];var days=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];var today=new Date();today.setHours(0,0,0,0);var h='<div class="cal-header"><button id="calPrev">◀</button><span>'+months[calMonth]+' '+calYear+'</span><button id="calNext">▶</button></div>';h+='<div class="cal-grid">'+days.map(function(d){return '<div class="cal-day-name">'+d+'</div>';}).join('');var firstDay=new Date(calYear,calMonth,1).getDay()||7;var lastDate=new Date(calYear,calMonth+1,0).getDate();var prevLast=new Date(calYear,calMonth,0).getDate();for(var i=1;i<firstDay;i++){h+='<div class="cal-day other">'+(prevLast-firstDay+i+1)+'</div>';}for(var d_=1;d_<=lastDate;d_++){var dt=new Date(calYear,calMonth,d_);var cls='cal-day';if(dt.getTime()===calDate.getTime())cls+=' active';if(dt.getTime()===today.getTime())cls+=' today';h+='<div class="'+cls+'" data-date="'+dt.toISOString()+'">'+d_+'</div>';}var total=firstDay+lastDate-1,remaining=Math.ceil(total/7)*7-total;for(var r_=1;r_<=remaining;r_++){h+='<div class="cal-day other">'+r_+'</div>';}h+='</div>';popup.innerHTML=h;popup.querySelector('#calPrev').onclick=function(e){e.stopPropagation();calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCal(popup,input);};popup.querySelector('#calNext').onclick=function(e){e.stopPropagation();calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCal(popup,input);};popup.querySelectorAll('.cal-day:not(.other)').forEach(function(d_el){d_el.onclick=function(e){e.stopPropagation();calDate=new Date(d_el.dataset.date);input.value=calDate.toLocaleDateString('ru-RU');closeCal();};});}
             document.getElementById('calOverlay').onclick=closeCal;
 
-            // --- АДМИН ---
             function RA(){
                 var h='<div class="header"><div class="logo">AUTO<span>SERVICE</span></div><div class="subtitle">⚙️ Админ-панель • '+C.length+' авто • '+S.length+' услуг</div></div>';
                 h+='<div class="status-bar '+(onl?'online':'')+'">'+(onl?'🟢 Онлайн':'🔴 Офлайн')+'</div>';
-                h+='<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:16px;"><div class="admin-tabs"><button class="admin-tab'+(at==='bookings'?' active':'')+'" data-at="bookings">📅 Заявки ('+(B?Object.keys(B).length:0)+')</button><button class="admin-tab'+(at==='cars'?' active':'')+'" data-at="cars">🚗 Авто ('+C.length+')</button><button class="admin-tab'+(at==='services'?' active':'')+'" data-at="services">🔧 Услуги ('+S.length+')</button></div><button class="btn btn-outline btn-sm" id="logoutBtn">🚪 Выйти</button></div>';
+                h+='<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:16px;"><div class="admin-tabs"><button class="admin-tab'+(at==='bookings'?' active':'')+'" data-at="bookings">📅 Заявки ('+Object.keys(B).length+')</button><button class="admin-tab'+(at==='cars'?' active':'')+'" data-at="cars">🚗 Авто ('+C.length+')</button><button class="admin-tab'+(at==='services'?' active':'')+'" data-at="services">🔧 Услуги ('+S.length+')</button></div><button class="btn btn-outline btn-sm" id="logoutBtn">🚪 Выйти</button></div>';
                 h+='<div class="admin-content'+(at==='bookings'?' active':'')+'">'+RAB()+'</div>';
                 h+='<div class="admin-content'+(at==='cars'?' active':'')+'">'+RAC()+'</div>';
                 h+='<div class="admin-content'+(at==='services'?' active':'')+'">'+RAS()+'</div>';
@@ -339,66 +279,32 @@
                 return h;
             }
 
-            function RAB(){
-                if(!B||!Object.keys(B).length)return '<div class="empty">Нет заявок</div>';
-                var h='';
-                Object.keys(B).reverse().forEach(function(k){
-                    var b=B[k],car=C.find(function(c){return c.id===b.carId;})||{icon:'🚗',name:'Не указан'};
-                    var scs=b.status==='confirmed'?'color:#4caf50;':b.status==='done'?'color:#9e9e9e;':'color:var(--accent);';
-                    var st=b.status==='confirmed'?'Подтверждена':b.status==='done'?'Выполнена':'Новая';
-                    var bookingTotal=b.total||calcTotal(b.services||[]);
-                    h+='<div class="booking-card"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;"><div><strong>'+E(b.name)+'</strong><br><span style="color:var(--accent);">📞 '+E(b.phone)+'</span></div><span style="'+scs+'font-weight:700;font-size:10px;">'+st+'</span></div>';
-                    h+='<div style="margin-top:6px;font-size:12px;">🚗 '+car.icon+' '+E(car.name)+' | 📅 '+(b.date||'—')+' '+(b.time||'')+'</div>';
-                    if(b.services&&b.services.length){h+='<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:3px;">'+b.services.map(function(sid){var s=S.find(function(x){return x.id===sid;});return s?'<span class="badge" style="background:rgba(255,152,0,0.15);color:var(--accent);">'+E(s.name)+'</span>':'';}).join('')+'</div>';}
-                    if(b.problem)h+='<div style="margin-top:8px;padding:8px;background:rgba(0,0,0,0.2);border-radius:6px;font-size:11px;">📝 '+E(b.problem)+'</div>';
-                    h+='<div class="booking-total-badge">💰 Сумма: '+F(bookingTotal)+'</div>';
-                    h+='<div style="margin-top:8px;display:flex;gap:5px;flex-wrap:wrap;">'+(b.status==='new'?'<button class="btn btn-success btn-sm" data-confirm="'+k+'">✅</button>':'')+(b.status!=='done'?'<button class="btn btn-accent btn-sm" data-done="'+k+'">✔️</button>':'')+'<button class="btn btn-danger btn-sm" data-del="'+k+'">🗑️</button></div></div>';
-                });
-                return h;
-            }
+            function RAB(){if(!Object.keys(B).length)return '<div class="empty">Нет заявок</div>';var h='';Object.keys(B).reverse().forEach(function(k){var b=B[k],car=C.find(function(c){return c.id===b.carId;})||{icon:'🚗',name:'Не указан'};var scs=b.status==='confirmed'?'color:#4caf50;':b.status==='done'?'color:#9e9e9e;':'color:var(--accent);';var st=b.status==='confirmed'?'Подтверждена':b.status==='done'?'Выполнена':'Новая';var bookingTotal=b.total||calcTotal(b.services||[]);h+='<div class="booking-card"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;"><div><strong>'+E(b.name)+'</strong><br><span style="color:var(--accent);">📞 '+E(b.phone)+'</span></div><span style="'+scs+'font-weight:700;font-size:10px;">'+st+'</span></div>';h+='<div style="margin-top:6px;font-size:12px;">🚗 '+car.icon+' '+E(car.name)+' | 📅 '+(b.date||'—')+' '+(b.time||'')+'</div>';if(b.services&&b.services.length){h+='<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:3px;">'+b.services.map(function(sid){var s=S.find(function(x){return x.id===sid;});return s?'<span class="badge" style="background:rgba(255,152,0,0.15);color:var(--accent);">'+E(s.name)+'</span>':'';}).join('')+'</div>';}if(b.problem)h+='<div style="margin-top:8px;padding:8px;background:rgba(0,0,0,0.2);border-radius:6px;font-size:11px;">📝 '+E(b.problem)+'</div>';h+='<div class="booking-total-badge">💰 Сумма: '+F(bookingTotal)+'</div>';h+='<div style="margin-top:8px;display:flex;gap:5px;flex-wrap:wrap;">'+(b.status==='new'?'<button class="btn btn-success btn-sm" data-confirm="'+k+'">✅</button>':'')+(b.status!=='done'?'<button class="btn btn-accent btn-sm" data-done="'+k+'">✔️</button>':'')+'<button class="btn btn-danger btn-sm" data-del="'+k+'">🗑️</button></div></div>';});return h;}
 
             function RAC(){
-                var h='<div class="card"><div class="card-title">🏗️ Полное управление автомобилями</div>';
-                h+='<div class="add-form" style="margin-bottom:16px;">';
-                h+='<div class="form-group"><label>Модель авто</label><input type="text" id="acName" placeholder="Toyota Camry"></div>';
-                h+='<div class="form-group"><label>Иконка</label><input type="text" id="acIcon" placeholder="🚙" maxlength="4"></div>';
-                h+='<div class="form-group"><label>Категория</label><select id="acCat"><option>Отечественные</option><option>Немецкие</option><option>Японские</option><option>Корейские</option><option>Французские</option><option>Американские</option><option>Чешские</option><option>Китайские</option></select></div>';
-                h+='<div class="form-group"><label>Двигатель</label><input type="text" id="acEngName" placeholder="Название"></div>';
-                h+='<div class="form-group"><label>Код двигателя</label><input type="text" id="acEngCode" placeholder="AEB / 2AR-FE"></div>';
-                h+='<div class="form-group"><label>Мощность</label><input type="text" id="acEngPower" placeholder="150 л.с."></div>';
-                h+='<div class="form-group"><label>Топливо</label><select id="acEngFuel"><option>Бензин</option><option>Дизель</option><option>Гибрид</option><option>Электро</option></select></div>';
-                h+='<div class="form-group"><label>КПП (название)</label><input type="text" id="acGbName" placeholder="МКПП-5"></div>';
-                h+='<div class="form-group"><label>Код КПП</label><input type="text" id="acGbCode" placeholder="012 / U660E"></div>';
-                h+='<div class="form-group"><label>Привод</label><select id="acGbDrive"><option>Передний</option><option>Задний</option><option>Полный</option></select></div>';
-                h+='<div class="form-group"><label>Коэфф.</label><input type="number" id="acGbMult" value="1" step="0.05" min="0.5" max="3"></div>';
-                h+='<div class="form-group"><label>Метка</label><input type="text" id="acGbBadge" placeholder="Средне"></div>';
-                h+='</div><button class="btn btn-accent" id="btnAddFullCar" style="width:100%;">➕ Добавить автомобиль с модификациями</button>';
-                h+='<div class="card" style="margin-top:16px;"><div class="card-title">📋 Существующие автомобили ('+C.length+')</div>';
-                if(C.length){
-                    C.forEach(function(c){
-                        h+='<div class="admin-car-item"><div style="display:flex;justify-content:space-between;align-items:center;"><strong>'+c.icon+' '+E(c.name)+'</strong> <span style="color:var(--muted);font-size:10px;">'+E(c.cat)+'</span><button class="btn btn-danger btn-sm" data-delcar="'+c.id+'">🗑️</button></div>';
-                        if(c.engines && c.engines.length){
-                            c.engines.forEach(function(e){
-                                h+='<div class="engines-list"><div style="display:flex;justify-content:space-between;align-items:center;"><span>⚡ '+E(e.name)+' ('+E(e.code)+') — '+E(e.power)+' '+E(e.fuel)+'</span><button class="btn btn-danger btn-sm" data-deleng="'+c.id+'" data-eid="'+e.id+'">🗑️</button></div>';
-                                if(e.gearboxes && e.gearboxes.length){
-                                    e.gearboxes.forEach(function(g){
-                                        h+='<div class="gearboxes-list"><span>⚙️ '+E(g.name)+' ('+E(g.code)+') — '+E(g.drive)+' ×'+g.mult.toFixed(2)+' ['+E(g.badge)+']</span><button class="btn btn-danger btn-sm" data-delgb="'+c.id+'" data-eid="'+e.id+'" data-gid="'+g.id+'">🗑️</button></div>';
-                                    });
-                                }
-                            });
-                        }
-                        h+='</div>';
-                    });
-                } else {
-                    h+='<div class="empty">Нет автомобилей</div>';
-                }
-                h+='</div>';
+                var h='<div class="card"><div class="card-title">➕ Добавить авто с модификациями</div>';
+                h+='<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;">';
+                h+='<div class="form-group" style="flex:1;min-width:150px;"><label>Модель</label><input type="text" id="acName" placeholder="Toyota Camry"></div>';
+                h+='<div class="form-group" style="flex:1;min-width:80px;"><label>Иконка</label><input type="text" id="acIcon" placeholder="🚙"></div>';
+                h+='<div class="form-group" style="flex:1;min-width:130px;"><label>Категория</label><select id="acCat"><option>Отечественные</option><option>Немецкие</option><option>Японские</option><option>Корейские</option><option>Французские</option><option>Американские</option></select></div>';
+                h+='<div class="form-group" style="flex:1;min-width:150px;"><label>Двигатель</label><input type="text" id="acEngName" placeholder="1.8T Turbo"></div>';
+                h+='<div class="form-group" style="flex:1;min-width:120px;"><label>Код двиг.</label><input type="text" id="acEngCode" placeholder="AEB"></div>';
+                h+='<div class="form-group" style="flex:1;min-width:100px;"><label>Мощность</label><input type="text" id="acEngPower" placeholder="150 л.с."></div>';
+                h+='<div class="form-group" style="flex:1;min-width:100px;"><label>Топливо</label><select id="acEngFuel"><option>Бензин</option><option>Дизель</option></select></div>';
+                h+='<div class="form-group" style="flex:1;min-width:140px;"><label>КПП</label><input type="text" id="acGbName" placeholder="МКПП-5"></div>';
+                h+='<div class="form-group" style="flex:1;min-width:100px;"><label>Код КПП</label><input type="text" id="acGbCode" placeholder="012"></div>';
+                h+='<div class="form-group" style="flex:1;min-width:110px;"><label>Привод</label><select id="acGbDrive"><option>Передний</option><option>Задний</option><option>Полный</option></select></div>';
+                h+='<div class="form-group" style="flex:1;min-width:90px;"><label>Коэфф.</label><input type="number" id="acGbMult" value="1" step="0.05"></div>';
+                h+='<div class="form-group" style="flex:1;min-width:100px;"><label>Метка</label><input type="text" id="acGbBadge" placeholder="Средне"></div>';
+                h+='</div><button class="btn btn-accent" id="btnAddCar" style="margin-top:10px;width:100%;">➕ Добавить автомобиль</button></div>';
+                h+='<div class="card"><div class="card-title">📋 Автомобили ('+C.length+')</div>';
+                if(C.length){C.forEach(function(c){h+='<div class="admin-car-item"><div style="display:flex;justify-content:space-between;align-items:center;"><strong>'+c.icon+' '+E(c.name)+'</strong> <span style="color:var(--muted);">'+E(c.cat)+'</span><button class="btn btn-danger btn-sm" data-delcar="'+c.id+'">🗑️</button></div>';if(c.engines&&c.engines.length){c.engines.forEach(function(e){h+='<div style="margin-left:12px;border-left:2px solid var(--accent);padding-left:8px;margin-top:4px;">⚡ '+E(e.name)+' ('+E(e.code)+') '+E(e.power)+' '+E(e.fuel)+' <button class="btn btn-danger btn-sm" data-deleng="'+c.id+'" data-eid="'+e.id+'">🗑️</button>';if(e.gearboxes&&e.gearboxes.length){e.gearboxes.forEach(function(g){h+='<div style="margin-left:12px;border-left:2px solid #ab47bc;padding-left:8px;">⚙️ '+E(g.name)+' ('+E(g.code)+') '+E(g.drive)+' ×'+g.mult.toFixed(2)+' ['+E(g.badge)+']</div>';});}h+='</div>';});}h+='</div>';});}else{h+='<div class="empty">Нет авто</div>';}h+='</div>';
                 return h;
             }
 
             function RAS(){
-                var h='<div class="card"><div class="card-title">➕ Услуга</div><input type="hidden" id="svcEditId"><div style="display:flex;gap:8px;flex-wrap:wrap;"><div class="form-group" style="flex:2;"><label>Название</label><input type="text" id="svcName"></div><div class="form-group" style="flex:1;"><label>Цена</label><input type="number" id="svcPrice" value="1000"></div><div class="form-group" style="flex:1;"><label>Категория</label><select id="svcCat">'+['diagnostics:🔍 Диагностика','maintenance:🛠️ ТО','engine:⚡ Двигатель','transmission:⚙️ Трансмиссия','brakes:🛑 Тормоза','suspension:🔧 Подвеска','ac:❄️ Кондиционер','electrical:🔌 Электрика','body:🎨 Кузов','tires:🛞 Шины'].map(function(x){return '<option value="'+x.split(':')[0]+'">'+x.split(':')[1]+'</option>';}).join('')+'</select></div></div><div class="form-group"><label>Инструменты</label><input type="text" id="svcTools"></div><div class="form-group"><label>Регламент</label><textarea id="svcSpecs"></textarea></div><div class="form-group"><label>Инструкция</label><textarea id="svcSteps"></textarea></div><div class="form-group"><label>Предупреждение</label><input type="text" id="svcWarning"></div><button class="btn btn-accent" id="btnSaveSvc">💾 Сохранить</button><button class="btn btn-outline btn-sm" id="btnClearSvc">✕</button></div>';
-                h+='<div class="card"><div class="card-title">📋 Услуги ('+S.length+')</div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;">'+S.map(function(s){return '<div style="background:rgba(255,255,255,0.02);padding:10px;border-radius:8px;"><strong>'+E(s.name)+'</strong><br><small>'+F(s.price)+' • '+s.cat+'</small><div style="margin-top:6px;display:flex;gap:4px;"><button class="btn btn-outline btn-sm" data-editsvc="'+s.id+'">✏️</button><button class="btn btn-danger btn-sm" data-delsvc="'+s.id+'">🗑️</button></div></div>';}).join('')+'</div></div>';
+                var h='<div class="card"><div class="card-title">➕ Услуга</div><input type="hidden" id="svcEditId"><div style="display:flex;gap:8px;flex-wrap:wrap;"><div class="form-group" style="flex:2;"><label>Название</label><input type="text" id="svcName"></div><div class="form-group" style="flex:1;"><label>Цена</label><input type="number" id="svcPrice" value="1000"></div><div class="form-group" style="flex:1;"><label>Категория</label><select id="svcCat">'+['diagnostics:🔍 Диагностика','maintenance:🛠️ ТО','engine:⚡ Двигатель','transmission:⚙️ Трансмиссия','brakes:🛑 Тормоза','suspension:🔧 Подвеска','ac:❄️ Кондиционер','electrical:🔌 Электрика','body:🎨 Кузов','tires:🛞 Шины'].map(function(x){return '<option value="'+x.split(':')[0]+'">'+x.split(':')[1]+'</option>';}).join('')+'</select></div></div><div class="form-group"><label>Инструменты</label><input type="text" id="svcTools"></div><div class="form-group"><label>Регламент</label><textarea id="svcSpecs"></textarea></div><div class="form-group"><label>Инструкция</label><textarea id="svcSteps"></textarea></div><div class="form-group"><label>Предупреждение</label><input type="text" id="svcWarning"></div><button class="btn btn-accent" id="btnSaveSvc">💾 Сохранить</button><button class="btn btn-outline btn-sm" id="btnClearSvc">✕ Очистить</button></div>';
+                h+='<div class="card"><div class="card-title">📋 Услуги ('+S.length+')</div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;">'+S.map(function(s){return '<div style="background:rgba(255,255,255,0.02);padding:10px;border-radius:8px;"><strong>'+E(s.name)+'</strong><br><small>'+F(s.price)+' • '+s.cat+'</small><div style="margin-top:6px;display:flex;gap:4px;"><button class="btn btn-outline btn-sm" data-editsvc="'+s.id+'">✏️</button><button class="btn btn-danger btn-sm" data-delsvc="'+s.id+'">🗑️</button></div></div>';}).join('')+'</div></div>';
                 return h;
             }
 
@@ -407,41 +313,14 @@
                 document.querySelectorAll('.admin-tab').forEach(function(b){b.onclick=function(){at=b.dataset.at;R();};});
                 document.querySelectorAll('[data-confirm]').forEach(function(b){b.onclick=function(){db.ref('bookings/'+b.dataset.confirm+'/status').set('confirmed');};});
                 document.querySelectorAll('[data-done]').forEach(function(b){b.onclick=function(){db.ref('bookings/'+b.dataset.done+'/status').set('done');};});
-                document.querySelectorAll('[data-del]').forEach(function(b){b.onclick=function(){if(confirm('Удалить заявку?'))db.ref('bookings/'+b.dataset.del).remove();};});
-
-                var btnFull=document.getElementById('btnAddFullCar');
-                if(btnFull)btnFull.onclick=function(){
-                    var name=document.getElementById('acName').value.trim();
-                    var icon=document.getElementById('acIcon').value.trim()||'🚗';
-                    var cat=document.getElementById('acCat').value;
-                    var engName=document.getElementById('acEngName').value.trim();
-                    var engCode=document.getElementById('acEngCode').value.trim();
-                    var engPower=document.getElementById('acEngPower').value.trim();
-                    var engFuel=document.getElementById('acEngFuel').value;
-                    var gbName=document.getElementById('acGbName').value.trim();
-                    var gbCode=document.getElementById('acGbCode').value.trim();
-                    var gbDrive=document.getElementById('acGbDrive').value;
-                    var gbMult=parseFloat(document.getElementById('acGbMult').value)||1;
-                    var gbBadge=document.getElementById('acGbBadge').value.trim()||'Средне';
-                    if(!name||!engName||!engCode||!gbName||!gbCode)return alert('Заполните все основные поля!');
-                    var car=C.find(function(c){return c.name.toLowerCase()===name.toLowerCase();});
-                    if(car){
-                        var eng=car.engines.find(function(e){return e.code.toLowerCase()===engCode.toLowerCase();});
-                        if(!eng){eng={id:'e'+Date.now(),name:engName,code:engCode,power:engPower,fuel:engFuel,gearboxes:[]};car.engines.push(eng);}
-                        var gb=eng.gearboxes.find(function(g){return g.code.toLowerCase()===gbCode.toLowerCase();});
-                        if(!gb){eng.gearboxes.push({id:'g'+Date.now(),name:gbName,code:gbCode,drive:gbDrive,mult:gbMult,badge:gbBadge});}else{return alert('Такая КПП уже существует для этого двигателя!');}
-                    }else{C.push({id:'c'+Date.now(),name:name,icon:icon,cat:cat,engines:[{id:'e'+Date.now(),name:engName,code:engCode,power:engPower,fuel:engFuel,gearboxes:[{id:'g'+Date.now(),name:gbName,code:gbCode,drive:gbDrive,mult:gbMult,badge:gbBadge}]}]});}
-                    sC();R();alert('✅ Автомобиль добавлен!');
-                };
-
-                document.querySelectorAll('[data-delcar]').forEach(function(b){b.onclick=function(){if(!confirm('Удалить авто и все модификации?'))return;C=C.filter(function(c){return c.id!==b.dataset.delcar;});sC();R();};});
-                document.querySelectorAll('[data-deleng]').forEach(function(b){b.onclick=function(){if(!confirm('Удалить двигатель и его КПП?'))return;var c=C.find(function(x){return x.id===b.dataset.deleng;});if(c)c.engines=c.engines.filter(function(e){return e.id!==b.dataset.eid;});sC();R();};});
-                document.querySelectorAll('[data-delgb]').forEach(function(b){b.onclick=function(){if(!confirm('Удалить КПП?'))return;var c=C.find(function(x){return x.id===b.dataset.delgb;});if(c){var e=c.engines.find(function(x){return x.id===b.dataset.eid;});if(e)e.gearboxes=e.gearboxes.filter(function(g){return g.id!==b.dataset.gid;});}sC();R();};});
-
-                document.getElementById('btnSaveSvc').onclick=function(){var eid=document.getElementById('svcEditId').value,n=document.getElementById('svcName').value.trim(),p=parseInt(document.getElementById('svcPrice').value)||0;if(!n||!p)return alert('Название и цена!');var o={name:n,price:p,cat:document.getElementById('svcCat').value,tools:document.getElementById('svcTools').value.trim(),specs:document.getElementById('svcSpecs').value.trim(),steps:document.getElementById('svcSteps').value.trim(),warning:document.getElementById('svcWarning').value.trim()};if(eid){var i=S.findIndex(function(s){return s.id==eid;});if(i>=0){o.id=S[i].id;S[i]=o;}}else{o.id=Date.now();S.push(o);}sS();document.getElementById('svcEditId').value='';document.getElementById('svcName').value='';document.getElementById('svcPrice').value='1000';R();};
+                document.querySelectorAll('[data-del]').forEach(function(b){b.onclick=function(){if(confirm('Удалить?'))db.ref('bookings/'+b.dataset.del).remove();};});
+                var btnCar=document.getElementById('btnAddCar');if(btnCar)btnCar.onclick=function(){var n=document.getElementById('acName').value.trim();var icon=document.getElementById('acIcon').value.trim()||'🚗';var cat=document.getElementById('acCat').value;var en=document.getElementById('acEngName').value.trim();var ec=document.getElementById('acEngCode').value.trim();var ep=document.getElementById('acEngPower').value.trim();var ef=document.getElementById('acEngFuel').value;var gn=document.getElementById('acGbName').value.trim();var gc=document.getElementById('acGbCode').value.trim();var gd=document.getElementById('acGbDrive').value;var gm=parseFloat(document.getElementById('acGbMult').value)||1;var gb=document.getElementById('acGbBadge').value.trim()||'Средне';if(!n||!en||!ec||!gn||!gc)return alert('Заполните все поля!');var car=C.find(function(c){return c.name.toLowerCase()===n.toLowerCase();});if(car){var eng=car.engines.find(function(e){return e.code.toLowerCase()===ec.toLowerCase();});if(!eng){eng={id:'e'+Date.now(),name:en,code:ec,power:ep,fuel:ef,gearboxes:[]};car.engines.push(eng);}eng.gearboxes.push({id:'g'+Date.now(),name:gn,code:gc,drive:gd,mult:gm,badge:gb});}else{C.push({id:'c'+Date.now(),name:n,icon:icon,cat:cat,engines:[{id:'e'+Date.now(),name:en,code:ec,power:ep,fuel:ef,gearboxes:[{id:'g'+Date.now(),name:gn,code:gc,drive:gd,mult:gm,badge:gb}]}]});}db.ref('cars').set(C);R();alert('✅ Добавлено!');};
+                document.querySelectorAll('[data-delcar]').forEach(function(b){b.onclick=function(){if(!confirm('Удалить?'))return;C=C.filter(function(c){return c.id!==b.dataset.delcar;});db.ref('cars').set(C);R();};});
+                document.querySelectorAll('[data-deleng]').forEach(function(b){b.onclick=function(){if(!confirm('Удалить?'))return;var c=C.find(function(x){return x.id===b.dataset.deleng;});if(c)c.engines=c.engines.filter(function(e){return e.id!==b.dataset.eid;});db.ref('cars').set(C);R();};});
+                var btnSvc=document.getElementById('btnSaveSvc');if(btnSvc)btnSvc.onclick=function(){var eid=document.getElementById('svcEditId').value;var n=document.getElementById('svcName').value.trim();var p=parseInt(document.getElementById('svcPrice').value)||0;if(!n||!p)return alert('Название и цена!');var o={name:n,price:p,cat:document.getElementById('svcCat').value,tools:document.getElementById('svcTools').value.trim(),specs:document.getElementById('svcSpecs').value.trim(),steps:document.getElementById('svcSteps').value.trim(),warning:document.getElementById('svcWarning').value.trim()};if(eid){var i=S.findIndex(function(s){return s.id==eid;});if(i>=0){o.id=S[i].id;S[i]=o;}}else{o.id=Date.now();S.push(o);}db.ref('services').set(S);document.getElementById('svcEditId').value='';document.getElementById('svcName').value='';document.getElementById('svcPrice').value='1000';R();};
                 document.getElementById('btnClearSvc').onclick=function(){document.getElementById('svcEditId').value='';document.getElementById('svcName').value='';document.getElementById('svcPrice').value='1000';};
                 document.querySelectorAll('[data-editsvc]').forEach(function(b){b.onclick=function(){var s=S.find(function(x){return x.id==b.dataset.editsvc;});if(!s)return;document.getElementById('svcEditId').value=s.id;document.getElementById('svcName').value=s.name;document.getElementById('svcPrice').value=s.price;document.getElementById('svcCat').value=s.cat;document.getElementById('svcTools').value=s.tools||'';document.getElementById('svcSpecs').value=s.specs||'';document.getElementById('svcSteps').value=s.steps||'';document.getElementById('svcWarning').value=s.warning||'';at='services';R();};});
-                document.querySelectorAll('[data-delsvc]').forEach(function(b){b.onclick=function(){if(!confirm('Удалить услугу?'))return;S=S.filter(function(s){return s.id!=b.dataset.delsvc;});sS();R();};});
+                document.querySelectorAll('[data-delsvc]').forEach(function(b){b.onclick=function(){if(!confirm('Удалить?'))return;S=S.filter(function(s){return s.id!=b.dataset.delsvc;});db.ref('services').set(S);R();};});
             }
 
             function OM(sid){var s=S.find(function(x){return x.id===sid;});if(!s)return;document.getElementById('modalTitle').textContent=s.name;var h='';if(s.specs?.trim()){h+='<h3>📅 Регламент</h3><table>';s.specs.split('\n').forEach(function(l){var p=l.split('|');if(p.length>=2)h+='<tr><td>'+E(p[0].trim())+'</td><td>'+E(p[1].trim())+'</td></tr>';});h+='</table>';}if(s.tools?.trim()){h+='<h3>🔧 Инструменты</h3><div style="display:flex;flex-wrap:wrap;gap:4px;">';s.tools.split(',').forEach(function(t){h+='<span class="badge" style="background:rgba(255,255,255,0.08);padding:4px 8px;">'+E(t.trim())+'</span>';});h+='</div>';}if(s.steps?.trim()){h+='<h3>📝 Инструкция</h3>';s.steps.split('\n').forEach(function(st,i){h+='<div class="step"><div class="step-head">Шаг '+(i+1)+'</div>'+E(st)+'</div>';});}if(s.warning?.trim())h+='<h3>⚠️ Предупреждение</h3><div style="background:rgba(255,152,0,0.1);border-left:4px solid var(--accent);padding:10px;border-radius:0 8px 8px 0;">'+E(s.warning)+'</div>';document.getElementById('modalBody').innerHTML=h;document.getElementById('modalOverlay').classList.remove('hidden');document.body.style.overflow='hidden';}
