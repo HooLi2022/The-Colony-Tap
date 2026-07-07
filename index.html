@@ -39,7 +39,6 @@
         .btn { padding:9px 18px; border-radius:22px; border:none; cursor:pointer; font-size:11px; font-weight:700; transition:all 0.2s; }
         .btn-sm { padding:5px 10px; font-size:9px; border-radius:14px; }
         .btn-accent { background:var(--accent); color:#000; }
-        .btn-accent:active { transform:scale(0.97); }
         .btn-success { background:var(--success); color:#fff; }
         .btn-danger { background:var(--danger); color:#fff; }
         .btn-outline { background:transparent; border:2px solid var(--accent); color:var(--accent); }
@@ -47,7 +46,6 @@
         .sticky-bar .price { font-size:26px; font-weight:900; color:#000; }
         .svc-group-title { font-size:11px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:1px; margin:12px 0 6px 4px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.06); }
         .svc-row { display:flex; justify-content:space-between; align-items:center; padding:10px 12px; border-radius:10px; background:rgba(255,255,255,0.015); margin-bottom:3px; gap:8px; font-size:12px; cursor:pointer; }
-        .svc-row:active { background:rgba(255,152,0,0.2); }
         .svc-row.selected { background:rgba(255,152,0,0.15); }
         .svc-left { display:flex; align-items:center; gap:8px; flex:1; }
         .check { width:20px; height:20px; border-radius:5px; border:2px solid rgba(255,255,255,0.25); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:bold; color:#000; }
@@ -100,7 +98,6 @@
         .empty { text-align:center; padding:30px; color:#555; }
         .footer { text-align:center; margin-top:20px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.05); color:#555; font-size:10px; }
         .detail-btn { padding:7px 14px; border-radius:20px; border:2px solid var(--accent); background:rgba(255,152,0,0.1); color:var(--accent); cursor:pointer; font-size:11px; font-weight:700; text-transform:uppercase; }
-        .detail-btn:active { background:var(--accent); color:#000; }
         .admin-car-item { background:rgba(255,255,255,0.02); padding:12px; border-radius:10px; margin-bottom:8px; border:1px solid rgba(255,255,255,0.06); }
         .engines-list { margin-top:8px; padding-left:12px; border-left:2px solid rgba(255,152,0,0.3); }
         .gearboxes-list { margin-top:4px; padding-left:12px; border-left:2px solid rgba(171,71,188,0.3); }
@@ -132,7 +129,7 @@
     <script>
         (function(){
             firebase.initializeApp({ databaseURL:'https://the-colony-tap-default-rtdb.firebaseio.com/' });
-            const db=firebase.database(), P='admin123', KA='as_v17';
+            const db=firebase.database(), P='admin123', KA='as_v18';
             let A=localStorage.getItem(KA)==='1', C=[], S=[], B=[], sc='almera_g15', se, sg, pk=new Set, fl='all', tb='price', at='bookings', dm='self', onl=!1, bkPicks=new Set;
             let calDate=null, calYear, calMonth;
 
@@ -142,6 +139,14 @@
             const M=()=>{let d=G();return d?d.gearbox.mult:1;};
             const Pc=s=>Math.round(s.price*M());
             const calcTotal=ids=>{let t=0;ids.forEach(id=>{let s=S.find(x=>x.id===id);if(s)t+=s.price;});return t;};
+
+            // Функция для нормализации данных из Firebase (объект -> массив)
+            function toArray(data){
+                if(!data) return [];
+                if(Array.isArray(data)) return data;
+                // Firebase иногда возвращает объект с ключами вместо массива
+                return Object.keys(data).map(function(k){ var item=data[k]; item.id=item.id||k; return item; });
+            }
 
             function DC(){return [
                 {id:'vaz2107',name:'ВАЗ 2107',icon:'🚗',cat:'Отечественные',engines:[{id:'v16',name:'1.6',code:'21067',power:'74 л.с.',fuel:'Бензин',gearboxes:[{id:'m5',name:'МКПП-5',code:'2107',drive:'Задний',mult:0.7,badge:'Эконом'}]}]},
@@ -182,17 +187,43 @@
             ];}
 
             function LD(){
-                db.ref('cars').once('value').then(function(s){ C=s.exists()?s.val():DC(); chk(); }).catch(function(){ C=DC(); chk(); });
-                db.ref('services').once('value').then(function(s){ S=s.exists()?s.val():DS(); chk(); }).catch(function(){ S=DS(); chk(); });
-                db.ref('bookings').on('value',function(s){ B=s.exists()?s.val():[]; if(A)R(); });
+                db.ref('cars').once('value').then(function(s){
+                    C = s.exists() ? toArray(s.val()) : DC();
+                    // Нормализуем engines и gearboxes внутри каждого авто
+                    C.forEach(function(car){
+                        car.engines = toArray(car.engines);
+                        car.engines.forEach(function(eng){
+                            eng.gearboxes = toArray(eng.gearboxes);
+                        });
+                    });
+                    chk();
+                }).catch(function(){ C=DC(); chk(); });
+
+                db.ref('services').once('value').then(function(s){
+                    S = s.exists() ? toArray(s.val()) : DS();
+                    chk();
+                }).catch(function(){ S=DS(); chk(); });
+
+                db.ref('bookings').on('value',function(s){
+                    B = s.exists() ? s.val() : {};
+                    if(A) R();
+                });
                 db.ref('.info/connected').on('value',function(s){ onl=s.val()===!0; });
             }
-            function chk(){ if(C.length&&S.length){ if(!C.find(function(c){return c.id===sc;})){ sc=C[0].id; se=C[0].engines[0].id; sg=C[0].engines[0].gearboxes[0].id; } onl=!0; R(); } }
+
+            function chk(){
+                if(C.length && S.length){
+                    if(!C.find(function(c){return c.id===sc;})){ sc=C[0].id; se=C[0].engines[0].id; sg=C[0].engines[0].gearboxes[0].id; }
+                    onl=!0; R();
+                }
+            }
+
             function sC(){ db.ref('cars').set(C); }
             function sS(){ db.ref('services').set(S); }
 
             function R(){ document.getElementById('app').innerHTML=A?RA():RC(); if(A)BA(); else BC(); }
 
+            // --- КЛИЕНТ ---
             function RC(){
                 var h='';
                 h+='<div class="header"><div class="logo">AUTO<span>SERVICE</span></div><div class="subtitle">Прайс-лист и запись • '+C.length+' авто • '+S.length+' услуг</div></div>';
@@ -293,9 +324,10 @@
 
             function openCalendar(input){document.getElementById('calOverlay').classList.add('show');var popup=document.getElementById('calendarPopup');var today=new Date();if(!calDate)calDate=today;calYear=calDate.getFullYear();calMonth=calDate.getMonth();renderCal(popup,input);popup.classList.add('show');}
             function closeCal(){document.getElementById('calOverlay').classList.remove('show');document.getElementById('calendarPopup').classList.remove('show');}
-            function renderCal(popup,input){var months=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];var days=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];var today=new Date();today.setHours(0,0,0,0);var h='<div class="cal-header"><button id="calPrev">◀</button><span>'+months[calMonth]+' '+calYear+'</span><button id="calNext">▶</button></div>';h+='<div class="cal-grid">'+days.map(function(d){return '<div class="cal-day-name">'+d+'</div>';}).join('')+'';var firstDay=new Date(calYear,calMonth,1).getDay()||7;var lastDate=new Date(calYear,calMonth+1,0).getDate();var prevLast=new Date(calYear,calMonth,0).getDate();for(var i=1;i<firstDay;i++){h+='<div class="cal-day other">'+(prevLast-firstDay+i+1)+'</div>';}for(var d_=1;d_<=lastDate;d_++){var dt=new Date(calYear,calMonth,d_);var cls='cal-day';if(dt.getTime()===calDate.getTime())cls+=' active';if(dt.getTime()===today.getTime())cls+=' today';h+='<div class="'+cls+'" data-date="'+dt.toISOString()+'">'+d_+'</div>';}var total=firstDay+lastDate-1,remaining=Math.ceil(total/7)*7-total;for(var r_=1;r_<=remaining;r_++){h+='<div class="cal-day other">'+r_+'</div>';}h+='</div>';popup.innerHTML=h;popup.querySelector('#calPrev').onclick=function(e){e.stopPropagation();calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCal(popup,input);};popup.querySelector('#calNext').onclick=function(e){e.stopPropagation();calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCal(popup,input);};popup.querySelectorAll('.cal-day:not(.other)').forEach(function(d_el){d_el.onclick=function(e){e.stopPropagation();calDate=new Date(d_el.dataset.date);input.value=calDate.toLocaleDateString('ru-RU');closeCal();};});}
+            function renderCal(popup,input){var months=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];var days=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];var today=new Date();today.setHours(0,0,0,0);var h='<div class="cal-header"><button id="calPrev">◀</button><span>'+months[calMonth]+' '+calYear+'</span><button id="calNext">▶</button></div>';h+='<div class="cal-grid">'+days.map(function(d){return '<div class="cal-day-name">'+d+'</div>';}).join('');var firstDay=new Date(calYear,calMonth,1).getDay()||7;var lastDate=new Date(calYear,calMonth+1,0).getDate();var prevLast=new Date(calYear,calMonth,0).getDate();for(var i=1;i<firstDay;i++){h+='<div class="cal-day other">'+(prevLast-firstDay+i+1)+'</div>';}for(var d_=1;d_<=lastDate;d_++){var dt=new Date(calYear,calMonth,d_);var cls='cal-day';if(dt.getTime()===calDate.getTime())cls+=' active';if(dt.getTime()===today.getTime())cls+=' today';h+='<div class="'+cls+'" data-date="'+dt.toISOString()+'">'+d_+'</div>';}var total=firstDay+lastDate-1,remaining=Math.ceil(total/7)*7-total;for(var r_=1;r_<=remaining;r_++){h+='<div class="cal-day other">'+r_+'</div>';}h+='</div>';popup.innerHTML=h;popup.querySelector('#calPrev').onclick=function(e){e.stopPropagation();calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCal(popup,input);};popup.querySelector('#calNext').onclick=function(e){e.stopPropagation();calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCal(popup,input);};popup.querySelectorAll('.cal-day:not(.other)').forEach(function(d_el){d_el.onclick=function(e){e.stopPropagation();calDate=new Date(d_el.dataset.date);input.value=calDate.toLocaleDateString('ru-RU');closeCal();};});}
             document.getElementById('calOverlay').onclick=closeCal;
 
+            // --- АДМИН ---
             function RA(){
                 var h='<div class="header"><div class="logo">AUTO<span>SERVICE</span></div><div class="subtitle">⚙️ Админ-панель • '+C.length+' авто • '+S.length+' услуг</div></div>';
                 h+='<div class="status-bar '+(onl?'online':'')+'">'+(onl?'🟢 Онлайн':'🔴 Офлайн')+'</div>';
@@ -342,17 +374,24 @@
                 h+='<div class="form-group"><label>Метка</label><input type="text" id="acGbBadge" placeholder="Средне"></div>';
                 h+='</div><button class="btn btn-accent" id="btnAddFullCar" style="width:100%;">➕ Добавить автомобиль с модификациями</button>';
                 h+='<div class="card" style="margin-top:16px;"><div class="card-title">📋 Существующие автомобили ('+C.length+')</div>';
-                C.forEach(function(c){
-                    h+='<div class="admin-car-item"><div style="display:flex;justify-content:space-between;align-items:center;"><strong>'+c.icon+' '+E(c.name)+'</strong> <span style="color:var(--muted);font-size:10px;">'+E(c.cat)+'</span><button class="btn btn-danger btn-sm" data-delcar="'+c.id+'">🗑️</button></div>';
-                    c.engines.forEach(function(e){
-                        h+='<div class="engines-list"><div style="display:flex;justify-content:space-between;align-items:center;"><span>⚡ '+E(e.name)+' ('+E(e.code)+') — '+E(e.power)+' '+E(e.fuel)+'</span><button class="btn btn-danger btn-sm" data-deleng="'+c.id+'" data-eid="'+e.id+'">🗑️</button></div>';
-                        e.gearboxes.forEach(function(g){
-                            h+='<div class="gearboxes-list"><span>⚙️ '+E(g.name)+' ('+E(g.code)+') — '+E(g.drive)+' ×'+g.mult.toFixed(2)+' ['+E(g.badge)+']</span><button class="btn btn-danger btn-sm" data-delgb="'+c.id+'" data-eid="'+e.id+'" data-gid="'+g.id+'">🗑️</button></div>';
-                        });
+                if(C.length){
+                    C.forEach(function(c){
+                        h+='<div class="admin-car-item"><div style="display:flex;justify-content:space-between;align-items:center;"><strong>'+c.icon+' '+E(c.name)+'</strong> <span style="color:var(--muted);font-size:10px;">'+E(c.cat)+'</span><button class="btn btn-danger btn-sm" data-delcar="'+c.id+'">🗑️</button></div>';
+                        if(c.engines && c.engines.length){
+                            c.engines.forEach(function(e){
+                                h+='<div class="engines-list"><div style="display:flex;justify-content:space-between;align-items:center;"><span>⚡ '+E(e.name)+' ('+E(e.code)+') — '+E(e.power)+' '+E(e.fuel)+'</span><button class="btn btn-danger btn-sm" data-deleng="'+c.id+'" data-eid="'+e.id+'">🗑️</button></div>';
+                                if(e.gearboxes && e.gearboxes.length){
+                                    e.gearboxes.forEach(function(g){
+                                        h+='<div class="gearboxes-list"><span>⚙️ '+E(g.name)+' ('+E(g.code)+') — '+E(g.drive)+' ×'+g.mult.toFixed(2)+' ['+E(g.badge)+']</span><button class="btn btn-danger btn-sm" data-delgb="'+c.id+'" data-eid="'+e.id+'" data-gid="'+g.id+'">🗑️</button></div>';
+                                    });
+                                }
+                            });
+                        }
+                        h+='</div>';
                     });
-                    h+='</div>';
-                });
-                if(!C.length)h+='<div class="empty">Нет автомобилей</div>';
+                } else {
+                    h+='<div class="empty">Нет автомобилей</div>';
+                }
                 h+='</div>';
                 return h;
             }
