@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Xuliki Bot</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 20px auto; padding: 20px; background: #1a1a1a; color: #eee; }
+        h1 { color: #ff6b00; }
+        .panel { background: #2a2a2a; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        label { display: block; margin: 8px 0 4px; font-size: 14px; color: #aaa; }
+        input, textarea { width: 100%; padding: 8px; background: #1a1a1a; border: 1px solid #444; color: #eee; border-radius: 4px; box-sizing: border-box; font-family: monospace; font-size: 12px; }
+        button { background: #ff6b00; color: #fff; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 14px; margin: 5px 5px 5px 0; }
+        button:hover { background: #ff8c33; }
+        button:disabled { background: #555; cursor: not-allowed; }
+        #log { background: #000; color: #0f0; padding: 10px; border-radius: 4px; height: 300px; overflow-y: auto; font-family: monospace; font-size: 12px; white-space: pre-wrap; }
+        .status { padding: 8px; border-radius: 4px; margin-bottom: 10px; }
+        .status.ok { background: #1a4d1a; color: #6f6; }
+        .status.err { background: #4d1a1a; color: #f66; }
+    </style>
+</head>
+<body>
+    <h1>🤖 Xuliki Bot</h1>
+
+    <div class="panel">
+        <div id="status" class="status">Вставь токен и нажми «Запустить»</div>
+
+        <label>Token (из Payload запроса):</label>
+        <input type="text" id="token" placeholder="cdf525a81d1acbf715f4b0a59c1d62ec">
+
+        <label>UID (твой VK ID):</label>
+        <input type="text" id="uid" placeholder="228195620">
+
+        <label>req_key (начальный):</label>
+        <input type="text" id="reqKey" value="srUjnhko">
+
+        <button onclick="startBot()" id="startBtn">▶ Запустить</button>
+        <button onclick="stopBot()" id="stopBtn" disabled>⏹ Остановить</button>
+    </div>
+
+    <div class="panel">
+        <button onclick="action('hobo')">👤 Подобрать бомжа</button>
+        <button onclick="action('boss')">👊 Ударить босса</button>
+        <button onclick="clearLog()">🗑 Очистить лог</button>
+    </div>
+
+    <div id="log"></div>
+
+    <script>
+        // ===== НАСТРОЙКИ =====
+        const PROXY_URL = 'proxy.php';  // твой прокси-скрипт
+        const API_ID = '6754112';
+        const SCRIPT_URL = 'https://prod-app6754112-57f261547534.pages-ac.vk-apps.ru';
+
+        // ===== ТАБЛИЦА spec_encode =====
+        const SPEC_MAP = {
+            "0":"2","1":"6","2":"0","3":"7","4":"5","5":"1","6":"4","7":"8","8":"3","9":"9",
+            "a":"b","b":"h","c":"k","d":"d","e":"u","f":"g","g":"t","h":"i","i":"l","j":"a",
+            "k":"e","l":"w","m":"r","n":"p","o":"x","p":"y","q":"m","r":"z","s":"c","t":"v",
+            "u":"j","v":"s","w":"f","x":"o","y":"q","z":"n",
+            "A":"E","B":"G","C":"J","D":"P","E":"L","F":"U","G":"W","H":"S","I":"V","J":"A",
+            "K":"N","L":"R","M":"C","N":"Z","O":"X","P":"M","Q":"Y","R":"B","S":"I","T":"H",
+            "U":"F","V":"K","W":"Q","X":"O","Y":"D","Z":"T"
+        };
+        const ALLOWED = new Set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
+
+        // ===== СОСТОЯНИЕ =====
+        let running = false;
+        let loopTimer = null;
+        let reqKey = 'srUjnhko';
+        let token = '';
+        let uid = '';
+
+        // ===== УТИЛИТЫ =====
+        function log(msg, color) {
+            const el = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            const line = document.createElement('div');
+            if (color) line.style.color = color;
+            line.textContent = `[${time}] ${msg}`;
+            el.appendChild(line);
+            el.scrollTop = el.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+        }
+
+        function setStatus(text, isError) {
+            const el = document.getElementById('status');
+            el.textContent = text;
+            el.className = 'status ' + (isError ? 'err' : 'ok');
+        }
+
+        function specEncode(s) {
+            let result = '';
+            for (const ch of s) {
+                result += ALLOWED.has(ch) ? (SPEC_MAP[ch] || ch) : ch;
+            }
+            return result;
+        }
+
+        function encodeParams(params) {
+            const json = JSON.stringify(params);
+            const b1 = btoa(json);
+            const b2 = btoa(b1);
+            return specEncode(b2);
+        }
+
+        function makeH() {
+            // Простой MD5 через встроенный crypto.subtle недоступен синхронно,
+            // поэтому используем заглушку — сервер h не проверяет
+            return Math.random().toString(16).substring(2, 34).padEnd(32, '0');
+        }
+
+        // ===== ОТПРАВКА ЗАПРОСА =====
+        async function sendRequest(method, params) {
+            const url = `${SCRIPT_URL}/universal.php?h=${makeH()}`;
+
+            const body = new URLSearchParams({
+                method: method,
+                api_id: API_ID,
+                params: encodeParams(params),
+                token: token,
+                uid: uid,
+                user_id: uid,
+                req_key: reqKey
+            });
+
+            // Шлём через прокси
+            const resp = await fetch(PROXY_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    url: url,
+                    body: body.toString()
+                })
+            });
+
+            if (!resp.ok) {
+                throw new Error(`HTTP ${resp.status}: ${await resp.text()}`);
+            }
+
+            const data = await resp.json();
+
+            if (data.req_key) {
+                reqKey = data.req_key;
+                log(`Новый req_key: ${reqKey}`, '#88f');
+            }
+
+            return data;
+        }
+
+        // ===== ДЕЙСТВИЯ =====
+        async function action(type) {
+            try {
+                if (type === 'hobo') {
+                    log('👤 Подбираю бомжа...', '#ff0');
+                    const res = await sendRequest('users.getHobo', {});
+                    log(`✅ Ответ: ${JSON.stringify(res).substring(0, 200)}`, '#0f0');
+                } else if (type === 'boss') {
+                    log('👊 Бью босса (wid=0, num=1)...', '#ff0');
+                    const res = await sendRequest('fights.damage', { wid: 0, num: 1 });
+                    log(`✅ Ответ: ${JSON.stringify(res).substring(0, 200)}`, '#0f0');
+                }
+            } catch (e) {
+                log(`❌ Ошибка: ${e.message}`, '#f66');
+            }
+        }
+
+        // ===== ЦИКЛ =====
+        async function botLoop() {
+            if (!running) return;
+
+            try {
+                // Подбираем бомжа
+                log('👤 Подбираю бомжа...', '#ff0');
+                const res = await sendRequest('users.getHobo', {});
+                log(`✅ ${JSON.stringify(res).substring(0, 150)}`, '#0f0');
+
+                // Ждём 5 секунд
+                await new Promise(r => setTimeout(r, 5000));
+
+                // Бьём босса
+                if (running) {
+                    log('👊 Бью босса...', '#ff0');
+                    const res2 = await sendRequest('fights.damage', { wid: 0, num: 1 });
+                    log(`✅ ${JSON.stringify(res2).substring(0, 150)}`, '#0f0');
+                }
+            } catch (e) {
+                log(`❌ Ошибка: ${e.message}`, '#f66');
+            }
+
+            // Повторяем через 10 секунд
+            if (running) {
+                loopTimer = setTimeout(botLoop, 10000);
+            }
+        }
+
+        function startBot() {
+            token = document.getElementById('token').value.trim();
+            uid = document.getElementById('uid').value.trim();
+            reqKey = document.getElementById('reqKey').value.trim() || 'srUjnhko';
+
+            if (!token || !uid) {
+                setStatus('Заполни Token и UID', true);
+                return;
+            }
+
+            running = true;
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('stopBtn').disabled = false;
+            setStatus('Бот запущен', false);
+            log('🚀 Бот запущен', '#0f0');
+            botLoop();
+        }
+
+        function stopBot() {
+            running = false;
+            if (loopTimer) clearTimeout(loopTimer);
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+            setStatus('Бот остановлен', false);
+            log('⏹ Бот остановлен', '#ff0');
+        }
+    </script>
+</body>
+</html>
